@@ -1,6 +1,8 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
+export const runtime = "nodejs";
+
 const handler = NextAuth({
   providers: [
     GoogleProvider({
@@ -11,11 +13,7 @@ const handler = NextAuth({
 
   callbacks: {
     async signIn({ user }) {
-      if (user.email === process.env.ADMIN_EMAIL) {
-        return true;
-      }
-
-      return false;
+      return user.email === process.env.ADMIN_EMAIL;
     },
   },
 
