@@ -1,10 +1,10 @@
-import Sidebar from "@/components/Sidebar";
-import Navbar from "@/components/Navbar";
-import StatCard from "@/components/StatCard";
-import ReviewCard from "@/components/ReviewCard";
-import AnalyticsCard from "@/components/AnalyticsCard";
-import ReplyBox from "@/components/ReplyBox";
-import SummaryCard from "@/components/SummaryCard";
+import Sidebar from "../../components/Sidebar";
+import Navbar from "../../components/Navbar";
+import StatCard from "../../components/StatCard";
+import ReviewCard from "../../components/ReviewCard";
+import AnalyticsCard from "../../components/AnalyticsCard";
+import ReplyBox from "../../components/ReplyBox";
+import SummaryCard from "../../components/SummaryCard";
 
 export default function DashboardPage() {
   return (
@@ -91,3 +91,6 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+
+
