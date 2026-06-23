@@ -8,22 +8,55 @@ export default function Sidebar() {
         ReviewReply AI
       </h1>
 
-      <div className="space-y-4">
+      <div className="space-y-3">
 
-        <Link href="/dashboard" className="block text-white bg-zinc-900 p-4 rounded-xl">
-          Dashboard
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-3 text-white bg-zinc-900 p-4 rounded-xl"
+        >
+          📊 Dashboard
         </Link>
 
-        <Link href="/reviews" className="block text-zinc-400 hover:text-white">
-          Reviews
+        <Link
+          href="/reviews"
+          className="flex items-center gap-3 text-zinc-400 hover:text-white p-3"
+        >
+          ⭐ Reviews
         </Link>
 
-        <Link href="/analytics" className="block text-zinc-400 hover:text-white">
-          Analytics
+        <Link
+          href="/analytics"
+          className="flex items-center gap-3 text-zinc-400 hover:text-white p-3"
+        >
+          📈 Analytics
         </Link>
 
-        <Link href="/settings" className="block text-zinc-400 hover:text-white">
-          Settings
+        <Link
+          href="/summary"
+          className="flex items-center gap-3 text-zinc-400 hover:text-white p-3"
+        >
+          🤖 AI Summary
+        </Link>
+
+        <Link
+          href="/reply-tool"
+          className="flex items-center gap-3 text-zinc-400 hover:text-white p-3"
+        >
+          💬 Reply Tool
+        </Link>
+
+        <Link
+          href="/alerts"
+          className="flex items-center gap-3 text-zinc-400 hover:text-white p-3"
+        >
+          🔔 Alerts
+        </Link>
+
+        <Link
+          href="/settings"
+          className="flex items-center gap-3 text-zinc-400 hover:text-white p-3"
+        >
+          ⚙️ Settings
         </Link>
 
       </div>
@@ -31,3 +64,6 @@ export default function Sidebar() {
     </div>
   );
 }
+
+
+
