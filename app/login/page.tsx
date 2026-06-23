@@ -10,9 +10,9 @@ export default function LoginPage() {
           Continue with Google to access admin dashboard.
         </p>
 
-        <button className="w-full bg-white text-black py-4 rounded-2xl font-semibold">
+        <a href="/api/auth/signin" className="block w-full bg-white text-black py-4 rounded-2xl font-semibold">
           Continue with Google
-        </button>
+        </a>
       </div>
     </div>
   );
