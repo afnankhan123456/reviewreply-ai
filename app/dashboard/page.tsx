@@ -1,3 +1,4 @@
+```tsx
 import Sidebar from "../../components/Sidebar";
 import Navbar from "../../components/Navbar";
 import StatCard from "../../components/StatCard";
@@ -61,15 +62,17 @@ export default function DashboardPage() {
           <div className="space-y-5">
 
             <ReviewCard
-              name="Rahul Sharma"
-              review="Amazing service and very friendly staff."
+              name="Demo Customer"
+              review="Amazing service and quick response!"
               status="Positive"
+              reply="Thank you for your feedback! We appreciate your support."
             />
 
             <ReviewCard
-              name="Priya Verma"
+              name="Sample Client"
               review="Delivery was slightly slow but quality was great."
               status="Mixed"
+              reply="Thank you for your honest feedback. We’ll improve our delivery speed."
             />
 
           </div>
@@ -91,6 +94,8 @@ export default function DashboardPage() {
     </div>
   );
 }
+```
+
 
 
 
