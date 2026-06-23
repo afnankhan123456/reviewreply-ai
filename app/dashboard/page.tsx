@@ -1,4 +1,3 @@
-```tsx
 import Sidebar from "../../components/Sidebar";
 import Navbar from "../../components/Navbar";
 import StatCard from "../../components/StatCard";
@@ -52,7 +51,7 @@ export default function DashboardPage() {
     </div>
   );
 }
-```
+
 
 
 
