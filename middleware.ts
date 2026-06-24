@@ -11,6 +11,10 @@ export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const isAdmin = token?.email === process.env.ADMIN_EMAIL;
 
+  if (!token && (pathname.startsWith("/admin") || pathname.startsWith("/dashboard"))) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
   if (pathname.startsWith("/admin") && !isAdmin) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
@@ -23,5 +27,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/dashboard/:path*", "/api/auth/:path*"],
+  matcher: ["/admin/:path*", "/dashboard/:path*"],
 };
