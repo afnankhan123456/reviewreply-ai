@@ -9,16 +9,17 @@ export default function Navbar() {
   useEffect(() => {
     if (darkMode) {
       document.documentElement.classList.add("dark");
+      document.body.style.backgroundColor = "#050816";
+      document.body.style.color = "white";
     } else {
       document.documentElement.classList.remove("dark");
+      document.body.style.backgroundColor = "white";
+      document.body.style.color = "black";
     }
   }, [darkMode]);
 
   return (
-    <div className="flex items-center justify-between mb-8">
-      <h1 className="text-3xl font-bold">
-        ReviewReply AI
-      </h1>
+    <div className="flex items-center justify-end mb-8">
 
       <div className="flex items-center gap-4 relative">
 
@@ -64,5 +65,3 @@ export default function Navbar() {
     </div>
   );
 }
-
-
