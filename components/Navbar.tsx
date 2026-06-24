@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 
 export default function Navbar() {
+  const { data: session } = useSession();
+
   const [darkMode, setDarkMode] = useState(true);
   const [open, setOpen] = useState(false);
 
@@ -49,14 +52,18 @@ export default function Navbar() {
             className="flex items-center gap-3 bg-zinc-200 dark:bg-zinc-900 px-3 py-2 rounded-2xl"
           >
             <img
-              src="https://avatars.githubusercontent.com/u/190445289?v=4"
+              src={session?.user?.image || "/profile.png"}
               alt="profile"
               className="h-10 w-10 rounded-full"
             />
 
             <div className="text-left">
               <p className="text-sm font-semibold">
-                Afnan Khan
+                {session?.user?.name || "User"}
+              </p>
+
+              <p className="text-xs text-zinc-500">
+                {session?.user?.email}
               </p>
             </div>
           </button>
@@ -74,3 +81,7 @@ export default function Navbar() {
     </div>
   );
 }
+
+
+
+
