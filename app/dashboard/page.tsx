@@ -1,4 +1,4 @@
-import ClientSidebar from "../../client_components/client_Sidebar";
+import ClientSidebar from "../../components/client_Sidebar";
 import Navbar from "../../components/Navbar";
 
 export default function DashboardPage() {
