@@ -1,3 +1,7 @@
+"use client";
+
+import { signIn } from "next-auth/react";
+
 export default function LoginPage() {
   return (
     <div className="min-h-screen bg-black flex items-center justify-center px-6">
@@ -10,9 +14,12 @@ export default function LoginPage() {
           Continue with Google to access admin dashboard.
         </p>
 
-        <a href="/api/auth/signin" className="block w-full bg-white text-black py-4 rounded-2xl font-semibold">
+        <button
+          onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+          className="block w-full bg-white text-black py-4 rounded-2xl font-semibold"
+        >
           Continue with Google
-        </a>
+        </button>
       </div>
     </div>
   );
