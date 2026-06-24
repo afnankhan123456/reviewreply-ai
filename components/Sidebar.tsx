@@ -1,6 +1,6 @@
 export default function Sidebar() {
   return (
-    <aside className="w-[260px] hidden lg:flex flex-col justify-between border-r border-zinc-800 bg-white dark:bg-[#060b1f] p-5">
+    <aside className="w-[260px] hidden lg:flex flex-col justify-between border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#060b1f] p-5">
 
       <div>
 
@@ -20,8 +20,8 @@ export default function Sidebar() {
               key={item}
               className={`rounded-2xl px-4 py-3 transition-all cursor-pointer ${
                 index === 0
-                  ? "bg-violet-600/20 border border-violet-500/30 text-white"
-                  : "text-zinc-400 hover:bg-white/5"
+                  ? "bg-violet-600/20 border border-violet-500/30 text-black dark:text-white"
+                  : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-white/5"
               }`}
             >
               {item}
@@ -33,5 +33,3 @@ export default function Sidebar() {
     </aside>
   );
 }
-
-
