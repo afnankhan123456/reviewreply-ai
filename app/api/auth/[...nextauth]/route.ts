@@ -22,11 +22,6 @@ const handler = NextAuth({
       return token;
     },
 
-    async session({ session, token }) {
-      session.user.isAdmin = token.isAdmin as boolean;
-      return session;
-    },
-
     async redirect({ baseUrl, url }) {
       if (url.includes("admin=true")) {
         return `${baseUrl}/admin`;
