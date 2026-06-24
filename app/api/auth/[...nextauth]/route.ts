@@ -3,6 +3,8 @@ import GoogleProvider from "next-auth/providers/google";
 
 export const runtime = "nodejs";
 
+const adminEmail = process.env.ADMIN_EMAIL;
+
 const handler = NextAuth({
   providers: [
     GoogleProvider({
@@ -12,8 +14,25 @@ const handler = NextAuth({
   ],
 
   callbacks: {
-    async signIn({ user }) {
-      return user.email === process.env.ADMIN_EMAIL;
+    async jwt({ token, user }) {
+      if (user?.email) {
+        token.isAdmin = user.email === adminEmail;
+      }
+
+      return token;
+    },
+
+    async session({ session, token }) {
+      session.user.isAdmin = token.isAdmin as boolean;
+      return session;
+    },
+
+    async redirect({ baseUrl, url }) {
+      if (url.includes("admin=true")) {
+        return `${baseUrl}/admin`;
+      }
+
+      return `${baseUrl}/dashboard`;
     },
   },
 
