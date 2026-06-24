@@ -3,19 +3,6 @@ export default function Sidebar() {
     <aside className="w-[260px] hidden lg:flex flex-col justify-between border-r border-zinc-800 bg-white dark:bg-[#060b1f] p-5">
 
       <div>
-        <div className="mb-8 flex items-center gap-3">
-          <div className="h-10 w-10 rounded-2xl bg-violet-600" />
-
-          <div>
-            <div className="font-bold text-lg">
-              ReviewReply AI
-            </div>
-
-            <div className="text-xs text-zinc-500">
-              Dashboard
-            </div>
-          </div>
-        </div>
 
         <div className="space-y-2">
           {[
@@ -46,3 +33,5 @@ export default function Sidebar() {
     </aside>
   );
 }
+
+
