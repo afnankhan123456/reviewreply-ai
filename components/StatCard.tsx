@@ -1,23 +1,13 @@
-type Props = {
-  title: string;
-  value: string;
-};
-
-export default function StatCard({
-  title,
-  value,
-}: Props) {
+export default function StatCard({ title, value }) {
   return (
-    <div className="bg-zinc-900 border border-zinc-800 p-6 rounded-2xl">
-
-      <h2 className="text-zinc-400 mb-3">
+    <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6">
+      <p className="text-zinc-500 dark:text-zinc-400 mb-2">
         {title}
-      </h2>
-
-      <p className="text-4xl font-bold text-white">
-        {value}
       </p>
 
+      <h2 className="text-3xl font-bold text-black dark:text-white">
+        {value}
+      </h2>
     </div>
   );
 }
