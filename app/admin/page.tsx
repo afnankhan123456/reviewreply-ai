@@ -19,7 +19,7 @@ export default function AdminPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
 
           <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-4 shadow-sm">
             <p className="text-xs font-medium text-zinc-500 dark:text-zinc-400 mb-2">
@@ -78,6 +78,118 @@ export default function AdminPage() {
           </div>
 
         </div>
+
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+
+          <div className="xl:col-span-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm">
+
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold">
+                Top Clients
+              </h2>
+
+              <button className="text-sm text-violet-500 font-medium">
+                View All
+              </button>
+            </div>
+
+            <div className="space-y-4">
+
+              <div className="flex items-center justify-between bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-4">
+                <div>
+                  <h3 className="font-semibold">
+                    Starbucks Coffee
+                  </h3>
+
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                    482 Reviews
+                  </p>
+                </div>
+
+                <span className="text-green-500 font-semibold">
+                  +24%
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-4">
+                <div>
+                  <h3 className="font-semibold">
+                    Burger King
+                  </h3>
+
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                    371 Reviews
+                  </p>
+                </div>
+
+                <span className="text-green-500 font-semibold">
+                  +18%
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-4">
+                <div>
+                  <h3 className="font-semibold">
+                    Pizza Hut
+                  </h3>
+
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                    290 Reviews
+                  </p>
+                </div>
+
+                <span className="text-green-500 font-semibold">
+                  +12%
+                </span>
+              </div>
+
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm">
+
+            <h2 className="text-2xl font-bold mb-6">
+              Recent Activity
+            </h2>
+
+            <div className="space-y-5">
+
+              <div>
+                <p className="font-medium">
+                  New review received
+                </p>
+
+                <span className="text-sm text-zinc-500 dark:text-zinc-400">
+                  2 min ago
+                </span>
+              </div>
+
+              <div>
+                <p className="font-medium">
+                  AI reply generated
+                </p>
+
+                <span className="text-sm text-zinc-500 dark:text-zinc-400">
+                  10 min ago
+                </span>
+              </div>
+
+              <div>
+                <p className="font-medium">
+                  New client added
+                </p>
+
+                <span className="text-sm text-zinc-500 dark:text-zinc-400">
+                  1 hour ago
+                </span>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
       </div>
     </div>
   );
