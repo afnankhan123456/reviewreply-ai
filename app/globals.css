@@ -16,14 +16,16 @@ html {
 
 body {
   margin: 0;
+  padding: 0;
   background: white;
   color: black;
   font-family: Inter, Arial, Helvetica, sans-serif;
   min-height: 100vh;
+  transition: all 0.3s ease;
 }
 
 .dark body {
-  background: linear-gradient(to bottom, #050816, #070b1f);
+  background: #050816;
   color: white;
 }
 
@@ -32,16 +34,18 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(139,92,246,0.5);
+  background: rgba(139, 92, 246, 0.5);
   border-radius: 999px;
 }
 
 .card-glow {
-  background: rgba(12,16,36,0.8);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(12, 16, 36, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+
   box-shadow:
     0 0 0 1px rgba(255,255,255,0.02),
     0 10px 40px rgba(0,0,0,0.45),
     0 0 40px rgba(139,92,246,0.12);
+
   backdrop-filter: blur(20px);
 }
