@@ -27,11 +27,11 @@ export default function AdminPage() {
             </p>
 
             <h2 className="text-3xl font-bold mb-2">
-              128
+              --
             </h2>
 
-            <p className="text-green-500 font-medium text-xs">
-              ↑ 12% this month
+            <p className="text-zinc-500 font-medium text-xs">
+              No Data Available
             </p>
           </div>
 
@@ -41,11 +41,11 @@ export default function AdminPage() {
             </p>
 
             <h2 className="text-3xl font-bold mb-2">
-              3,842
+              --
             </h2>
 
-            <p className="text-green-500 font-medium text-xs">
-              ↑ 24% this month
+            <p className="text-zinc-500 font-medium text-xs">
+              No Data Available
             </p>
           </div>
 
@@ -55,11 +55,11 @@ export default function AdminPage() {
             </p>
 
             <h2 className="text-3xl font-bold mb-2">
-              2,731
+              --
             </h2>
 
-            <p className="text-green-500 font-medium text-xs">
-              ↑ 31% this month
+            <p className="text-zinc-500 font-medium text-xs">
+              No Data Available
             </p>
           </div>
 
@@ -69,11 +69,11 @@ export default function AdminPage() {
             </p>
 
             <h2 className="text-3xl font-bold mb-2">
-              $12,430
+              --
             </h2>
 
-            <p className="text-green-500 font-medium text-xs">
-              ↑ 18% this month
+            <p className="text-zinc-500 font-medium text-xs">
+              No Data Available
             </p>
           </div>
 
@@ -93,57 +93,10 @@ export default function AdminPage() {
               </button>
             </div>
 
-            <div className="space-y-4">
-
-              <div className="flex items-center justify-between bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-4">
-                <div>
-                  <h3 className="font-semibold">
-                    Starbucks Coffee
-                  </h3>
-
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                    482 Reviews
-                  </p>
-                </div>
-
-                <span className="text-green-500 font-semibold">
-                  +24%
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-4">
-                <div>
-                  <h3 className="font-semibold">
-                    Burger King
-                  </h3>
-
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                    371 Reviews
-                  </p>
-                </div>
-
-                <span className="text-green-500 font-semibold">
-                  +18%
-                </span>
-              </div>
-
-              <div className="flex items-center justify-between bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-4">
-                <div>
-                  <h3 className="font-semibold">
-                    Pizza Hut
-                  </h3>
-
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                    290 Reviews
-                  </p>
-                </div>
-
-                <span className="text-green-500 font-semibold">
-                  +12%
-                </span>
-              </div>
-
+            <div className="flex items-center justify-center h-[320px] rounded-2xl bg-zinc-100 dark:bg-zinc-950 text-zinc-500 dark:text-zinc-400">
+              No Clients Connected
             </div>
+
           </div>
 
           <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 shadow-sm">
@@ -152,38 +105,8 @@ export default function AdminPage() {
               Recent Activity
             </h2>
 
-            <div className="space-y-5">
-
-              <div>
-                <p className="font-medium">
-                  New review received
-                </p>
-
-                <span className="text-sm text-zinc-500 dark:text-zinc-400">
-                  2 min ago
-                </span>
-              </div>
-
-              <div>
-                <p className="font-medium">
-                  AI reply generated
-                </p>
-
-                <span className="text-sm text-zinc-500 dark:text-zinc-400">
-                  10 min ago
-                </span>
-              </div>
-
-              <div>
-                <p className="font-medium">
-                  New client added
-                </p>
-
-                <span className="text-sm text-zinc-500 dark:text-zinc-400">
-                  1 hour ago
-                </span>
-              </div>
-
+            <div className="flex items-center justify-center h-[320px] rounded-2xl bg-zinc-100 dark:bg-zinc-950 text-zinc-500 dark:text-zinc-400">
+              No Activity Available
             </div>
 
           </div>
