@@ -1,12 +1,10 @@
-```ts id="q4w9vl"
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
-  return NextResponse.next();
+return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/auth/:path*"],
+matcher: ["/admin/:path*", "/api/auth/:path*"],
 };
-```
