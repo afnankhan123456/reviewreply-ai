@@ -163,6 +163,143 @@ export default function DashboardPage() {
 
         </div>
 
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
+
+          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6">
+
+            <h2 className="text-2xl font-bold mb-6">
+              Business Overview
+            </h2>
+
+            <div className="space-y-4">
+
+              <div className="bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-4">
+                Google Reviews Connected
+              </div>
+
+              <div className="bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-4">
+                Facebook Page Connected
+              </div>
+
+              <div className="bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-4">
+                Instagram Connected
+              </div>
+
+              <div className="bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-4">
+                WhatsApp Connected
+              </div>
+
+            </div>
+
+          </div>
+
+          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6">
+
+            <h2 className="text-2xl font-bold mb-6">
+              Recent Activity
+            </h2>
+
+            <div className="space-y-4">
+
+              <div className="bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-4">
+                • New Review Received
+              </div>
+
+              <div className="bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-4">
+                • AI Reply Sent
+              </div>
+
+              <div className="bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-4">
+                • Rating Increased
+              </div>
+
+              <div className="bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-4">
+                • Customer Replied
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6">
+
+          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6">
+
+            <h2 className="text-xl font-bold mb-6">
+              Review By Rating
+            </h2>
+
+            <div className="space-y-4">
+
+              <div className="flex justify-between">
+                <span>⭐⭐⭐⭐⭐</span>
+                <span>2,310 Reviews</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span>⭐⭐⭐⭐</span>
+                <span>980 Reviews</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span>⭐⭐⭐</span>
+                <span>320 Reviews</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span>⭐⭐</span>
+                <span>90 Reviews</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span>⭐</span>
+                <span>42 Reviews</span>
+              </div>
+
+            </div>
+
+          </div>
+
+          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6">
+
+            <h2 className="text-xl font-bold mb-6">
+              Top Keywords
+            </h2>
+
+            <div className="space-y-4">
+
+              <div>• Fast Service</div>
+              <div>• Friendly Staff</div>
+              <div>• Professional</div>
+              <div>• Quick Response</div>
+              <div>• Recommended</div>
+
+            </div>
+
+          </div>
+
+          <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6">
+
+            <h2 className="text-xl font-bold mb-6">
+              Customer Insights
+            </h2>
+
+            <div className="space-y-4">
+
+              <div>• 82% Positive Reviews</div>
+              <div>• 18% Negative Reviews</div>
+              <div>• Peak Time: Evening</div>
+              <div>• Most Active Customers</div>
+              <div>• Returning Users: 68%</div>
+
+            </div>
+
+          </div>
+
+        </div>
+
       </div>
 
     </div>
