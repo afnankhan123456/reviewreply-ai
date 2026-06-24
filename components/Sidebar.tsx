@@ -1,91 +1,48 @@
-import Link from "next/link";
-
 export default function Sidebar() {
   return (
-    <aside className="hidden md:flex w-80 min-h-screen bg-[#0B1020]/90 backdrop-blur-2xl border-r border-white/10 flex-col justify-between px-6 py-8 shadow-2xl">
+    <aside className="w-[260px] hidden lg:flex flex-col justify-between border-r border-zinc-800 bg-white dark:bg-[#060b1f] p-5">
+
       <div>
-        <div className="mb-12">
-          <h1 className="text-3xl font-black text-white tracking-tight">
-            ReviewReply AI
-          </h1>
+        <div className="mb-8 flex items-center gap-3">
+          <div className="h-10 w-10 rounded-2xl bg-violet-600" />
 
-          <p className="text-sm text-zinc-400 mt-2">
-            Premium AI Review Platform
-          </p>
+          <div>
+            <div className="font-bold text-lg">
+              ReviewReply AI
+            </div>
+
+            <div className="text-xs text-zinc-500">
+              Dashboard
+            </div>
+          </div>
         </div>
 
-        <nav className="space-y-4">
-          <Link
-            href="/dashboard"
-            className="flex items-center gap-4 rounded-2xl bg-gradient-to-r from-purple-600 to-blue-500 px-5 py-4 text-white font-semibold shadow-xl"
-          >
-            <span className="text-xl">📊</span>
-            Dashboard
-          </Link>
-
-          <Link
-            href="/reviews"
-            className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-zinc-300 hover:bg-white/10 hover:text-white transition-all"
-          >
-            <span className="text-xl">⭐</span>
-            Reviews
-          </Link>
-
-          <Link
-            href="/analytics"
-            className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-zinc-300 hover:bg-white/10 hover:text-white transition-all"
-          >
-            <span className="text-xl">📈</span>
-            Analytics
-          </Link>
-
-          <Link
-            href="/summary"
-            className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-zinc-300 hover:bg-white/10 hover:text-white transition-all"
-          >
-            <span className="text-xl">🤖</span>
-            AI Summary
-          </Link>
-
-          <Link
-            href="/reply-tool"
-            className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-zinc-300 hover:bg-white/10 hover:text-white transition-all"
-          >
-            <span className="text-xl">💬</span>
-            Reply Tool
-          </Link>
-
-          <Link
-            href="/alerts"
-            className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-zinc-300 hover:bg-white/10 hover:text-white transition-all"
-          >
-            <span className="text-xl">🔔</span>
-            Alerts
-          </Link>
-
-          <Link
-            href="/settings"
-            className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/5 px-5 py-4 text-zinc-300 hover:bg-white/10 hover:text-white transition-all"
-          >
-            <span className="text-xl">⚙️</span>
-            Settings
-          </Link>
-        </nav>
-      </div>
-
-      <div className="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur-xl shadow-2xl">
-        <p className="text-sm text-zinc-400 mb-2">
-          AI Review Performance
-        </p>
-
-        <h3 className="text-3xl font-bold text-white">
-          98%
-        </h3>
-
-        <div className="mt-4 h-3 rounded-full bg-zinc-800 overflow-hidden">
-          <div className="h-full w-[98%] rounded-full bg-gradient-to-r from-purple-500 to-cyan-400"></div>
+        <div className="space-y-2">
+          {[
+            "Dashboard",
+            "Clients",
+            "Reviews",
+            "AI Replies",
+            "Analytics",
+            "Team",
+            "Billing",
+            "Integrations",
+            "Settings",
+          ].map((item, index) => (
+            <div
+              key={item}
+              className={`rounded-2xl px-4 py-3 transition-all cursor-pointer ${
+                index === 0
+                  ? "bg-violet-600/20 border border-violet-500/30 text-white"
+                  : "text-zinc-400 hover:bg-white/5"
+              }`}
+            >
+              {item}
+            </div>
+          ))}
         </div>
       </div>
+
     </aside>
   );
 }
