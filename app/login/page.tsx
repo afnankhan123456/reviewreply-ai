@@ -3,6 +3,12 @@
 import { signIn } from "next-auth/react";
 
 export default function LoginPage() {
+  const handleLogin = async () => {
+    await signIn("google", {
+      callbackUrl: "/api/auth/signin?admin=true",
+    });
+  };
+
   return (
     <div className="min-h-screen bg-black flex items-center justify-center px-6">
       <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-10 w-full max-w-md text-center">
@@ -11,11 +17,11 @@ export default function LoginPage() {
         </h1>
 
         <p className="text-zinc-400 mb-8">
-          Continue with Google to access admin dashboard.
+          Continue with Google to access dashboard.
         </p>
 
         <button
-          onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+          onClick={handleLogin}
           className="block w-full bg-white text-black py-4 rounded-2xl font-semibold"
         >
           Continue with Google
