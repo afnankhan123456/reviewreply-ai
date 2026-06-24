@@ -9,8 +9,12 @@ export default function AdminNavbar() {
   useEffect(() => {
     if (dark) {
       document.documentElement.classList.add("dark");
+      document.body.style.background = "#050816";
+      document.body.style.color = "white";
     } else {
       document.documentElement.classList.remove("dark");
+      document.body.style.background = "white";
+      document.body.style.color = "black";
     }
   }, [dark]);
 
@@ -19,13 +23,13 @@ export default function AdminNavbar() {
       <h1 className="text-xl font-bold">ReviewReply AI</h1>
 
       <div className="flex items-center gap-4 text-xl relative">
-        <button className="p-2 rounded-full bg-white/10">
+        <button className={`p-2 rounded-full ${dark ? "bg-white/10" : "bg-gray-100"}`}>
           🔔
         </button>
 
         <button
           onClick={() => setDark(!dark)}
-          className="p-2 rounded-full bg-white/10"
+          className={`p-2 rounded-full ${dark ? "bg-white/10" : "bg-gray-100"}`}
         >
           {dark ? "☀️" : "🌙"}
         </button>
@@ -33,14 +37,14 @@ export default function AdminNavbar() {
         <div className="relative">
           <button
             onClick={() => setOpen(!open)}
-            className="flex items-center gap-2 px-3 py-2 rounded-full bg-white/10"
+            className={`flex items-center gap-2 px-3 py-2 rounded-full ${dark ? "bg-white/10" : "bg-gray-100"}`}
           >
             <img
-              src="https://i.pravatar.cc/40"
+              src="https://avatars.githubusercontent.com/u/190445289?v=4"
               alt="profile"
               className="w-8 h-8 rounded-full"
             />
-            <span className="text-sm">Afnan</span>
+            <span className="text-sm">Afnan Khan</span>
           </button>
 
           {open && (
