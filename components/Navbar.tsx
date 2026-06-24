@@ -1,50 +1,68 @@
 "use client";
 
-import { useSession, signOut } from "next-auth/react";
+import { useEffect, useState } from "react";
 
 export default function Navbar() {
-  const { data: session } = useSession();
+  const [darkMode, setDarkMode] = useState(true);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [darkMode]);
 
   return (
-    <div className="flex items-center justify-between mb-10">
-      <div>
-        <h1 className="text-4xl font-bold text-white">
-          Dashboard
-        </h1>
+    <div className="flex items-center justify-between mb-8">
+      <h1 className="text-3xl font-bold">
+        ReviewReply AI
+      </h1>
 
-        <p className="text-zinc-400 mt-2">
-          Monitor your business reviews.
-        </p>
-      </div>
+      <div className="flex items-center gap-4 relative">
 
-      <div className="flex items-center gap-4">
-        <div className="bg-zinc-900 px-5 py-3 rounded-xl text-white flex items-center gap-3">
-          {session?.user?.image && (
-            <img
-              src={session.user.image}
-              alt="profile"
-              className="w-10 h-10 rounded-full"
-            />
-          )}
-
-          <div>
-            <p className="font-semibold">
-              {session?.user?.name || "User"}
-            </p>
-
-            <p className="text-xs text-zinc-400">
-              {session?.user?.email}
-            </p>
-          </div>
-        </div>
+        <button className="h-11 w-11 rounded-full bg-zinc-200 dark:bg-zinc-900 flex items-center justify-center">
+          🔔
+        </button>
 
         <button
-          onClick={() => signOut({ callbackUrl: "/login" })}
-          className="bg-red-500 text-white px-4 py-3 rounded-xl"
+          onClick={() => setDarkMode(!darkMode)}
+          className="h-11 w-11 rounded-full bg-zinc-200 dark:bg-zinc-900 flex items-center justify-center"
         >
-          Logout
+          {darkMode ? "☀️" : "🌙"}
         </button>
+
+        <div className="relative">
+          <button
+            onClick={() => setOpen(!open)}
+            className="flex items-center gap-3 bg-zinc-200 dark:bg-zinc-900 px-3 py-2 rounded-2xl"
+          >
+            <img
+              src="https://avatars.githubusercontent.com/u/190445289?v=4"
+              alt="profile"
+              className="h-10 w-10 rounded-full"
+            />
+
+            <div className="text-left">
+              <p className="text-sm font-semibold">
+                Afnan Khan
+              </p>
+            </div>
+          </button>
+
+          {open && (
+            <div className="absolute right-0 mt-3 w-40 rounded-2xl border border-zinc-800 bg-zinc-900 p-2">
+              <button className="w-full rounded-xl px-4 py-3 text-left hover:bg-zinc-800">
+                Logout
+              </button>
+            </div>
+          )}
+        </div>
+
       </div>
     </div>
   );
 }
+
+
