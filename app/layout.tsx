@@ -1,5 +1,5 @@
 import "./globals.css";
-import { SessionProvider } from "next-auth/react";
+import Providers from "../components/Providers";
 
 export const metadata = {
   title: "ReviewReply AI",
@@ -14,9 +14,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <SessionProvider>
+        <Providers>
           {children}
-        </SessionProvider>
+        </Providers>
       </body>
     </html>
   );
