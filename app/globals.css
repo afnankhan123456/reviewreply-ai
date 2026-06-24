@@ -2,8 +2,54 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  background: #09090b;
+  margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(139,92,246,0.18), transparent 30%),
+    radial-gradient(circle at top right, rgba(34,211,238,0.12), transparent 30%),
+    linear-gradient(to bottom, #050816, #070b1f);
   color: white;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Inter, Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(139,92,246,0.5);
+  border-radius: 999px;
+}
+
+.card-glow {
+  background: rgba(12,16,36,0.8);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.02),
+    0 10px 40px rgba(0,0,0,0.45),
+    0 0 40px rgba(139,92,246,0.12);
+  backdrop-filter: blur(20px);
+}
+
+.neon-button {
+  background: linear-gradient(to right, #7c3aed, #06b6d4);
+  transition: 0.25s ease;
+}
+
+.neon-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px rgba(139,92,246,0.4);
 }
