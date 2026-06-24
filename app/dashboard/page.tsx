@@ -1,11 +1,11 @@
-import Sidebar from "../../components/Sidebar";
+import ClientSidebar from "../../client_components/client_Sidebar";
 import Navbar from "../../components/Navbar";
 
 export default function DashboardPage() {
   return (
     <div className="flex min-h-screen bg-zinc-100 dark:bg-black text-black dark:text-white">
 
-      <Sidebar />
+      <ClientSidebar />
 
       <div className="flex-1 p-8">
 
