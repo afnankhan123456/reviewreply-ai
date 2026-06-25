@@ -37,22 +37,22 @@ export default function PricingPage() {
         <div className="space-y-4 mb-8">
 
           <div className="flex items-center gap-3">
-            <span>?</span>
+            <span>✔</span>
             <p>Unlimited AI Replies</p>
           </div>
 
           <div className="flex items-center gap-3">
-            <span>?</span>
+            <span>✔</span>
             <p>Analytics Dashboard</p>
           </div>
 
           <div className="flex items-center gap-3">
-            <span>?</span>
+            <span>✔</span>
             <p>Review Management</p>
           </div>
 
           <div className="flex items-center gap-3">
-            <span>?</span>
+            <span>✔</span>
             <p>Business Insights</p>
           </div>
 
@@ -84,8 +84,8 @@ export default function PricingPage() {
                 });
               }}
 
-              onApprove={() => {
-                alert("Subscription Successful ??");
+              onApprove={async () => {
+                alert("Subscription Successful 🎉");
               }}
 
             />
