@@ -1,7 +1,18 @@
+"use client";
+
 import ClientSidebar from "../../components/client_Sidebar";
 import Navbar from "../../components/Navbar";
+import { useSession } from "next-auth/react";
 
 export default function DashboardPage() {
+
+  const { data: session } = useSession();
+
+  const userName =
+    session?.user?.email
+      ?.split("@")[0]
+      .replace(/[0-9]/g, "") || "User";
+
   return (
     <div className="flex min-h-screen bg-zinc-100 dark:bg-black text-black dark:text-white">
 
@@ -10,6 +21,18 @@ export default function DashboardPage() {
       <div className="flex-1 p-8">
 
         <Navbar />
+
+        <div className="mb-8">
+
+          <h1 className="text-4xl font-bold mb-2">
+            Welcome {userName} 👋
+          </h1>
+
+          <p className="text-zinc-500 dark:text-zinc-400">
+            Manage your reviews with AI
+          </p>
+
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-4 mb-8">
 
