@@ -29,7 +29,7 @@ export default function DashboardPage() {
           </h1>
 
           <p className="text-zinc-500 dark:text-zinc-400">
-            Manage your reviews with AI
+            Manage and grow your business reviews with AI
           </p>
 
         </div>
@@ -42,11 +42,11 @@ export default function DashboardPage() {
             </p>
 
             <h2 className="text-2xl font-bold mb-2">
-              --
+              $4,820
             </h2>
 
-            <p className="text-zinc-500 text-xs">
-              No Data Available
+            <p className="text-green-500 text-xs">
+              +18% this month
             </p>
           </div>
 
@@ -56,11 +56,11 @@ export default function DashboardPage() {
             </p>
 
             <h2 className="text-2xl font-bold mb-2">
-              --
+              4.7 ★
             </h2>
 
-            <p className="text-zinc-500 text-xs">
-              No Data Available
+            <p className="text-green-500 text-xs">
+              Excellent customer feedback
             </p>
           </div>
 
@@ -70,11 +70,11 @@ export default function DashboardPage() {
             </p>
 
             <h2 className="text-2xl font-bold mb-2">
-              --
+              12
             </h2>
 
-            <p className="text-zinc-500 text-xs">
-              No Data Available
+            <p className="text-yellow-500 text-xs">
+              Needs quick response
             </p>
           </div>
 
@@ -84,11 +84,11 @@ export default function DashboardPage() {
             </p>
 
             <h2 className="text-2xl font-bold mb-2">
-              --
+              92%
             </h2>
 
-            <p className="text-zinc-500 text-xs">
-              No Data Available
+            <p className="text-green-500 text-xs">
+              Faster than last month
             </p>
           </div>
 
@@ -98,11 +98,11 @@ export default function DashboardPage() {
             </p>
 
             <h2 className="text-2xl font-bold mb-2">
-              --
+              18.2K
             </h2>
 
-            <p className="text-zinc-500 text-xs">
-              No Data Available
+            <p className="text-green-500 text-xs">
+              +25% profile visibility
             </p>
           </div>
 
@@ -112,11 +112,11 @@ export default function DashboardPage() {
             </p>
 
             <h2 className="text-2xl font-bold mb-2">
-              --
+              248
             </h2>
 
-            <p className="text-zinc-500 text-xs">
-              No Data Available
+            <p className="text-green-500 text-xs">
+              +32 new reviews
             </p>
           </div>
 
@@ -130,8 +130,40 @@ export default function DashboardPage() {
               Recent Reviews
             </h2>
 
-            <div className="flex items-center justify-center h-[250px] rounded-2xl bg-zinc-100 dark:bg-zinc-950 text-zinc-500 dark:text-zinc-400">
-              No Reviews Connected
+            <div className="space-y-4">
+
+              <div className="bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-4">
+                <p className="font-semibold mb-2">
+                  ⭐⭐⭐⭐⭐ Sarah Johnson
+                </p>
+
+                <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-3">
+                  Amazing customer service and very fast delivery.
+                </p>
+
+                <div className="bg-white dark:bg-zinc-900 rounded-xl p-3 border border-zinc-200 dark:border-zinc-800">
+                  <p className="text-sm">
+                    Thank you for your kind feedback! We're happy you enjoyed our service.
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-4">
+                <p className="font-semibold mb-2">
+                  ⭐⭐⭐⭐ Michael Lee
+                </p>
+
+                <p className="text-sm text-zinc-600 dark:text-zinc-400 mb-3">
+                  Great quality but delivery was slightly late.
+                </p>
+
+                <div className="bg-white dark:bg-zinc-900 rounded-xl p-3 border border-zinc-200 dark:border-zinc-800">
+                  <p className="text-sm">
+                    Thanks for your feedback. We’re improving delivery times for a better experience.
+                  </p>
+                </div>
+              </div>
+
             </div>
 
           </div>
@@ -142,8 +174,25 @@ export default function DashboardPage() {
               AI Reply Generator
             </h2>
 
-            <div className="flex items-center justify-center h-[250px] rounded-2xl bg-zinc-100 dark:bg-zinc-950 text-zinc-500 dark:text-zinc-400">
-              Connect Reviews To Generate AI Replies
+            <div className="space-y-4">
+
+              <textarea
+                className="w-full h-[120px] rounded-2xl bg-zinc-100 dark:bg-zinc-950 border border-zinc-200 dark:border-zinc-800 p-4 outline-none resize-none"
+                defaultValue="The food quality was excellent and staff was very friendly."
+              />
+
+              <button className="w-full bg-violet-600 hover:bg-violet-700 transition-all rounded-2xl py-3 font-semibold text-white">
+                Generate AI Reply
+              </button>
+
+              <div className="bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-4">
+
+                <p className="text-sm">
+                  Thank you for your wonderful review! We're delighted you enjoyed the food and our friendly staff. We look forward to serving you again soon.
+                </p>
+
+              </div>
+
             </div>
 
           </div>
@@ -158,8 +207,36 @@ export default function DashboardPage() {
               Business Overview
             </h2>
 
-            <div className="flex items-center justify-center h-[220px] rounded-2xl bg-zinc-100 dark:bg-zinc-950 text-zinc-500 dark:text-zinc-400">
-              No Business Connected
+            <div className="space-y-4">
+
+              <div className="flex justify-between">
+                <span>Total Customers</span>
+                <span className="font-bold">
+                  1,284
+                </span>
+              </div>
+
+              <div className="flex justify-between">
+                <span>Positive Reviews</span>
+                <span className="font-bold text-green-500">
+                  82%
+                </span>
+              </div>
+
+              <div className="flex justify-between">
+                <span>Negative Reviews</span>
+                <span className="font-bold text-red-500">
+                  18%
+                </span>
+              </div>
+
+              <div className="flex justify-between">
+                <span>Customer Retention</span>
+                <span className="font-bold">
+                  74%
+                </span>
+              </div>
+
             </div>
 
           </div>
@@ -170,8 +247,38 @@ export default function DashboardPage() {
               Recent Activity
             </h2>
 
-            <div className="flex items-center justify-center h-[220px] rounded-2xl bg-zinc-100 dark:bg-zinc-950 text-zinc-500 dark:text-zinc-400">
-              No Activity Available
+            <div className="space-y-4">
+
+              <div className="bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-4">
+                <p className="font-medium">
+                  AI replied to 8 reviews
+                </p>
+
+                <p className="text-xs text-zinc-500 mt-1">
+                  2 minutes ago
+                </p>
+              </div>
+
+              <div className="bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-4">
+                <p className="font-medium">
+                  3 new customer reviews received
+                </p>
+
+                <p className="text-xs text-zinc-500 mt-1">
+                  10 minutes ago
+                </p>
+              </div>
+
+              <div className="bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-4">
+                <p className="font-medium">
+                  Business profile performance increased
+                </p>
+
+                <p className="text-xs text-zinc-500 mt-1">
+                  1 hour ago
+                </p>
+              </div>
+
             </div>
 
           </div>
@@ -186,8 +293,33 @@ export default function DashboardPage() {
               Review By Rating
             </h2>
 
-            <div className="flex items-center justify-center h-[220px] rounded-2xl bg-zinc-100 dark:bg-zinc-950 text-zinc-500 dark:text-zinc-400">
-              No Rating Data
+            <div className="space-y-3">
+
+              <div className="flex justify-between">
+                <span>⭐⭐⭐⭐⭐</span>
+                <span>164 Reviews</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span>⭐⭐⭐⭐</span>
+                <span>52 Reviews</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span>⭐⭐⭐</span>
+                <span>21 Reviews</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span>⭐⭐</span>
+                <span>7 Reviews</span>
+              </div>
+
+              <div className="flex justify-between">
+                <span>⭐</span>
+                <span>4 Reviews</span>
+              </div>
+
             </div>
 
           </div>
@@ -198,8 +330,24 @@ export default function DashboardPage() {
               Top Keywords
             </h2>
 
-            <div className="flex items-center justify-center h-[220px] rounded-2xl bg-zinc-100 dark:bg-zinc-950 text-zinc-500 dark:text-zinc-400">
-              No Keywords Available
+            <div className="flex flex-wrap gap-3">
+
+              <span className="px-4 py-2 rounded-full bg-violet-600/20 text-violet-500">
+                Fast Service
+              </span>
+
+              <span className="px-4 py-2 rounded-full bg-green-600/20 text-green-500">
+                Friendly Staff
+              </span>
+
+              <span className="px-4 py-2 rounded-full bg-blue-600/20 text-blue-500">
+                Quality Product
+              </span>
+
+              <span className="px-4 py-2 rounded-full bg-yellow-600/20 text-yellow-500">
+                Delivery
+              </span>
+
             </div>
 
           </div>
@@ -210,8 +358,26 @@ export default function DashboardPage() {
               Customer Insights
             </h2>
 
-            <div className="flex items-center justify-center h-[220px] rounded-2xl bg-zinc-100 dark:bg-zinc-950 text-zinc-500 dark:text-zinc-400">
-              No Insights Available
+            <div className="space-y-4">
+
+              <div className="bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-4">
+                <p className="text-sm">
+                  Customers love your fast response time and friendly support.
+                </p>
+              </div>
+
+              <div className="bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-4">
+                <p className="text-sm">
+                  Most complaints are related to delayed deliveries.
+                </p>
+              </div>
+
+              <div className="bg-zinc-100 dark:bg-zinc-950 rounded-2xl p-4">
+                <p className="text-sm">
+                  Positive reviews increased by 18% this month.
+                </p>
+              </div>
+
             </div>
 
           </div>
