@@ -384,6 +384,39 @@ export default function DashboardPage() {
 
         </div>
 
+        <div className="mt-10 border-t border-zinc-200 dark:border-zinc-800 pt-6 text-center text-sm text-zinc-500">
+
+          <div className="flex items-center justify-center gap-6 mb-3 flex-wrap">
+
+            <a
+              href="/legal/privacy-policy"
+              className="hover:text-violet-500 transition-all"
+            >
+              Privacy Policy
+            </a>
+
+            <a
+              href="/legal/terms"
+              className="hover:text-violet-500 transition-all"
+            >
+              Terms & Conditions
+            </a>
+
+            <a
+              href="/legal/disclaimer"
+              className="hover:text-violet-500 transition-all"
+            >
+              Disclaimer
+            </a>
+
+          </div>
+
+          <p>
+            © 2026 ReviewReply AI. All rights reserved.
+          </p>
+
+        </div>
+
       </div>
 
     </div>
