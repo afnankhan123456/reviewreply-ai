@@ -1,32 +1,77 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
 export default function ClientSidebar() {
+
+  const pathname = usePathname();
+
+  const menuItems = [
+    {
+      name: "Dashboard",
+      href: "/dashboard",
+    },
+
+    {
+      name: "Reviews",
+      href: "/reviews",
+    },
+
+    {
+      name: "AI Replies",
+      href: "/ai-replies",
+    },
+
+    {
+      name: "Analytics",
+      href: "/analytics",
+    },
+
+    {
+      name: "Business",
+      href: "/business",
+    },
+
+    {
+      name: "Customers",
+      href: "/customers",
+    },
+
+    {
+      name: "Subscription",
+      href: "/pricing",
+    },
+
+    {
+      name: "Settings",
+      href: "/settings",
+    },
+  ];
+
   return (
     <aside className="w-[260px] hidden lg:flex flex-col justify-between border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#060b1f] p-5">
 
       <div>
 
         <div className="space-y-2">
-          {[
-            "Dashboard",
-            "Reviews",
-            "AI Replies",
-            "Analytics",
-            "Business",
-            "Customers",
-            "Subscription",
-            "Billing",
-            "Settings",
-          ].map((item, index) => (
-            <div
-              key={item}
-              className={`rounded-2xl px-4 py-3 transition-all cursor-pointer ${
-                index === 0
+
+          {menuItems.map((item) => (
+
+            <Link
+              key={item.name}
+              href={item.href}
+              className={`block rounded-2xl px-4 py-3 transition-all cursor-pointer ${
+                pathname === item.href
                   ? "bg-violet-600/20 border border-violet-500/30 text-black dark:text-white"
                   : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-white/5"
               }`}
             >
-              {item}
-            </div>
+              {item.name}
+            </Link>
+
           ))}
+
         </div>
 
       </div>
@@ -50,3 +95,4 @@ export default function ClientSidebar() {
     </aside>
   );
 }
+
