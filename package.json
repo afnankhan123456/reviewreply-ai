@@ -14,7 +14,8 @@
     "react": "latest",
     "react-dom": "latest",
     "openai": "^5.0.0",
-    "next-auth": "^4.24.11"
+    "next-auth": "^4.24.11",
+    "@paypal/react-paypal-js": "^8.9.2"
   },
 
   "devDependencies": {
