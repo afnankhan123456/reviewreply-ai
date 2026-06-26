@@ -19,11 +19,6 @@ export default function ClientSidebar() {
     },
 
     {
-      name: "AI Replies",
-      href: "/ai-replies",
-    },
-
-    {
       name: "Analytics",
       href: "/analytics",
     },
@@ -41,11 +36,6 @@ export default function ClientSidebar() {
     {
       name: "Subscription",
       href: "/pricing",
-    },
-
-    {
-      name: "Settings",
-      href: "/settings",
     },
   ];
 
@@ -95,4 +85,3 @@ export default function ClientSidebar() {
     </aside>
   );
 }
-
