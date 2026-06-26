@@ -1,6 +1,6 @@
 "use client";
 
-import BasicSidebar from "./components/BasicSidebar";
+import BasicSidebar from "./component/BasicSidebar";
 
 export default function BasicLayout({
   children,
@@ -19,3 +19,5 @@ export default function BasicLayout({
     </div>
   );
 }
+
+
