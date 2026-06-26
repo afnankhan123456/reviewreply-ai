@@ -2,16 +2,16 @@
 
 import Navbar from "../../../../components/Navbar";
 
-import BasicStats from "../components/BasicStats";
-import BasicReviews from "../components/BasicReviews";
-import BasicAnalytics from "../components/BasicAnalytics";
-import BasicReplyGenerator from "../components/BasicReplyGenerator";
-import BasicReviewHistory from "../components/BasicReviewHistory";
-import BasicBusinessLocation from "../components/BasicBusinessLocation";
-import BasicTemplates from "../components/BasicTemplates";
-import BasicCustomerInsights from "../components/BasicCustomerInsights";
-import BasicSupport from "../components/BasicSupport";
-import BasicActivity from "../components/BasicActivity";
+import BasicStats from "../component/BasicStats";
+import BasicReviews from "../component/BasicReviews";
+import BasicAnalytics from "../component/BasicAnalytics";
+import BasicReplyGenerator from "../component/BasicReplyGenerator";
+import BasicReviewHistory from "../component/BasicReviewHistory";
+import BasicBusinessLocation from "../component/BasicBusinessLocation";
+import BasicTemplates from "../component/BasicTemplates";
+import BasicCustomerInsights from "../component/BasicCustomerInsights";
+import BasicSupport from "../component/BasicSupport";
+import BasicActivity from "../component/BasicActivity";
 
 export default function BasicDashboardPage() {
   return (
@@ -70,3 +70,4 @@ export default function BasicDashboardPage() {
     </div>
   );
 }
+
