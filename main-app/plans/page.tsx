@@ -1,6 +1,6 @@
 "use client";
 
-import Navbar from "../../../../components/Navbar";
+import Navbar from "../components/Navbar";
 
 import BasicStats from "../component/BasicStats";
 import BasicReviews from "../component/BasicReviews";
@@ -70,4 +70,3 @@ export default function BasicDashboardPage() {
     </div>
   );
 }
-
