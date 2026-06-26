@@ -3,7 +3,6 @@ import Link from "next/link";
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-black flex items-center justify-center">
-
       <div className="text-center">
 
         <h1 className="text-6xl font-bold text-white mb-6">
@@ -15,14 +14,13 @@ export default function HomePage() {
         </p>
 
         <Link
-          href="/dashboard"
-          className="bg-white text-black px-8 py-4 rounded-2xl font-bold text-lg"
+          href="/main-app/plans"
+          className="bg-white text-black px-8 py-4 rounded-2xl font-bold text-lg inline-block"
         >
           Open Dashboard
         </Link>
 
       </div>
-
     </div>
   );
 }
