@@ -59,67 +59,7 @@ export default function BasicPricingPage() {
               </div>
 
               <div className="p-8">
-                �
-              </div>
-
-            </div>
-
-            <div className="grid grid-cols-4 text-center border-t border-zinc-200 dark:border-zinc-800">
-
-              <div className="p-8 border-r border-zinc-200 dark:border-zinc-800 font-semibold">
-                3 Months
-              </div>
-
-              <div className="p-8 border-r border-zinc-200 dark:border-zinc-800 text-5xl font-bold">
-                $24
-              </div>
-
-              <div className="p-8 border-r border-zinc-200 dark:border-zinc-800">
-                $8 / month
-              </div>
-
-              <div className="p-8 text-green-500 font-bold">
-                Save 11%
-              </div>
-
-            </div>
-
-            <div className="grid grid-cols-4 text-center border-t border-zinc-200 dark:border-zinc-800">
-
-              <div className="p-8 border-r border-zinc-200 dark:border-zinc-800 font-semibold">
-                6 Months
-              </div>
-
-              <div className="p-8 border-r border-zinc-200 dark:border-zinc-800 text-5xl font-bold">
-                $45
-              </div>
-
-              <div className="p-8 border-r border-zinc-200 dark:border-zinc-800">
-                $7.50 / month
-              </div>
-
-              <div className="p-8 text-green-500 font-bold">
-                Save 17%
-              </div>
-
-            </div>
-
-            <div className="grid grid-cols-4 text-center border-t border-zinc-200 dark:border-zinc-800">
-
-              <div className="p-8 border-r border-zinc-200 dark:border-zinc-800 font-semibold">
-                12 Months
-              </div>
-
-              <div className="p-8 border-r border-zinc-200 dark:border-zinc-800 text-5xl font-bold">
-                $88
-              </div>
-
-              <div className="p-8 border-r border-zinc-200 dark:border-zinc-800">
-                $7.33 / month
-              </div>
-
-              <div className="p-8 text-green-500 font-bold">
-                Save 20%
+                —
               </div>
 
             </div>
@@ -134,34 +74,16 @@ export default function BasicPricingPage() {
 
             <div className="space-y-5">
 
-              <div>? 1 Business Location</div>
-
-              <div>? 100 AI Review Analysis / Month</div>
-
-              <div>? AI Generated Review Replies</div>
-
-              <div>? Google Review Sync</div>
-
-              <div>? Positive & Negative Review Detection</div>
-
-              <div>? Basic Review Analytics</div>
-
-              <div>? Reply Templates</div>
-
-              <div>? Manual Reply Approval</div>
-
-              <div>? Review History</div>
-
-              <div>? Email Support</div>
-
-              <div>? Dashboard Access</div>
-
-              <div>? Fast Setup</div>
+              <div>✓ 1 Business Location</div>
+              <div>✓ 100 AI Review Analysis / Month</div>
+              <div>✓ AI Generated Review Replies</div>
+              <div>✓ Google Review Sync</div>
+              <div>✓ Dashboard Access</div>
 
             </div>
 
             <Link
-              href="/plans/basic/dashboard"
+              href="/plans"
               className="mt-10 block text-center bg-violet-600 hover:bg-violet-700 transition-all rounded-2xl py-4 font-semibold text-white text-lg"
             >
               Continue To Dashboard
