@@ -1,8 +1,9 @@
 "use client";
 
 import Navbar from "../../../../components/Navbar";
-import BasicStats from "../components/BasicStats";
-import BasicReviews from "../components/BasicReviews";
+
+import BasicStats from "../component/BasicStats";
+import BasicReviews from "../component/BasicReviews";
 
 export default function BasicDashboardPage() {
   return (
