@@ -9,17 +9,24 @@ export async function middleware(request: NextRequest) {
   });
 
   const pathname = request.nextUrl.pathname;
+
   const isAdmin = token?.email === process.env.ADMIN_EMAIL;
 
-  if (!token && (pathname.startsWith("/admin") || pathname.startsWith("/dashboard"))) {
+  // Protect admin and plans routes
+  if (
+    !token &&
+    (pathname.startsWith("/admin") || pathname.startsWith("/plans"))
+  ) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
+  // Non-admin trying to access admin
   if (pathname.startsWith("/admin") && !isAdmin) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/plans", request.url));
   }
 
-  if (pathname.startsWith("/dashboard") && isAdmin) {
+  // Admin trying to access user plans dashboard
+  if (pathname.startsWith("/plans") && isAdmin) {
     return NextResponse.redirect(new URL("/admin", request.url));
   }
 
@@ -27,5 +34,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/dashboard/:path*"],
+  matcher: ["/admin/:path*", "/plans/:path*"],
 };
