@@ -4,193 +4,99 @@ import Link from "next/link";
 
 export default function BasicPricingPage() {
   return (
-    <div className="min-h-screen bg-zinc-100 dark:bg-black text-black dark:text-white p-6">
+    <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 hover:border-violet-500 transition-all h-full">
 
-      <div className="max-w-7xl mx-auto">
+      {/* TITLE */}
 
-        {/* HEADING */}
+      <h2 className="text-4xl font-bold mb-4 text-white">
+        Basic
+      </h2>
 
-        <div className="text-center mb-14">
+      <p className="text-zinc-400 mb-8">
+        Perfect for small businesses
+      </p>
 
-          <h1 className="text-6xl font-bold mb-4 tracking-wide">
-            BASIC PLAN
-          </h1>
+      {/* PRICING */}
 
-          <p className="text-zinc-500 text-xl">
-            Perfect for Small Businesses & Startups
-          </p>
+      <div className="space-y-4 mb-8">
+
+        <div className="flex items-center justify-between bg-zinc-800 rounded-2xl px-5 py-4">
+
+          <span className="text-zinc-300 font-medium">
+            1 Month
+          </span>
+
+          <span className="text-2xl font-bold text-white">
+            $9
+          </span>
 
         </div>
 
-        {/* MAIN CARD */}
+        <div className="flex items-center justify-between bg-zinc-800 rounded-2xl px-5 py-4">
 
-        <div className="bg-white dark:bg-zinc-900 rounded-[35px] overflow-hidden border border-zinc-200 dark:border-zinc-800 shadow-xl">
+          <span className="text-zinc-300 font-medium">
+            3 Months
+          </span>
 
-          <div className="grid grid-cols-1 xl:grid-cols-5">
+          <span className="text-2xl font-bold text-white">
+            $24
+          </span>
 
-            {/* LEFT TABLE */}
+        </div>
 
-            <div className="xl:col-span-3 border-r border-zinc-200 dark:border-zinc-800">
+        <div className="flex items-center justify-between bg-zinc-800 rounded-2xl px-5 py-4">
 
-              {/* TABLE HEADER */}
+          <span className="text-zinc-300 font-medium">
+            6 Months
+          </span>
 
-              <div className="grid grid-cols-4 bg-[#0B2C74] text-white text-center font-semibold">
+          <span className="text-2xl font-bold text-white">
+            $45
+          </span>
 
-                <div className="p-6 border-r border-blue-700">
-                  DURATION
-                </div>
+        </div>
 
-                <div className="p-6 border-r border-blue-700">
-                  PRICE (USD)
-                </div>
+        <div className="flex items-center justify-between bg-zinc-800 rounded-2xl px-5 py-4">
 
-                <div className="p-6 border-r border-blue-700">
-                  EFFECTIVE PRICE / MONTH
-                </div>
+          <span className="text-zinc-300 font-medium">
+            12 Months
+          </span>
 
-                <div className="p-6">
-                  YOU SAVE
-                </div>
-
-              </div>
-
-              {/* ROW 1 */}
-
-              <div className="grid grid-cols-4 text-center border-t border-zinc-200 dark:border-zinc-800">
-
-                <div className="p-8 font-semibold border-r border-zinc-200 dark:border-zinc-800">
-                  1 Month
-                </div>
-
-                <div className="p-8 text-5xl font-bold border-r border-zinc-200 dark:border-zinc-800">
-                  $9
-                </div>
-
-                <div className="p-8 border-r border-zinc-200 dark:border-zinc-800">
-                  $9 / month
-                </div>
-
-                <div className="p-8 text-xl">
-                  —
-                </div>
-
-              </div>
-
-              {/* ROW 2 */}
-
-              <div className="grid grid-cols-4 text-center border-t border-zinc-200 dark:border-zinc-800">
-
-                <div className="p-8 font-semibold border-r border-zinc-200 dark:border-zinc-800">
-                  3 Months
-                </div>
-
-                <div className="p-8 text-5xl font-bold border-r border-zinc-200 dark:border-zinc-800">
-                  $24
-                </div>
-
-                <div className="p-8 border-r border-zinc-200 dark:border-zinc-800">
-                  $8 / month
-                </div>
-
-                <div className="p-8 text-green-600 font-bold">
-                  Save 11%
-                </div>
-
-              </div>
-
-              {/* ROW 3 */}
-
-              <div className="grid grid-cols-4 text-center border-t border-zinc-200 dark:border-zinc-800">
-
-                <div className="p-8 font-semibold border-r border-zinc-200 dark:border-zinc-800">
-                  6 Months
-                </div>
-
-                <div className="p-8 text-5xl font-bold border-r border-zinc-200 dark:border-zinc-800">
-                  $45
-                </div>
-
-                <div className="p-8 border-r border-zinc-200 dark:border-zinc-800">
-                  $7.50 / month
-                </div>
-
-                <div className="p-8 text-green-600 font-bold">
-                  Save 17%
-                </div>
-
-              </div>
-
-              {/* ROW 4 */}
-
-              <div className="grid grid-cols-4 text-center border-t border-zinc-200 dark:border-zinc-800">
-
-                <div className="p-8 font-semibold border-r border-zinc-200 dark:border-zinc-800">
-                  12 Months
-                </div>
-
-                <div className="p-8 text-5xl font-bold border-r border-zinc-200 dark:border-zinc-800">
-                  $88
-                </div>
-
-                <div className="p-8 border-r border-zinc-200 dark:border-zinc-800">
-                  $7.33 / month
-                </div>
-
-                <div className="p-8 text-green-600 font-bold">
-                  Save 20%
-                </div>
-
-              </div>
-
-            </div>
-
-            {/* RIGHT FEATURES */}
-
-            <div className="xl:col-span-2 p-10">
-
-              <h2 className="text-3xl font-bold mb-10 text-center">
-                FEATURES INCLUDED
-              </h2>
-
-              <div className="space-y-6 text-lg">
-
-                <div>✓ 1 Business Location</div>
-
-                <div>✓ 100 Reviews Sync / Month</div>
-
-                <div>✓ Google Review Sync</div>
-
-                <div>✓ Review Dashboard</div>
-
-                <div>✓ New Review Email Alerts</div>
-
-                <div>✓ Unanswered Reviews Tracking</div>
-
-                <div>✓ Basic Rating Overview</div>
-
-                <div>✓ Positive & Negative Review Detection</div>
-
-                <div>✓ Basic Review Analytics</div>
-
-              </div>
-
-              <Link
-                href="/plans"
-                className="mt-12 block text-center bg-violet-600 hover:bg-violet-700 transition-all rounded-2xl py-4 font-semibold text-white text-lg"
-              >
-                Continue To Dashboard
-              </Link>
-
-            </div>
-
-          </div>
+          <span className="text-2xl font-bold text-white">
+            $88
+          </span>
 
         </div>
 
       </div>
 
+      {/* FEATURES */}
+
+      <div className="space-y-4 text-zinc-300 mb-10">
+
+        <div>✓ 1 Business Location</div>
+
+        <div>✓ AI Review Replies</div>
+
+        <div>✓ Review Dashboard</div>
+
+        <div>✓ Basic Analytics</div>
+
+      </div>
+
+      {/* BUTTON */}
+
+      <Link
+        href="/plans/basic/pricing"
+        className="block text-center bg-violet-600 hover:bg-violet-700 transition-all rounded-2xl py-4 font-semibold text-white"
+      >
+        View Full Pricing
+      </Link>
+
     </div>
   );
 }
+
+
 
 
