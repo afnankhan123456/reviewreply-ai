@@ -27,7 +27,7 @@ const handler = NextAuth({
         return `${baseUrl}/admin`;
       }
 
-      return `${baseUrl}/plans`;
+      return `${baseUrl}/plans/basic/pricing`;
     },
   },
 
