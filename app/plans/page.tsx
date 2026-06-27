@@ -7,27 +7,31 @@ export default function PlansPage() {
   return (
     <div className="min-h-screen bg-black text-white px-8 py-6">
 
-      {/* TOP LOGO */}
+      {/* TOP HEADER */}
 
-      <div className="flex items-center gap-5 mb-16">
+      <div className="border-b border-zinc-800 pb-8 mb-16">
 
-        <Image
-          src="/ai-logo.png"
-          alt="ReviewReply AI"
-          width={200}
-          height={200}
-          className="object-contain"
-        />
+        <div className="flex items-center gap-5">
 
-        <div className="flex flex-col justify-center h-[200px]">
+          <Image
+            src="/ai-logo.png"
+            alt="ReviewReply AI"
+            width={150}
+            height={150}
+            className="object-contain"
+          />
 
-          <h1 className="text-4xl font-bold leading-none">
-            ReviewReply AI
-          </h1>
+          <div className="flex flex-col justify-center h-[150px]">
 
-          <p className="text-zinc-400 text-xl mt-2">
-            AI Powered Review Management
-          </p>
+            <h1 className="text-4xl font-bold leading-none">
+              ReviewReply AI
+            </h1>
+
+            <p className="text-zinc-400 text-xl mt-2">
+              AI Powered Review Management
+            </p>
+
+          </div>
 
         </div>
 
