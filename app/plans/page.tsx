@@ -160,34 +160,39 @@ export default function PlansPage() {
 
       {/* FOOTER */}
 
-      <div className="border-t border-zinc-800 mt-20 pt-8 flex items-center justify-center gap-8 text-zinc-400 text-sm">
+      <div className="border-t border-zinc-800 mt-20 pt-8 flex flex-col items-center gap-4">
 
-        <Link
-          href="/legal/privacy-policy"
-          className="hover:text-white transition-all"
-        >
-          Privacy Policy
-        </Link>
+        <div className="flex items-center gap-8 text-zinc-400 text-sm">
 
-        <Link
-          href="/legal/terms"
-          className="hover:text-white transition-all"
-        >
-          Terms
-        </Link>
+          <Link
+            href="/legal/privacy-policy"
+            className="hover:text-white transition-all"
+          >
+            Privacy Policy
+          </Link>
 
-        <Link
-          href="/legal/disclaimer"
-          className="hover:text-white transition-all"
-        >
-          Disclaimer
-        </Link>
+          <Link
+            href="/legal/terms"
+            className="hover:text-white transition-all"
+          >
+            Terms
+          </Link>
+
+          <Link
+            href="/legal/disclaimer"
+            className="hover:text-white transition-all"
+          >
+            Disclaimer
+          </Link>
+
+        </div>
+
+        <p className="text-zinc-500 text-sm">
+          © 2026 ReviewReply AI. All rights reserved.
+        </p>
 
       </div>
 
     </div>
   );
 }
-
-
-
