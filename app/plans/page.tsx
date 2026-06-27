@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import PlanCard from "./basic/plancard";
+import PlanCard from "./basic/PlanCard";
 
 export default function PlansPage() {
   return (
