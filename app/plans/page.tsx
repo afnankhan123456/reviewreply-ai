@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import BasicPricingPage from "./basic/pricing/page";
 
 export default function PlansPage() {
   return (
@@ -73,34 +74,11 @@ export default function PlansPage() {
 
       {/* PLANS */}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+      <div className="space-y-8 max-w-7xl mx-auto">
 
         {/* BASIC */}
 
-        <Link href="/plans/basic/pricing">
-
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 hover:border-violet-500 transition-all cursor-pointer">
-
-            <h2 className="text-4xl font-bold mb-4">
-              Basic
-            </h2>
-
-            <p className="text-zinc-400 mb-8">
-              Perfect for small businesses
-            </p>
-
-            <div className="space-y-4 text-zinc-300">
-
-              <div>✓ 1 Business Location</div>
-              <div>✓ AI Review Replies</div>
-              <div>✓ Review Dashboard</div>
-              <div>✓ Basic Analytics</div>
-
-            </div>
-
-          </div>
-
-        </Link>
+        <BasicPricingPage />
 
         {/* STANDARD */}
 
@@ -196,3 +174,4 @@ export default function PlansPage() {
     </div>
   );
 }
+
