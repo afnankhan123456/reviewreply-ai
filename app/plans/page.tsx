@@ -158,6 +158,36 @@ export default function PlansPage() {
 
       </div>
 
+      {/* FOOTER */}
+
+      <div className="border-t border-zinc-800 mt-20 pt-8 flex items-center justify-center gap-8 text-zinc-400 text-sm">
+
+        <Link
+          href="/legal/privacy-policy"
+          className="hover:text-white transition-all"
+        >
+          Privacy Policy
+        </Link>
+
+        <Link
+          href="/legal/terms"
+          className="hover:text-white transition-all"
+        >
+          Terms
+        </Link>
+
+        <Link
+          href="/legal/disclaimer"
+          className="hover:text-white transition-all"
+        >
+          Disclaimer
+        </Link>
+
+      </div>
+
     </div>
   );
 }
+
+
+
