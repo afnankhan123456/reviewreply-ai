@@ -9,7 +9,7 @@ export default function PlansPage() {
 
       {/* TOP LOGO */}
 
-      <div className="flex items-center gap-6 mb-16">
+      <div className="flex items-center gap-5 mb-16">
 
         <Image
           src="/ai-logo.png"
@@ -19,13 +19,13 @@ export default function PlansPage() {
           className="object-contain"
         />
 
-        <div className="flex flex-col justify-center">
+        <div className="flex flex-col justify-center h-[200px]">
 
-          <h1 className="text-6xl font-bold tracking-tight leading-none">
+          <h1 className="text-4xl font-bold leading-none">
             ReviewReply AI
           </h1>
 
-          <p className="text-zinc-400 text-3xl mt-4 font-medium">
+          <p className="text-zinc-400 text-xl mt-2">
             AI Powered Review Management
           </p>
 
