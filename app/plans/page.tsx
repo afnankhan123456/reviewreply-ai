@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import BasicPricingPage from "./basic/pricing/page";
+import PlanCard from "./basic/PlanCard";
 
 export default function PlansPage() {
   return (
@@ -78,7 +78,7 @@ export default function PlansPage() {
 
         {/* BASIC */}
 
-        <BasicPricingPage />
+        <PlanCard />
 
         {/* STANDARD */}
 
@@ -174,6 +174,8 @@ export default function PlansPage() {
     </div>
   );
 }
+
+
 
 
 
