@@ -9,23 +9,23 @@ export default function PlansPage() {
 
       {/* TOP LOGO */}
 
-      <div className="flex items-center gap-5 mb-16">
+      <div className="flex items-center gap-4 mb-16">
 
         <Image
           src="/ai-logo.png"
           alt="ReviewReply AI"
-          width={200}
-          height={200}
+          width={90}
+          height={90}
           className="rounded-3xl"
         />
 
-        <div>
+        <div className="pt-1">
 
-          <h1 className="text-2xl font-bold">
+          <h1 className="text-2xl font-bold leading-none">
             ReviewReply AI
           </h1>
 
-          <p className="text-zinc-400 text-lg mt-1">
+          <p className="text-zinc-400 text-lg mt-2">
             AI Powered Review Management
           </p>
 
