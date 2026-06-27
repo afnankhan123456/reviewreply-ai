@@ -5,7 +5,7 @@ import { signIn } from "next-auth/react";
 export default function LoginPage() {
   const handleLogin = async () => {
     await signIn("google", {
-      callbackUrl: "/plans",
+      callbackUrl: "/plans/basic/pricing",
     });
   };
 
