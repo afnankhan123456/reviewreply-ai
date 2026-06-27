@@ -14,14 +14,14 @@ export default function PlansPage() {
         <Image
           src="/ai-logo.png"
           alt="ReviewReply AI"
-          width={120}
-          height={120}
+          width={200}
+          height={200}
           className="rounded-3xl"
         />
 
         <div>
 
-          <h1 className="text-4xl font-bold">
+          <h1 className="text-2xl font-bold">
             ReviewReply AI
           </h1>
 
