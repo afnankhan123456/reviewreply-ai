@@ -74,73 +74,65 @@ export default function PlansPage() {
 
       {/* PLANS */}
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 max-w-7xl mx-auto items-start">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto items-stretch">
 
         {/* BASIC */}
 
-        <div className="xl:col-span-2">
-          <BasicPricingPage />
-        </div>
+        <BasicPricingPage />
 
-        {/* RIGHT SIDE */}
+        {/* STANDARD */}
 
-        <div className="space-y-8">
+        <Link href="/plans/standard/pricing" className="h-full">
 
-          {/* STANDARD */}
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 hover:border-blue-500 transition-all cursor-pointer h-full flex flex-col">
 
-          <Link href="/plans/standard/pricing">
+            <h2 className="text-4xl font-bold mb-4">
+              Standard
+            </h2>
 
-            <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 hover:border-blue-500 transition-all cursor-pointer">
+            <p className="text-zinc-400 mb-8">
+              Best for growing businesses
+            </p>
 
-              <h2 className="text-4xl font-bold mb-4">
-                Standard
-              </h2>
+            <div className="space-y-4 text-zinc-300 flex-1">
 
-              <p className="text-zinc-400 mb-8">
-                Best for growing businesses
-              </p>
-
-              <div className="space-y-4 text-zinc-300">
-
-                <div>✓ Multiple Locations</div>
-                <div>✓ Smart AI Replies</div>
-                <div>✓ Advanced Analytics</div>
-                <div>✓ Templates & Insights</div>
-
-              </div>
+              <div>✓ Multiple Locations</div>
+              <div>✓ Smart AI Replies</div>
+              <div>✓ Advanced Analytics</div>
+              <div>✓ Templates & Insights</div>
 
             </div>
 
-          </Link>
+          </div>
 
-          {/* PRO */}
+        </Link>
 
-          <Link href="/plans/pro/pricing">
+        {/* PRO */}
 
-            <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 hover:border-yellow-500 transition-all cursor-pointer">
+        <Link href="/plans/pro/pricing" className="h-full">
 
-              <h2 className="text-4xl font-bold mb-4">
-                Pro
-              </h2>
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 hover:border-yellow-500 transition-all cursor-pointer h-full flex flex-col">
 
-              <p className="text-zinc-400 mb-8">
-                Full power for agencies & brands
-              </p>
+            <h2 className="text-4xl font-bold mb-4">
+              Pro
+            </h2>
 
-              <div className="space-y-4 text-zinc-300">
+            <p className="text-zinc-400 mb-8">
+              Full power for agencies & brands
+            </p>
 
-                <div>✓ Unlimited Locations</div>
-                <div>✓ Premium AI Features</div>
-                <div>✓ Team Access</div>
-                <div>✓ Priority Support</div>
+            <div className="space-y-4 text-zinc-300 flex-1">
 
-              </div>
+              <div>✓ Unlimited Locations</div>
+              <div>✓ Premium AI Features</div>
+              <div>✓ Team Access</div>
+              <div>✓ Priority Support</div>
 
             </div>
 
-          </Link>
+          </div>
 
-        </div>
+        </Link>
 
       </div>
 
@@ -182,5 +174,6 @@ export default function PlansPage() {
     </div>
   );
 }
+
 
 
