@@ -22,7 +22,7 @@ export default function PlansPage() {
 
         {/* BASIC */}
 
-        <Link href="/plans/basic">
+        <Link href="/plans/basic/pricing">
 
           <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 hover:border-violet-500 transition-all cursor-pointer">
 
@@ -49,7 +49,7 @@ export default function PlansPage() {
 
         {/* STANDARD */}
 
-        <Link href="/plans/standard">
+        <Link href="/plans/standard/pricing">
 
           <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 hover:border-blue-500 transition-all cursor-pointer">
 
@@ -76,7 +76,7 @@ export default function PlansPage() {
 
         {/* PRO */}
 
-        <Link href="/plans/pro">
+        <Link href="/plans/pro/pricing">
 
           <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 hover:border-yellow-500 transition-all cursor-pointer">
 
@@ -105,4 +105,4 @@ export default function PlansPage() {
 
     </div>
   );
-}
+}   
