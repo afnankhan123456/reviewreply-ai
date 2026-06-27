@@ -4,99 +4,167 @@ import Link from "next/link";
 
 export default function BasicPricingPage() {
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 hover:border-violet-500 transition-all h-full">
+    <div className="bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden hover:border-violet-500 transition-all h-full">
 
-      {/* TITLE */}
+      {/* HEADER */}
 
-      <h2 className="text-4xl font-bold mb-4 text-white">
-        Basic
-      </h2>
+      <div className="px-8 pt-8 pb-6 border-b border-zinc-800">
 
-      <p className="text-zinc-400 mb-8">
-        Perfect for small businesses
-      </p>
+        <h2 className="text-4xl font-bold text-white mb-3">
+          Basic
+        </h2>
 
-      {/* PRICING */}
+        <p className="text-zinc-400">
+          Perfect for small businesses
+        </p>
 
-      <div className="space-y-4 mb-8">
+      </div>
 
-        <div className="flex items-center justify-between bg-zinc-800 rounded-2xl px-5 py-4">
+      {/* TABLE HEADER */}
 
-          <span className="text-zinc-300 font-medium">
-            1 Month
-          </span>
+      <div className="grid grid-cols-5 bg-zinc-800 border-b border-zinc-700 text-sm font-semibold text-zinc-300">
 
-          <span className="text-2xl font-bold text-white">
-            $9
-          </span>
-
+        <div className="p-4 border-r border-zinc-700">
+          Duration
         </div>
 
-        <div className="flex items-center justify-between bg-zinc-800 rounded-2xl px-5 py-4">
-
-          <span className="text-zinc-300 font-medium">
-            3 Months
-          </span>
-
-          <span className="text-2xl font-bold text-white">
-            $24
-          </span>
-
+        <div className="p-4 border-r border-zinc-700">
+          Price
         </div>
 
-        <div className="flex items-center justify-between bg-zinc-800 rounded-2xl px-5 py-4">
-
-          <span className="text-zinc-300 font-medium">
-            6 Months
-          </span>
-
-          <span className="text-2xl font-bold text-white">
-            $45
-          </span>
-
+        <div className="p-4 border-r border-zinc-700">
+          Price / Month
         </div>
 
-        <div className="flex items-center justify-between bg-zinc-800 rounded-2xl px-5 py-4">
+        <div className="p-4 border-r border-zinc-700">
+          You Save
+        </div>
 
-          <span className="text-zinc-300 font-medium">
-            12 Months
-          </span>
-
-          <span className="text-2xl font-bold text-white">
-            $88
-          </span>
-
+        <div className="p-4">
+          Features Included
         </div>
 
       </div>
 
-      {/* FEATURES */}
+      {/* ROW 1 */}
 
-      <div className="space-y-4 text-zinc-300 mb-10">
+      <div className="grid grid-cols-5 border-b border-zinc-800">
 
-        <div>✓ 1 Business Location</div>
+        <div className="p-4 border-r border-zinc-800 text-zinc-300 font-medium">
+          1 Month
+        </div>
 
-        <div>✓ AI Review Replies</div>
+        <div className="p-4 border-r border-zinc-800 text-white text-2xl font-bold">
+          $9
+        </div>
 
-        <div>✓ Review Dashboard</div>
+        <div className="p-4 border-r border-zinc-800 text-zinc-300">
+          $9/mo
+        </div>
 
-        <div>✓ Basic Analytics</div>
+        <div className="p-4 border-r border-zinc-800 text-zinc-400">
+          —
+        </div>
+
+        <div className="p-4 text-zinc-300">
+          1 Business Location
+        </div>
+
+      </div>
+
+      {/* ROW 2 */}
+
+      <div className="grid grid-cols-5 border-b border-zinc-800">
+
+        <div className="p-4 border-r border-zinc-800 text-zinc-300 font-medium">
+          3 Months
+        </div>
+
+        <div className="p-4 border-r border-zinc-800 text-white text-2xl font-bold">
+          $24
+        </div>
+
+        <div className="p-4 border-r border-zinc-800 text-zinc-300">
+          $8/mo
+        </div>
+
+        <div className="p-4 border-r border-zinc-800 text-green-500 font-semibold">
+          11%
+        </div>
+
+        <div className="p-4 text-zinc-300">
+          AI Review Replies
+        </div>
+
+      </div>
+
+      {/* ROW 3 */}
+
+      <div className="grid grid-cols-5 border-b border-zinc-800">
+
+        <div className="p-4 border-r border-zinc-800 text-zinc-300 font-medium">
+          6 Months
+        </div>
+
+        <div className="p-4 border-r border-zinc-800 text-white text-2xl font-bold">
+          $45
+        </div>
+
+        <div className="p-4 border-r border-zinc-800 text-zinc-300">
+          $7.5/mo
+        </div>
+
+        <div className="p-4 border-r border-zinc-800 text-green-500 font-semibold">
+          17%
+        </div>
+
+        <div className="p-4 text-zinc-300">
+          Review Dashboard
+        </div>
+
+      </div>
+
+      {/* ROW 4 */}
+
+      <div className="grid grid-cols-5">
+
+        <div className="p-4 border-r border-zinc-800 text-zinc-300 font-medium">
+          12 Months
+        </div>
+
+        <div className="p-4 border-r border-zinc-800 text-white text-2xl font-bold">
+          $88
+        </div>
+
+        <div className="p-4 border-r border-zinc-800 text-zinc-300">
+          $7.3/mo
+        </div>
+
+        <div className="p-4 border-r border-zinc-800 text-green-500 font-semibold">
+          20%
+        </div>
+
+        <div className="p-4 text-zinc-300">
+          Basic Analytics
+        </div>
 
       </div>
 
       {/* BUTTON */}
 
-      <Link
-        href="/plans/basic/pricing"
-        className="block text-center bg-violet-600 hover:bg-violet-700 transition-all rounded-2xl py-4 font-semibold text-white"
-      >
-        View Full Pricing
-      </Link>
+      <div className="p-6 border-t border-zinc-800">
+
+        <Link
+          href="/plans/basic/pricing"
+          className="block text-center bg-violet-600 hover:bg-violet-700 transition-all rounded-2xl py-4 font-semibold text-white"
+        >
+          View Full Pricing
+        </Link>
+
+      </div>
 
     </div>
   );
 }
-
-
 
 
