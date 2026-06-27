@@ -11,25 +11,45 @@ export default function PlansPage() {
 
       <div className="border-b border-zinc-800 pb-8 mb-16">
 
-        <div className="flex items-center gap-5">
+        <div className="flex items-center justify-between">
 
-          <Image
-            src="/ai-logo.png"
-            alt="ReviewReply AI"
-            width={120}
-            height={120}
-            className="object-contain"
-          />
+          {/* LEFT SIDE */}
 
-          <div className="flex flex-col justify-center h-[150px]">
+          <div className="flex items-center gap-5">
 
-            <h1 className="text-4xl font-bold leading-none">
-              ReviewReply AI
-            </h1>
+            <Image
+              src="/ai-logo.png"
+              alt="ReviewReply AI"
+              width={100}
+              height={100}
+              className="object-contain"
+            />
 
-            <p className="text-zinc-400 text-xl mt-2">
-              AI Powered Review Management
-            </p>
+            <div className="flex flex-col justify-center h-[100px]">
+
+              <h1 className="text-4xl font-bold leading-none">
+                ReviewReply AI
+              </h1>
+
+              <p className="text-zinc-400 text-xl mt-2">
+                AI Powered Review Management
+              </p>
+
+            </div>
+
+          </div>
+
+          {/* RIGHT SIDE */}
+
+          <div className="flex items-center gap-3 bg-zinc-900 border border-zinc-800 px-5 py-3 rounded-2xl hover:border-violet-500 transition-all cursor-pointer">
+
+            <span className="text-lg font-semibold">
+              Refer & Earn
+            </span>
+
+            <span className="bg-violet-600 text-white text-sm font-bold px-3 py-1 rounded-full">
+              ₹200
+            </span>
 
           </div>
 
