@@ -1,56 +1,108 @@
 "use client";
 
-import Navbar from "./basic/component/Navbar";
-
-import BasicStats from "./basic/component/BasicStats";
-import BasicReviews from "./basic/component/BasicReviews";
-import BasicAnalytics from "./basic/component/BasicAnalytics";
-import BasicReplyGenerator from "./basic/component/BasicReplyGenerator";
-import BasicReviewHistory from "./basic/component/BasicReviewHistory";
-import BasicBusinessLocation from "./basic/component/BasicBusinessLocation";
-import BasicTemplates from "./basic/component/BasicTemplates";
-import BasicCustomerInsights from "./basic/component/BasicCustomerInsights";
-import BasicSupport from "./basic/component/BasicSupport";
-import BasicActivity from "./basic/component/BasicActivity";
+import Link from "next/link";
 
 export default function PlansPage() {
   return (
-    <div>
-      <Navbar />
+    <div className="min-h-screen bg-black text-white p-8">
 
-      <div className="mb-8 mt-6">
-        <h1 className="text-4xl font-bold mb-2">
-          Basic Dashboard
+      <div className="text-center mb-14">
+
+        <h1 className="text-6xl font-bold mb-4">
+          Choose Your Plan
         </h1>
 
-        <p className="text-zinc-500 dark:text-zinc-400">
-          Manage your reviews with essential business tools
+        <p className="text-zinc-400 text-xl">
+          Select the perfect plan for your business
         </p>
+
       </div>
 
-      <BasicStats />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
-        <BasicReviews />
-        <BasicReplyGenerator />
+        {/* BASIC */}
+
+        <Link href="/plans/basic">
+
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 hover:border-violet-500 transition-all cursor-pointer">
+
+            <h2 className="text-4xl font-bold mb-4">
+              Basic
+            </h2>
+
+            <p className="text-zinc-400 mb-8">
+              Perfect for small businesses
+            </p>
+
+            <div className="space-y-4 text-zinc-300">
+
+              <div>✓ 1 Business Location</div>
+              <div>✓ AI Review Replies</div>
+              <div>✓ Review Dashboard</div>
+              <div>✓ Basic Analytics</div>
+
+            </div>
+
+          </div>
+
+        </Link>
+
+        {/* STANDARD */}
+
+        <Link href="/plans/standard">
+
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 hover:border-blue-500 transition-all cursor-pointer">
+
+            <h2 className="text-4xl font-bold mb-4">
+              Standard
+            </h2>
+
+            <p className="text-zinc-400 mb-8">
+              Best for growing businesses
+            </p>
+
+            <div className="space-y-4 text-zinc-300">
+
+              <div>✓ Multiple Locations</div>
+              <div>✓ Smart AI Replies</div>
+              <div>✓ Advanced Analytics</div>
+              <div>✓ Templates & Insights</div>
+
+            </div>
+
+          </div>
+
+        </Link>
+
+        {/* PRO */}
+
+        <Link href="/plans/pro">
+
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 hover:border-yellow-500 transition-all cursor-pointer">
+
+            <h2 className="text-4xl font-bold mb-4">
+              Pro
+            </h2>
+
+            <p className="text-zinc-400 mb-8">
+              Full power for agencies & brands
+            </p>
+
+            <div className="space-y-4 text-zinc-300">
+
+              <div>✓ Unlimited Locations</div>
+              <div>✓ Premium AI Features</div>
+              <div>✓ Team Access</div>
+              <div>✓ Priority Support</div>
+
+            </div>
+
+          </div>
+
+        </Link>
+
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
-        <BasicAnalytics />
-        <BasicBusinessLocation />
-      </div>
-
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
-        <BasicReviewHistory />
-        <BasicTemplates />
-      </div>
-
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-6">
-        <BasicCustomerInsights />
-        <BasicActivity />
-      </div>
-
-      <BasicSupport />
     </div>
   );
 }
