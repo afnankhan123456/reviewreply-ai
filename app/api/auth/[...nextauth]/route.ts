@@ -27,7 +27,7 @@ const handler = NextAuth({
         return `${baseUrl}/admin`;
       }
 
-      return `${baseUrl}/plans/basic/pricing`;
+      return `${baseUrl}/plans`;
     },
   },
 
@@ -39,3 +39,6 @@ const handler = NextAuth({
 });
 
 export { handler as GET, handler as POST };
+
+
+
