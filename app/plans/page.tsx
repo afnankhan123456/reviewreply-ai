@@ -16,8 +16,8 @@ export default function PlansPage() {
           <Image
             src="/ai-logo.png"
             alt="ReviewReply AI"
-            width={150}
-            height={150}
+            width={120}
+            height={120}
             className="object-contain"
           />
 
