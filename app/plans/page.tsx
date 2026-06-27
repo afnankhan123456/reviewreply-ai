@@ -1,10 +1,43 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 
 export default function PlansPage() {
   return (
-    <div className="min-h-screen bg-black text-white p-8">
+    <div className="min-h-screen bg-black text-white px-8 py-6">
+
+      {/* TOP BAR */}
+
+      <div className="flex items-center justify-between mb-16">
+
+        <div className="flex items-center gap-4">
+
+          <Image
+            src="/reviewreply-ai-logo.png"
+            alt="ReviewReply AI"
+            width={60}
+            height={60}
+            className="rounded-2xl"
+          />
+
+          <div>
+
+            <h1 className="text-3xl font-bold">
+              ReviewReply AI
+            </h1>
+
+            <p className="text-zinc-400 text-sm">
+              AI Powered Review Management
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* HEADING */}
 
       <div className="text-center mb-14">
 
@@ -17,6 +50,8 @@ export default function PlansPage() {
         </p>
 
       </div>
+
+      {/* PLANS */}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
 
@@ -105,4 +140,4 @@ export default function PlansPage() {
 
     </div>
   );
-}   
+}
