@@ -74,11 +74,11 @@ export default function BasicPricingPage() {
               </div>
 
               <div className="flex items-center p-4 border-r border-zinc-800 text-4xl font-bold">
-                $9
+                $0.01
               </div>
 
               <div className="flex items-center p-4 border-r border-zinc-800 text-base">
-                $9 / month
+                $0.01 / month
               </div>
 
               <div className="flex items-center p-4 border-r border-zinc-800 text-base">
@@ -88,7 +88,7 @@ export default function BasicPricingPage() {
               <div className="flex items-center justify-center p-4">
 
                 <button
-                  onClick={() => handlePayment("9")}
+                  onClick={() => handlePayment("0.01")}
                   className="text-blue-400 font-bold text-lg hover:text-blue-300"
                 >
                   Pay
