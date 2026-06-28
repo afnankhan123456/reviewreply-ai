@@ -22,181 +22,207 @@ export default function BasicPricingPage() {
 
         </div>
 
-        {/* TABLE */}
+        {/* MAIN WRAPPER */}
 
-        <div className="bg-zinc-900 border border-zinc-800 rounded-3xl overflow-hidden">
+        <div className="flex rounded-3xl overflow-hidden border border-zinc-800 bg-zinc-900">
 
-          {/* HEADER */}
+          {/* LEFT TABLE */}
 
-          <div className="grid grid-cols-6 bg-[#0B2C74] text-white font-semibold text-center text-sm">
+          <div className="w-[75%]">
 
-            <div className="p-5 border-r border-blue-800">
-              DURATION
+            {/* HEADER */}
+
+            <div className="grid grid-cols-5 bg-[#0B2C74] text-white font-semibold text-center text-sm">
+
+              <div className="p-5 border-r border-blue-800">
+                DURATION
+              </div>
+
+              <div className="p-5 border-r border-blue-800">
+                PRICE (USD)
+              </div>
+
+              <div className="p-5 border-r border-blue-800">
+                EFFECTIVE PRICE / MONTH
+              </div>
+
+              <div className="p-5 border-r border-blue-800">
+                YOU SAVE
+              </div>
+
+              <div className="p-5">
+                CLICK
+              </div>
+
             </div>
 
-            <div className="p-5 border-r border-blue-800">
-              PRICE (USD)
+            {/* ROW 1 */}
+
+            <div className="grid grid-cols-5 border-t border-zinc-800 min-h-[130px]">
+
+              <div className="flex items-center gap-3 p-6 border-r border-zinc-800 font-semibold text-2xl">
+                📅 1 Month
+              </div>
+
+              <div className="flex items-center p-6 border-r border-zinc-800 text-6xl font-bold">
+                $9
+              </div>
+
+              <div className="flex items-center p-6 border-r border-zinc-800 text-xl">
+                $9 / month
+              </div>
+
+              <div className="flex items-center p-6 border-r border-zinc-800 text-xl">
+                —
+              </div>
+
+              <div className="flex items-center justify-center p-6">
+
+                <Link
+                  href="/dashboard"
+                  className="text-blue-400 font-bold text-2xl hover:text-blue-300"
+                >
+                  Click
+                </Link>
+
+              </div>
+
             </div>
 
-            <div className="p-5 border-r border-blue-800">
-              EFFECTIVE PRICE / MONTH
+            {/* ROW 2 */}
+
+            <div className="grid grid-cols-5 border-t border-zinc-800 min-h-[130px]">
+
+              <div className="flex items-center gap-3 p-6 border-r border-zinc-800 font-semibold text-2xl">
+                📅 3 Months
+              </div>
+
+              <div className="flex items-center p-6 border-r border-zinc-800 text-6xl font-bold">
+                $24
+              </div>
+
+              <div className="flex items-center p-6 border-r border-zinc-800 text-xl">
+                $8 / month
+              </div>
+
+              <div className="flex items-center p-6 border-r border-zinc-800 text-green-500 font-bold text-xl">
+                Save 11%
+              </div>
+
+              <div className="flex items-center justify-center p-6">
+
+                <Link
+                  href="/dashboard"
+                  className="text-blue-400 font-bold text-2xl hover:text-blue-300"
+                >
+                  Click
+                </Link>
+
+              </div>
+
             </div>
 
-            <div className="p-5 border-r border-blue-800">
-              YOU SAVE
+            {/* ROW 3 */}
+
+            <div className="grid grid-cols-5 border-t border-zinc-800 min-h-[130px]">
+
+              <div className="flex items-center gap-3 p-6 border-r border-zinc-800 font-semibold text-2xl">
+                📅 6 Months
+              </div>
+
+              <div className="flex items-center p-6 border-r border-zinc-800 text-6xl font-bold">
+                $45
+              </div>
+
+              <div className="flex items-center p-6 border-r border-zinc-800 text-xl">
+                $7.50 / month
+              </div>
+
+              <div className="flex items-center p-6 border-r border-zinc-800 text-green-500 font-bold text-xl">
+                Save 17%
+              </div>
+
+              <div className="flex items-center justify-center p-6">
+
+                <Link
+                  href="/dashboard"
+                  className="text-blue-400 font-bold text-2xl hover:text-blue-300"
+                >
+                  Click
+                </Link>
+
+              </div>
+
             </div>
 
-            <div className="p-5 border-r border-blue-800">
-              CLICK
+            {/* ROW 4 */}
+
+            <div className="grid grid-cols-5 border-t border-zinc-800 min-h-[130px]">
+
+              <div className="flex items-center gap-3 p-6 border-r border-zinc-800 font-semibold text-2xl">
+                📅 12 Months
+              </div>
+
+              <div className="flex items-center p-6 border-r border-zinc-800 text-6xl font-bold">
+                $88
+              </div>
+
+              <div className="flex items-center p-6 border-r border-zinc-800 text-xl">
+                $7.33 / month
+              </div>
+
+              <div className="flex items-center p-6 border-r border-zinc-800 text-green-500 font-bold text-xl">
+                Save 20%
+              </div>
+
+              <div className="flex items-center justify-center p-6">
+
+                <Link
+                  href="/dashboard"
+                  className="text-blue-400 font-bold text-2xl hover:text-blue-300"
+                >
+                  Click
+                </Link>
+
+              </div>
+
             </div>
 
-            <div className="p-5">
+          </div>
+
+          {/* RIGHT FEATURE BOX */}
+
+          <div className="w-[25%] border-l border-zinc-800">
+
+            {/* FEATURE HEADER */}
+
+            <div className="bg-[#0B2C74] text-white font-semibold text-center text-sm p-5">
               FEATURES INCLUDED
             </div>
 
-          </div>
+            {/* FEATURE AREA */}
 
-          {/* ROW 1 */}
-
-          <div className="grid grid-cols-6 border-t border-zinc-800">
-
-            <div className="p-6 border-r border-zinc-800 font-semibold flex items-center gap-3">
-              📅 1 Month
-            </div>
-
-            <div className="p-6 border-r border-zinc-800 text-4xl font-bold">
-              $9
-            </div>
-
-            <div className="p-6 border-r border-zinc-800">
-              $9 / month
-            </div>
-
-            <div className="p-6 border-r border-zinc-800">
-              —
-            </div>
-
-            <div className="p-6 border-r border-zinc-800">
-              <Link
-                href="/dashboard"
-                className="text-blue-400 font-semibold hover:text-blue-300"
-              >
-                Click
-              </Link>
-            </div>
-
-            <div className="p-6 border-r border-zinc-800 space-y-4 text-sm text-zinc-300">
+            <div className="p-8 space-y-8 text-zinc-300 text-2xl">
 
               <div>✓ 1 Business Location</div>
+
               <div>✓ 100 Reviews Sync / Month</div>
+
               <div>✓ Google Review Sync</div>
+
               <div>✓ Review Dashboard</div>
+
               <div>✓ New Review Email Alerts</div>
+
               <div>✓ Unanswered Reviews Tracking</div>
+
               <div>✓ Basic Rating Overview</div>
+
               <div>✓ Positive & Negative Review Detection</div>
+
               <div>✓ Basic Review Analytics</div>
 
             </div>
-
-          </div>
-
-          {/* ROW 2 */}
-
-          <div className="grid grid-cols-6 border-t border-zinc-800">
-
-            <div className="p-6 border-r border-zinc-800 font-semibold flex items-center gap-3">
-              📅 3 Months
-            </div>
-
-            <div className="p-6 border-r border-zinc-800 text-4xl font-bold">
-              $24
-            </div>
-
-            <div className="p-6 border-r border-zinc-800">
-              $8 / month
-            </div>
-
-            <div className="p-6 border-r border-zinc-800 text-green-500 font-bold">
-              Save 11%
-            </div>
-
-            <div className="p-6 border-r border-zinc-800">
-              <Link
-                href="/dashboard"
-                className="text-blue-400 font-semibold hover:text-blue-300"
-              >
-                Click
-              </Link>
-            </div>
-
-            <div className="p-6 border-r border-zinc-800"></div>
-
-          </div>
-
-          {/* ROW 3 */}
-
-          <div className="grid grid-cols-6 border-t border-zinc-800">
-
-            <div className="p-6 border-r border-zinc-800 font-semibold flex items-center gap-3">
-              📅 6 Months
-            </div>
-
-            <div className="p-6 border-r border-zinc-800 text-4xl font-bold">
-              $45
-            </div>
-
-            <div className="p-6 border-r border-zinc-800">
-              $7.50 / month
-            </div>
-
-            <div className="p-6 border-r border-zinc-800 text-green-500 font-bold">
-              Save 17%
-            </div>
-
-            <div className="p-6 border-r border-zinc-800">
-              <Link
-                href="/dashboard"
-                className="text-blue-400 font-semibold hover:text-blue-300"
-              >
-                Click
-              </Link>
-            </div>
-
-            <div className="p-6 border-r border-zinc-800"></div>
-
-          </div>
-
-          {/* ROW 4 */}
-
-          <div className="grid grid-cols-6 border-t border-zinc-800">
-
-            <div className="p-6 border-r border-zinc-800 font-semibold flex items-center gap-3">
-              📅 12 Months
-            </div>
-
-            <div className="p-6 border-r border-zinc-800 text-4xl font-bold">
-              $88
-            </div>
-
-            <div className="p-6 border-r border-zinc-800">
-              $7.33 / month
-            </div>
-
-            <div className="p-6 border-r border-zinc-800 text-green-500 font-bold">
-              Save 20%
-            </div>
-
-            <div className="p-6 border-r border-zinc-800">
-              <Link
-                href="/dashboard"
-                className="text-blue-400 font-semibold hover:text-blue-300"
-              >
-                Click
-              </Link>
-            </div>
-
-            <div className="p-6 border-r border-zinc-800"></div>
 
           </div>
 
@@ -207,3 +233,6 @@ export default function BasicPricingPage() {
     </div>
   );
 }
+
+
+
