@@ -2,19 +2,19 @@
 
 export default function BasicPricingPage() {
   return (
-    <div className="min-h-screen bg-black text-white p-8">
+    <div className="min-h-screen bg-black text-white p-6">
 
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-6xl mx-auto">
 
         {/* HEADING */}
 
-        <div className="text-center mb-14">
+        <div className="text-center mb-12">
 
-          <h1 className="text-6xl font-bold mb-4">
+          <h1 className="text-5xl font-bold mb-4">
             BASIC PLAN
           </h1>
 
-          <p className="text-zinc-400 text-xl">
+          <p className="text-zinc-400 text-lg">
             Perfect for Small Businesses & Startups
           </p>
 
@@ -26,130 +26,144 @@ export default function BasicPricingPage() {
 
           {/* HEADER */}
 
-          <div className="grid grid-cols-5 bg-[#0B2C74] text-white font-semibold text-center">
+          <div className="grid grid-cols-5 bg-[#0B2C74] text-white font-semibold text-center text-sm">
 
-            <div className="p-6 border-r border-blue-800">
+            <div className="p-5 border-r border-blue-800">
               DURATION
             </div>
 
-            <div className="p-6 border-r border-blue-800">
+            <div className="p-5 border-r border-blue-800">
               PRICE (USD)
             </div>
 
-            <div className="p-6 border-r border-blue-800">
+            <div className="p-5 border-r border-blue-800">
               EFFECTIVE PRICE / MONTH
             </div>
 
-            <div className="p-6 border-r border-blue-800">
+            <div className="p-5 border-r border-blue-800">
               YOU SAVE
             </div>
 
-            <div className="p-6">
+            <div className="p-5">
               FEATURES INCLUDED
             </div>
 
           </div>
 
-          {/* ROW 1 */}
+          {/* MAIN CONTENT */}
 
-          <div className="grid grid-cols-5 border-t border-zinc-800">
+          <div className="grid grid-cols-5">
 
-            <div className="p-8 border-r border-zinc-800 font-semibold">
-              1 Month
+            {/* COLUMN 1 */}
+
+            <div className="border-r border-zinc-800">
+
+              <div className="p-6 border-b border-zinc-800 font-semibold">
+                1 Month
+              </div>
+
+              <div className="p-6 border-b border-zinc-800 font-semibold">
+                3 Months
+              </div>
+
+              <div className="p-6 border-b border-zinc-800 font-semibold">
+                6 Months
+              </div>
+
+              <div className="p-6 font-semibold">
+                12 Months
+              </div>
+
             </div>
 
-            <div className="p-8 border-r border-zinc-800 text-5xl font-bold">
-              $9
+            {/* COLUMN 2 */}
+
+            <div className="border-r border-zinc-800">
+
+              <div className="p-6 border-b border-zinc-800 text-4xl font-bold">
+                $9
+              </div>
+
+              <div className="p-6 border-b border-zinc-800 text-4xl font-bold">
+                $24
+              </div>
+
+              <div className="p-6 border-b border-zinc-800 text-4xl font-bold">
+                $45
+              </div>
+
+              <div className="p-6 text-4xl font-bold">
+                $88
+              </div>
+
             </div>
 
-            <div className="p-8 border-r border-zinc-800">
-              $9 / month
+            {/* COLUMN 3 */}
+
+            <div className="border-r border-zinc-800">
+
+              <div className="p-6 border-b border-zinc-800">
+                $9 / month
+              </div>
+
+              <div className="p-6 border-b border-zinc-800">
+                $8 / month
+              </div>
+
+              <div className="p-6 border-b border-zinc-800">
+                $7.50 / month
+              </div>
+
+              <div className="p-6">
+                $7.33 / month
+              </div>
+
             </div>
 
-            <div className="p-8 border-r border-zinc-800">
-              —
+            {/* COLUMN 4 */}
+
+            <div className="border-r border-zinc-800">
+
+              <div className="p-6 border-b border-zinc-800">
+                —
+              </div>
+
+              <div className="p-6 border-b border-zinc-800 text-green-500 font-bold">
+                Save 11%
+              </div>
+
+              <div className="p-6 border-b border-zinc-800 text-green-500 font-bold">
+                Save 17%
+              </div>
+
+              <div className="p-6 text-green-500 font-bold">
+                Save 20%
+              </div>
+
             </div>
 
-            <div className="p-8">
-              1 Business Location
-            </div>
+            {/* COLUMN 5 */}
 
-          </div>
+            <div className="p-6 space-y-4 text-zinc-300 text-sm">
 
-          {/* ROW 2 */}
+              <div>✓ 1 Business Location</div>
 
-          <div className="grid grid-cols-5 border-t border-zinc-800">
+              <div>✓ 100 Reviews Sync / Month</div>
 
-            <div className="p-8 border-r border-zinc-800 font-semibold">
-              3 Months
-            </div>
+              <div>✓ Google Review Sync</div>
 
-            <div className="p-8 border-r border-zinc-800 text-5xl font-bold">
-              $24
-            </div>
+              <div>✓ Review Dashboard</div>
 
-            <div className="p-8 border-r border-zinc-800">
-              $8 / month
-            </div>
+              <div>✓ New Review Email Alerts</div>
 
-            <div className="p-8 border-r border-zinc-800 text-green-500 font-bold">
-              Save 11%
-            </div>
+              <div>✓ Unanswered Reviews Tracking</div>
 
-            <div className="p-8">
-              Google Review Sync
-            </div>
+              <div>✓ Basic Rating Overview</div>
 
-          </div>
+              <div>✓ Positive & Negative Review Detection</div>
 
-          {/* ROW 3 */}
+              <div>✓ Basic Review Analytics</div>
 
-          <div className="grid grid-cols-5 border-t border-zinc-800">
-
-            <div className="p-8 border-r border-zinc-800 font-semibold">
-              6 Months
-            </div>
-
-            <div className="p-8 border-r border-zinc-800 text-5xl font-bold">
-              $45
-            </div>
-
-            <div className="p-8 border-r border-zinc-800">
-              $7.50 / month
-            </div>
-
-            <div className="p-8 border-r border-zinc-800 text-green-500 font-bold">
-              Save 17%
-            </div>
-
-            <div className="p-8">
-              Review Dashboard
-            </div>
-
-          </div>
-
-          {/* ROW 4 */}
-
-          <div className="grid grid-cols-5 border-t border-zinc-800">
-
-            <div className="p-8 border-r border-zinc-800 font-semibold">
-              12 Months
-            </div>
-
-            <div className="p-8 border-r border-zinc-800 text-5xl font-bold">
-              $88
-            </div>
-
-            <div className="p-8 border-r border-zinc-800">
-              $7.33 / month
-            </div>
-
-            <div className="p-8 border-r border-zinc-800 text-green-500 font-bold">
-              Save 20%
-            </div>
-
-            <div className="p-8">
-              Basic Review Analytics
             </div>
 
           </div>
