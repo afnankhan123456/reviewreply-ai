@@ -1,13 +1,13 @@
-export default function ReviewsPage() {
+export default function AnalyticsPage() {
   return (
     <div className="p-10">
 
       <h1 className="text-3xl font-bold mb-4">
-        Reviews
+        Analytics
       </h1>
 
       <div className="bg-white rounded-2xl border p-6">
-        All customer reviews will appear here.
+        Analytics charts and data will appear here.
       </div>
 
     </div>
