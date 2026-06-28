@@ -1,8 +1,17 @@
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function BasicPricingPage() {
+
+  const router = useRouter();
+
+  const handlePayment = (amount: string) => {
+
+    alert(`PayPal Payment Start: $${amount}`);
+
+  };
+
   return (
     <div className="min-h-screen bg-black text-white p-4">
 
@@ -51,7 +60,7 @@ export default function BasicPricingPage() {
               </div>
 
               <div className="p-4">
-                CLICK
+                PAY
               </div>
 
             </div>
@@ -78,12 +87,12 @@ export default function BasicPricingPage() {
 
               <div className="flex items-center justify-center p-4">
 
-                <Link
-                  href="/plans/basic/dashbord"
+                <button
+                  onClick={() => handlePayment("9")}
                   className="text-blue-400 font-bold text-lg hover:text-blue-300"
                 >
-                  Click
-                </Link>
+                  Pay
+                </button>
 
               </div>
 
@@ -111,12 +120,12 @@ export default function BasicPricingPage() {
 
               <div className="flex items-center justify-center p-4">
 
-                <Link
-                  href="/plans/basic/dashbord"
+                <button
+                  onClick={() => handlePayment("24")}
                   className="text-blue-400 font-bold text-lg hover:text-blue-300"
                 >
-                  Click
-                </Link>
+                  Pay
+                </button>
 
               </div>
 
@@ -144,12 +153,12 @@ export default function BasicPricingPage() {
 
               <div className="flex items-center justify-center p-4">
 
-                <Link
-                  href="/plans/basic/dashbord"
+                <button
+                  onClick={() => handlePayment("45")}
                   className="text-blue-400 font-bold text-lg hover:text-blue-300"
                 >
-                  Click
-                </Link>
+                  Pay
+                </button>
 
               </div>
 
@@ -177,12 +186,12 @@ export default function BasicPricingPage() {
 
               <div className="flex items-center justify-center p-4">
 
-                <Link
-                  href="/plans/basic/dashbord"
+                <button
+                  onClick={() => handlePayment("88")}
                   className="text-blue-400 font-bold text-lg hover:text-blue-300"
                 >
-                  Click
-                </Link>
+                  Pay
+                </button>
 
               </div>
 
@@ -233,8 +242,3 @@ export default function BasicPricingPage() {
     </div>
   );
 }
-
-
-
-
-
