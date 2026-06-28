@@ -1,9 +1,45 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Sidebar() {
+
+  const pathname = usePathname();
+
+  const menuItems = [
+    {
+      name: "Dashboard",
+      href: "/plans/basic/dashbord",
+    },
+    {
+      name: "Reviews",
+      href: "/plans/basic/dashbord/reviews",
+    },
+    {
+      name: "Alerts",
+      href: "/plans/basic/dashbord/alerts",
+    },
+    {
+      name: "Unanswered",
+      href: "/plans/basic/dashbord/unanswered",
+    },
+    {
+      name: "Analytics",
+      href: "/plans/basic/dashbord/analytics",
+    },
+    {
+      name: "Settings",
+      href: "/plans/basic/dashbord/settings",
+    },
+    {
+      name: "Integrations",
+      href: "/plans/basic/dashbord/integrations",
+    },
+  ];
+
   return (
+
     <div className="w-[260px] bg-white border-r border-zinc-200 flex flex-col justify-between p-5">
 
       <div>
@@ -18,37 +54,21 @@ export default function Sidebar() {
 
         <div className="space-y-3">
 
-          <Link href="#" className="block bg-blue-50 text-blue-600 px-4 py-3 rounded-xl font-medium">
-            Dashboard
-          </Link>
+          {menuItems.map((item) => (
 
-          <Link href="#" className="block hover:bg-zinc-100 px-4 py-3 rounded-xl">
-            Reviews
-          </Link>
+            <Link
+              key={item.name}
+              href={item.href}
+              className={`block px-4 py-3 rounded-xl font-medium transition ${
+                pathname === item.href
+                  ? "bg-blue-50 text-blue-600"
+                  : "hover:bg-zinc-100 text-zinc-700"
+              }`}
+            >
+              {item.name}
+            </Link>
 
-          <Link href="#" className="block hover:bg-zinc-100 px-4 py-3 rounded-xl">
-            Alerts
-          </Link>
-
-          <Link href="#" className="block hover:bg-zinc-100 px-4 py-3 rounded-xl">
-            Unanswered
-          </Link>
-
-          <Link href="#" className="block hover:bg-zinc-100 px-4 py-3 rounded-xl">
-            Analytics
-          </Link>
-
-          <Link href="#" className="block hover:bg-zinc-100 px-4 py-3 rounded-xl">
-            Settings
-          </Link>
-
-          <Link href="#" className="block hover:bg-zinc-100 px-4 py-3 rounded-xl">
-            Integrations
-          </Link>
-
-          <Link href="#" className="block hover:bg-zinc-100 px-4 py-3 rounded-xl">
-            Billing
-          </Link>
+          ))}
 
         </div>
 
@@ -62,5 +82,7 @@ export default function Sidebar() {
       </div>
 
     </div>
+
   );
 }
+
