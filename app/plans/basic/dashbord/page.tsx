@@ -1,31 +1,69 @@
 "use client";
 
-import Navbar from "../../../../components/Navbar";
+import Topbar from "./components/Topbar";
+import StatCard from "./components/StatCard";
+import ReviewDashboard from "./components/ReviewDashboard";
+import AlertsCard from "./components/AlertsCard";
+import UnansweredCard from "./components/UnansweredCard";
+import RatingOverview from "./components/RatingOverview";
+import DetectionCard from "./components/DetectionCard";
+import AnalyticsChart from "./components/AnalyticsChart";
 
-import BasicStats from "../component/BasicStats";
-import BasicReviews from "../component/BasicReviews";
-
-export default function BasicDashboardPage() {
+export default function DashboardPage() {
   return (
-    <div className="p-8">
+    <div>
 
-      <Navbar />
+      {/* TOPBAR */}
 
-      <div className="mb-8">
+      <Topbar />
 
-        <h1 className="text-4xl font-bold mb-2">
-          Basic Dashboard
-        </h1>
+      {/* TOP STATS */}
 
-        <p className="text-zinc-500 dark:text-zinc-400">
-          Manage your reviews with essential tools
-        </p>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+
+        <StatCard
+          title="Reviews Synced"
+          value="100/100"
+          subtitle="This Month"
+        />
+
+        <StatCard
+          title="Google Review Sync"
+          value="Active"
+          subtitle="Last synced 2 hours ago"
+        />
+
+        <StatCard
+          title="Business Location"
+          value="1"
+          subtitle="Connected"
+        />
 
       </div>
 
-      <BasicStats />
+      {/* MIDDLE SECTION */}
 
-      <BasicReviews />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+
+        <ReviewDashboard />
+
+        <AlertsCard />
+
+        <UnansweredCard />
+
+      </div>
+
+      {/* BOTTOM SECTION */}
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+
+        <RatingOverview />
+
+        <DetectionCard />
+
+        <AnalyticsChart />
+
+      </div>
 
     </div>
   );
