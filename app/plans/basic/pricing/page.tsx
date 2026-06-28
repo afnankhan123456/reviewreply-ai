@@ -79,7 +79,7 @@ export default function BasicPricingPage() {
               <div className="flex items-center justify-center p-4">
 
                 <Link
-                  href="/dashboard"
+                  href="/plans/basic/dashbord"
                   className="text-blue-400 font-bold text-lg hover:text-blue-300"
                 >
                   Click
@@ -112,7 +112,7 @@ export default function BasicPricingPage() {
               <div className="flex items-center justify-center p-4">
 
                 <Link
-                  href="/dashboard"
+                  href="/plans/basic/dashbord"
                   className="text-blue-400 font-bold text-lg hover:text-blue-300"
                 >
                   Click
@@ -145,7 +145,7 @@ export default function BasicPricingPage() {
               <div className="flex items-center justify-center p-4">
 
                 <Link
-                  href="/dashboard"
+                  href="/plans/basic/dashbord"
                   className="text-blue-400 font-bold text-lg hover:text-blue-300"
                 >
                   Click
@@ -178,7 +178,7 @@ export default function BasicPricingPage() {
               <div className="flex items-center justify-center p-4">
 
                 <Link
-                  href="/dashboard"
+                  href="/plans/basic/dashbord"
                   className="text-blue-400 font-bold text-lg hover:text-blue-300"
                 >
                   Click
@@ -233,6 +233,7 @@ export default function BasicPricingPage() {
     </div>
   );
 }
+
 
 
 
