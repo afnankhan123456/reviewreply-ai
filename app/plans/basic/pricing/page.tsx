@@ -26,7 +26,7 @@ export default function BasicPricingPage() {
 
           {/* HEADER */}
 
-          <div className="grid grid-cols-5 bg-[#0B2C74] text-white font-semibold text-center text-sm">
+          <div className="grid grid-cols-6 bg-[#0B2C74] text-white font-semibold text-center text-sm">
 
             <div className="p-5 border-r border-blue-800">
               DURATION
@@ -44,6 +44,10 @@ export default function BasicPricingPage() {
               YOU SAVE
             </div>
 
+            <div className="p-5 border-r border-blue-800">
+              CLICK
+            </div>
+
             <div className="p-5">
               FEATURES INCLUDED
             </div>
@@ -52,26 +56,26 @@ export default function BasicPricingPage() {
 
           {/* MAIN CONTENT */}
 
-          <div className="grid grid-cols-5">
+          <div className="grid grid-cols-6">
 
             {/* COLUMN 1 */}
 
             <div className="border-r border-zinc-800">
 
-              <div className="p-6 border-b border-zinc-800 font-semibold">
-                1 Month
+              <div className="p-6 border-b border-zinc-800 font-semibold flex items-center gap-3">
+                📅 1 Month
               </div>
 
-              <div className="p-6 border-b border-zinc-800 font-semibold">
-                3 Months
+              <div className="p-6 border-b border-zinc-800 font-semibold flex items-center gap-3">
+                📅 3 Months
               </div>
 
-              <div className="p-6 border-b border-zinc-800 font-semibold">
-                6 Months
+              <div className="p-6 border-b border-zinc-800 font-semibold flex items-center gap-3">
+                📅 6 Months
               </div>
 
-              <div className="p-6 font-semibold">
-                12 Months
+              <div className="p-6 font-semibold flex items-center gap-3">
+                📅 12 Months
               </div>
 
             </div>
@@ -143,6 +147,28 @@ export default function BasicPricingPage() {
             </div>
 
             {/* COLUMN 5 */}
+
+            <div className="border-r border-zinc-800">
+
+              <div className="p-6 border-b border-zinc-800 text-blue-400 font-semibold cursor-pointer hover:text-blue-300">
+                Click
+              </div>
+
+              <div className="p-6 border-b border-zinc-800 text-blue-400 font-semibold cursor-pointer hover:text-blue-300">
+                Click
+              </div>
+
+              <div className="p-6 border-b border-zinc-800 text-blue-400 font-semibold cursor-pointer hover:text-blue-300">
+                Click
+              </div>
+
+              <div className="p-6 text-blue-400 font-semibold cursor-pointer hover:text-blue-300">
+                Click
+              </div>
+
+            </div>
+
+            {/* COLUMN 6 */}
 
             <div className="p-6 space-y-4 text-zinc-300 text-sm">
 
