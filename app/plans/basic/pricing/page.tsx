@@ -85,26 +85,16 @@ export default function BasicPricingPage() {
               </Link>
             </div>
 
-            {/* FEATURES BOX */}
-
-            <div className="row-span-4 p-6 space-y-5 text-zinc-300 text-sm">
+            <div className="p-6 border-r border-zinc-800 space-y-4 text-sm text-zinc-300">
 
               <div>✓ 1 Business Location</div>
-
               <div>✓ 100 Reviews Sync / Month</div>
-
               <div>✓ Google Review Sync</div>
-
               <div>✓ Review Dashboard</div>
-
               <div>✓ New Review Email Alerts</div>
-
               <div>✓ Unanswered Reviews Tracking</div>
-
               <div>✓ Basic Rating Overview</div>
-
               <div>✓ Positive & Negative Review Detection</div>
-
               <div>✓ Basic Review Analytics</div>
 
             </div>
@@ -113,7 +103,7 @@ export default function BasicPricingPage() {
 
           {/* ROW 2 */}
 
-          <div className="grid grid-cols-5 border-t border-zinc-800">
+          <div className="grid grid-cols-6 border-t border-zinc-800">
 
             <div className="p-6 border-r border-zinc-800 font-semibold flex items-center gap-3">
               📅 3 Months
@@ -140,11 +130,13 @@ export default function BasicPricingPage() {
               </Link>
             </div>
 
+            <div className="p-6 border-r border-zinc-800"></div>
+
           </div>
 
           {/* ROW 3 */}
 
-          <div className="grid grid-cols-5 border-t border-zinc-800">
+          <div className="grid grid-cols-6 border-t border-zinc-800">
 
             <div className="p-6 border-r border-zinc-800 font-semibold flex items-center gap-3">
               📅 6 Months
@@ -171,11 +163,13 @@ export default function BasicPricingPage() {
               </Link>
             </div>
 
+            <div className="p-6 border-r border-zinc-800"></div>
+
           </div>
 
           {/* ROW 4 */}
 
-          <div className="grid grid-cols-5 border-t border-zinc-800">
+          <div className="grid grid-cols-6 border-t border-zinc-800">
 
             <div className="p-6 border-r border-zinc-800 font-semibold flex items-center gap-3">
               📅 12 Months
@@ -201,6 +195,8 @@ export default function BasicPricingPage() {
                 Click
               </Link>
             </div>
+
+            <div className="p-6 border-r border-zinc-800"></div>
 
           </div>
 
