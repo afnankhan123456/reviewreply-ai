@@ -6,7 +6,7 @@ export default function BasicPricingPage() {
   return (
     <div className="min-h-screen bg-black text-white p-6">
 
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-7xl mx-auto">
 
         {/* HEADING */}
 
@@ -78,14 +78,16 @@ export default function BasicPricingPage() {
 
             <div className="p-6 border-r border-zinc-800">
               <Link
-                href="/checkout/basic-1month"
+                href="/dashboard"
                 className="text-blue-400 font-semibold hover:text-blue-300"
               >
                 Click
               </Link>
             </div>
 
-            <div className="p-6 row-span-4 space-y-4 text-zinc-300 text-sm">
+            {/* FEATURES BOX */}
+
+            <div className="row-span-4 p-6 space-y-5 text-zinc-300 text-sm">
 
               <div>✓ 1 Business Location</div>
 
@@ -131,7 +133,7 @@ export default function BasicPricingPage() {
 
             <div className="p-6 border-r border-zinc-800">
               <Link
-                href="/checkout/basic-3month"
+                href="/dashboard"
                 className="text-blue-400 font-semibold hover:text-blue-300"
               >
                 Click
@@ -162,7 +164,7 @@ export default function BasicPricingPage() {
 
             <div className="p-6 border-r border-zinc-800">
               <Link
-                href="/checkout/basic-6month"
+                href="/dashboard"
                 className="text-blue-400 font-semibold hover:text-blue-300"
               >
                 Click
@@ -193,7 +195,7 @@ export default function BasicPricingPage() {
 
             <div className="p-6 border-r border-zinc-800">
               <Link
-                href="/checkout/basic-12month"
+                href="/dashboard"
                 className="text-blue-400 font-semibold hover:text-blue-300"
               >
                 Click
