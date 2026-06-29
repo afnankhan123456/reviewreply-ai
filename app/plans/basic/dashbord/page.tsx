@@ -269,12 +269,193 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* 1 BIG + 2 SMALL */}
+        {/* RECENT REVIEWS + RIGHT STACKED CARDS */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7">
-          <div className="xl:col-span-2 bg-white rounded-[24px] h-[360px] border border-[#e5e7eb]" />
-          <div className="flex flex-col gap-6 h-[360px]">
-            <div className="bg-white rounded-[24px] h-[170px] border border-[#e5e7eb]" />
-            <div className="bg-white rounded-[24px] h-[170px] border border-[#e5e7eb]" />
+
+          {/* LEFT BIG CARD — Recent Reviews */}
+          <div className="xl:col-span-2 bg-white rounded-[24px] border border-[#e5e7eb] shadow-sm p-5">
+            <div className="flex items-center justify-between">
+              <h3 className="text-[17px] font-semibold text-[#111827]">
+                Recent Reviews
+              </h3>
+              <button className="text-[12px] font-medium text-blue-600">
+                View All
+              </button>
+            </div>
+            <div className="flex flex-col gap-5 mt-5">
+              {[
+                {
+                  name: "James Anderson",
+                  text: "Excellent service! Highly recommended.",
+                  rating: 5,
+                  status: "Replied",
+                  color: "bg-green-100 text-green-700",
+                },
+                {
+                  name: "Linda Martinez",
+                  text: "Good experience overall.",
+                  rating: 4,
+                  status: "Replied",
+                  color: "bg-green-100 text-green-700",
+                },
+                {
+                  name: "Robert Taylor",
+                  text: "Not satisfied with the support.",
+                  rating: 2,
+                  status: "Pending",
+                  color: "bg-yellow-100 text-yellow-700",
+                },
+                {
+                  name: "Patricia Brown",
+                  text: "Average experience.",
+                  rating: 3,
+                  status: "Replied",
+                  color: "bg-green-100 text-green-700",
+                },
+              ].map((item, index) => (
+                <div key={index} className="flex items-start justify-between">
+                  <div className="flex gap-3">
+                    <div className="w-7 h-7 rounded-full border border-[#e5e7eb] flex items-center justify-center text-[12px] font-semibold">
+                      G
+                    </div>
+                    <div>
+                      <h4 className="text-[13px] font-semibold text-[#111827]">
+                        {item.name}
+                      </h4>
+                      <p className="text-[11px] text-[#6b7280] mt-1">
+                        {item.text}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="flex gap-0.5">
+                      {Array(5).fill(0).map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`w-3.5 h-3.5 ${
+                            i < item.rating
+                              ? "fill-yellow-400 text-yellow-400"
+                              : "text-gray-300"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    <span
+                      className={`text-[11px] font-medium px-2 py-1 rounded-md ${item.color}`}
+                    >
+                      {item.status}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* RIGHT STACKED CARDS */}
+          <div className="flex flex-col gap-6">
+
+            {/* TOP 5 KEYWORDS */}
+            <div className="bg-white rounded-[24px] border border-[#e5e7eb] shadow-sm p-5 flex-1">
+              <div className="flex items-center justify-between">
+                <h3 className="text-[16px] font-semibold text-[#111827]">
+                  Top 5 Keywords
+                </h3>
+                <button className="text-[12px] font-medium text-blue-600">
+                  View All
+                </button>
+              </div>
+              <div className="flex flex-col gap-4 mt-5">
+                {[
+                  { name: "Service", value: "45 (32%)", width: "80%" },
+                  { name: "Quality", value: "30 (21%)", width: "60%" },
+                  { name: "Support", value: "25 (18%)", width: "50%" },
+                  { name: "Experience", value: "20 (14%)", width: "40%" },
+                  { name: "Product", value: "10 (7%)", width: "25%" },
+                ].map((item, index) => (
+                  <div key={index} className="flex items-center gap-3">
+                    <span className="text-[12px] font-semibold text-blue-600 w-4">
+                      {index + 1}
+                    </span>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-[12px] text-[#111827]">
+                          {item.name}
+                        </span>
+                        <span className="text-[11px] text-[#6b7280]">
+                          {item.value}
+                        </span>
+                      </div>
+                      <div className="w-full h-2 rounded-full bg-gray-200 overflow-hidden">
+                        <div
+                          className="h-full bg-blue-500 rounded-full"
+                          style={{ width: item.width }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* RESPONSE TRACKING */}
+            <div className="bg-white rounded-[24px] border border-[#e5e7eb] shadow-sm p-5">
+              <div className="flex items-center justify-between">
+                <h3 className="text-[16px] font-semibold text-[#111827]">
+                  Response Tracking
+                </h3>
+                <button className="text-[12px] font-medium text-blue-600">
+                  View All
+                </button>
+              </div>
+              <div className="flex items-center justify-between mt-5">
+                {/* Circle */}
+                <div className="w-[120px] h-[120px] rounded-full border-[10px] border-green-500 flex flex-col items-center justify-center">
+                  <h2 className="text-[30px] font-bold text-[#111827]">
+                    128
+                  </h2>
+                  <p className="text-[11px] text-[#6b7280]">
+                    Total
+                  </p>
+                </div>
+                {/* Stats */}
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 rounded-full bg-green-500" />
+                    <div>
+                      <p className="text-[12px] font-medium text-[#111827]">
+                        Replied
+                      </p>
+                      <p className="text-[11px] text-[#6b7280]">
+                        109 (85%)
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
+                    <div>
+                      <p className="text-[12px] font-medium text-[#111827]">
+                        Pending
+                      </p>
+                      <p className="text-[11px] text-[#6b7280]">
+                        19 (15%)
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
+                    <div>
+                      <p className="text-[12px] font-medium text-[#111827]">
+                        No Reply
+                      </p>
+                      <p className="text-[11px] text-[#6b7280]">
+                        0 (0%)
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 
