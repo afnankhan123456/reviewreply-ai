@@ -6,13 +6,13 @@ export default function BasicPricingPage() {
 
   const router = useRouter();
 
-  // PAYPAL PAYMENT
+  // PAY BUTTON
 
   const handlePayment = async (amount: string) => {
 
     // TEMPORARY DIRECT DASHBOARD REDIRECT
 
-    router.push("/plans/basic/dashboard");
+    router.push("/plans/basic/dashbord");
 
   };
 
@@ -262,3 +262,6 @@ export default function BasicPricingPage() {
 
   );
 }
+
+
+
