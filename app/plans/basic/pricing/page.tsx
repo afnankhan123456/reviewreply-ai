@@ -10,45 +10,9 @@ export default function BasicPricingPage() {
 
   const handlePayment = async (amount: string) => {
 
-    try {
+    // TEMPORARY DIRECT DASHBOARD REDIRECT
 
-      const response = await fetch("/api/paypal/create-order", {
-
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          amount,
-        }),
-
-      });
-
-      const data = await response.json();
-
-      // REDIRECT TO PAYPAL
-
-      if (data.url) {
-
-        window.location.href = data.url;
-
-      } else {
-
-        alert("PayPal payment failed");
-
-        console.log(data);
-
-      }
-
-    } catch (error) {
-
-      console.log(error);
-
-      alert("Something went wrong");
-
-    }
+    router.push("/plans/basic/dashboard");
 
   };
 
