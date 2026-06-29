@@ -7,9 +7,7 @@ export default function BasicPricingPage() {
   const router = useRouter();
 
   const handlePayment = (amount: string) => {
-
     alert(`PayPal Payment Start: $${amount}`);
-
   };
 
   return (
@@ -37,7 +35,7 @@ export default function BasicPricingPage() {
 
           {/* LEFT TABLE */}
 
-          <div className="w-[75%]">
+          <div className="w-[72%]">
 
             {/* HEADER */}
 
@@ -67,7 +65,7 @@ export default function BasicPricingPage() {
 
             {/* ROW 1 */}
 
-            <div className="grid grid-cols-5 border-t border-zinc-800 min-h-[85px]">
+            <div className="grid grid-cols-5 border-t border-zinc-800 min-h-[90px]">
 
               <div className="flex items-center gap-2 p-4 border-r border-zinc-800 font-semibold text-lg">
                 📅 1 Month
@@ -100,7 +98,7 @@ export default function BasicPricingPage() {
 
             {/* ROW 2 */}
 
-            <div className="grid grid-cols-5 border-t border-zinc-800 min-h-[85px]">
+            <div className="grid grid-cols-5 border-t border-zinc-800 min-h-[90px]">
 
               <div className="flex items-center gap-2 p-4 border-r border-zinc-800 font-semibold text-lg">
                 📅 3 Months
@@ -133,7 +131,7 @@ export default function BasicPricingPage() {
 
             {/* ROW 3 */}
 
-            <div className="grid grid-cols-5 border-t border-zinc-800 min-h-[85px]">
+            <div className="grid grid-cols-5 border-t border-zinc-800 min-h-[90px]">
 
               <div className="flex items-center gap-2 p-4 border-r border-zinc-800 font-semibold text-lg">
                 📅 6 Months
@@ -166,7 +164,7 @@ export default function BasicPricingPage() {
 
             {/* ROW 4 */}
 
-            <div className="grid grid-cols-5 border-t border-zinc-800 min-h-[85px]">
+            <div className="grid grid-cols-5 border-t border-zinc-800 min-h-[90px]">
 
               <div className="flex items-center gap-2 p-4 border-r border-zinc-800 font-semibold text-lg">
                 📅 12 Months
@@ -201,7 +199,7 @@ export default function BasicPricingPage() {
 
           {/* RIGHT FEATURE BOX */}
 
-          <div className="w-[25%] border-l border-zinc-800">
+          <div className="w-[28%] border-l border-zinc-800">
 
             {/* FEATURE HEADER */}
 
@@ -211,25 +209,39 @@ export default function BasicPricingPage() {
 
             {/* FEATURE AREA */}
 
-            <div className="p-5 space-y-4 text-zinc-300 text-base">
+            <div className="p-4 grid grid-cols-2 gap-x-2 gap-y-2 text-[11px] leading-tight text-zinc-300">
 
               <div>✓ 1 Business Location</div>
 
-              <div>✓ 100 Reviews Sync / Month</div>
+              <div>✓ Low Rating Alerts</div>
+
+              <div>✓ 100 Review Sync</div>
+
+              <div>✓ Monthly PDF Reports</div>
 
               <div>✓ Google Review Sync</div>
 
+              <div>✓ Reply Templates</div>
+
               <div>✓ Review Dashboard</div>
 
-              <div>✓ New Review Email Alerts</div>
+              <div>✓ Response Tracking</div>
 
-              <div>✓ Unanswered Reviews Tracking</div>
+              <div>✓ Email Alerts</div>
 
-              <div>✓ Basic Rating Overview</div>
+              <div>✓ Top 5 Keywords</div>
 
-              <div>✓ Positive & Negative Review Detection</div>
+              <div>✓ Unanswered Tracking</div>
 
-              <div>✓ Basic Review Analytics</div>
+              <div>✓ Search & Filter</div>
+
+              <div>✓ Rating Overview</div>
+
+              <div>✓ 30 Day History</div>
+
+              <div>✓ Review Analytics</div>
+
+              <div>✓ Export CSV/PDF</div>
 
             </div>
 
