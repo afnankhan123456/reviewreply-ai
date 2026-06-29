@@ -1,188 +1,206 @@
-"use client";
+{/* 3 BIG CARDS */}
+<div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7">
 
-import {
-  Download,
-  FileText,
-  Hash,
-  Mail,
-  MessageSquare,
-  RefreshCw,
-  Star,
-  TrendingUp,
-  AlertTriangle,
-  Reply,
-} from "lucide-react";
+  {/* Rating Overview */}
+  <div className="bg-white rounded-[24px] h-[220px] border border-[#e5e7eb] shadow-sm p-5">
 
-import Topbar from "./components/Topbar";
+    <div className="flex items-center justify-between">
+      <h3 className="text-[17px] font-semibold text-[#111827]">
+        Rating Overview
+      </h3>
 
-const featureCards = [
-  {
-    title: "Low Rating Alerts",
-    icon: AlertTriangle,
-    color: "bg-red-100 text-red-500",
-  },
-  {
-    title: "Unanswered Tracking",
-    icon: MessageSquare,
-    color: "bg-pink-100 text-pink-500",
-  },
-  {
-    title: "Reply Templates",
-    icon: Reply,
-    color: "bg-violet-100 text-violet-500",
-  },
-  {
-    title: "Response Tracking",
-    icon: RefreshCw,
-    color: "bg-cyan-100 text-cyan-500",
-  },
-  {
-    title: "Email Alerts",
-    icon: Mail,
-    color: "bg-yellow-100 text-yellow-600",
-  },
-  {
-    title: "Top 5 Keywords",
-    icon: Hash,
-    color: "bg-orange-100 text-orange-500",
-  },
-  {
-    title: "Monthly PDF Reports",
-    icon: FileText,
-    color: "bg-green-100 text-green-600",
-  },
-  {
-    title: "Export CSV / PDF",
-    icon: Download,
-    color: "bg-blue-100 text-blue-600",
-  },
-];
+      <button className="text-[13px] font-medium text-blue-600">
+        View All
+      </button>
+    </div>
 
-export default function DashboardPage() {
-  return (
-    <div className="min-h-screen bg-white">
-      <div className="p-5 lg:p-7">
+    <div className="flex items-center justify-between mt-6">
 
-        <Topbar />
+      <div className="w-[120px] h-[120px] rounded-full border-[10px] border-orange-400 flex flex-col items-center justify-center">
+        <h2 className="text-[30px] font-bold text-[#111827]">
+          128
+        </h2>
 
-        {/* TOP 4 CARDS — height 80px, compact design */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mt-7">
+        <p className="text-[11px] text-[#6b7280]">
+          Total Reviews
+        </p>
+      </div>
 
-          {/* CARD 1 */}
-          <div className="bg-white border border-[#e5e7eb] rounded-[20px] p-3 h-[80px] shadow-sm flex items-center gap-3 overflow-hidden">
-            <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
-              <MessageSquare className="w-5 h-5 text-blue-600" />
-            </div>
-            <div className="flex flex-col gap-0.5 min-w-0">
-              <p className="text-[11px] text-[#6b7280] leading-tight">Reviews Synced</p>
-              <div className="flex items-baseline gap-1">
-                <h3 className="text-[22px] font-bold text-[#111827] leading-none">100</h3>
-                <span className="text-[13px] text-[#6b7280]">/100</span>
-              </div>
-              <p className="text-[10px] text-[#6b7280] leading-tight">This Month</p>
-            </div>
-          </div>
+      <div className="flex flex-col gap-3 w-[140px]">
 
-          {/* CARD 2 */}
-          <div className="bg-white border border-[#e5e7eb] rounded-[20px] p-3 h-[80px] shadow-sm flex items-center gap-3 overflow-hidden">
-            <div className="w-10 h-10 rounded-xl bg-green-100 flex items-center justify-center flex-shrink-0">
-              <RefreshCw className="w-5 h-5 text-green-600" />
-            </div>
-            <div className="flex flex-col gap-0.5 min-w-0">
-              <p className="text-[11px] text-[#6b7280] leading-tight">Google Review Sync</p>
-              <h3 className="text-[22px] font-bold text-green-600 leading-none">Active</h3>
-              <p className="text-[10px] text-[#6b7280] leading-tight">Last synced 2 hours ago</p>
-            </div>
-          </div>
+        {[5,4,3,2,1].map((star, index) => (
+          <div
+            key={index}
+            className="flex items-center gap-2"
+          >
 
-          {/* CARD 3 */}
-          <div className="bg-white border border-[#e5e7eb] rounded-[20px] p-3 h-[80px] shadow-sm flex items-center gap-3 overflow-hidden">
-            <div className="w-10 h-10 rounded-xl bg-yellow-100 flex items-center justify-center flex-shrink-0">
-              <Star className="w-5 h-5 fill-yellow-500 text-yellow-500" />
-            </div>
-            <div className="flex flex-col gap-0.5 min-w-0">
-              <p className="text-[11px] text-[#6b7280] leading-tight">Average Rating</p>
-              <div className="flex items-center gap-2">
-                <h3 className="text-[22px] font-bold text-[#111827] leading-none">4.6</h3>
-                <div className="flex gap-0.5">
-                  {Array(5).fill(0).map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-3.5 h-3.5 ${i < 4 ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
-                    />
-                  ))}
-                </div>
-              </div>
-              <p className="text-[10px] text-[#6b7280] leading-tight">Based on 128 reviews</p>
-            </div>
-          </div>
+            <span className="text-[12px] font-medium text-[#111827] w-3">
+              {star}
+            </span>
 
-          {/* CARD 4 */}
-          <div className="bg-white border border-[#e5e7eb] rounded-[20px] p-3 h-[80px] shadow-sm flex items-center gap-3 overflow-hidden">
-            <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center flex-shrink-0">
-              <TrendingUp className="w-5 h-5 text-purple-600" />
-            </div>
-            <div className="flex flex-col gap-0.5 min-w-0">
-              <p className="text-[11px] text-[#6b7280] leading-tight">Response Rate</p>
-              <h3 className="text-[22px] font-bold text-[#111827] leading-none">85%</h3>
-              <p className="text-[10px] text-green-600 leading-tight font-medium">Good response rate</p>
-            </div>
-          </div>
-
-        </div>
-
-        {/* 8 SMALL CARDS — height 80px */}
-        <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-4 mt-6">
-          {featureCards.map((item, index) => {
-            const Icon = item.icon;
-            return (
+            <div className="flex-1 h-2 rounded-full bg-gray-200 overflow-hidden">
               <div
-                key={index}
-                className="bg-white border border-[#e5e7eb] rounded-[18px] h-[80px] p-2 shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center gap-1 overflow-hidden"
-              >
-                <div
-                  className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${item.color}`}
-                >
-                  <Icon className="w-4 h-4" />
-                </div>
-                <p className="text-[11px] font-semibold text-[#111827] leading-tight text-center px-1 line-clamp-2">
-                  {item.title}
-                </p>
-              </div>
-            );
-          })}
-        </div>
+                className={`h-full rounded-full ${
+                  star === 5
+                    ? "w-[80%] bg-green-500"
+                    : star === 4
+                    ? "w-[55%] bg-green-400"
+                    : star === 3
+                    ? "w-[30%] bg-yellow-400"
+                    : star === 2
+                    ? "w-[18%] bg-orange-400"
+                    : "w-[10%] bg-red-400"
+                }`}
+              />
+            </div>
 
-        {/* 3 BIG CARDS — height 160px with labels */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7">
-          <div className="bg-white rounded-[24px] h-[160px] border border-[#e5e7eb] flex items-center justify-center shadow-sm">
-            <p className="text-lg font-semibold text-[#111827]">Rating Overview Card</p>
-          </div>
-          <div className="bg-white rounded-[24px] h-[160px] border border-[#e5e7eb] flex items-center justify-center shadow-sm">
-            <p className="text-lg font-semibold text-[#111827]">Low Rating Alerts Card</p>
-          </div>
-          <div className="bg-white rounded-[24px] h-[160px] border border-[#e5e7eb] flex items-center justify-center shadow-sm">
-            <p className="text-lg font-semibold text-[#111827]">Unanswered Reviews Card</p>
-          </div>
-        </div>
+            <span className="text-[11px] text-[#6b7280]">
+              {star === 5
+                ? "62%"
+                : star === 4
+                ? "23%"
+                : star === 3
+                ? "8%"
+                : star === 2
+                ? "4%"
+                : "3%"}
+            </span>
 
-        {/* 1 BIG + 2 SMALL */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7">
-          <div className="xl:col-span-2 bg-white rounded-[24px] h-[360px] border border-[#e5e7eb]" />
-          <div className="flex flex-col gap-6 h-[360px]">
-            <div className="bg-white rounded-[24px] h-[170px] border border-[#e5e7eb]" />
-            <div className="bg-white rounded-[24px] h-[170px] border border-[#e5e7eb]" />
           </div>
-        </div>
-
-        {/* LAST 3 CARDS */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7 pb-8">
-          <div className="bg-white rounded-[24px] h-[340px] border border-[#e5e7eb]" />
-          <div className="bg-white rounded-[24px] h-[340px] border border-[#e5e7eb]" />
-          <div className="bg-white rounded-[24px] h-[340px] border border-[#e5e7eb]" />
-        </div>
+        ))}
 
       </div>
+
     </div>
-  );
-}
+
+  </div>
+
+  {/* Low Rating Alerts */}
+  <div className="bg-white rounded-[24px] h-[220px] border border-[#e5e7eb] shadow-sm p-5">
+
+    <div className="flex items-center justify-between">
+      <h3 className="text-[17px] font-semibold text-[#111827]">
+        Low Rating Alerts
+      </h3>
+
+      <button className="text-[13px] font-medium text-blue-600">
+        View All
+      </button>
+    </div>
+
+    <div className="flex flex-col gap-5 mt-6">
+
+      {[1,2,3].map((item) => (
+        <div
+          key={item}
+          className="flex items-start justify-between"
+        >
+
+          <div className="flex gap-3">
+
+            <div className="w-8 h-8 rounded-full bg-white border border-[#e5e7eb] flex items-center justify-center">
+              <span className="text-[12px] font-bold text-[#4285F4]">
+                G
+              </span>
+            </div>
+
+            <div>
+              <h4 className="text-[14px] font-semibold text-[#111827]">
+                John Doe
+              </h4>
+
+              <p className="text-[12px] text-[#6b7280] mt-1">
+                Need improvement.
+              </p>
+            </div>
+
+          </div>
+
+          <div className="flex flex-col items-end gap-1">
+
+            <div className="flex items-center gap-1">
+              <Star className="w-3.5 h-3.5 fill-red-400 text-red-400" />
+              <Star className="w-3.5 h-3.5 fill-red-400 text-red-400" />
+              <Star className="w-3.5 h-3.5 text-gray-300" />
+              <Star className="w-3.5 h-3.5 text-gray-300" />
+              <Star className="w-3.5 h-3.5 text-gray-300" />
+            </div>
+
+            <span className="text-[11px] text-[#6b7280]">
+              2h ago
+            </span>
+
+          </div>
+
+        </div>
+      ))}
+
+    </div>
+
+  </div>
+
+  {/* Unanswered Reviews */}
+  <div className="bg-white rounded-[24px] h-[220px] border border-[#e5e7eb] shadow-sm p-5">
+
+    <div className="flex items-center justify-between">
+      <h3 className="text-[17px] font-semibold text-[#111827]">
+        Unanswered Reviews
+      </h3>
+
+      <button className="text-[13px] font-medium text-blue-600">
+        View All
+      </button>
+    </div>
+
+    <div className="flex flex-col gap-5 mt-6">
+
+      {[1,2,3].map((item) => (
+        <div
+          key={item}
+          className="flex items-start justify-between"
+        >
+
+          <div className="flex gap-3">
+
+            <div className="w-8 h-8 rounded-full bg-white border border-[#e5e7eb] flex items-center justify-center">
+              <span className="text-[12px] font-bold text-[#4285F4]">
+                G
+              </span>
+            </div>
+
+            <div>
+              <h4 className="text-[14px] font-semibold text-[#111827]">
+                Emily Davis
+              </h4>
+
+              <p className="text-[12px] text-[#6b7280] mt-1">
+                Please improve your service.
+              </p>
+            </div>
+
+          </div>
+
+          <div className="flex flex-col items-end gap-1">
+
+            <div className="flex items-center gap-1">
+              <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+              <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+              <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
+              <Star className="w-3.5 h-3.5 text-gray-300" />
+              <Star className="w-3.5 h-3.5 text-gray-300" />
+            </div>
+
+            <span className="text-[11px] text-[#6b7280]">
+              3h ago
+            </span>
+
+          </div>
+
+        </div>
+      ))}
+
+    </div>
+
+  </div>
+
+</div>
