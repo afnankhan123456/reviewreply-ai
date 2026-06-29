@@ -6,8 +6,50 @@ export default function BasicPricingPage() {
 
   const router = useRouter();
 
-  const handlePayment = (amount: string) => {
-    alert(`PayPal Payment Start: $${amount}`);
+  // PAYPAL PAYMENT
+
+  const handlePayment = async (amount: string) => {
+
+    try {
+
+      const response = await fetch("/api/paypal/create-order", {
+
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+          amount,
+        }),
+
+      });
+
+      const data = await response.json();
+
+      // REDIRECT TO PAYPAL
+
+      if (data.url) {
+
+        window.location.href = data.url;
+
+      } else {
+
+        alert("PayPal payment failed");
+
+        console.log(data);
+
+      }
+
+    } catch (error) {
+
+      console.log(error);
+
+      alert("Something went wrong");
+
+    }
+
   };
 
   return (
