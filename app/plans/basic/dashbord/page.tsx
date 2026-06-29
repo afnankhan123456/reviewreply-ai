@@ -131,7 +131,7 @@ export default function DashboardPage() {
 
         </div>
 
-        {/* 8 SMALL CARDS — height 80px, content ab andar fit hoga */}
+        {/* 8 SMALL CARDS — height 80px */}
         <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-4 mt-6">
           {featureCards.map((item, index) => {
             const Icon = item.icon;
@@ -153,11 +153,17 @@ export default function DashboardPage() {
           })}
         </div>
 
-        {/* 3 BIG CARDS */}
+        {/* 3 BIG CARDS — height 160px with labels */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7">
-          <div className="bg-white rounded-[24px] h-[360px] border border-[#e5e7eb]" />
-          <div className="bg-white rounded-[24px] h-[360px] border border-[#e5e7eb]" />
-          <div className="bg-white rounded-[24px] h-[360px] border border-[#e5e7eb]" />
+          <div className="bg-white rounded-[24px] h-[160px] border border-[#e5e7eb] flex items-center justify-center shadow-sm">
+            <p className="text-lg font-semibold text-[#111827]">Rating Overview Card</p>
+          </div>
+          <div className="bg-white rounded-[24px] h-[160px] border border-[#e5e7eb] flex items-center justify-center shadow-sm">
+            <p className="text-lg font-semibold text-[#111827]">Low Rating Alerts Card</p>
+          </div>
+          <div className="bg-white rounded-[24px] h-[160px] border border-[#e5e7eb] flex items-center justify-center shadow-sm">
+            <p className="text-lg font-semibold text-[#111827]">Unanswered Reviews Card</p>
+          </div>
         </div>
 
         {/* 1 BIG + 2 SMALL */}
