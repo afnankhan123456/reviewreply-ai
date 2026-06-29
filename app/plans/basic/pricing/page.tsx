@@ -11,6 +11,7 @@ export default function BasicPricingPage() {
   };
 
   return (
+
     <div className="min-h-screen bg-black text-white p-4">
 
       <div className="max-w-7xl mx-auto">
@@ -87,7 +88,7 @@ export default function BasicPricingPage() {
 
                 <button
                   onClick={() => handlePayment("0.01")}
-                  className="text-blue-400 font-bold text-lg hover:text-blue-300"
+                  className="text-blue-400 font-bold text-lg hover:text-blue-300 transition-all"
                 >
                   Pay
                 </button>
@@ -120,7 +121,7 @@ export default function BasicPricingPage() {
 
                 <button
                   onClick={() => handlePayment("24")}
-                  className="text-blue-400 font-bold text-lg hover:text-blue-300"
+                  className="text-blue-400 font-bold text-lg hover:text-blue-300 transition-all"
                 >
                   Pay
                 </button>
@@ -153,7 +154,7 @@ export default function BasicPricingPage() {
 
                 <button
                   onClick={() => handlePayment("45")}
-                  className="text-blue-400 font-bold text-lg hover:text-blue-300"
+                  className="text-blue-400 font-bold text-lg hover:text-blue-300 transition-all"
                 >
                   Pay
                 </button>
@@ -186,7 +187,7 @@ export default function BasicPricingPage() {
 
                 <button
                   onClick={() => handlePayment("88")}
-                  className="text-blue-400 font-bold text-lg hover:text-blue-300"
+                  className="text-blue-400 font-bold text-lg hover:text-blue-300 transition-all"
                 >
                   Pay
                 </button>
@@ -209,7 +210,7 @@ export default function BasicPricingPage() {
 
             {/* FEATURE AREA */}
 
-            <div className="p-4 grid grid-cols-2 gap-x-2 gap-y-2 text-[14px] leading-tight text-zinc-300">
+            <div className="p-4 grid grid-cols-2 gap-x-3 gap-y-3 text-[14px] leading-tight text-zinc-300">
 
               <div>✓ 1 Business Location</div>
 
@@ -252,5 +253,6 @@ export default function BasicPricingPage() {
       </div>
 
     </div>
+
   );
 }
