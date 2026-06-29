@@ -459,11 +459,14 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* LAST 3 CARDS */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7 pb-8">
-          <div className="bg-white rounded-[24px] h-[340px] border border-[#e5e7eb]" />
-          <div className="bg-white rounded-[24px] h-[340px] border border-[#e5e7eb]" />
-          <div className="bg-white rounded-[24px] h-[340px] border border-[#e5e7eb]" />
+        {/* LAST 2 CARDS — Review Analysis & Monthly History (same size) */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-7 pb-8">
+          <div className="bg-white rounded-[24px] h-[340px] border border-[#e5e7eb] shadow-sm flex items-center justify-center">
+            <h3 className="text-[17px] font-semibold text-[#111827]">Review Analysis</h3>
+          </div>
+          <div className="bg-white rounded-[24px] h-[340px] border border-[#e5e7eb] shadow-sm flex items-center justify-center">
+            <h3 className="text-[17px] font-semibold text-[#111827]">Monthly History</h3>
+          </div>
         </div>
 
       </div>
