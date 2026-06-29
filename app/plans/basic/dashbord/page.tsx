@@ -76,11 +76,11 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        {/* TOP 4 BIG CARDS */}
+        {/* TOP 4 BIG CARDS — height changed to 80px */}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mt-7">
 
           {/* CARD 1 */}
-          <div className="bg-white border border-[#e5e7eb] rounded-[26px] p-6 h-[180px] shadow-sm">
+          <div className="bg-white border border-[#e5e7eb] rounded-[26px] p-6 h-[80px] shadow-sm">
             <div className="flex items-start justify-between">
 
               <div>
@@ -111,7 +111,7 @@ export default function DashboardPage() {
           </div>
 
           {/* CARD 2 */}
-          <div className="bg-white border border-[#e5e7eb] rounded-[26px] p-6 h-[180px] shadow-sm">
+          <div className="bg-white border border-[#e5e7eb] rounded-[26px] p-6 h-[80px] shadow-sm">
             <div className="flex items-start justify-between">
 
               <div>
@@ -136,7 +136,7 @@ export default function DashboardPage() {
           </div>
 
           {/* CARD 3 */}
-          <div className="bg-white border border-[#e5e7eb] rounded-[26px] p-6 h-[180px] shadow-sm">
+          <div className="bg-white border border-[#e5e7eb] rounded-[26px] p-6 h-[80px] shadow-sm">
             <div className="flex items-start justify-between">
 
               <div>
@@ -176,7 +176,7 @@ export default function DashboardPage() {
           </div>
 
           {/* CARD 4 */}
-          <div className="bg-white border border-[#e5e7eb] rounded-[26px] p-6 h-[180px] shadow-sm">
+          <div className="bg-white border border-[#e5e7eb] rounded-[26px] p-6 h-[80px] shadow-sm">
             <div className="flex items-start justify-between">
 
               <div>
