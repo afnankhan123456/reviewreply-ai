@@ -15,17 +15,6 @@ import {
 
 import Topbar from "./components/Topbar";
 
-import AlertsCard from "./components/AlertsCard";
-import UnansweredCard from "./components/UnansweredCard";
-import RatingOverview from "./components/RatingOverview";
-
-import AnalyticsChart from "./components/AnalyticsChart";
-import KeywordCard from "./components/KeywordCard";
-import ResponseTrackingCard from "./components/ResponseTrackingCard";
-
-import PDFReportCard from "./components/PDFReportCard";
-import RecentReviewsCard from "./components/RecentReviewsCard";
-
 const featureCards = [
   {
     title: "Low Rating Alerts",
@@ -75,10 +64,8 @@ export default function DashboardPage() {
 
       <div className="p-5 lg:p-7">
 
-        {/* TOPBAR */}
         <Topbar />
 
-        {/* PAGE TITLE */}
         <div className="mt-5">
 
           <h1 className="text-[34px] font-bold text-[#111827]">
@@ -91,14 +78,11 @@ export default function DashboardPage() {
 
         </div>
 
-        {/* ================================================= */}
-        {/* TOP 4 BIG CARDS */}
-        {/* ================================================= */}
+        {/* TOP 4 CARDS */}
 
         <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-5 mt-7">
 
-          {/* CARD 1 */}
-          <div className="bg-white border border-[#e5e7eb] rounded-[26px] p-6 h-[180px] shadow-sm hover:shadow-md transition-all">
+          <div className="bg-white border border-[#e5e7eb] rounded-[26px] p-6 h-[180px] shadow-sm">
 
             <div className="flex items-start justify-between">
 
@@ -134,8 +118,7 @@ export default function DashboardPage() {
 
           </div>
 
-          {/* CARD 2 */}
-          <div className="bg-white border border-[#e5e7eb] rounded-[26px] p-6 h-[180px] shadow-sm hover:shadow-md transition-all">
+          <div className="bg-white border border-[#e5e7eb] rounded-[26px] p-6 h-[180px] shadow-sm">
 
             <div className="flex items-start justify-between">
 
@@ -163,8 +146,7 @@ export default function DashboardPage() {
 
           </div>
 
-          {/* CARD 3 */}
-          <div className="bg-white border border-[#e5e7eb] rounded-[26px] p-6 h-[180px] shadow-sm hover:shadow-md transition-all">
+          <div className="bg-white border border-[#e5e7eb] rounded-[26px] p-6 h-[180px] shadow-sm">
 
             <div className="flex items-start justify-between">
 
@@ -209,8 +191,7 @@ export default function DashboardPage() {
 
           </div>
 
-          {/* CARD 4 */}
-          <div className="bg-white border border-[#e5e7eb] rounded-[26px] p-6 h-[180px] shadow-sm hover:shadow-md transition-all">
+          <div className="bg-white border border-[#e5e7eb] rounded-[26px] p-6 h-[180px] shadow-sm">
 
             <div className="flex items-start justify-between">
 
@@ -240,9 +221,7 @@ export default function DashboardPage() {
 
         </div>
 
-        {/* ================================================= */}
         {/* 8 SMALL CARDS */}
-        {/* ================================================= */}
 
         <div className="grid grid-cols-2 md:grid-cols-4 2xl:grid-cols-8 gap-4 mt-6">
 
@@ -254,7 +233,7 @@ export default function DashboardPage() {
 
               <div
                 key={index}
-                className="bg-white border border-[#e5e7eb] rounded-[22px] h-[120px] px-4 py-4 shadow-sm hover:shadow-md transition-all cursor-pointer"
+                className="bg-white border border-[#e5e7eb] rounded-[22px] h-[120px] px-4 py-4 shadow-sm"
               >
 
                 <div
@@ -275,63 +254,41 @@ export default function DashboardPage() {
 
         </div>
 
-        {/* ================================================= */}
-        {/* 3 BIG SAME CARDS */}
-        {/* ================================================= */}
+        {/* 3 BIG CARDS */}
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7">
 
-          <div className="h-[360px]">
-            <RatingOverview />
-          </div>
+          <div className="bg-white rounded-[24px] h-[360px] border border-[#e5e7eb]" />
 
-          <div className="h-[360px]">
-            <AlertsCard />
-          </div>
+          <div className="bg-white rounded-[24px] h-[360px] border border-[#e5e7eb]" />
 
-          <div className="h-[360px]">
-            <UnansweredCard />
-          </div>
+          <div className="bg-white rounded-[24px] h-[360px] border border-[#e5e7eb]" />
 
         </div>
 
-        {/* ================================================= */}
-        {/* 1 BIG + 2 SMALL */}
-        {/* ================================================= */}
+        {/* BIG + 2 SMALL */}
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7">
 
-          <div className="xl:col-span-2 h-[360px]">
-            <AnalyticsChart />
-          </div>
+          <div className="xl:col-span-2 bg-white rounded-[24px] h-[360px] border border-[#e5e7eb]" />
 
           <div className="flex flex-col gap-6 h-[360px]">
 
-            <div className="h-[170px]">
-              <KeywordCard />
-            </div>
+            <div className="bg-white rounded-[24px] h-[170px] border border-[#e5e7eb]" />
 
-            <div className="h-[170px]">
-              <ResponseTrackingCard />
-            </div>
+            <div className="bg-white rounded-[24px] h-[170px] border border-[#e5e7eb]" />
 
           </div>
 
         </div>
 
-        {/* ================================================= */}
         {/* LAST 2 CARDS */}
-        {/* ================================================= */}
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-7 pb-8">
 
-          <div className="h-[340px]">
-            <RecentReviewsCard />
-          </div>
+          <div className="bg-white rounded-[24px] h-[340px] border border-[#e5e7eb]" />
 
-          <div className="h-[340px]">
-            <PDFReportCard />
-          </div>
+          <div className="bg-white rounded-[24px] h-[340px] border border-[#e5e7eb]" />
 
         </div>
 
