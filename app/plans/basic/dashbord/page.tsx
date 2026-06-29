@@ -6,7 +6,6 @@ import ReviewDashboard from "./components/ReviewDashboard";
 import AlertsCard from "./components/AlertsCard";
 import UnansweredCard from "./components/UnansweredCard";
 import RatingOverview from "./components/RatingOverview";
-import DetectionCard from "./components/DetectionCard";
 import AnalyticsChart from "./components/AnalyticsChart";
 
 export default function DashboardPage() {
