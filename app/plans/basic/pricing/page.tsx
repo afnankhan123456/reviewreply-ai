@@ -209,7 +209,7 @@ export default function BasicPricingPage() {
 
             {/* FEATURE AREA */}
 
-            <div className="p-4 grid grid-cols-2 gap-x-2 gap-y-2 text-[11px] leading-tight text-zinc-300">
+            <div className="p-4 grid grid-cols-2 gap-x-2 gap-y-2 text-[14px] leading-tight text-zinc-300">
 
               <div>✓ 1 Business Location</div>
 
