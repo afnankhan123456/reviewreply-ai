@@ -131,21 +131,21 @@ export default function DashboardPage() {
 
         </div>
 
-        {/* 8 SMALL CARDS — height 80px */}
+        {/* 8 SMALL CARDS — height 80px, content ab andar fit hoga */}
         <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-4 mt-6">
           {featureCards.map((item, index) => {
             const Icon = item.icon;
             return (
               <div
                 key={index}
-                className="bg-white border border-[#e5e7eb] rounded-[22px] h-[80px] px-4 py-4 shadow-sm hover:shadow-md transition-all"
+                className="bg-white border border-[#e5e7eb] rounded-[18px] h-[80px] p-2 shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center gap-1 overflow-hidden"
               >
                 <div
-                  className={`w-[48px] h-[48px] rounded-[16px] flex items-center justify-center ${item.color}`}
+                  className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${item.color}`}
                 >
-                  <Icon className="w-5 h-5" />
+                  <Icon className="w-4 h-4" />
                 </div>
-                <p className="text-[13px] font-semibold text-[#111827] leading-5 mt-3">
+                <p className="text-[11px] font-semibold text-[#111827] leading-tight text-center px-1 line-clamp-2">
                   {item.title}
                 </p>
               </div>
