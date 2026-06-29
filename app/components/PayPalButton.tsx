@@ -39,6 +39,7 @@ export default function PayPalButton({ amount }: Props) {
             purchase_units: [
               {
                 amount: {
+                  currency_code: "USD",
                   value: amount,
                 },
               },
