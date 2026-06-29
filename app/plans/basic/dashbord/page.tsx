@@ -1,6 +1,5 @@
 "use client";
 
-import Sidebar from "./components/Sidebar";
 import Topbar from "./components/Topbar";
 
 import AlertsCard from "./components/AlertsCard";
@@ -17,19 +16,11 @@ export default function DashboardPage() {
 
   return (
 
-    <div className="flex min-h-screen bg-[#f5f7fb]">
-
-      {/* SIDEBAR */}
-
-      <div className="w-[240px] border-r border-zinc-200 bg-white">
-
-        <Sidebar />
-
-      </div>
+    <div className="min-h-screen bg-[#f5f7fb]">
 
       {/* MAIN CONTENT */}
 
-      <div className="flex-1 p-6">
+      <div className="p-6">
 
         {/* TOPBAR */}
 
@@ -55,7 +46,7 @@ export default function DashboardPage() {
 
           {/* CARD 1 */}
 
-          <div className="bg-white rounded-3xl border border-zinc-200 p-6">
+          <div className="bg-white rounded-3xl border border-zinc-200 p-6 shadow-sm">
 
             <div className="flex items-center justify-between">
 
@@ -85,7 +76,7 @@ export default function DashboardPage() {
 
           {/* CARD 2 */}
 
-          <div className="bg-white rounded-3xl border border-zinc-200 p-6">
+          <div className="bg-white rounded-3xl border border-zinc-200 p-6 shadow-sm">
 
             <div className="flex items-center justify-between">
 
@@ -115,7 +106,7 @@ export default function DashboardPage() {
 
           {/* CARD 3 */}
 
-          <div className="bg-white rounded-3xl border border-zinc-200 p-6">
+          <div className="bg-white rounded-3xl border border-zinc-200 p-6 shadow-sm">
 
             <div className="flex items-center justify-between">
 
@@ -145,7 +136,7 @@ export default function DashboardPage() {
 
           {/* CARD 4 */}
 
-          <div className="bg-white rounded-3xl border border-zinc-200 p-6">
+          <div className="bg-white rounded-3xl border border-zinc-200 p-6 shadow-sm">
 
             <div className="flex items-center justify-between">
 
