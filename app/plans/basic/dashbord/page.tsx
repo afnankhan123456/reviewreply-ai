@@ -1,222 +1,247 @@
 "use client";
 
+import Sidebar from "./components/Sidebar";
 import Topbar from "./components/Topbar";
-import StatCard from "./components/StatCard";
-import ReviewDashboard from "./components/ReviewDashboard";
+
 import AlertsCard from "./components/AlertsCard";
 import UnansweredCard from "./components/UnansweredCard";
 import RatingOverview from "./components/RatingOverview";
 import AnalyticsChart from "./components/AnalyticsChart";
 
+import KeywordCard from "./components/KeywordCard";
+import ResponseTrackingCard from "./components/ResponseTrackingCard";
+import PDFReportCard from "./components/PDFReportCard";
+import RecentReviewsCard from "./components/RecentReviewsCard";
+
 export default function DashboardPage() {
 
   return (
 
-    <div className="min-h-screen bg-[#f5f7fb] p-6">
+    <div className="flex min-h-screen bg-[#f5f7fb]">
 
-      {/* TOPBAR */}
+      {/* SIDEBAR */}
 
-      <Topbar />
+      <div className="w-[240px] border-r border-zinc-200 bg-white">
 
-      {/* PAGE TITLE */}
-
-      <div className="mt-6 mb-6">
-
-        <h1 className="text-3xl font-bold text-black">
-          Dashboard
-        </h1>
-
-        <p className="text-zinc-500 mt-1">
-          Monitor reviews, alerts, analytics & customer responses
-        </p>
+        <Sidebar />
 
       </div>
 
-      {/* TOP STATS */}
+      {/* MAIN CONTENT */}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
+      <div className="flex-1 p-6">
 
-        <div className="bg-white rounded-3xl p-5 border border-zinc-200 shadow-sm">
+        {/* TOPBAR */}
 
-          <div className="flex items-center justify-between">
+        <Topbar />
 
-            <div>
+        {/* PAGE TITLE */}
 
-              <p className="text-zinc-500 text-sm">
-                Reviews Synced
-              </p>
+        <div className="mt-6">
 
-              <h2 className="text-4xl font-bold text-black mt-2">
-                100
-              </h2>
+          <h1 className="text-3xl font-bold text-black">
+            Dashboard
+          </h1>
 
-              <p className="text-green-600 text-sm mt-2">
-                Active This Month
-              </p>
+          <p className="text-zinc-500 mt-1">
+            Here's what's happening with your reviews today.
+          </p>
+
+        </div>
+
+        {/* TOP 4 CARDS */}
+
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 mt-6">
+
+          {/* CARD 1 */}
+
+          <div className="bg-white rounded-3xl border border-zinc-200 p-6">
+
+            <div className="flex items-center justify-between">
+
+              <div>
+
+                <p className="text-zinc-500 text-sm">
+                  Reviews Synced
+                </p>
+
+                <h2 className="text-4xl font-bold text-black mt-2">
+                  100 / 100
+                </h2>
+
+                <p className="text-zinc-500 text-sm mt-2">
+                  This Month
+                </p>
+
+              </div>
+
+              <div className="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center text-3xl">
+                💬
+              </div>
 
             </div>
 
-            <div className="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center text-3xl">
-              💬
+          </div>
+
+          {/* CARD 2 */}
+
+          <div className="bg-white rounded-3xl border border-zinc-200 p-6">
+
+            <div className="flex items-center justify-between">
+
+              <div>
+
+                <p className="text-zinc-500 text-sm">
+                  Google Review Sync
+                </p>
+
+                <h2 className="text-3xl font-bold text-green-600 mt-2">
+                  Active
+                </h2>
+
+                <p className="text-zinc-500 text-sm mt-2">
+                  Last synced 2 hours ago
+                </p>
+
+              </div>
+
+              <div className="w-16 h-16 rounded-2xl bg-green-100 flex items-center justify-center text-3xl">
+                🔄
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* CARD 3 */}
+
+          <div className="bg-white rounded-3xl border border-zinc-200 p-6">
+
+            <div className="flex items-center justify-between">
+
+              <div>
+
+                <p className="text-zinc-500 text-sm">
+                  Average Rating
+                </p>
+
+                <h2 className="text-4xl font-bold text-black mt-2">
+                  4.6
+                </h2>
+
+                <p className="text-yellow-500 text-lg mt-2">
+                  ★★★★★
+                </p>
+
+              </div>
+
+              <div className="w-16 h-16 rounded-2xl bg-yellow-100 flex items-center justify-center text-3xl">
+                ⭐
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* CARD 4 */}
+
+          <div className="bg-white rounded-3xl border border-zinc-200 p-6">
+
+            <div className="flex items-center justify-between">
+
+              <div>
+
+                <p className="text-zinc-500 text-sm">
+                  Response Rate
+                </p>
+
+                <h2 className="text-4xl font-bold text-black mt-2">
+                  85%
+                </h2>
+
+                <p className="text-green-600 text-sm mt-2">
+                  Good response rate
+                </p>
+
+              </div>
+
+              <div className="w-16 h-16 rounded-2xl bg-purple-100 flex items-center justify-center text-3xl">
+                📈
+              </div>
+
             </div>
 
           </div>
 
         </div>
 
-        <div className="bg-white rounded-3xl p-5 border border-zinc-200 shadow-sm">
+        {/* 8 SMALL FEATURE CARDS */}
 
-          <div className="flex items-center justify-between">
+        <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-4 mt-6">
 
-            <div>
+          {[
+            "Low Rating Alerts",
+            "Unanswered Tracking",
+            "Reply Templates",
+            "Response Tracking",
+            "Email Alerts",
+            "Top 5 Keywords",
+            "Monthly PDF Reports",
+            "Export CSV / PDF",
+          ].map((item, index) => (
 
-              <p className="text-zinc-500 text-sm">
-                Google Sync
-              </p>
+            <div
+              key={index}
+              className="bg-white border border-zinc-200 rounded-2xl p-4 text-center hover:shadow-md transition-all"
+            >
 
-              <h2 className="text-3xl font-bold text-green-600 mt-2">
-                Active
-              </h2>
+              <div className="text-2xl mb-3">
+                ✨
+              </div>
 
-              <p className="text-zinc-500 text-sm mt-2">
-                Last sync 2h ago
+              <p className="text-sm font-medium text-black leading-snug">
+                {item}
               </p>
 
             </div>
 
-            <div className="w-16 h-16 rounded-2xl bg-green-100 flex items-center justify-center text-3xl">
-              🔄
-            </div>
-
-          </div>
+          ))}
 
         </div>
 
-        <div className="bg-white rounded-3xl p-5 border border-zinc-200 shadow-sm">
+        {/* MAIN 3 CARDS */}
 
-          <div className="flex items-center justify-between">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6">
 
-            <div>
+          <RatingOverview />
 
-              <p className="text-zinc-500 text-sm">
-                Avg Rating
-              </p>
+          <AlertsCard />
 
-              <h2 className="text-4xl font-bold text-black mt-2">
-                4.6
-              </h2>
-
-              <p className="text-yellow-500 text-sm mt-2">
-                ★★★★★
-              </p>
-
-            </div>
-
-            <div className="w-16 h-16 rounded-2xl bg-yellow-100 flex items-center justify-center text-3xl">
-              ⭐
-            </div>
-
-          </div>
+          <UnansweredCard />
 
         </div>
 
-        <div className="bg-white rounded-3xl p-5 border border-zinc-200 shadow-sm">
+        {/* ANALYTICS SECTION */}
 
-          <div className="flex items-center justify-between">
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-6">
 
-            <div>
+          <AnalyticsChart />
 
-              <p className="text-zinc-500 text-sm">
-                Response Rate
-              </p>
+          <KeywordCard />
 
-              <h2 className="text-4xl font-bold text-black mt-2">
-                85%
-              </h2>
-
-              <p className="text-green-600 text-sm mt-2">
-                Good Performance
-              </p>
-
-            </div>
-
-            <div className="w-16 h-16 rounded-2xl bg-purple-100 flex items-center justify-center text-3xl">
-              📈
-            </div>
-
-          </div>
+          <ResponseTrackingCard />
 
         </div>
 
-      </div>
+        {/* LAST SECTION */}
 
-      {/* FEATURE CARDS */}
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-6">
 
-      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5 mt-8">
+          <RecentReviewsCard />
 
-        {[
-          "1 Business Location",
-          "Low Rating Alerts",
-          "100 Review Sync",
-          "Monthly PDF Reports",
-          "Google Review Sync",
-          "Reply Templates",
-          "Review Dashboard",
-          "Response Tracking",
-          "Email Alerts",
-          "Top 5 Keywords",
-          "Unanswered Tracking",
-          "Search & Filter",
-          "Rating Overview",
-          "30 Day History",
-          "Review Analytics",
-          "Export CSV/PDF",
-        ].map((feature, index) => (
+          <PDFReportCard />
 
-          <div
-            key={index}
-            className="bg-white border border-zinc-200 rounded-3xl p-5 hover:shadow-lg transition-all"
-          >
-
-            <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-2xl mb-4">
-              ✨
-            </div>
-
-            <h3 className="text-black font-semibold text-lg">
-              {feature}
-            </h3>
-
-            <p className="text-zinc-500 text-sm mt-2">
-              Fully integrated feature inside your dashboard
-            </p>
-
-          </div>
-
-        ))}
-
-      </div>
-
-      {/* MAIN SECTION */}
-
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-8">
-
-        <ReviewDashboard />
-
-        <AlertsCard />
-
-        <UnansweredCard />
-
-      </div>
-
-      {/* BOTTOM SECTION */}
-
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-8">
-
-        <RatingOverview />
-
-        <DetectionCard />
-
-        <AnalyticsChart />
+        </div>
 
       </div>
 
