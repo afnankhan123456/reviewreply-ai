@@ -13,85 +13,193 @@ export default function DashboardPage() {
 
   return (
 
-    <div>
+    <div className="min-h-screen bg-[#f5f7fb] p-6">
 
       {/* TOPBAR */}
 
       <Topbar />
 
-      {/* TOP STATS */}
+      {/* PAGE TITLE */}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+      <div className="mt-6 mb-6">
 
-        <StatCard
-          title="Reviews Synced"
-          value="100/100"
-          subtitle="This Month"
-        />
+        <h1 className="text-3xl font-bold text-black">
+          Dashboard
+        </h1>
 
-        <StatCard
-          title="Google Review Sync"
-          value="Active"
-          subtitle="Last synced 2 hours ago"
-        />
-
-        <StatCard
-          title="Business Location"
-          value="1"
-          subtitle="Connected"
-        />
+        <p className="text-zinc-500 mt-1">
+          Monitor reviews, alerts, analytics & customer responses
+        </p>
 
       </div>
 
-      {/* FEATURES SECTION */}
+      {/* TOP STATS */}
 
-      <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 mt-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
 
-        <h2 className="text-2xl font-bold text-white mb-5">
-          Basic Plan Features
-        </h2>
+        <div className="bg-white rounded-3xl p-5 border border-zinc-200 shadow-sm">
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-zinc-300 text-[14px]">
+          <div className="flex items-center justify-between">
 
-          <div>✓ 1 Business Location</div>
+            <div>
 
-          <div>✓ Low Rating Alerts</div>
+              <p className="text-zinc-500 text-sm">
+                Reviews Synced
+              </p>
 
-          <div>✓ 100 Review Sync</div>
+              <h2 className="text-4xl font-bold text-black mt-2">
+                100
+              </h2>
 
-          <div>✓ Monthly PDF Reports</div>
+              <p className="text-green-600 text-sm mt-2">
+                Active This Month
+              </p>
 
-          <div>✓ Google Review Sync</div>
+            </div>
 
-          <div>✓ Reply Templates</div>
+            <div className="w-16 h-16 rounded-2xl bg-blue-100 flex items-center justify-center text-3xl">
+              💬
+            </div>
 
-          <div>✓ Review Dashboard</div>
+          </div>
 
-          <div>✓ Response Tracking</div>
+        </div>
 
-          <div>✓ Email Alerts</div>
+        <div className="bg-white rounded-3xl p-5 border border-zinc-200 shadow-sm">
 
-          <div>✓ Top 5 Keywords</div>
+          <div className="flex items-center justify-between">
 
-          <div>✓ Unanswered Tracking</div>
+            <div>
 
-          <div>✓ Search & Filter</div>
+              <p className="text-zinc-500 text-sm">
+                Google Sync
+              </p>
 
-          <div>✓ Rating Overview</div>
+              <h2 className="text-3xl font-bold text-green-600 mt-2">
+                Active
+              </h2>
 
-          <div>✓ 30 Day History</div>
+              <p className="text-zinc-500 text-sm mt-2">
+                Last sync 2h ago
+              </p>
 
-          <div>✓ Review Analytics</div>
+            </div>
 
-          <div>✓ Export CSV/PDF</div>
+            <div className="w-16 h-16 rounded-2xl bg-green-100 flex items-center justify-center text-3xl">
+              🔄
+            </div>
+
+          </div>
+
+        </div>
+
+        <div className="bg-white rounded-3xl p-5 border border-zinc-200 shadow-sm">
+
+          <div className="flex items-center justify-between">
+
+            <div>
+
+              <p className="text-zinc-500 text-sm">
+                Avg Rating
+              </p>
+
+              <h2 className="text-4xl font-bold text-black mt-2">
+                4.6
+              </h2>
+
+              <p className="text-yellow-500 text-sm mt-2">
+                ★★★★★
+              </p>
+
+            </div>
+
+            <div className="w-16 h-16 rounded-2xl bg-yellow-100 flex items-center justify-center text-3xl">
+              ⭐
+            </div>
+
+          </div>
+
+        </div>
+
+        <div className="bg-white rounded-3xl p-5 border border-zinc-200 shadow-sm">
+
+          <div className="flex items-center justify-between">
+
+            <div>
+
+              <p className="text-zinc-500 text-sm">
+                Response Rate
+              </p>
+
+              <h2 className="text-4xl font-bold text-black mt-2">
+                85%
+              </h2>
+
+              <p className="text-green-600 text-sm mt-2">
+                Good Performance
+              </p>
+
+            </div>
+
+            <div className="w-16 h-16 rounded-2xl bg-purple-100 flex items-center justify-center text-3xl">
+              📈
+            </div>
+
+          </div>
 
         </div>
 
       </div>
 
-      {/* MIDDLE SECTION */}
+      {/* FEATURE CARDS */}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5 mt-8">
+
+        {[
+          "1 Business Location",
+          "Low Rating Alerts",
+          "100 Review Sync",
+          "Monthly PDF Reports",
+          "Google Review Sync",
+          "Reply Templates",
+          "Review Dashboard",
+          "Response Tracking",
+          "Email Alerts",
+          "Top 5 Keywords",
+          "Unanswered Tracking",
+          "Search & Filter",
+          "Rating Overview",
+          "30 Day History",
+          "Review Analytics",
+          "Export CSV/PDF",
+        ].map((feature, index) => (
+
+          <div
+            key={index}
+            className="bg-white border border-zinc-200 rounded-3xl p-5 hover:shadow-lg transition-all"
+          >
+
+            <div className="w-14 h-14 rounded-2xl bg-blue-50 flex items-center justify-center text-2xl mb-4">
+              ✨
+            </div>
+
+            <h3 className="text-black font-semibold text-lg">
+              {feature}
+            </h3>
+
+            <p className="text-zinc-500 text-sm mt-2">
+              Fully integrated feature inside your dashboard
+            </p>
+
+          </div>
+
+        ))}
+
+      </div>
+
+      {/* MAIN SECTION */}
+
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-8">
 
         <ReviewDashboard />
 
@@ -103,7 +211,7 @@ export default function DashboardPage() {
 
       {/* BOTTOM SECTION */}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-8">
 
         <RatingOverview />
 
