@@ -18,7 +18,7 @@ export default function PlanCard() {
 
       {/* FEATURES */}
 
-      <div className="grid grid-cols-2 gap-x-2 gap-y-2 text-[10px] leading-tight text-zinc-300 flex-1">
+      <div className="grid grid-cols-2 gap-x-2 gap-y-2 text-[12px] leading-tight text-zinc-300 flex-1">
 
         <div>✓ 1 Business Location</div>
 
