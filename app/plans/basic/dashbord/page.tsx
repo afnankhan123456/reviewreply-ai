@@ -25,7 +25,6 @@ import ResponseTrackingCard from "./components/ResponseTrackingCard";
 
 import PDFReportCard from "./components/PDFReportCard";
 import RecentReviewsCard from "./components/RecentReviewsCard";
-import ExtraCard from "./components/ExtraCard";
 
 const featureCards = [
   {
@@ -73,6 +72,7 @@ const featureCards = [
 export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-[#f7f8fc]">
+
       <div className="p-5 lg:p-7">
 
         {/* TOPBAR */}
@@ -80,6 +80,7 @@ export default function DashboardPage() {
 
         {/* PAGE TITLE */}
         <div className="mt-5">
+
           <h1 className="text-[34px] font-bold text-[#111827]">
             Dashboard
           </h1>
@@ -87,6 +88,7 @@ export default function DashboardPage() {
           <p className="text-[#6b7280] text-[15px] mt-1">
             Here's what's happening with your reviews today.
           </p>
+
         </div>
 
         {/* ================================================= */}
@@ -96,11 +98,12 @@ export default function DashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-5 mt-7">
 
           {/* CARD 1 */}
-          <div className="bg-white border border-[#e5e7eb] rounded-[26px] p-6 h-[180px] shadow-sm hover:shadow-md transition-all relative overflow-hidden">
+          <div className="bg-white border border-[#e5e7eb] rounded-[26px] p-6 h-[180px] shadow-sm hover:shadow-md transition-all">
 
             <div className="flex items-start justify-between">
 
               <div>
+
                 <p className="text-[#6b7280] text-[15px]">
                   Reviews Synced
                 </p>
@@ -120,6 +123,7 @@ export default function DashboardPage() {
                 <p className="text-[#6b7280] text-[14px] mt-4">
                   This Month
                 </p>
+
               </div>
 
               <div className="w-[62px] h-[62px] rounded-[20px] bg-blue-100 flex items-center justify-center">
@@ -136,6 +140,7 @@ export default function DashboardPage() {
             <div className="flex items-start justify-between">
 
               <div>
+
                 <p className="text-[#6b7280] text-[15px]">
                   Google Review Sync
                 </p>
@@ -147,6 +152,7 @@ export default function DashboardPage() {
                 <p className="text-[#6b7280] text-[14px] mt-4">
                   Last synced 2 hours ago
                 </p>
+
               </div>
 
               <div className="w-[62px] h-[62px] rounded-[20px] bg-green-100 flex items-center justify-center">
@@ -295,12 +301,10 @@ export default function DashboardPage() {
 
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7">
 
-          {/* BIG CARD */}
           <div className="xl:col-span-2 h-[360px]">
             <AnalyticsChart />
           </div>
 
-          {/* RIGHT SMALL CARDS */}
           <div className="flex flex-col gap-6 h-[360px]">
 
             <div className="h-[170px]">
@@ -316,10 +320,10 @@ export default function DashboardPage() {
         </div>
 
         {/* ================================================= */}
-        {/* LAST 3 SAME CARDS */}
+        {/* LAST 2 CARDS */}
         {/* ================================================= */}
 
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7 pb-8">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-7 pb-8">
 
           <div className="h-[340px]">
             <RecentReviewsCard />
@@ -329,13 +333,10 @@ export default function DashboardPage() {
             <PDFReportCard />
           </div>
 
-          <div className="h-[340px]">
-            <ExtraCard />
-          </div>
-
         </div>
 
       </div>
+
     </div>
   );
 }
