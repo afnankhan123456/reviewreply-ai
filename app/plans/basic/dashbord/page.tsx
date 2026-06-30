@@ -153,27 +153,27 @@ export default function DashboardPage() {
           })}
         </div>
 
-        {/* 3 DETAILED CARDS — Rating Overview, Low Rating Alerts, Unanswered Reviews */}
+        {/* 3 DETAILED CARDS — Fixed height 205px */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7">
 
-          {/* Rating Overview */}
-          <div className="bg-white rounded-[20px] border border-[#e5e7eb] p-5 shadow-sm">
+          {/* Rating Overview - h-[205px] */}
+          <div className="bg-white rounded-[20px] border border-[#e5e7eb] p-5 shadow-sm h-[205px] overflow-hidden">
             <div className="flex items-center justify-between">
-              <h3 className="text-[16px] font-semibold text-[#111827]">
+              <h3 className="text-[15px] font-semibold text-[#111827]">
                 Rating Overview
               </h3>
               <button className="text-[12px] font-medium text-blue-600">
                 View All
               </button>
             </div>
-            <div className="flex items-center justify-between mt-5">
-              {/* Circle */}
-              <div className="relative w-[120px] h-[120px] rounded-full border-[10px] border-orange-400 flex flex-col items-center justify-center">
-                <h2 className="text-[32px] font-bold text-[#111827]">128</h2>
-                <p className="text-[11px] text-[#6b7280]">Total Reviews</p>
+            <div className="flex items-center justify-between mt-3">
+              {/* Smaller Circle */}
+              <div className="relative w-[90px] h-[90px] rounded-full border-[8px] border-orange-400 flex flex-col items-center justify-center">
+                <h2 className="text-[26px] font-bold text-[#111827] leading-none">128</h2>
+                <p className="text-[10px] text-[#6b7280]">Total Reviews</p>
               </div>
               {/* Rating Bars */}
-              <div className="flex flex-col gap-3 w-[140px]">
+              <div className="flex flex-col gap-2.5 w-[140px]">
                 {[
                   { star: 5, width: "80%", color: "bg-green-500", total: 80 },
                   { star: 4, width: "55%", color: "bg-green-400", total: 30 },
@@ -182,33 +182,33 @@ export default function DashboardPage() {
                   { star: 1, width: "10%", color: "bg-red-400", total: 3 },
                 ].map((item, index) => (
                   <div key={index} className="flex items-center gap-2">
-                    <span className="text-[12px] font-medium text-[#111827] w-3">
+                    <span className="text-[11px] font-medium text-[#111827] w-3">
                       {item.star}
                     </span>
-                    <div className="flex-1 h-2 rounded-full bg-gray-200 overflow-hidden">
+                    <div className="flex-1 h-1.5 rounded-full bg-gray-200 overflow-hidden">
                       <div
                         className={`h-full rounded-full ${item.color}`}
                         style={{ width: item.width }}
                       />
                     </div>
-                    <span className="text-[11px] text-[#6b7280]">{item.total}</span>
+                    <span className="text-[10px] text-[#6b7280]">{item.total}</span>
                   </div>
                 ))}
               </div>
             </div>
           </div>
 
-          {/* Low Rating Alerts */}
-          <div className="bg-white rounded-[20px] border border-[#e5e7eb] p-5 shadow-sm">
+          {/* Low Rating Alerts - h-[205px] */}
+          <div className="bg-white rounded-[20px] border border-[#e5e7eb] p-5 shadow-sm h-[205px] overflow-hidden">
             <div className="flex items-center justify-between">
-              <h3 className="text-[16px] font-semibold text-[#111827]">
+              <h3 className="text-[15px] font-semibold text-[#111827]">
                 Low Rating Alerts
               </h3>
               <button className="text-[12px] font-medium text-blue-600">
                 View All
               </button>
             </div>
-            <div className="flex flex-col gap-5 mt-5">
+            <div className="flex flex-col gap-4 mt-4">
               {[1, 2, 3].map((item) => (
                 <div key={item} className="flex items-start justify-between">
                   <div className="flex gap-3">
@@ -233,17 +233,17 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Unanswered Reviews */}
-          <div className="bg-white rounded-[20px] border border-[#e5e7eb] p-5 shadow-sm">
+          {/* Unanswered Reviews - h-[205px] */}
+          <div className="bg-white rounded-[20px] border border-[#e5e7eb] p-5 shadow-sm h-[205px] overflow-hidden">
             <div className="flex items-center justify-between">
-              <h3 className="text-[16px] font-semibold text-[#111827]">
+              <h3 className="text-[15px] font-semibold text-[#111827]">
                 Unanswered Reviews
               </h3>
               <button className="text-[12px] font-medium text-blue-600">
                 View All
               </button>
             </div>
-            <div className="flex flex-col gap-5 mt-5">
+            <div className="flex flex-col gap-4 mt-4">
               {[1, 2, 3].map((item) => (
                 <div key={item} className="flex items-start justify-between">
                   <div className="flex gap-3">
@@ -272,17 +272,17 @@ export default function DashboardPage() {
         {/* RECENT REVIEWS + RIGHT STACKED CARDS */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7">
 
-          {/* LEFT BIG CARD — Recent Reviews */}
-          <div className="xl:col-span-2 bg-white rounded-[24px] border border-[#e5e7eb] shadow-sm p-5">
+          {/* LEFT BIG CARD — Recent Reviews (now top 3, h-[205px]) */}
+          <div className="xl:col-span-2 bg-white rounded-[24px] border border-[#e5e7eb] shadow-sm p-5 h-[205px] overflow-auto">
             <div className="flex items-center justify-between">
-              <h3 className="text-[17px] font-semibold text-[#111827]">
+              <h3 className="text-[16px] font-semibold text-[#111827]">
                 Recent Reviews
               </h3>
               <button className="text-[12px] font-medium text-blue-600">
                 View All
               </button>
             </div>
-            <div className="flex flex-col gap-5 mt-5">
+            <div className="flex flex-col gap-4 mt-4">
               {[
                 {
                   name: "James Anderson",
@@ -304,13 +304,6 @@ export default function DashboardPage() {
                   rating: 2,
                   status: "Pending",
                   color: "bg-yellow-100 text-yellow-700",
-                },
-                {
-                  name: "Patricia Brown",
-                  text: "Average experience.",
-                  rating: 3,
-                  status: "Replied",
-                  color: "bg-green-100 text-green-700",
                 },
               ].map((item, index) => (
                 <div key={index} className="flex items-start justify-between">
@@ -351,26 +344,24 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* RIGHT STACKED CARDS */}
+          {/* RIGHT STACKED CARDS — each 205px */}
           <div className="flex flex-col gap-6">
 
-            {/* TOP 5 KEYWORDS */}
-            <div className="bg-white rounded-[24px] border border-[#e5e7eb] shadow-sm p-5 flex-1">
+            {/* TOP 5 KEYWORDS (now top 3, h-[205px]) */}
+            <div className="bg-white rounded-[24px] border border-[#e5e7eb] shadow-sm p-5 h-[205px] overflow-auto">
               <div className="flex items-center justify-between">
-                <h3 className="text-[16px] font-semibold text-[#111827]">
-                  Top 5 Keywords
+                <h3 className="text-[15px] font-semibold text-[#111827]">
+                  Top Keywords
                 </h3>
                 <button className="text-[12px] font-medium text-blue-600">
                   View All
                 </button>
               </div>
-              <div className="flex flex-col gap-4 mt-5">
+              <div className="flex flex-col gap-3 mt-4">
                 {[
                   { name: "Service", value: "45 (32%)", width: "80%" },
                   { name: "Quality", value: "30 (21%)", width: "60%" },
                   { name: "Support", value: "25 (18%)", width: "50%" },
-                  { name: "Experience", value: "20 (14%)", width: "40%" },
-                  { name: "Product", value: "10 (7%)", width: "25%" },
                 ].map((item, index) => (
                   <div key={index} className="flex items-center gap-3">
                     <span className="text-[12px] font-semibold text-blue-600 w-4">
@@ -397,28 +388,28 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* RESPONSE TRACKING */}
-            <div className="bg-white rounded-[24px] border border-[#e5e7eb] shadow-sm p-5">
+            {/* RESPONSE TRACKING - h-[205px] */}
+            <div className="bg-white rounded-[24px] border border-[#e5e7eb] shadow-sm p-5 h-[205px] overflow-hidden">
               <div className="flex items-center justify-between">
-                <h3 className="text-[16px] font-semibold text-[#111827]">
+                <h3 className="text-[15px] font-semibold text-[#111827]">
                   Response Tracking
                 </h3>
                 <button className="text-[12px] font-medium text-blue-600">
                   View All
                 </button>
               </div>
-              <div className="flex items-center justify-between mt-5">
-                {/* Circle */}
-                <div className="w-[120px] h-[120px] rounded-full border-[10px] border-green-500 flex flex-col items-center justify-center">
-                  <h2 className="text-[30px] font-bold text-[#111827]">
+              <div className="flex items-center justify-between mt-3">
+                {/* Smaller Circle */}
+                <div className="w-[90px] h-[90px] rounded-full border-[8px] border-green-500 flex flex-col items-center justify-center">
+                  <h2 className="text-[26px] font-bold text-[#111827]">
                     128
                   </h2>
-                  <p className="text-[11px] text-[#6b7280]">
+                  <p className="text-[10px] text-[#6b7280]">
                     Total
                   </p>
                 </div>
                 {/* Stats */}
-                <div className="flex flex-col gap-4">
+                <div className="flex flex-col gap-3">
                   <div className="flex items-center gap-2">
                     <div className="w-2.5 h-2.5 rounded-full bg-green-500" />
                     <div>
@@ -459,12 +450,12 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* LAST 2 CARDS — Review Analysis & Monthly History (same size) */}
+        {/* LAST 2 CARDS — fixed height 205px */}
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-7 pb-8">
-          <div className="bg-white rounded-[24px] h-[340px] border border-[#e5e7eb] shadow-sm flex items-center justify-center">
+          <div className="bg-white rounded-[24px] h-[205px] border border-[#e5e7eb] shadow-sm flex items-center justify-center">
             <h3 className="text-[17px] font-semibold text-[#111827]">Review Analysis</h3>
           </div>
-          <div className="bg-white rounded-[24px] h-[340px] border border-[#e5e7eb] shadow-sm flex items-center justify-center">
+          <div className="bg-white rounded-[24px] h-[205px] border border-[#e5e7eb] shadow-sm flex items-center justify-center">
             <h3 className="text-[17px] font-semibold text-[#111827]">Monthly History</h3>
           </div>
         </div>
