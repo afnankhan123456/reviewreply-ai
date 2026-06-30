@@ -77,7 +77,7 @@ export default function Sidebar() {
         {/* LOGO */}
         <div className="mb-10">
           <img
-            src="https://github.com/afnankhan123456/reviewreply-ai/blob/main/public/ai-logo.png"
+            src="/ai-logo.png"
             alt="ReviewSync Logo"
             className="h-10 w-auto"
           />
