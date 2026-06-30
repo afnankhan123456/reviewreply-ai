@@ -62,12 +62,10 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen bg-white">
       <div className="p-5 lg:p-7">
-
         <Topbar />
 
         {/* TOP 4 CARDS — height 80px, compact design */}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mt-7">
-
           {/* CARD 1 */}
           <div className="bg-white border border-[#e5e7eb] rounded-[20px] p-3 h-[80px] shadow-sm flex items-center gap-3 overflow-hidden">
             <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center flex-shrink-0">
@@ -105,12 +103,18 @@ export default function DashboardPage() {
               <div className="flex items-center gap-2">
                 <h3 className="text-[22px] font-bold text-[#111827] leading-none">4.6</h3>
                 <div className="flex gap-0.5">
-                  {Array(5).fill(0).map((_, i) => (
-                    <Star
-                      key={i}
-                      className={`w-3.5 h-3.5 ${i < 4 ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`}
-                    />
-                  ))}
+                  {Array(5)
+                    .fill(0)
+                    .map((_, i) => (
+                      <Star
+                        key={i}
+                        className={`w-3.5 h-3.5 ${
+                          i < 4
+                            ? "fill-yellow-400 text-yellow-400"
+                            : "text-gray-300"
+                        }`}
+                      />
+                    ))}
                 </div>
               </div>
               <p className="text-[10px] text-[#6b7280] leading-tight">Based on 128 reviews</p>
@@ -125,10 +129,11 @@ export default function DashboardPage() {
             <div className="flex flex-col gap-0.5 min-w-0">
               <p className="text-[11px] text-[#6b7280] leading-tight">Response Rate</p>
               <h3 className="text-[22px] font-bold text-[#111827] leading-none">85%</h3>
-              <p className="text-[10px] text-green-600 leading-tight font-medium">Good response rate</p>
+              <p className="text-[10px] text-green-600 leading-tight font-medium">
+                Good response rate
+              </p>
             </div>
           </div>
-
         </div>
 
         {/* 8 SMALL CARDS — height 80px */}
@@ -153,21 +158,16 @@ export default function DashboardPage() {
           })}
         </div>
 
-        {/* 3 DETAILED CARDS — Fixed height 205px */}
+        {/* 3 DETAILED CARDS — Rating Overview, Low Rating Alerts, Unanswered Reviews */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7">
-
-          {/* Rating Overview - h-[205px] */}
-          <div className="bg-white rounded-[20px] border border-[#e5e7eb] p-5 shadow-sm h-[205px] overflow-hidden">
-            <div className="flex items-center justify-between">
-              <h3 className="text-[15px] font-semibold text-[#111827]">
-                Rating Overview
-              </h3>
-              <button className="text-[12px] font-medium text-blue-600">
-                View All
-              </button>
+          {/* Rating Overview – fixed 205px, no scroll */}
+          <div className="bg-white rounded-[20px] border border-[#e5e7eb] p-5 shadow-sm h-[205px] overflow-hidden flex flex-col">
+            <div className="flex items-center justify-between flex-shrink-0">
+              <h3 className="text-[15px] font-semibold text-[#111827]">Rating Overview</h3>
+              <button className="text-[12px] font-medium text-blue-600">View All</button>
             </div>
             <div className="flex items-center justify-between mt-3">
-              {/* Smaller Circle */}
+              {/* Circle */}
               <div className="relative w-[90px] h-[90px] rounded-full border-[8px] border-orange-400 flex flex-col items-center justify-center">
                 <h2 className="text-[26px] font-bold text-[#111827] leading-none">128</h2>
                 <p className="text-[10px] text-[#6b7280]">Total Reviews</p>
@@ -182,9 +182,7 @@ export default function DashboardPage() {
                   { star: 1, width: "10%", color: "bg-red-400", total: 3 },
                 ].map((item, index) => (
                   <div key={index} className="flex items-center gap-2">
-                    <span className="text-[11px] font-medium text-[#111827] w-3">
-                      {item.star}
-                    </span>
+                    <span className="text-[11px] font-medium text-[#111827] w-3">{item.star}</span>
                     <div className="flex-1 h-1.5 rounded-full bg-gray-200 overflow-hidden">
                       <div
                         className={`h-full rounded-full ${item.color}`}
@@ -198,18 +196,14 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Low Rating Alerts - h-[205px] */}
-          <div className="bg-white rounded-[20px] border border-[#e5e7eb] p-5 shadow-sm h-[205px] overflow-hidden">
-            <div className="flex items-center justify-between">
-              <h3 className="text-[15px] font-semibold text-[#111827]">
-                Low Rating Alerts
-              </h3>
-              <button className="text-[12px] font-medium text-blue-600">
-                View All
-              </button>
+          {/* Low Rating Alerts – 205px, sticky header, scrollable list */}
+          <div className="bg-white rounded-[20px] border border-[#e5e7eb] p-5 shadow-sm h-[205px] flex flex-col">
+            <div className="flex items-center justify-between flex-shrink-0">
+              <h3 className="text-[15px] font-semibold text-[#111827]">Low Rating Alerts</h3>
+              <button className="text-[12px] font-medium text-blue-600">View All</button>
             </div>
-            <div className="flex flex-col gap-4 mt-4">
-              {[1, 2, 3].map((item) => (
+            <div className="flex-1 overflow-y-auto mt-4 space-y-4 pr-1">
+              {[1, 2, 3, 4, 5].map((item) => (
                 <div key={item} className="flex items-start justify-between">
                   <div className="flex gap-3">
                     <div className="w-7 h-7 rounded-full bg-white border border-[#e5e7eb] flex items-center justify-center text-[12px] font-semibold">
@@ -233,18 +227,14 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Unanswered Reviews - h-[205px] */}
-          <div className="bg-white rounded-[20px] border border-[#e5e7eb] p-5 shadow-sm h-[205px] overflow-hidden">
-            <div className="flex items-center justify-between">
-              <h3 className="text-[15px] font-semibold text-[#111827]">
-                Unanswered Reviews
-              </h3>
-              <button className="text-[12px] font-medium text-blue-600">
-                View All
-              </button>
+          {/* Unanswered Reviews – 205px, sticky header, scrollable list */}
+          <div className="bg-white rounded-[20px] border border-[#e5e7eb] p-5 shadow-sm h-[205px] flex flex-col">
+            <div className="flex items-center justify-between flex-shrink-0">
+              <h3 className="text-[15px] font-semibold text-[#111827]">Unanswered Reviews</h3>
+              <button className="text-[12px] font-medium text-blue-600">View All</button>
             </div>
-            <div className="flex flex-col gap-4 mt-4">
-              {[1, 2, 3].map((item) => (
+            <div className="flex-1 overflow-y-auto mt-4 space-y-4 pr-1">
+              {[1, 2, 3, 4].map((item) => (
                 <div key={item} className="flex items-start justify-between">
                   <div className="flex gap-3">
                     <div className="w-7 h-7 rounded-full bg-white border border-[#e5e7eb] flex items-center justify-center text-[12px] font-semibold">
@@ -252,7 +242,9 @@ export default function DashboardPage() {
                     </div>
                     <div>
                       <h4 className="text-[13px] font-semibold text-[#111827]">Emily Davis</h4>
-                      <p className="text-[11px] text-[#6b7280] mt-1">Please improve your service.</p>
+                      <p className="text-[11px] text-[#6b7280] mt-1">
+                        Please improve your service.
+                      </p>
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
@@ -271,18 +263,13 @@ export default function DashboardPage() {
 
         {/* RECENT REVIEWS + RIGHT STACKED CARDS */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7">
-
-          {/* LEFT BIG CARD — Recent Reviews (now top 3, h-[205px]) */}
-          <div className="xl:col-span-2 bg-white rounded-[24px] border border-[#e5e7eb] shadow-sm p-5 h-[205px] overflow-auto">
-            <div className="flex items-center justify-between">
-              <h3 className="text-[16px] font-semibold text-[#111827]">
-                Recent Reviews
-              </h3>
-              <button className="text-[12px] font-medium text-blue-600">
-                View All
-              </button>
+          {/* LEFT BIG CARD — Recent Reviews (sticky header, scrollable list, 205px) */}
+          <div className="xl:col-span-2 bg-white rounded-[24px] border border-[#e5e7eb] shadow-sm p-5 h-[205px] flex flex-col">
+            <div className="flex items-center justify-between flex-shrink-0">
+              <h3 className="text-[16px] font-semibold text-[#111827]">Recent Reviews</h3>
+              <button className="text-[12px] font-medium text-blue-600">View All</button>
             </div>
-            <div className="flex flex-col gap-4 mt-4">
+            <div className="flex-1 overflow-y-auto mt-4 space-y-4 pr-1">
               {[
                 {
                   name: "James Anderson",
@@ -305,6 +292,13 @@ export default function DashboardPage() {
                   status: "Pending",
                   color: "bg-yellow-100 text-yellow-700",
                 },
+                {
+                  name: "Patricia Brown",
+                  text: "Average experience.",
+                  rating: 3,
+                  status: "Replied",
+                  color: "bg-green-100 text-green-700",
+                },
               ].map((item, index) => (
                 <div key={index} className="flex items-start justify-between">
                   <div className="flex gap-3">
@@ -312,26 +306,24 @@ export default function DashboardPage() {
                       G
                     </div>
                     <div>
-                      <h4 className="text-[13px] font-semibold text-[#111827]">
-                        {item.name}
-                      </h4>
-                      <p className="text-[11px] text-[#6b7280] mt-1">
-                        {item.text}
-                      </p>
+                      <h4 className="text-[13px] font-semibold text-[#111827]">{item.name}</h4>
+                      <p className="text-[11px] text-[#6b7280] mt-1">{item.text}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="flex gap-0.5">
-                      {Array(5).fill(0).map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-3.5 h-3.5 ${
-                            i < item.rating
-                              ? "fill-yellow-400 text-yellow-400"
-                              : "text-gray-300"
-                          }`}
-                        />
-                      ))}
+                      {Array(5)
+                        .fill(0)
+                        .map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-3.5 h-3.5 ${
+                              i < item.rating
+                                ? "fill-yellow-400 text-yellow-400"
+                                : "text-gray-300"
+                            }`}
+                          />
+                        ))}
                     </div>
                     <span
                       className={`text-[11px] font-medium px-2 py-1 rounded-md ${item.color}`}
@@ -344,24 +336,21 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* RIGHT STACKED CARDS — each 205px */}
+          {/* RIGHT COLUMN – Top Keywords + Review Analysis / Monthly History / Response Tracking */}
           <div className="flex flex-col gap-6">
-
-            {/* TOP 5 KEYWORDS (now top 3, h-[205px]) */}
-            <div className="bg-white rounded-[24px] border border-[#e5e7eb] shadow-sm p-5 h-[205px] overflow-auto">
-              <div className="flex items-center justify-between">
-                <h3 className="text-[15px] font-semibold text-[#111827]">
-                  Top Keywords
-                </h3>
-                <button className="text-[12px] font-medium text-blue-600">
-                  View All
-                </button>
+            {/* Top 5 Keywords – sticky header, scrollable list, 205px */}
+            <div className="bg-white rounded-[24px] border border-[#e5e7eb] shadow-sm p-5 h-[205px] flex flex-col">
+              <div className="flex items-center justify-between flex-shrink-0">
+                <h3 className="text-[15px] font-semibold text-[#111827]">Top Keywords</h3>
+                <button className="text-[12px] font-medium text-blue-600">View All</button>
               </div>
-              <div className="flex flex-col gap-3 mt-4">
+              <div className="flex-1 overflow-y-auto mt-4 space-y-3 pr-1">
                 {[
                   { name: "Service", value: "45 (32%)", width: "80%" },
                   { name: "Quality", value: "30 (21%)", width: "60%" },
                   { name: "Support", value: "25 (18%)", width: "50%" },
+                  { name: "Experience", value: "20 (14%)", width: "40%" },
+                  { name: "Product", value: "10 (7%)", width: "25%" },
                 ].map((item, index) => (
                   <div key={index} className="flex items-center gap-3">
                     <span className="text-[12px] font-semibold text-blue-600 w-4">
@@ -369,12 +358,8 @@ export default function DashboardPage() {
                     </span>
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-1">
-                        <span className="text-[12px] text-[#111827]">
-                          {item.name}
-                        </span>
-                        <span className="text-[11px] text-[#6b7280]">
-                          {item.value}
-                        </span>
+                        <span className="text-[12px] text-[#111827]">{item.name}</span>
+                        <span className="text-[11px] text-[#6b7280]">{item.value}</span>
                       </div>
                       <div className="w-full h-2 rounded-full bg-gray-200 overflow-hidden">
                         <div
@@ -388,78 +373,59 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* RESPONSE TRACKING - h-[205px] */}
-            <div className="bg-white rounded-[24px] border border-[#e5e7eb] shadow-sm p-5 h-[205px] overflow-hidden">
-              <div className="flex items-center justify-between">
-                <h3 className="text-[15px] font-semibold text-[#111827]">
-                  Response Tracking
-                </h3>
-                <button className="text-[12px] font-medium text-blue-600">
-                  View All
-                </button>
-              </div>
-              <div className="flex items-center justify-between mt-3">
-                {/* Smaller Circle */}
-                <div className="w-[90px] h-[90px] rounded-full border-[8px] border-green-500 flex flex-col items-center justify-center">
-                  <h2 className="text-[26px] font-bold text-[#111827]">
-                    128
-                  </h2>
-                  <p className="text-[10px] text-[#6b7280]">
-                    Total
-                  </p>
+            {/* Row: Review Analysis + Monthly History (left) | Response Tracking (right) */}
+            <div className="grid grid-cols-2 gap-6">
+              {/* Left stack: Review Analysis and Monthly History */}
+              <div className="flex flex-col gap-6">
+                <div className="bg-white rounded-[24px] h-[205px] border border-[#e5e7eb] shadow-sm flex items-center justify-center">
+                  <h3 className="text-[17px] font-semibold text-[#111827]">Review Analysis</h3>
                 </div>
-                {/* Stats */}
-                <div className="flex flex-col gap-3">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 rounded-full bg-green-500" />
-                    <div>
-                      <p className="text-[12px] font-medium text-[#111827]">
-                        Replied
-                      </p>
-                      <p className="text-[11px] text-[#6b7280]">
-                        109 (85%)
-                      </p>
-                    </div>
+                <div className="bg-white rounded-[24px] h-[205px] border border-[#e5e7eb] shadow-sm flex items-center justify-center">
+                  <h3 className="text-[17px] font-semibold text-[#111827]">Monthly History</h3>
+                </div>
+              </div>
+
+              {/* Response Tracking – fixed height 205px, placed on the right */}
+              <div className="bg-white rounded-[24px] border border-[#e5e7eb] shadow-sm p-5 h-[205px] flex flex-col">
+                <div className="flex items-center justify-between flex-shrink-0">
+                  <h3 className="text-[15px] font-semibold text-[#111827]">Response Tracking</h3>
+                  <button className="text-[12px] font-medium text-blue-600">View All</button>
+                </div>
+                <div className="flex items-center justify-between mt-3">
+                  {/* Circle */}
+                  <div className="w-[90px] h-[90px] rounded-full border-[8px] border-green-500 flex flex-col items-center justify-center">
+                    <h2 className="text-[26px] font-bold text-[#111827]">128</h2>
+                    <p className="text-[10px] text-[#6b7280]">Total</p>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
-                    <div>
-                      <p className="text-[12px] font-medium text-[#111827]">
-                        Pending
-                      </p>
-                      <p className="text-[11px] text-[#6b7280]">
-                        19 (15%)
-                      </p>
+                  {/* Stats */}
+                  <div className="flex flex-col gap-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2.5 h-2.5 rounded-full bg-green-500" />
+                      <div>
+                        <p className="text-[12px] font-medium text-[#111827]">Replied</p>
+                        <p className="text-[11px] text-[#6b7280]">109 (85%)</p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
-                    <div>
-                      <p className="text-[12px] font-medium text-[#111827]">
-                        No Reply
-                      </p>
-                      <p className="text-[11px] text-[#6b7280]">
-                        0 (0%)
-                      </p>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
+                      <div>
+                        <p className="text-[12px] font-medium text-[#111827]">Pending</p>
+                        <p className="text-[11px] text-[#6b7280]">19 (15%)</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
+                      <div>
+                        <p className="text-[12px] font-medium text-[#111827]">No Reply</p>
+                        <p className="text-[11px] text-[#6b7280]">0 (0%)</p>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
-
-        {/* LAST 2 CARDS — fixed height 205px */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mt-7 pb-8">
-          <div className="bg-white rounded-[24px] h-[205px] border border-[#e5e7eb] shadow-sm flex items-center justify-center">
-            <h3 className="text-[17px] font-semibold text-[#111827]">Review Analysis</h3>
-          </div>
-          <div className="bg-white rounded-[24px] h-[205px] border border-[#e5e7eb] shadow-sm flex items-center justify-center">
-            <h3 className="text-[17px] font-semibold text-[#111827]">Monthly History</h3>
-          </div>
-        </div>
-
       </div>
     </div>
   );
