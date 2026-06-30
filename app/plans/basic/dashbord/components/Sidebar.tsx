@@ -74,13 +74,21 @@ export default function Sidebar() {
   return (
     <div className="w-[260px] bg-white border-r border-zinc-200 flex flex-col justify-between p-5">
       <div>
-        {/* LOGO */}
-        <div className="mb-10">
+        {/* LOGO + BRAND TEXT */}
+        <div className="flex items-center gap-3 mb-10">
           <img
             src="/ai-logo.png"
-            alt="ReviewSync Logo"
+            alt="ReviewReply AI Logo"
             className="h-10 w-auto"
           />
+          <div className="flex flex-col">
+            <span className="text-sm font-semibold text-zinc-800 leading-tight">
+              ReviewReply AI
+            </span>
+            <span className="text-[11px] text-zinc-500 leading-tight">
+              AI Powered Review Management
+            </span>
+          </div>
         </div>
 
         {/* MENU */}
@@ -119,7 +127,3 @@ export default function Sidebar() {
     </div>
   );
 }
-
-
-
-
