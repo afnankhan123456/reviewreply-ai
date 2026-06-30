@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export default function Sidebar() {
-
   const pathname = usePathname();
 
   const menuItems = [
@@ -36,26 +35,29 @@ export default function Sidebar() {
       name: "Integrations",
       href: "/plans/basic/dashbord/integrations",
     },
+    {
+      name: "Template",
+      href: "/plans/basic/dashbord/template",
+    },
+    {
+      name: "Report",
+      href: "/plans/basic/dashbord/report",
+    },
+    {
+      name: "Export",
+      href: "/plans/basic/dashbord/export",
+    },
   ];
 
   return (
-
     <div className="w-[260px] bg-white border-r border-zinc-200 flex flex-col justify-between p-5">
-
       <div>
-
         {/* LOGO */}
-
-        <h1 className="text-2xl font-bold text-blue-600 mb-10">
-          ReviewSync
-        </h1>
+        <h1 className="text-2xl font-bold text-blue-600 mb-10">ReviewSync</h1>
 
         {/* MENU */}
-
         <div className="space-y-3">
-
           {menuItems.map((item) => (
-
             <Link
               key={item.name}
               href={item.href}
@@ -67,22 +69,19 @@ export default function Sidebar() {
             >
               {item.name}
             </Link>
-
           ))}
-
         </div>
-
       </div>
 
       {/* USER */}
-
       <div className="bg-zinc-100 rounded-2xl p-4">
         <p className="font-semibold">Business Owner</p>
         <p className="text-sm text-zinc-500">Basic Plan</p>
       </div>
-
     </div>
-
   );
 }
+
+
+
 
