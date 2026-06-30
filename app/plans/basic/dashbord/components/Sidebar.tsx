@@ -2,6 +2,18 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {
+  LayoutDashboard,
+  Star,
+  Bell,
+  MessageCircle,
+  BarChart3,
+  Settings,
+  Blocks,
+  FileText,
+  FileBarChart,
+  Download,
+} from "lucide-react";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -10,42 +22,52 @@ export default function Sidebar() {
     {
       name: "Dashboard",
       href: "/plans/basic/dashbord",
+      icon: LayoutDashboard,
     },
     {
       name: "Reviews",
       href: "/plans/basic/dashbord/reviews",
+      icon: Star,
     },
     {
       name: "Alerts",
       href: "/plans/basic/dashbord/alerts",
+      icon: Bell,
     },
     {
       name: "Unanswered",
       href: "/plans/basic/dashbord/unanswered",
+      icon: MessageCircle,
     },
     {
       name: "Analytics",
       href: "/plans/basic/dashbord/analytics",
+      icon: BarChart3,
     },
     {
       name: "Settings",
       href: "/plans/basic/dashbord/settings",
+      icon: Settings,
     },
     {
       name: "Integrations",
       href: "/plans/basic/dashbord/integrations",
+      icon: Blocks,
     },
     {
       name: "Template",
       href: "/plans/basic/dashbord/template",
+      icon: FileText,
     },
     {
       name: "Report",
       href: "/plans/basic/dashbord/report",
+      icon: FileBarChart,
     },
     {
       name: "Export",
       href: "/plans/basic/dashbord/export",
+      icon: Download,
     },
   ];
 
@@ -57,19 +79,29 @@ export default function Sidebar() {
 
         {/* MENU */}
         <div className="space-y-3">
-          {menuItems.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              className={`block px-4 py-3 rounded-xl font-medium transition ${
-                pathname === item.href
-                  ? "bg-blue-50 text-blue-600"
-                  : "hover:bg-zinc-100 text-zinc-700"
-              }`}
-            >
-              {item.name}
-            </Link>
-          ))}
+          {menuItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = pathname === item.href;
+
+            return (
+              <Link
+                key={item.name}
+                href={item.href}
+                className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition ${
+                  isActive
+                    ? "bg-blue-50 text-blue-600"
+                    : "hover:bg-zinc-100 text-zinc-700"
+                }`}
+              >
+                <Icon
+                  className={`w-5 h-5 ${
+                    isActive ? "text-blue-600" : "text-zinc-500"
+                  }`}
+                />
+                <span>{item.name}</span>
+              </Link>
+            );
+          })}
         </div>
       </div>
 
@@ -81,7 +113,3 @@ export default function Sidebar() {
     </div>
   );
 }
-
-
-
-
