@@ -161,53 +161,50 @@ export default function ReportPage() {
 
         <div className="space-y-5">
 
-          {[1, 2, 3, 4].map((item) => (
-            <div
-              key={item}
-              className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 border border-zinc-200 rounded-2xl p-5 hover:bg-zinc-50 transition"
-            >
+          <div
+            className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 border border-zinc-200 rounded-2xl p-5 hover:bg-zinc-50 transition"
+          >
 
-              <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4">
 
-                <div className="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center">
-                  <BarChart3 className="w-7 h-7 text-blue-500" />
-                </div>
-
-                <div>
-
-                  <h3 className="font-semibold text-black">
-                    Monthly Performance Report
-                  </h3>
-
-                  <p className="text-sm text-zinc-500 mt-1">
-                    Review insights, customer feedback, and analytics summary.
-                  </p>
-
-                  <p className="text-xs text-zinc-400 mt-2">
-                    Generated on June 28, 2026
-                  </p>
-
-                </div>
-
+              <div className="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center">
+                <BarChart3 className="w-7 h-7 text-blue-500" />
               </div>
 
-              {/* ACTIONS */}
+              <div>
 
-              <div className="flex items-center gap-3">
+                <h3 className="font-semibold text-black">
+                  Monthly Performance Report
+                </h3>
 
-                <button className="px-4 py-2 rounded-xl bg-blue-50 text-blue-600 text-sm font-medium hover:bg-blue-100 transition">
-                  View
-                </button>
+                <p className="text-sm text-zinc-500 mt-1">
+                  Review insights, customer feedback, and analytics summary.
+                </p>
 
-                <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-black text-white text-sm font-medium hover:opacity-90 transition">
-                  <Download className="w-4 h-4" />
-                  Download
-                </button>
+                <p className="text-xs text-zinc-400 mt-2">
+                  Generated on June 28, 2026
+                </p>
 
               </div>
 
             </div>
-          ))}
+
+            {/* ACTIONS */}
+
+            <div className="flex items-center gap-3">
+
+              <button className="px-4 py-2 rounded-xl bg-blue-50 text-blue-600 text-sm font-medium hover:bg-blue-100 transition">
+                View
+              </button>
+
+              <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-black text-white text-sm font-medium hover:opacity-90 transition">
+                <Download className="w-4 h-4" />
+                Download
+              </button>
+
+            </div>
+
+          </div>
 
         </div>
 
