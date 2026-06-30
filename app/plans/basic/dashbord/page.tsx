@@ -165,7 +165,7 @@ export default function DashboardPage() {
           })}
         </div>
 
-        {/* 3 DETAILED CARDS — Rating Overview, Low Rating Alerts, Unanswered Reviews */}
+        {/* 3 DETAILED CARDS — Rating Overview, Positive/Negative Detection, Unanswered Reviews */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7">
           {/* Rating Overview */}
           <div className="bg-white rounded-[20px] border border-[#e5e7eb] p-5 shadow-sm h-[205px] overflow-hidden flex flex-col">
@@ -200,33 +200,44 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Low Rating Alerts */}
+          {/* Positive & Negative Review Detection (replacing Low Rating Alerts) */}
           <div className="bg-white rounded-[20px] border border-[#e5e7eb] p-5 shadow-sm h-[205px] flex flex-col">
             <div className="flex items-center justify-between flex-shrink-0">
-              <h3 className="text-[15px] font-semibold text-[#111827]">Low Rating Alerts</h3>
+              <h3 className="text-[15px] font-semibold text-[#111827]">Review Sentiment</h3>
             </div>
-            <div className="flex-1 overflow-y-auto mt-4 space-y-4 pr-1 scrollbar-thin">
-              {[1, 2, 3, 4, 5].map((item) => (
-                <div key={item} className="flex items-start justify-between">
-                  <div className="flex gap-3">
-                    <div className="w-7 h-7 rounded-full bg-white border border-[#e5e7eb] flex items-center justify-center text-[12px] font-semibold">
-                      G
-                    </div>
-                    <div>
-                      <h4 className="text-[13px] font-semibold text-[#111827]">John Doe</h4>
-                      <p className="text-[11px] text-[#6b7280] mt-1">Need improvement.</p>
-                    </div>
+            <div className="flex flex-col justify-center flex-1 mt-2 space-y-4">
+              {/* Positive */}
+              <div className="flex items-center gap-3">
+                <div className="w-2.5 h-2.5 rounded-full bg-green-500" />
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[13px] font-medium text-[#111827]">Positive</span>
+                    <span className="text-[13px] font-semibold text-green-600">85%</span>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Star className="w-3.5 h-3.5 fill-red-400 text-red-400" />
-                    <Star className="w-3.5 h-3.5 fill-red-400 text-red-400" />
-                    <Star className="w-3.5 h-3.5 text-gray-300" />
-                    <Star className="w-3.5 h-3.5 text-gray-300" />
-                    <Star className="w-3.5 h-3.5 text-gray-300" />
-                    <span className="text-[11px] text-[#6b7280] ml-2">2.0</span>
+                  <div className="w-full h-2 rounded-full bg-gray-200 overflow-hidden">
+                    <div className="h-full bg-green-500 rounded-full" style={{ width: "85%" }} />
                   </div>
                 </div>
-              ))}
+              </div>
+
+              {/* Negative */}
+              <div className="flex items-center gap-3">
+                <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
+                <div className="flex-1">
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-[13px] font-medium text-[#111827]">Negative</span>
+                    <span className="text-[13px] font-semibold text-red-500">15%</span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-gray-200 overflow-hidden">
+                    <div className="h-full bg-red-500 rounded-full" style={{ width: "15%" }} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Total analyzed */}
+              <p className="text-[11px] text-[#6b7280] text-center">
+                Based on last 100 reviews
+              </p>
             </div>
           </div>
 
