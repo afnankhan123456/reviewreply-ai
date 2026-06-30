@@ -1,13 +1,13 @@
 import {
-  FileText,
-  Download,
-  Calendar,
-  TrendingUp,
+  LayoutTemplate,
+  MessageSquareReply,
+  Sparkles,
   Star,
-  BarChart3,
+  Copy,
+  Pencil,
 } from "lucide-react";
 
-export default function ReportPage() {
+export default function TemplatePage() {
   return (
     <div className="p-6 lg:p-8">
 
@@ -16,16 +16,16 @@ export default function ReportPage() {
       <div className="mb-8">
 
         <h1 className="text-3xl font-bold text-black">
-          Reports
+          Templates
         </h1>
 
         <p className="text-zinc-500 mt-2">
-          Generate and download detailed business review reports.
+          Create and manage AI review reply templates.
         </p>
 
       </div>
 
-      {/* TOP REPORT CARDS */}
+      {/* TOP CARDS */}
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
 
@@ -38,17 +38,17 @@ export default function ReportPage() {
             <div>
 
               <p className="text-sm text-zinc-500">
-                Total Reports
+                Total Templates
               </p>
 
               <h2 className="text-3xl font-bold text-black mt-2">
-                24
+                18
               </h2>
 
             </div>
 
             <div className="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center">
-              <FileText className="w-6 h-6 text-blue-500" />
+              <LayoutTemplate className="w-6 h-6 text-blue-500" />
             </div>
 
           </div>
@@ -64,7 +64,7 @@ export default function ReportPage() {
             <div>
 
               <p className="text-sm text-zinc-500">
-                Monthly Reports
+                AI Generated
               </p>
 
               <h2 className="text-3xl font-bold text-black mt-2">
@@ -73,8 +73,8 @@ export default function ReportPage() {
 
             </div>
 
-            <div className="w-12 h-12 rounded-2xl bg-green-100 flex items-center justify-center">
-              <Calendar className="w-6 h-6 text-green-500" />
+            <div className="w-12 h-12 rounded-2xl bg-purple-100 flex items-center justify-center">
+              <Sparkles className="w-6 h-6 text-purple-500" />
             </div>
 
           </div>
@@ -90,17 +90,17 @@ export default function ReportPage() {
             <div>
 
               <p className="text-sm text-zinc-500">
-                Avg Rating
+                Positive Replies
               </p>
 
               <h2 className="text-3xl font-bold text-black mt-2">
-                4.8
+                48
               </h2>
 
             </div>
 
-            <div className="w-12 h-12 rounded-2xl bg-yellow-100 flex items-center justify-center">
-              <Star className="w-6 h-6 text-yellow-500 fill-yellow-500" />
+            <div className="w-12 h-12 rounded-2xl bg-green-100 flex items-center justify-center">
+              <Star className="w-6 h-6 text-green-500 fill-green-500" />
             </div>
 
           </div>
@@ -116,17 +116,17 @@ export default function ReportPage() {
             <div>
 
               <p className="text-sm text-zinc-500">
-                Performance Growth
+                Reply Templates
               </p>
 
               <h2 className="text-3xl font-bold text-black mt-2">
-                +32%
+                36
               </h2>
 
             </div>
 
-            <div className="w-12 h-12 rounded-2xl bg-purple-100 flex items-center justify-center">
-              <TrendingUp className="w-6 h-6 text-purple-500" />
+            <div className="w-12 h-12 rounded-2xl bg-yellow-100 flex items-center justify-center">
+              <MessageSquareReply className="w-6 h-6 text-yellow-500" />
             </div>
 
           </div>
@@ -135,7 +135,7 @@ export default function ReportPage() {
 
       </div>
 
-      {/* REPORT LIST */}
+      {/* TEMPLATE LIST */}
 
       <div className="bg-white rounded-3xl border border-zinc-200 p-6 shadow-sm mt-8">
 
@@ -144,17 +144,17 @@ export default function ReportPage() {
           <div>
 
             <h2 className="text-xl font-bold text-black">
-              Generated Reports
+              Saved Templates
             </h2>
 
             <p className="text-sm text-zinc-500 mt-1">
-              Access and download your latest business reports.
+              Quickly reply to reviews using saved response templates.
             </p>
 
           </div>
 
           <button className="px-5 py-3 rounded-2xl bg-black text-white font-medium hover:opacity-90 transition">
-            Generate Report
+            Create Template
           </button>
 
         </div>
@@ -164,45 +164,50 @@ export default function ReportPage() {
           {[1, 2, 3, 4].map((item) => (
             <div
               key={item}
-              className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 border border-zinc-200 rounded-2xl p-5 hover:bg-zinc-50 transition"
+              className="border border-zinc-200 rounded-3xl p-5 hover:bg-zinc-50 transition"
             >
 
-              <div className="flex items-center gap-4">
-
-                <div className="w-14 h-14 rounded-2xl bg-blue-100 flex items-center justify-center">
-                  <BarChart3 className="w-7 h-7 text-blue-500" />
-                </div>
+              <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
 
                 <div>
 
-                  <h3 className="font-semibold text-black">
-                    Monthly Performance Report
-                  </h3>
+                  <div className="flex items-center gap-3">
 
-                  <p className="text-sm text-zinc-500 mt-1">
-                    Review insights, customer feedback, and analytics summary.
+                    <h3 className="text-lg font-semibold text-black">
+                      Positive Review Reply
+                    </h3>
+
+                    <span className="px-3 py-1 rounded-full bg-green-100 text-green-600 text-xs font-medium">
+                      Active
+                    </span>
+
+                  </div>
+
+                  <p className="text-sm text-zinc-500 mt-3 max-w-3xl">
+                    Thank you so much for your kind words! We're happy you had a great experience with our service and look forward to serving you again.
                   </p>
 
-                  <p className="text-xs text-zinc-400 mt-2">
-                    Generated on June 28, 2026
+                  <p className="text-xs text-zinc-400 mt-3">
+                    Last edited 2 days ago
                   </p>
 
                 </div>
 
-              </div>
+                {/* ACTION BUTTONS */}
 
-              {/* ACTIONS */}
+                <div className="flex items-center gap-3">
 
-              <div className="flex items-center gap-3">
+                  <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-50 text-blue-600 text-sm font-medium hover:bg-blue-100 transition">
+                    <Copy className="w-4 h-4" />
+                    Use
+                  </button>
 
-                <button className="px-4 py-2 rounded-xl bg-blue-50 text-blue-600 text-sm font-medium hover:bg-blue-100 transition">
-                  View
-                </button>
+                  <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-zinc-100 text-zinc-700 text-sm font-medium hover:bg-zinc-200 transition">
+                    <Pencil className="w-4 h-4" />
+                    Edit
+                  </button>
 
-                <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-black text-white text-sm font-medium hover:opacity-90 transition">
-                  <Download className="w-4 h-4" />
-                  Download
-                </button>
+                </div>
 
               </div>
 
