@@ -13,7 +13,6 @@ import {
 
 import Topbar from "./components/Topbar";
 
-// Updated feature cards: removed Top 5 Keywords, kept Business Location (will span 2 columns)
 const featureCards = [
   {
     title: "Low Rating Alerts",
@@ -44,7 +43,6 @@ const featureCards = [
     title: "Business Location",
     icon: MapPin,
     color: "bg-teal-100 text-teal-600",
-    // This card will span 2 columns
     span: true,
   },
 ];
@@ -71,10 +69,9 @@ export default function DashboardPage() {
       `}</style>
 
       <div className="p-5 lg:p-7">
-        {/* Topbar now only shows Date Range — Business Location card removed from Topbar */}
         <Topbar />
 
-        {/* TOP 4 CARDS — height 80px, compact design */}
+        {/* TOP 4 CARDS — height 80px */}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mt-7">
           {/* CARD 1 */}
           <div className="bg-white border border-[#e5e7eb] rounded-[20px] p-3 h-[80px] shadow-sm flex items-center gap-3 overflow-hidden">
@@ -119,9 +116,7 @@ export default function DashboardPage() {
                       <Star
                         key={i}
                         className={`w-3.5 h-3.5 ${
-                          i < 4
-                            ? "fill-yellow-400 text-yellow-400"
-                            : "text-gray-300"
+                          i < 4 ? "fill-yellow-400 text-yellow-400" : "text-gray-300"
                         }`}
                       />
                     ))}
@@ -146,7 +141,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* 6 SMALL CARDS — height 80px (using xl:grid-cols-7, Business Location spans 2) */}
+        {/* 6 SMALL CARDS (Business Location spans 2 columns) */}
         <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-7 gap-4 mt-6">
           {featureCards.map((item, index) => {
             const Icon = item.icon;
@@ -172,7 +167,7 @@ export default function DashboardPage() {
 
         {/* 3 DETAILED CARDS — Rating Overview, Low Rating Alerts, Unanswered Reviews */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7">
-          {/* Rating Overview – fixed 205px, no scroll */}
+          {/* Rating Overview */}
           <div className="bg-white rounded-[20px] border border-[#e5e7eb] p-5 shadow-sm h-[205px] overflow-hidden flex flex-col">
             <div className="flex items-center justify-between flex-shrink-0">
               <h3 className="text-[15px] font-semibold text-[#111827]">Rating Overview</h3>
@@ -205,7 +200,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Low Rating Alerts – 205px, sticky header, scrollable list */}
+          {/* Low Rating Alerts */}
           <div className="bg-white rounded-[20px] border border-[#e5e7eb] p-5 shadow-sm h-[205px] flex flex-col">
             <div className="flex items-center justify-between flex-shrink-0">
               <h3 className="text-[15px] font-semibold text-[#111827]">Low Rating Alerts</h3>
@@ -235,7 +230,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Unanswered Reviews – 205px, sticky header, scrollable list */}
+          {/* Unanswered Reviews */}
           <div className="bg-white rounded-[20px] border border-[#e5e7eb] p-5 shadow-sm h-[205px] flex flex-col">
             <div className="flex items-center justify-between flex-shrink-0">
               <h3 className="text-[15px] font-semibold text-[#111827]">Unanswered Reviews</h3>
@@ -270,47 +265,21 @@ export default function DashboardPage() {
 
         {/* RECENT REVIEWS + RIGHT COLUMN (Top Keywords) */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7">
-          {/* LEFT BIG CARD — Recent Reviews (sticky header, scrollable list, 205px) */}
+          {/* Recent Reviews */}
           <div className="xl:col-span-2 bg-white rounded-[24px] border border-[#e5e7eb] shadow-sm p-5 h-[205px] flex flex-col">
             <div className="flex items-center justify-between flex-shrink-0">
               <h3 className="text-[16px] font-semibold text-[#111827]">Recent Reviews</h3>
             </div>
             <div className="flex-1 overflow-y-auto mt-4 space-y-4 pr-1 scrollbar-thin">
               {[
-                {
-                  name: "James Anderson",
-                  text: "Excellent service! Highly recommended.",
-                  rating: 5,
-                  status: "Replied",
-                  color: "bg-green-100 text-green-700",
-                },
-                {
-                  name: "Linda Martinez",
-                  text: "Good experience overall.",
-                  rating: 4,
-                  status: "Replied",
-                  color: "bg-green-100 text-green-700",
-                },
-                {
-                  name: "Robert Taylor",
-                  text: "Not satisfied with the support.",
-                  rating: 2,
-                  status: "Pending",
-                  color: "bg-yellow-100 text-yellow-700",
-                },
-                {
-                  name: "Patricia Brown",
-                  text: "Average experience.",
-                  rating: 3,
-                  status: "Replied",
-                  color: "bg-green-100 text-green-700",
-                },
+                { name: "James Anderson", text: "Excellent service! Highly recommended.", rating: 5, status: "Replied", color: "bg-green-100 text-green-700" },
+                { name: "Linda Martinez", text: "Good experience overall.", rating: 4, status: "Replied", color: "bg-green-100 text-green-700" },
+                { name: "Robert Taylor", text: "Not satisfied with the support.", rating: 2, status: "Pending", color: "bg-yellow-100 text-yellow-700" },
+                { name: "Patricia Brown", text: "Average experience.", rating: 3, status: "Replied", color: "bg-green-100 text-green-700" },
               ].map((item, index) => (
                 <div key={index} className="flex items-start justify-between">
                   <div className="flex gap-3">
-                    <div className="w-7 h-7 rounded-full border border-[#e5e7eb] flex items-center justify-center text-[12px] font-semibold">
-                      G
-                    </div>
+                    <div className="w-7 h-7 rounded-full border border-[#e5e7eb] flex items-center justify-center text-[12px] font-semibold">G</div>
                     <div>
                       <h4 className="text-[13px] font-semibold text-[#111827]">{item.name}</h4>
                       <p className="text-[11px] text-[#6b7280] mt-1">{item.text}</p>
@@ -318,31 +287,18 @@ export default function DashboardPage() {
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="flex gap-0.5">
-                      {Array(5)
-                        .fill(0)
-                        .map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`w-3.5 h-3.5 ${
-                              i < item.rating
-                                ? "fill-yellow-400 text-yellow-400"
-                                : "text-gray-300"
-                            }`}
-                          />
-                        ))}
+                      {Array(5).fill(0).map((_, i) => (
+                        <Star key={i} className={`w-3.5 h-3.5 ${i < item.rating ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />
+                      ))}
                     </div>
-                    <span
-                      className={`text-[11px] font-medium px-2 py-1 rounded-md ${item.color}`}
-                    >
-                      {item.status}
-                    </span>
+                    <span className={`text-[11px] font-medium px-2 py-1 rounded-md ${item.color}`}>{item.status}</span>
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* RIGHT COLUMN – Top Keywords (unchanged, still here as separate card) */}
+          {/* Top Keywords */}
           <div className="bg-white rounded-[24px] border border-[#e5e7eb] shadow-sm p-5 h-[205px] flex flex-col">
             <div className="flex items-center justify-between flex-shrink-0">
               <h3 className="text-[15px] font-semibold text-[#111827]">Top Keywords</h3>
@@ -356,19 +312,14 @@ export default function DashboardPage() {
                 { name: "Product", value: "10 (7%)", width: "25%" },
               ].map((item, index) => (
                 <div key={index} className="flex items-center gap-3">
-                  <span className="text-[12px] font-semibold text-blue-600 w-4">
-                    {index + 1}
-                  </span>
+                  <span className="text-[12px] font-semibold text-blue-600 w-4">{index + 1}</span>
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-[12px] text-[#111827]">{item.name}</span>
                       <span className="text-[11px] text-[#6b7280]">{item.value}</span>
                     </div>
                     <div className="w-full h-2 rounded-full bg-gray-200 overflow-hidden">
-                      <div
-                        className="h-full bg-blue-500 rounded-full"
-                        style={{ width: item.width }}
-                      />
+                      <div className="h-full bg-blue-500 rounded-full" style={{ width: item.width }} />
                     </div>
                   </div>
                 </div>
@@ -377,30 +328,67 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* NEW FULL-WIDTH ROW: Review Analysis, Monthly History, Response Tracking */}
+        {/* CHARTS ROW: Review Analysis + Monthly History + Response Tracking */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7">
-          {/* Review Analysis */}
-          <div className="bg-white rounded-[24px] h-[205px] border border-[#e5e7eb] shadow-sm flex items-center justify-center">
-            <h3 className="text-[17px] font-semibold text-[#111827]">Review Analysis</h3>
+          {/* Review Analysis – Simple Bar Chart */}
+          <div className="bg-white rounded-[24px] border border-[#e5e7eb] shadow-sm p-5 h-[205px] flex flex-col">
+            <h3 className="text-[15px] font-semibold text-[#111827] mb-3">Review Analysis</h3>
+            <div className="flex items-end justify-between gap-1 flex-1 px-2">
+              {[
+                { month: "Jan", value: 35 },
+                { month: "Feb", value: 45 },
+                { month: "Mar", value: 30 },
+                { month: "Apr", value: 60 },
+                { month: "May", value: 50 },
+                { month: "Jun", value: 70 },
+              ].map((item) => (
+                <div key={item.month} className="flex flex-col items-center gap-1 flex-1">
+                  <div className="w-full bg-blue-100 rounded-t-md relative" style={{ height: `${(item.value / 70) * 100}%` }}>
+                    <div className="absolute inset-x-0 top-0 h-full bg-blue-500 rounded-t-md opacity-80" style={{ height: `${(item.value / 70) * 100}%` }}></div>
+                  </div>
+                  <span className="text-[10px] text-zinc-500">{item.month}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
-          {/* Monthly History */}
-          <div className="bg-white rounded-[24px] h-[205px] border border-[#e5e7eb] shadow-sm flex items-center justify-center">
-            <h3 className="text-[17px] font-semibold text-[#111827]">Monthly History</h3>
+          {/* Monthly History – Simple Line Chart */}
+          <div className="bg-white rounded-[24px] border border-[#e5e7eb] shadow-sm p-5 h-[205px] flex flex-col">
+            <h3 className="text-[15px] font-semibold text-[#111827] mb-3">Monthly History</h3>
+            <div className="flex-1 flex items-center justify-center relative">
+              <svg viewBox="0 0 200 80" className="w-full h-full">
+                <polyline
+                  points="10,60 40,30 70,50 100,10 130,40 160,25 190,55"
+                  fill="none"
+                  stroke="#6366f1"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <circle cx="10" cy="60" r="2" fill="#6366f1" />
+                <circle cx="40" cy="30" r="2" fill="#6366f1" />
+                <circle cx="70" cy="50" r="2" fill="#6366f1" />
+                <circle cx="100" cy="10" r="2" fill="#6366f1" />
+                <circle cx="130" cy="40" r="2" fill="#6366f1" />
+                <circle cx="160" cy="25" r="2" fill="#6366f1" />
+                <circle cx="190" cy="55" r="2" fill="#6366f1" />
+              </svg>
+              <div className="absolute bottom-2 left-2 right-2 flex justify-between text-[9px] text-zinc-400">
+                <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span>
+              </div>
+            </div>
           </div>
 
-          {/* Response Tracking – 205px, wider layout */}
+          {/* Response Tracking */}
           <div className="bg-white rounded-[24px] border border-[#e5e7eb] shadow-sm p-5 h-[205px] flex flex-col">
             <div className="flex items-center justify-between flex-shrink-0">
               <h3 className="text-[16px] font-semibold text-[#111827]">Response Tracking</h3>
             </div>
             <div className="flex items-center justify-between mt-3 flex-1">
-              {/* Circle */}
               <div className="relative w-[90px] h-[90px] rounded-full border-[8px] border-green-500 flex flex-col items-center justify-center">
                 <h2 className="text-[26px] font-bold text-[#111827] leading-none">128</h2>
                 <p className="text-[10px] text-[#6b7280]">Total</p>
               </div>
-              {/* Stats */}
               <div className="flex flex-col gap-3">
                 <div className="flex items-center gap-2">
                   <div className="w-2.5 h-2.5 rounded-full bg-green-500" />
