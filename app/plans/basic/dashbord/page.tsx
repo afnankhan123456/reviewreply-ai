@@ -2,7 +2,6 @@
 
 import {
   MapPin,
-  Hash,
   Mail,
   MessageSquare,
   RefreshCw,
@@ -14,7 +13,7 @@ import {
 
 import Topbar from "./components/Topbar";
 
-// ✅ Updated feature cards: Monthly PDF Reports & Export CSV / PDF हटा दिए गए, Business Location जोड़ा गया
+// Updated feature cards: removed Top 5 Keywords, kept Business Location (will span 2 columns)
 const featureCards = [
   {
     title: "Low Rating Alerts",
@@ -42,14 +41,11 @@ const featureCards = [
     color: "bg-yellow-100 text-yellow-600",
   },
   {
-    title: "Top 5 Keywords",
-    icon: Hash,
-    color: "bg-orange-100 text-orange-500",
-  },
-  {
     title: "Business Location",
     icon: MapPin,
     color: "bg-teal-100 text-teal-600",
+    // This card will span 2 columns
+    span: true,
   },
 ];
 
@@ -75,7 +71,7 @@ export default function DashboardPage() {
       `}</style>
 
       <div className="p-5 lg:p-7">
-        {/* ⚠️ Topbar अब सिर्फ Date Range कार्ड दिखाएगा — Business Location वाला कार्ड हटा दिया गया है */}
+        {/* Topbar now only shows Date Range — Business Location card removed from Topbar */}
         <Topbar />
 
         {/* TOP 4 CARDS — height 80px, compact design */}
@@ -150,14 +146,16 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* 7 SMALL CARDS — height 80px (अब 7 कार्ड, इसलिए xl:grid-cols-7) */}
+        {/* 6 SMALL CARDS — height 80px (using xl:grid-cols-7, Business Location spans 2) */}
         <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-7 gap-4 mt-6">
           {featureCards.map((item, index) => {
             const Icon = item.icon;
             return (
               <div
                 key={index}
-                className="bg-white border border-[#e5e7eb] rounded-[18px] h-[80px] p-2 shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center gap-1 overflow-hidden"
+                className={`bg-white border border-[#e5e7eb] rounded-[18px] h-[80px] p-2 shadow-sm hover:shadow-md transition-all flex flex-col items-center justify-center gap-1 overflow-hidden ${
+                  item.span ? "xl:col-span-2" : ""
+                }`}
               >
                 <div
                   className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${item.color}`}
@@ -344,7 +342,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* RIGHT COLUMN – Top Keywords only */}
+          {/* RIGHT COLUMN – Top Keywords (unchanged, still here as separate card) */}
           <div className="bg-white rounded-[24px] border border-[#e5e7eb] shadow-sm p-5 h-[205px] flex flex-col">
             <div className="flex items-center justify-between flex-shrink-0">
               <h3 className="text-[15px] font-semibold text-[#111827]">Top Keywords</h3>
