@@ -72,27 +72,38 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className="w-[260px] bg-white border-r border-zinc-200 flex flex-col justify-between p-5">
+    <div className="w-[260px] bg-white dark:bg-[#111827] border-r border-zinc-200 dark:border-zinc-800 flex flex-col justify-between p-5 transition-colors duration-300">
+
       <div>
+
         {/* LOGO + BRAND TEXT */}
+
         <div className="flex items-center gap-3 mb-10">
+
           <img
             src="/ai-logo.png"
             alt="ReviewReply AI Logo"
             className="h-10 w-auto"
           />
+
           <div className="flex flex-col">
-            <span className="text-sm font-semibold text-zinc-800 leading-tight">
+
+            <span className="text-sm font-semibold text-zinc-800 dark:text-white leading-tight">
               ReviewReply AI
             </span>
-            <span className="text-[11px] text-zinc-500 leading-tight">
+
+            <span className="text-[11px] text-zinc-500 dark:text-zinc-400 leading-tight">
               AI Powered Review Management
             </span>
+
           </div>
+
         </div>
 
         {/* MENU */}
+
         <div className="space-y-3">
+
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = pathname === item.href;
@@ -103,27 +114,43 @@ export default function Sidebar() {
                 href={item.href}
                 className={`flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition ${
                   isActive
-                    ? "bg-blue-50 text-blue-600"
-                    : "hover:bg-zinc-100 text-zinc-700"
+                    ? "bg-blue-50 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400"
+                    : "hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
                 }`}
               >
+
                 <Icon
                   className={`w-5 h-5 ${
-                    isActive ? "text-blue-600" : "text-zinc-500"
+                    isActive
+                      ? "text-blue-600 dark:text-blue-400"
+                      : "text-zinc-500 dark:text-zinc-400"
                   }`}
                 />
+
                 <span>{item.name}</span>
+
               </Link>
             );
           })}
+
         </div>
+
       </div>
 
       {/* USER */}
-      <div className="bg-zinc-100 rounded-2xl p-4">
-        <p className="font-semibold">Business Owner</p>
-        <p className="text-sm text-zinc-500">Basic Plan</p>
+
+      <div className="bg-zinc-100 dark:bg-zinc-800 rounded-2xl p-4 transition-colors duration-300">
+
+        <p className="font-semibold text-black dark:text-white">
+          Business Owner
+        </p>
+
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          Basic Plan
+        </p>
+
       </div>
+
     </div>
   );
 }
