@@ -1,8 +1,7 @@
 "use client";
 
 import {
-  Download,
-  FileText,
+  MapPin,
   Hash,
   Mail,
   MessageSquare,
@@ -15,6 +14,7 @@ import {
 
 import Topbar from "./components/Topbar";
 
+// Updated feature cards: removed Monthly PDF Reports & Export CSV / PDF, added Business Location
 const featureCards = [
   {
     title: "Low Rating Alerts",
@@ -47,14 +47,9 @@ const featureCards = [
     color: "bg-orange-100 text-orange-500",
   },
   {
-    title: "Monthly PDF Reports",
-    icon: FileText,
-    color: "bg-green-100 text-green-600",
-  },
-  {
-    title: "Export CSV / PDF",
-    icon: Download,
-    color: "bg-blue-100 text-blue-600",
+    title: "Business Location",
+    icon: MapPin,
+    color: "bg-teal-100 text-teal-600",
   },
 ];
 
@@ -154,8 +149,8 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* 8 SMALL CARDS — height 80px */}
-        <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-4 mt-6">
+        {/* 7 SMALL CARDS — height 80px (grid changed to 7 columns on xl) */}
+        <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-7 gap-4 mt-6">
           {featureCards.map((item, index) => {
             const Icon = item.icon;
             return (
@@ -401,7 +396,7 @@ export default function DashboardPage() {
               <h3 className="text-[16px] font-semibold text-[#111827]">Response Tracking</h3>
             </div>
             <div className="flex items-center justify-between mt-3 flex-1">
-              {/* Circle – slightly bigger again now that there's space */}
+              {/* Circle */}
               <div className="relative w-[90px] h-[90px] rounded-full border-[8px] border-green-500 flex flex-col items-center justify-center">
                 <h2 className="text-[26px] font-bold text-[#111827] leading-none">128</h2>
                 <p className="text-[10px] text-[#6b7280]">Total</p>
