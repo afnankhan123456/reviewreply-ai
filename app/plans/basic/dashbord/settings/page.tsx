@@ -14,17 +14,36 @@ export default function SettingsPage() {
 
   useEffect(() => {
 
-    if (darkMode) {
+    const savedTheme = localStorage.getItem("theme");
+
+    if (savedTheme === "dark") {
+      setDarkMode(true);
       document.documentElement.classList.add("dark");
+    }
+
+  }, []);
+
+  useEffect(() => {
+
+    if (darkMode) {
+
+      document.documentElement.classList.add("dark");
+
+      localStorage.setItem("theme", "dark");
+
     } else {
+
       document.documentElement.classList.remove("dark");
+
+      localStorage.setItem("theme", "light");
+
     }
 
   }, [darkMode]);
 
   return (
 
-    <div className="p-10 min-h-screen bg-zinc-50 dark:bg-zinc-900 transition">
+    <div className="p-10 min-h-screen bg-zinc-50 dark:bg-zinc-900 transition-colors duration-300">
 
       <h1 className="text-3xl font-bold mb-8 text-zinc-900 dark:text-white">
         Settings
@@ -34,7 +53,7 @@ export default function SettingsPage() {
 
         {/* GOOGLE CONNECTION */}
 
-        <div className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-6 flex items-center justify-between">
+        <div className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-6 flex items-center justify-between transition-colors duration-300">
 
           <div>
 
@@ -42,7 +61,7 @@ export default function SettingsPage() {
               Google Business Connection
             </h2>
 
-            <p className="text-sm text-zinc-500 mt-1">
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
               Connect your Google Business Profile
             </p>
 
@@ -56,7 +75,7 @@ export default function SettingsPage() {
 
         {/* EMAIL NOTIFICATIONS */}
 
-        <div className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-6 flex items-center justify-between">
+        <div className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-6 flex items-center justify-between transition-colors duration-300">
 
           <div>
 
@@ -64,7 +83,7 @@ export default function SettingsPage() {
               Email Notifications
             </h2>
 
-            <p className="text-sm text-zinc-500 mt-1">
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
               Receive important email updates
             </p>
 
@@ -87,7 +106,7 @@ export default function SettingsPage() {
 
         {/* REVIEW ALERTS */}
 
-        <div className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-6 flex items-center justify-between">
+        <div className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-6 flex items-center justify-between transition-colors duration-300">
 
           <div>
 
@@ -95,7 +114,7 @@ export default function SettingsPage() {
               New Review Alerts
             </h2>
 
-            <p className="text-sm text-zinc-500 mt-1">
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
               Get alerts when new reviews arrive
             </p>
 
@@ -118,7 +137,7 @@ export default function SettingsPage() {
 
         {/* AUTO REPLY */}
 
-        <div className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-6 flex items-center justify-between">
+        <div className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-6 flex items-center justify-between transition-colors duration-300">
 
           <div>
 
@@ -134,7 +153,7 @@ export default function SettingsPage() {
 
             </div>
 
-            <p className="text-sm text-zinc-500 mt-1">
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
               Automatically reply to customer reviews
             </p>
 
@@ -151,7 +170,7 @@ export default function SettingsPage() {
 
         {/* REVIEW SYNC */}
 
-        <div className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-6 flex items-center justify-between">
+        <div className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-6 flex items-center justify-between transition-colors duration-300">
 
           <div>
 
@@ -159,7 +178,7 @@ export default function SettingsPage() {
               Review Sync Frequency
             </h2>
 
-            <p className="text-sm text-zinc-500 mt-1">
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
               Choose how often reviews sync
             </p>
 
@@ -182,7 +201,7 @@ export default function SettingsPage() {
 
         {/* DARK MODE */}
 
-        <div className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-6 flex items-center justify-between">
+        <div className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-6 flex items-center justify-between transition-colors duration-300">
 
           <div>
 
@@ -190,7 +209,7 @@ export default function SettingsPage() {
               Dark / Light Mode
             </h2>
 
-            <p className="text-sm text-zinc-500 mt-1">
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
               Change dashboard appearance
             </p>
 
@@ -213,7 +232,3 @@ export default function SettingsPage() {
 
   );
 }
-
-
-
-
