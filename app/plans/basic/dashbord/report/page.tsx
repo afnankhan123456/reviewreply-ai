@@ -15,11 +15,11 @@ export default function ReportPage() {
 
       <div className="mb-8">
 
-        <h1 className="text-3xl font-bold text-black">
+        <h1 className="text-3xl font-bold text-black dark:text-white">
           Reports
         </h1>
 
-        <p className="text-zinc-500 mt-2">
+        <p className="text-zinc-500 dark:text-zinc-400 mt-2">
           Generate and download detailed business review reports.
         </p>
 
@@ -31,17 +31,17 @@ export default function ReportPage() {
 
         {/* CARD 1 */}
 
-        <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm">
+        <div className="bg-white dark:bg-zinc-800 rounded-2xl border border-zinc-200 dark:border-zinc-700 p-5 shadow-sm transition-colors duration-300">
 
           <div className="flex items-center justify-between">
 
             <div>
 
-              <p className="text-sm text-zinc-500">
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
                 Total Reports
               </p>
 
-              <h2 className="text-3xl font-bold text-black mt-2">
+              <h2 className="text-3xl font-bold text-black dark:text-white mt-2">
                 24
               </h2>
 
@@ -57,17 +57,17 @@ export default function ReportPage() {
 
         {/* CARD 2 */}
 
-        <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm">
+        <div className="bg-white dark:bg-zinc-800 rounded-2xl border border-zinc-200 dark:border-zinc-700 p-5 shadow-sm transition-colors duration-300">
 
           <div className="flex items-center justify-between">
 
             <div>
 
-              <p className="text-sm text-zinc-500">
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
                 Monthly Reports
               </p>
 
-              <h2 className="text-3xl font-bold text-black mt-2">
+              <h2 className="text-3xl font-bold text-black dark:text-white mt-2">
                 12
               </h2>
 
@@ -83,17 +83,17 @@ export default function ReportPage() {
 
         {/* CARD 3 */}
 
-        <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm">
+        <div className="bg-white dark:bg-zinc-800 rounded-2xl border border-zinc-200 dark:border-zinc-700 p-5 shadow-sm transition-colors duration-300">
 
           <div className="flex items-center justify-between">
 
             <div>
 
-              <p className="text-sm text-zinc-500">
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
                 Avg Rating
               </p>
 
-              <h2 className="text-3xl font-bold text-black mt-2">
+              <h2 className="text-3xl font-bold text-black dark:text-white mt-2">
                 4.8
               </h2>
 
@@ -109,17 +109,17 @@ export default function ReportPage() {
 
         {/* CARD 4 */}
 
-        <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm">
+        <div className="bg-white dark:bg-zinc-800 rounded-2xl border border-zinc-200 dark:border-zinc-700 p-5 shadow-sm transition-colors duration-300">
 
           <div className="flex items-center justify-between">
 
             <div>
 
-              <p className="text-sm text-zinc-500">
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
                 Performance Growth
               </p>
 
-              <h2 className="text-3xl font-bold text-black mt-2">
+              <h2 className="text-3xl font-bold text-black dark:text-white mt-2">
                 +32%
               </h2>
 
@@ -137,23 +137,23 @@ export default function ReportPage() {
 
       {/* REPORT LIST */}
 
-      <div className="bg-white rounded-3xl border border-zinc-200 p-6 shadow-sm mt-8">
+      <div className="bg-white dark:bg-zinc-800 rounded-3xl border border-zinc-200 dark:border-zinc-700 p-6 shadow-sm mt-8 transition-colors duration-300">
 
         <div className="flex items-center justify-between mb-6">
 
           <div>
 
-            <h2 className="text-xl font-bold text-black">
+            <h2 className="text-xl font-bold text-black dark:text-white">
               Generated Reports
             </h2>
 
-            <p className="text-sm text-zinc-500 mt-1">
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
               Access and download your latest business reports.
             </p>
 
           </div>
 
-          <button className="px-5 py-3 rounded-2xl bg-black text-white font-medium hover:opacity-90 transition">
+          <button className="px-5 py-3 rounded-2xl bg-black dark:bg-white dark:text-black text-white font-medium hover:opacity-90 transition">
             Generate Report
           </button>
 
@@ -162,7 +162,7 @@ export default function ReportPage() {
         <div className="space-y-5">
 
           <div
-            className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 border border-zinc-200 rounded-2xl p-5 hover:bg-zinc-50 transition"
+            className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-5 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition"
           >
 
             <div className="flex items-center gap-4">
@@ -173,15 +173,15 @@ export default function ReportPage() {
 
               <div>
 
-                <h3 className="font-semibold text-black">
+                <h3 className="font-semibold text-black dark:text-white">
                   Monthly Performance Report
                 </h3>
 
-                <p className="text-sm text-zinc-500 mt-1">
+                <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
                   Review insights, customer feedback, and analytics summary.
                 </p>
 
-                <p className="text-xs text-zinc-400 mt-2">
+                <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-2">
                   Generated on June 28, 2026
                 </p>
 
@@ -193,11 +193,11 @@ export default function ReportPage() {
 
             <div className="flex items-center gap-3">
 
-              <button className="px-4 py-2 rounded-xl bg-blue-50 text-blue-600 text-sm font-medium hover:bg-blue-100 transition">
+              <button className="px-4 py-2 rounded-xl bg-blue-50 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 text-sm font-medium hover:bg-blue-100 dark:hover:bg-blue-500/30 transition">
                 View
               </button>
 
-              <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-black text-white text-sm font-medium hover:opacity-90 transition">
+              <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-black dark:bg-white dark:text-black text-white text-sm font-medium hover:opacity-90 transition">
                 <Download className="w-4 h-4" />
                 Download
               </button>
