@@ -149,9 +149,27 @@ export default function AnalyticsPage() {
 
         </div>
 
-        
-::contentReference[oaicite:0]{index=0}
+        <div className="h-[320px] flex items-end justify-between gap-4">
 
+          {[40, 60, 90, 120, 150, 180].map((height, index) => (
+            <div
+              key={index}
+              className="flex flex-col items-center gap-3 w-full"
+            >
+
+              <div
+                className="w-full rounded-t-2xl bg-blue-500"
+                style={{ height: `${height}px` }}
+              />
+
+              <span className="text-sm text-zinc-500">
+                {["Jan", "Feb", "Mar", "Apr", "May", "Jun"][index]}
+              </span>
+
+            </div>
+          ))}
+
+        </div>
 
       </div>
 
