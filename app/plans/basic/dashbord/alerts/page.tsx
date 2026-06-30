@@ -12,13 +12,15 @@ export default function AlertsPage() {
       {/* HEADER */}
 
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-black">
+
+        <h1 className="text-3xl font-bold text-black dark:text-white">
           Alerts
         </h1>
 
-        <p className="text-zinc-500 mt-2">
+        <p className="text-zinc-500 dark:text-zinc-400 mt-2">
           Monitor important review alerts and customer issues.
         </p>
+
       </div>
 
       {/* TOP ALERT CARDS */}
@@ -27,17 +29,20 @@ export default function AlertsPage() {
 
         {/* CARD 1 */}
 
-        <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm">
+        <div className="bg-white dark:bg-zinc-800 rounded-2xl border border-zinc-200 dark:border-zinc-700 p-5 shadow-sm transition-colors duration-300">
+
           <div className="flex items-center justify-between">
 
             <div>
-              <p className="text-sm text-zinc-500">
+
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
                 Low Rating Alerts
               </p>
 
-              <h2 className="text-3xl font-bold text-black mt-2">
+              <h2 className="text-3xl font-bold text-black dark:text-white mt-2">
                 12
               </h2>
+
             </div>
 
             <div className="w-12 h-12 rounded-2xl bg-red-100 flex items-center justify-center">
@@ -45,21 +50,25 @@ export default function AlertsPage() {
             </div>
 
           </div>
+
         </div>
 
         {/* CARD 2 */}
 
-        <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm">
+        <div className="bg-white dark:bg-zinc-800 rounded-2xl border border-zinc-200 dark:border-zinc-700 p-5 shadow-sm transition-colors duration-300">
+
           <div className="flex items-center justify-between">
 
             <div>
-              <p className="text-sm text-zinc-500">
+
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
                 Unanswered Reviews
               </p>
 
-              <h2 className="text-3xl font-bold text-black mt-2">
+              <h2 className="text-3xl font-bold text-black dark:text-white mt-2">
                 8
               </h2>
+
             </div>
 
             <div className="w-12 h-12 rounded-2xl bg-yellow-100 flex items-center justify-center">
@@ -67,21 +76,25 @@ export default function AlertsPage() {
             </div>
 
           </div>
+
         </div>
 
         {/* CARD 3 */}
 
-        <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm">
+        <div className="bg-white dark:bg-zinc-800 rounded-2xl border border-zinc-200 dark:border-zinc-700 p-5 shadow-sm transition-colors duration-300">
+
           <div className="flex items-center justify-between">
 
             <div>
-              <p className="text-sm text-zinc-500">
+
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
                 Negative Feedback
               </p>
 
-              <h2 className="text-3xl font-bold text-black mt-2">
+              <h2 className="text-3xl font-bold text-black dark:text-white mt-2">
                 5
               </h2>
+
             </div>
 
             <div className="w-12 h-12 rounded-2xl bg-orange-100 flex items-center justify-center">
@@ -89,21 +102,25 @@ export default function AlertsPage() {
             </div>
 
           </div>
+
         </div>
 
         {/* CARD 4 */}
 
-        <div className="bg-white rounded-2xl border border-zinc-200 p-5 shadow-sm">
+        <div className="bg-white dark:bg-zinc-800 rounded-2xl border border-zinc-200 dark:border-zinc-700 p-5 shadow-sm transition-colors duration-300">
+
           <div className="flex items-center justify-between">
 
             <div>
-              <p className="text-sm text-zinc-500">
+
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
                 New Notifications
               </p>
 
-              <h2 className="text-3xl font-bold text-black mt-2">
+              <h2 className="text-3xl font-bold text-black dark:text-white mt-2">
                 21
               </h2>
+
             </div>
 
             <div className="w-12 h-12 rounded-2xl bg-blue-100 flex items-center justify-center">
@@ -111,36 +128,37 @@ export default function AlertsPage() {
             </div>
 
           </div>
+
         </div>
 
       </div>
 
       {/* RECENT ALERTS */}
 
-      <div className="bg-white rounded-3xl border border-zinc-200 p-6 shadow-sm mt-8">
+      <div className="bg-white dark:bg-zinc-800 rounded-3xl border border-zinc-200 dark:border-zinc-700 p-6 shadow-sm mt-8 transition-colors duration-300">
 
         <div className="flex items-center justify-between mb-6">
 
           <div>
-            <h2 className="text-xl font-bold text-black">
+
+            <h2 className="text-xl font-bold text-black dark:text-white">
               Recent Alerts
             </h2>
 
-            <p className="text-sm text-zinc-500 mt-1">
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
               Latest important activities from customer reviews.
             </p>
+
           </div>
 
         </div>
 
         <div className="space-y-5">
 
-          {/* ALERT ITEM */}
-
           {[1, 2, 3, 4].map((item) => (
             <div
               key={item}
-              className="flex items-start justify-between border border-zinc-200 rounded-2xl p-4 hover:bg-zinc-50 transition"
+              className="flex items-start justify-between border border-zinc-200 dark:border-zinc-700 rounded-2xl p-4 hover:bg-zinc-50 dark:hover:bg-zinc-900 transition"
             >
 
               <div className="flex gap-4">
@@ -150,22 +168,24 @@ export default function AlertsPage() {
                 </div>
 
                 <div>
-                  <h3 className="font-semibold text-black">
+
+                  <h3 className="font-semibold text-black dark:text-white">
                     Low Rating Review Detected
                   </h3>
 
-                  <p className="text-sm text-zinc-500 mt-1">
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
                     A customer left a 2-star review mentioning poor service experience.
                   </p>
 
-                  <p className="text-xs text-zinc-400 mt-2">
+                  <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-2">
                     2 minutes ago
                   </p>
+
                 </div>
 
               </div>
 
-              <button className="px-4 py-2 rounded-xl bg-red-50 text-red-500 text-sm font-medium hover:bg-red-100 transition">
+              <button className="px-4 py-2 rounded-xl bg-red-50 dark:bg-red-500/20 text-red-500 dark:text-red-400 text-sm font-medium hover:bg-red-100 dark:hover:bg-red-500/30 transition">
                 View
               </button>
 
