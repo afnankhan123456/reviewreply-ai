@@ -14,7 +14,7 @@ import {
 
 import Topbar from "./components/Topbar";
 
-// Updated feature cards: removed Monthly PDF Reports & Export CSV / PDF, added Business Location
+// ✅ Updated feature cards: Monthly PDF Reports & Export CSV / PDF हटा दिए गए, Business Location जोड़ा गया
 const featureCards = [
   {
     title: "Low Rating Alerts",
@@ -75,6 +75,7 @@ export default function DashboardPage() {
       `}</style>
 
       <div className="p-5 lg:p-7">
+        {/* ⚠️ Topbar अब सिर्फ Date Range कार्ड दिखाएगा — Business Location वाला कार्ड हटा दिया गया है */}
         <Topbar />
 
         {/* TOP 4 CARDS — height 80px, compact design */}
@@ -149,7 +150,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* 7 SMALL CARDS — height 80px (grid changed to 7 columns on xl) */}
+        {/* 7 SMALL CARDS — height 80px (अब 7 कार्ड, इसलिए xl:grid-cols-7) */}
         <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-7 gap-4 mt-6">
           {featureCards.map((item, index) => {
             const Icon = item.icon;
