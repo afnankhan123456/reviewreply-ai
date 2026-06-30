@@ -274,7 +274,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* RECENT REVIEWS + RIGHT STACKED CARDS */}
+        {/* RECENT REVIEWS + RIGHT COLUMN (Top Keywords) */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7">
           {/* LEFT BIG CARD — Recent Reviews (sticky header, scrollable list, 205px) */}
           <div className="xl:col-span-2 bg-white rounded-[24px] border border-[#e5e7eb] shadow-sm p-5 h-[205px] flex flex-col">
@@ -348,83 +348,85 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* RIGHT COLUMN – Top Keywords + three cards in one row */}
-          <div className="flex flex-col gap-6">
-            {/* Top 5 Keywords – sticky header, scrollable list, 205px */}
-            <div className="bg-white rounded-[24px] border border-[#e5e7eb] shadow-sm p-5 h-[205px] flex flex-col">
-              <div className="flex items-center justify-between flex-shrink-0">
-                <h3 className="text-[15px] font-semibold text-[#111827]">Top Keywords</h3>
-              </div>
-              <div className="flex-1 overflow-y-auto mt-4 space-y-3 pr-1 scrollbar-thin">
-                {[
-                  { name: "Service", value: "45 (32%)", width: "80%" },
-                  { name: "Quality", value: "30 (21%)", width: "60%" },
-                  { name: "Support", value: "25 (18%)", width: "50%" },
-                  { name: "Experience", value: "20 (14%)", width: "40%" },
-                  { name: "Product", value: "10 (7%)", width: "25%" },
-                ].map((item, index) => (
-                  <div key={index} className="flex items-center gap-3">
-                    <span className="text-[12px] font-semibold text-blue-600 w-4">
-                      {index + 1}
-                    </span>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-1">
-                        <span className="text-[12px] text-[#111827]">{item.name}</span>
-                        <span className="text-[11px] text-[#6b7280]">{item.value}</span>
-                      </div>
-                      <div className="w-full h-2 rounded-full bg-gray-200 overflow-hidden">
-                        <div
-                          className="h-full bg-blue-500 rounded-full"
-                          style={{ width: item.width }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+          {/* RIGHT COLUMN – Top Keywords only */}
+          <div className="bg-white rounded-[24px] border border-[#e5e7eb] shadow-sm p-5 h-[205px] flex flex-col">
+            <div className="flex items-center justify-between flex-shrink-0">
+              <h3 className="text-[15px] font-semibold text-[#111827]">Top Keywords</h3>
             </div>
-
-            {/* Row: Review Analysis, Monthly History, Response Tracking – all in one line */}
-            <div className="grid grid-cols-3 gap-4">
-              <div className="bg-white rounded-[24px] h-[205px] border border-[#e5e7eb] shadow-sm flex items-center justify-center">
-                <h3 className="text-[15px] font-semibold text-[#111827]">Review Analysis</h3>
-              </div>
-              <div className="bg-white rounded-[24px] h-[205px] border border-[#e5e7eb] shadow-sm flex items-center justify-center">
-                <h3 className="text-[15px] font-semibold text-[#111827]">Monthly History</h3>
-              </div>
-              {/* Response Tracking – 205px with content */}
-              <div className="bg-white rounded-[24px] border border-[#e5e7eb] shadow-sm p-4 h-[205px] flex flex-col">
-                <div className="flex items-center justify-between flex-shrink-0">
-                  <h3 className="text-[14px] font-semibold text-[#111827]">Response Tracking</h3>
-                </div>
-                <div className="flex flex-col items-center justify-center flex-1 gap-3 mt-2">
-                  {/* Smaller circle */}
-                  <div className="w-[70px] h-[70px] rounded-full border-[6px] border-green-500 flex flex-col items-center justify-center">
-                    <h2 className="text-[22px] font-bold text-[#111827] leading-none">128</h2>
-                    <p className="text-[9px] text-[#6b7280]">Total</p>
+            <div className="flex-1 overflow-y-auto mt-4 space-y-3 pr-1 scrollbar-thin">
+              {[
+                { name: "Service", value: "45 (32%)", width: "80%" },
+                { name: "Quality", value: "30 (21%)", width: "60%" },
+                { name: "Support", value: "25 (18%)", width: "50%" },
+                { name: "Experience", value: "20 (14%)", width: "40%" },
+                { name: "Product", value: "10 (7%)", width: "25%" },
+              ].map((item, index) => (
+                <div key={index} className="flex items-center gap-3">
+                  <span className="text-[12px] font-semibold text-blue-600 w-4">
+                    {index + 1}
+                  </span>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[12px] text-[#111827]">{item.name}</span>
+                      <span className="text-[11px] text-[#6b7280]">{item.value}</span>
+                    </div>
+                    <div className="w-full h-2 rounded-full bg-gray-200 overflow-hidden">
+                      <div
+                        className="h-full bg-blue-500 rounded-full"
+                        style={{ width: item.width }}
+                      />
+                    </div>
                   </div>
-                  <div className="flex flex-col gap-2 w-full px-2">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5">
-                        <div className="w-2 h-2 rounded-full bg-green-500" />
-                        <span className="text-[11px] text-[#111827]">Replied</span>
-                      </div>
-                      <span className="text-[11px] text-[#6b7280]">109 (85%)</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5">
-                        <div className="w-2 h-2 rounded-full bg-yellow-400" />
-                        <span className="text-[11px] text-[#111827]">Pending</span>
-                      </div>
-                      <span className="text-[11px] text-[#6b7280]">19 (15%)</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-1.5">
-                        <div className="w-2 h-2 rounded-full bg-red-500" />
-                        <span className="text-[11px] text-[#111827]">No Reply</span>
-                      </div>
-                      <span className="text-[11px] text-[#6b7280]">0 (0%)</span>
-                    </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* NEW FULL-WIDTH ROW: Review Analysis, Monthly History, Response Tracking */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7">
+          {/* Review Analysis */}
+          <div className="bg-white rounded-[24px] h-[205px] border border-[#e5e7eb] shadow-sm flex items-center justify-center">
+            <h3 className="text-[17px] font-semibold text-[#111827]">Review Analysis</h3>
+          </div>
+
+          {/* Monthly History */}
+          <div className="bg-white rounded-[24px] h-[205px] border border-[#e5e7eb] shadow-sm flex items-center justify-center">
+            <h3 className="text-[17px] font-semibold text-[#111827]">Monthly History</h3>
+          </div>
+
+          {/* Response Tracking – 205px, wider layout */}
+          <div className="bg-white rounded-[24px] border border-[#e5e7eb] shadow-sm p-5 h-[205px] flex flex-col">
+            <div className="flex items-center justify-between flex-shrink-0">
+              <h3 className="text-[16px] font-semibold text-[#111827]">Response Tracking</h3>
+            </div>
+            <div className="flex items-center justify-between mt-3 flex-1">
+              {/* Circle – slightly bigger again now that there's space */}
+              <div className="relative w-[90px] h-[90px] rounded-full border-[8px] border-green-500 flex flex-col items-center justify-center">
+                <h2 className="text-[26px] font-bold text-[#111827] leading-none">128</h2>
+                <p className="text-[10px] text-[#6b7280]">Total</p>
+              </div>
+              {/* Stats */}
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-green-500" />
+                  <div>
+                    <p className="text-[12px] font-medium text-[#111827]">Replied</p>
+                    <p className="text-[11px] text-[#6b7280]">109 (85%)</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
+                  <div>
+                    <p className="text-[12px] font-medium text-[#111827]">Pending</p>
+                    <p className="text-[11px] text-[#6b7280]">19 (15%)</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
+                  <div>
+                    <p className="text-[12px] font-medium text-[#111827]">No Reply</p>
+                    <p className="text-[11px] text-[#6b7280]">0 (0%)</p>
                   </div>
                 </div>
               </div>
