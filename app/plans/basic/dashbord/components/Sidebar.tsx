@@ -75,7 +75,13 @@ export default function Sidebar() {
     <div className="w-[260px] bg-white border-r border-zinc-200 flex flex-col justify-between p-5">
       <div>
         {/* LOGO */}
-        <h1 className="text-2xl font-bold text-blue-600 mb-10">ReviewSync</h1>
+        <div className="mb-10">
+          <img
+            src="https://github.com/afnankhan123456/reviewreply-ai/blob/main/public/ai-logo.png"
+            alt="ReviewSync Logo"
+            className="h-10 w-auto"
+          />
+        </div>
 
         {/* MENU */}
         <div className="space-y-3">
@@ -113,3 +119,7 @@ export default function Sidebar() {
     </div>
   );
 }
+
+
+
+
