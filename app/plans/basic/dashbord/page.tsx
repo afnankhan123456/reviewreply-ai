@@ -77,6 +77,38 @@ export default function DashboardPage() {
       <div className="p-5 lg:p-7">
         <Topbar />
 
+        {/* Google Business Connection Card */}
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 mt-7">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                Google Business
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Connect your Google Business Profile
+              </p>
+            </div>
+            <button className="bg-black dark:bg-white dark:text-black text-white px-4 py-2 rounded-xl">
+              Connect Google Business
+            </button>
+          </div>
+          <div className="mt-4">
+            <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-700/30 border border-gray-200 dark:border-gray-600 rounded-xl p-4">
+              <div>
+                <h3 className="font-medium text-gray-900 dark:text-gray-100">
+                  Locations Usage
+                </h3>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  Basic Plan supports only 1 business location
+                </p>
+              </div>
+              <div className="text-gray-900 dark:text-gray-100 font-semibold">
+                0 / 1
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* TOP 4 CARDS — height 80px */}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mt-7">
           {/* CARD 1 */}
