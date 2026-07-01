@@ -91,11 +91,11 @@ const handler = NextAuth({
     async jwt({ token, account, user }) {
 
       if (account?.access_token) {
-        token.accessToken = account.access_token;
+        (token as any).accessToken = account.access_token;
       }
 
       if (user?.email) {
-        token.isAdmin = user.email === adminEmail;
+        (token as any).isAdmin = user.email === adminEmail;
       }
 
       return token;
@@ -103,7 +103,7 @@ const handler = NextAuth({
 
     async session({ session, token }) {
 
-      session.accessToken = token.accessToken;
+      (session as any).accessToken = (token as any).accessToken;
 
       return session;
     },
