@@ -12,6 +12,13 @@ const handler = NextAuth({
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+
+      authorization: {
+        params: {
+          scope:
+            "openid email profile https://www.googleapis.com/auth/business.manage",
+        },
+      },
     }),
   ],
 
@@ -36,7 +43,18 @@ const handler = NextAuth({
             name: user.name,
             email: user.email,
             image: user.image,
+
             plan: "basic",
+
+            subscriptionStatus: "active",
+
+            reviewsUsed: 0,
+            reviewsLimit: 100,
+
+            locationsUsed: 0,
+            locationsLimit: 1,
+
+            googleConnected: false,
           },
         });
 
