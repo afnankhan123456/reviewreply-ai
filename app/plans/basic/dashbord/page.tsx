@@ -50,11 +50,14 @@ const featureCards = [
 export default function DashboardPage() {
   const [locations, setLocations] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   async function loadGoogleBusiness() {
     try {
       setLoading(true);
+      setError("");
       const response = await fetch("/api/google-business");
       const data = await response.json();
       if (!data.success) {
@@ -63,9 +66,42 @@ export default function DashboardPage() {
       }
       setLocations(data.locations || []);
     } catch (error) {
-      setError("Something went wrong");
+      setError("Something went wrong while loading locations");
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function saveLocation(location: any) {
+    try {
+      setSaving(true);
+      setError("");
+      setSuccess("");
+
+      const response = await fetch("/api/save-location", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          googleLocationId: location.name,
+          businessName: location.title,
+          address: location.storefrontAddress?.addressLines?.join(", ") || "",
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!data.success) {
+        setError(data.error || "Failed to save location");
+        return;
+      }
+
+      setSuccess("Business location connected successfully");
+    } catch (error) {
+      setError("Something went wrong while saving location");
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -75,6 +111,7 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">
+      {/* Thin scrollbar styles – light & dark */}
       <style jsx>{`
         .scrollbar-thin::-webkit-scrollbar {
           width: 4px;
@@ -101,9 +138,9 @@ export default function DashboardPage() {
       <div className="p-5 lg:p-7">
         <Topbar />
 
-        {/* Google Business Locations Card (Dynamic) */}
+        {/* Google Business Locations Card */}
         <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 mt-7">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
             <div>
               <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
                 Google Business Locations
@@ -112,16 +149,15 @@ export default function DashboardPage() {
                 Basic Plan supports only 1 location
               </p>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="text-gray-900 dark:text-gray-100 font-semibold">
+            <div className="flex items-center gap-4 w-full sm:w-auto">
+              <div className="text-gray-900 dark:text-gray-100 font-semibold whitespace-nowrap">
                 {locations.length} / 1
               </div>
               <button
                 onClick={() => {
-                  // Add your OAuth connect logic here, e.g.:
-                  // window.location.href = "/api/google/auth";
+                  // OAuth connect logic – example: window.location.href = "/api/google/auth";
                 }}
-                className="bg-black dark:bg-white dark:text-black text-white px-4 py-2 rounded-xl text-sm font-medium"
+                className="bg-black dark:bg-white dark:text-black text-white px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap"
               >
                 Connect Google Business
               </button>
@@ -129,7 +165,9 @@ export default function DashboardPage() {
           </div>
 
           {loading && (
-            <p className="text-gray-500 dark:text-gray-400">Loading locations...</p>
+            <p className="text-gray-500 dark:text-gray-400">
+              Loading locations...
+            </p>
           )}
 
           {error && (
@@ -138,22 +176,32 @@ export default function DashboardPage() {
             </div>
           )}
 
+          {success && (
+            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-600 dark:text-green-400 p-4 rounded-xl mb-4">
+              {success}
+            </div>
+          )}
+
           <div className="space-y-4">
             {locations.map((location: any) => (
               <div
                 key={location.name}
-                className="border border-gray-200 dark:border-gray-600 rounded-xl p-4 flex items-center justify-between"
+                className="border border-gray-200 dark:border-gray-600 rounded-xl p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3"
               >
-                <div>
-                  <h2 className="font-semibold text-gray-900 dark:text-gray-100">
+                <div className="min-w-0">
+                  <h2 className="font-semibold text-gray-900 dark:text-gray-100 truncate">
                     {location.title || "Business Location"}
                   </h2>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
                     {location.storefrontAddress?.addressLines?.join(", ") || "No Address"}
                   </p>
                 </div>
-                <button className="bg-black dark:bg-white dark:text-black text-white px-4 py-2 rounded-xl text-sm font-medium">
-                  Select
+                <button
+                  onClick={() => saveLocation(location)}
+                  disabled={saving}
+                  className="bg-black dark:bg-white dark:text-black text-white px-4 py-2 rounded-xl text-sm font-medium disabled:opacity-50 whitespace-nowrap"
+                >
+                  {saving ? "Saving..." : "Select"}
                 </button>
               </div>
             ))}
