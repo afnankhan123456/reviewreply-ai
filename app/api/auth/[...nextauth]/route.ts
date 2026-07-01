@@ -25,52 +25,64 @@ const handler = NextAuth({
 
     async signIn({ user }) {
 
-      if (!user.email) {
-        return false;
-      }
+      try {
 
-      const existingUser = await prisma.user.findUnique({
-        where: {
-          email: user.email,
-        },
-      });
+        if (!user.email) {
+          return false;
+        }
 
-      if (!existingUser) {
-
-        await prisma.user.create({
-          data: {
-            name: user.name,
-            email: user.email,
-            image: user.image,
-
-            plan: "basic",
-
-            subscriptionStatus: "active",
-
-            reviewsUsed: 0,
-            reviewsLimit: 100,
-
-            locationsUsed: 0,
-            locationsLimit: 1,
-
-            googleConnected: false,
-          },
-        });
-
-      } else {
-
-        await prisma.user.update({
+        const existingUser = await prisma.user.findUnique({
           where: {
             email: user.email,
           },
-          data: {
-            lastLogin: new Date(),
-          },
         });
 
-      }
+        if (!existingUser) {
 
-      return true;
+          await prisma.user.create({
+            data: {
+              name: user.name || "",
+              email: user.email,
+              image: user.image || "",
+
+              plan: "basic",
+
+              subscriptionStatus: "active",
+
+              reviewsUsed: 0,
+              reviewsLimit: 100,
+
+              locationsUsed: 0,
+              locationsLimit: 1,
+
+              googleConnected: false,
+
+              createdAt: new Date(),
+              lastLogin: new Date(),
+            },
+          });
+
+        } else {
+
+          await prisma.user.update({
+            where: {
+              email: user.email,
+            },
+            data: {
+              lastLogin: new Date(),
+            },
+          });
+
+        }
+
+        return true;
+
+      } catch (error) {
+
+        console.log("SIGN IN ERROR:", error);
+
+        return true;
+      }
     },
 
     async jwt({ token, user }) {
