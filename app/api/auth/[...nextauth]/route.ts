@@ -15,7 +15,10 @@ const handler = NextAuth({
 
       authorization: {
         params: {
-          scope: "openid email profile",
+          scope:
+            "openid email profile https://www.googleapis.com/auth/business.manage",
+          access_type: "offline",
+          prompt: "consent",
         },
       },
     }),
@@ -85,13 +88,24 @@ const handler = NextAuth({
       }
     },
 
-    async jwt({ token, user }) {
+    async jwt({ token, account, user }) {
+
+      if (account?.access_token) {
+        token.accessToken = account.access_token;
+      }
 
       if (user?.email) {
         token.isAdmin = user.email === adminEmail;
       }
 
       return token;
+    },
+
+    async session({ session, token }) {
+
+      session.accessToken = token.accessToken;
+
+      return session;
     },
 
     async redirect({ baseUrl, url }) {
