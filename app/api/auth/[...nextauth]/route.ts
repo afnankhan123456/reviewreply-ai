@@ -15,8 +15,7 @@ const handler = NextAuth({
 
       authorization: {
         params: {
-          scope:
-            "openid email profile https://www.googleapis.com/auth/business.manage",
+          scope: "openid email profile",
         },
       },
     }),
