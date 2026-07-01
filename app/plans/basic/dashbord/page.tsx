@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import {
   MapPin,
   Mail,
@@ -10,7 +11,6 @@ import {
   AlertTriangle,
   Reply,
 } from "lucide-react";
-
 import Topbar from "./components/Topbar";
 
 const featureCards = [
@@ -48,9 +48,33 @@ const featureCards = [
 ];
 
 export default function DashboardPage() {
+  const [locations, setLocations] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  async function loadGoogleBusiness() {
+    try {
+      setLoading(true);
+      const response = await fetch("/api/google-business");
+      const data = await response.json();
+      if (!data.success) {
+        setError(data.error || "Failed to load locations");
+        return;
+      }
+      setLocations(data.locations || []);
+    } catch (error) {
+      setError("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadGoogleBusiness();
+  }, []);
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">
-      {/* Thin scrollbar styles – light & dark */}
       <style jsx>{`
         .scrollbar-thin::-webkit-scrollbar {
           width: 4px;
@@ -77,35 +101,62 @@ export default function DashboardPage() {
       <div className="p-5 lg:p-7">
         <Topbar />
 
-        {/* Google Business Connection Card */}
+        {/* Google Business Locations Card (Dynamic) */}
         <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 mt-7">
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                Google Business
-              </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Connect your Google Business Profile
+              <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                Google Business Locations
+              </h1>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                Basic Plan supports only 1 location
               </p>
             </div>
-            <button className="bg-black dark:bg-white dark:text-black text-white px-4 py-2 rounded-xl">
-              Connect Google Business
-            </button>
-          </div>
-          <div className="mt-4">
-            <div className="flex items-center justify-between bg-gray-50 dark:bg-gray-700/30 border border-gray-200 dark:border-gray-600 rounded-xl p-4">
-              <div>
-                <h3 className="font-medium text-gray-900 dark:text-gray-100">
-                  Locations Usage
-                </h3>
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                  Basic Plan supports only 1 business location
-                </p>
-              </div>
+            <div className="flex items-center gap-4">
               <div className="text-gray-900 dark:text-gray-100 font-semibold">
-                0 / 1
+                {locations.length} / 1
               </div>
+              <button
+                onClick={() => {
+                  // Add your OAuth connect logic here, e.g.:
+                  // window.location.href = "/api/google/auth";
+                }}
+                className="bg-black dark:bg-white dark:text-black text-white px-4 py-2 rounded-xl text-sm font-medium"
+              >
+                Connect Google Business
+              </button>
             </div>
+          </div>
+
+          {loading && (
+            <p className="text-gray-500 dark:text-gray-400">Loading locations...</p>
+          )}
+
+          {error && (
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 p-4 rounded-xl mb-4">
+              {error}
+            </div>
+          )}
+
+          <div className="space-y-4">
+            {locations.map((location: any) => (
+              <div
+                key={location.name}
+                className="border border-gray-200 dark:border-gray-600 rounded-xl p-4 flex items-center justify-between"
+              >
+                <div>
+                  <h2 className="font-semibold text-gray-900 dark:text-gray-100">
+                    {location.title || "Business Location"}
+                  </h2>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {location.storefrontAddress?.addressLines?.join(", ") || "No Address"}
+                  </p>
+                </div>
+                <button className="bg-black dark:bg-white dark:text-black text-white px-4 py-2 rounded-xl text-sm font-medium">
+                  Select
+                </button>
+              </div>
+            ))}
           </div>
         </div>
 
