@@ -1,18 +1,15 @@
 import { NextResponse } from "next/server";
-import { prisma } from "../../../../lib/prisma";
+import { prisma } from "../../../lib/prisma";
 import { getToken } from "next-auth/jwt";
 
 export async function GET(req: any) {
-
   try {
-
     const token: any = await getToken({
       req,
       secret: process.env.NEXTAUTH_SECRET,
     });
 
     if (!token?.accessToken) {
-
       return NextResponse.json({
         success: false,
         error: "No Google access token found",
@@ -26,13 +23,11 @@ export async function GET(req: any) {
     });
 
     for (const user of users) {
-
       if (user.reviewsUsed >= user.reviewsLimit) {
         continue;
       }
 
       for (const location of user.businessLocations) {
-
         const response = await fetch(
           `https://mybusiness.googleapis.com/v4/${location.googleLocationId}/reviews`,
           {
@@ -43,11 +38,9 @@ export async function GET(req: any) {
         );
 
         const data = await response.json();
-
         const reviews = data.reviews || [];
 
         for (const review of reviews) {
-
           if (user.reviewsUsed >= user.reviewsLimit) {
             break;
           }
@@ -65,30 +58,15 @@ export async function GET(req: any) {
           await prisma.review.create({
             data: {
               userId: user.id,
-
               businessLocationId: location.id,
-
               googleReviewId: review.reviewId,
-
-              reviewerName:
-                review.reviewer?.displayName || "Anonymous",
-
+              reviewerName: review.reviewer?.displayName || "Anonymous",
               rating: review.starRating || 0,
-
-              reviewText:
-                review.comment || "",
-
-              reviewReply:
-                review.reviewReply?.comment || "",
-
-              replied:
-                !!review.reviewReply,
-
-              reviewDate:
-                new Date(review.createTime),
-
-              syncedAt:
-                new Date(),
+              reviewText: review.comment || "",
+              reviewReply: review.reviewReply?.comment || "",
+              replied: !!review.reviewReply,
+              reviewDate: new Date(review.createTime),
+              syncedAt: new Date(),
             },
           });
 
@@ -110,13 +88,10 @@ export async function GET(req: any) {
       success: true,
       message: "Auto sync completed",
     });
-
   } catch (error) {
-
     return NextResponse.json({
       success: false,
       error: String(error),
     });
-
   }
 }
