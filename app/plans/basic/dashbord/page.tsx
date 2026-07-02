@@ -48,11 +48,35 @@ const featureCards = [
 ];
 
 export default function DashboardPage() {
+  // Google Business Locations states
   const [locations, setLocations] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  // Dashboard stats states (initially empty/zero)
+  const [reviewsSynced, setReviewsSynced] = useState({ current: 0, total: 0 });
+  const [syncStatus, setSyncStatus] = useState({ active: false, lastSynced: "" });
+  const [averageRating, setAverageRating] = useState(0);
+  const [totalReviews, setTotalReviews] = useState(0);
+  const [ratingCounts, setRatingCounts] = useState([0, 0, 0, 0, 0]);
+  const [sentiment, setSentiment] = useState({ positive: 0, negative: 0 });
+  const [unansweredReviews, setUnansweredReviews] = useState<any[]>([]);
+  const [recentReviews, setRecentReviews] = useState<any[]>([]);
+  const [topKeywords, setTopKeywords] = useState<any[]>([]);
+  const [responseTracking, setResponseTracking] = useState({
+    total: 0,
+    replied: 0,
+    pending: 0,
+    noReply: 0,
+  });
+
+  // Google Reviews Sync card states
+  const [syncLimit] = useState(100); // Basic plan limit
+  const [autoSync, setAutoSync] = useState(true);
+  const [syncStatusText, setSyncStatusText] = useState("Ready");
+  const [syncedReviewsList, setSyncedReviewsList] = useState<any[]>([]);
 
   async function loadGoogleBusiness() {
     try {
@@ -107,6 +131,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     loadGoogleBusiness();
+    // In production, load all dashboard data here (e.g. loadDashboardStats())
   }, []);
 
   return (
@@ -165,9 +190,7 @@ export default function DashboardPage() {
           </div>
 
           {loading && (
-            <p className="text-gray-500 dark:text-gray-400">
-              Loading locations...
-            </p>
+            <p className="text-gray-500 dark:text-gray-400">Loading locations...</p>
           )}
 
           {error && (
@@ -208,6 +231,162 @@ export default function DashboardPage() {
           </div>
         </div>
 
+        {/* GOOGLE REVIEWS SYNC CARD */}
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 mt-7">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-6">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                Google Reviews Sync
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                Sync and manage Google Business reviews
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => {
+                  // Manual sync logic – e.g., fetch("/api/sync-reviews")
+                }}
+                className="bg-black dark:bg-white dark:text-black text-white px-4 py-2 rounded-xl text-sm font-medium"
+              >
+                Manual Sync
+              </button>
+            </div>
+          </div>
+
+          {/* STATS */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {/* Reviews Usage */}
+            <div className="border border-gray-200 dark:border-gray-700 rounded-xl p-4">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Reviews Synced
+              </p>
+              <div className="flex items-end gap-2 mt-2">
+                <h3 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                  {reviewsSynced.current}
+                </h3>
+                <span className="text-gray-500 dark:text-gray-400 mb-1">
+                  /{syncLimit}
+                </span>
+              </div>
+              <p className="text-xs text-gray-400 mt-1">Monthly Limit</p>
+            </div>
+
+            {/* Auto Sync */}
+            <div className="border border-gray-200 dark:border-gray-700 rounded-xl p-4">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Auto Sync
+              </p>
+              <h3
+                className={`text-2xl font-bold mt-2 ${
+                  autoSync
+                    ? "text-green-600 dark:text-green-400"
+                    : "text-gray-500 dark:text-gray-400"
+                }`}
+              >
+                {autoSync ? "Active" : "Inactive"}
+              </h3>
+              <p className="text-xs text-gray-400 mt-1">
+                {autoSync
+                  ? "Daily review sync enabled"
+                  : "Auto sync is turned off"}
+              </p>
+            </div>
+
+            {/* Sync Status */}
+            <div className="border border-gray-200 dark:border-gray-700 rounded-xl p-4">
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Sync Status
+              </p>
+              <h3 className="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-2">
+                {syncStatusText}
+              </h3>
+              <p className="text-xs text-gray-400 mt-1">
+                {syncStatusText === "Ready"
+                  ? "Waiting for manual sync"
+                  : "Sync in progress..."}
+              </p>
+            </div>
+          </div>
+
+          {/* LIMIT WARNING */}
+          <div className="mt-5 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4">
+            <div className="flex items-start gap-3">
+              <AlertTriangle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 mt-0.5" />
+              <div>
+                <h4 className="text-sm font-semibold text-yellow-700 dark:text-yellow-300">
+                  Monthly Sync Limit
+                </h4>
+                <p className="text-sm text-yellow-600 dark:text-yellow-400 mt-1">
+                  Basic plan supports maximum {syncLimit} Google reviews sync per month.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* RECENT SYNCED REVIEWS */}
+          <div className="mt-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                Latest Synced Reviews
+              </h3>
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                {syncedReviewsList.length} Reviews
+              </span>
+            </div>
+
+            <div className="space-y-4">
+              {syncedReviewsList.length === 0 ? (
+                <p className="text-gray-500 dark:text-gray-400 text-sm text-center">
+                  No synced reviews yet. Click "Manual Sync" to pull the latest.
+                </p>
+              ) : (
+                syncedReviewsList.map((review, index) => (
+                  <div
+                    key={index}
+                    className="border border-gray-200 dark:border-gray-700 rounded-xl p-4"
+                  >
+                    <div className="flex items-start justify-between gap-4">
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-sm font-semibold text-gray-700 dark:text-gray-300">
+                            {review.initial || "G"}
+                          </div>
+                          <div>
+                            <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                              {review.name}
+                            </h4>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              Synced {review.syncedAt || "recently"}
+                            </p>
+                          </div>
+                        </div>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 mt-3">
+                          {review.text}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        {Array(5)
+                          .fill(0)
+                          .map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`w-4 h-4 ${
+                                i < review.rating
+                                  ? "fill-yellow-400 text-yellow-400"
+                                  : "text-gray-300 dark:text-gray-600"
+                              }`}
+                            />
+                          ))}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+
         {/* TOP 4 CARDS — height 80px */}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mt-7">
           {/* CARD 1 */}
@@ -218,8 +397,8 @@ export default function DashboardPage() {
             <div className="flex flex-col gap-0.5 min-w-0">
               <p className="text-[11px] text-gray-500 dark:text-gray-400 leading-tight">Reviews Synced</p>
               <div className="flex items-baseline gap-1">
-                <h3 className="text-[22px] font-bold text-gray-900 dark:text-gray-100 leading-none">100</h3>
-                <span className="text-[13px] text-gray-500 dark:text-gray-400">/100</span>
+                <h3 className="text-[22px] font-bold text-gray-900 dark:text-gray-100 leading-none">{reviewsSynced.current}</h3>
+                <span className="text-[13px] text-gray-500 dark:text-gray-400">/{syncLimit}</span>
               </div>
               <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">This Month</p>
             </div>
@@ -232,8 +411,12 @@ export default function DashboardPage() {
             </div>
             <div className="flex flex-col gap-0.5 min-w-0">
               <p className="text-[11px] text-gray-500 dark:text-gray-400 leading-tight">Google Review Sync</p>
-              <h3 className="text-[22px] font-bold text-green-600 dark:text-green-400 leading-none">Active</h3>
-              <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">Last synced 2 hours ago</p>
+              <h3 className="text-[22px] font-bold text-green-600 dark:text-green-400 leading-none">
+                {syncStatus.active ? "Active" : "Inactive"}
+              </h3>
+              <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">
+                {syncStatus.lastSynced ? `Last synced ${syncStatus.lastSynced}` : "Not synced yet"}
+              </p>
             </div>
           </div>
 
@@ -245,7 +428,9 @@ export default function DashboardPage() {
             <div className="flex flex-col gap-0.5 min-w-0">
               <p className="text-[11px] text-gray-500 dark:text-gray-400 leading-tight">Average Rating</p>
               <div className="flex items-center gap-2">
-                <h3 className="text-[22px] font-bold text-gray-900 dark:text-gray-100 leading-none">4.6</h3>
+                <h3 className="text-[22px] font-bold text-gray-900 dark:text-gray-100 leading-none">
+                  {averageRating.toFixed(1)}
+                </h3>
                 <div className="flex gap-0.5">
                   {Array(5)
                     .fill(0)
@@ -253,7 +438,7 @@ export default function DashboardPage() {
                       <Star
                         key={i}
                         className={`w-3.5 h-3.5 ${
-                          i < 4
+                          i < Math.round(averageRating)
                             ? "fill-yellow-400 dark:fill-yellow-300 text-yellow-400 dark:text-yellow-300"
                             : "text-gray-300 dark:text-gray-600"
                         }`}
@@ -261,7 +446,9 @@ export default function DashboardPage() {
                     ))}
                 </div>
               </div>
-              <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">Based on 128 reviews</p>
+              <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">
+                Based on {totalReviews} reviews
+              </p>
             </div>
           </div>
 
@@ -272,9 +459,11 @@ export default function DashboardPage() {
             </div>
             <div className="flex flex-col gap-0.5 min-w-0">
               <p className="text-[11px] text-gray-500 dark:text-gray-400 leading-tight">Response Rate</p>
-              <h3 className="text-[22px] font-bold text-gray-900 dark:text-gray-100 leading-none">85%</h3>
-              <p className="text-[10px] text-green-600 dark:text-green-400 leading-tight font-medium">
-                Good response rate
+              <h3 className="text-[22px] font-bold text-gray-900 dark:text-gray-100 leading-none">
+                {totalReviews ? Math.round((responseTracking.replied / totalReviews) * 100) : 0}%
+              </h3>
+              <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">
+                {totalReviews === 0 ? "No data yet" : "Response tracking active"}
               </p>
             </div>
           </div>
@@ -313,26 +502,22 @@ export default function DashboardPage() {
             </div>
             <div className="flex items-center justify-between mt-3">
               <div className="relative w-[90px] h-[90px] rounded-full border-[8px] border-orange-400 dark:border-orange-500 flex flex-col items-center justify-center">
-                <h2 className="text-[26px] font-bold text-gray-900 dark:text-gray-100 leading-none">128</h2>
+                <h2 className="text-[26px] font-bold text-gray-900 dark:text-gray-100 leading-none">{totalReviews}</h2>
                 <p className="text-[10px] text-gray-500 dark:text-gray-400">Total Reviews</p>
               </div>
               <div className="flex flex-col gap-2.5 w-[140px]">
-                {[
-                  { star: 5, width: "80%", color: "bg-green-500", total: 80 },
-                  { star: 4, width: "55%", color: "bg-green-400", total: 30 },
-                  { star: 3, width: "30%", color: "bg-yellow-400", total: 10 },
-                  { star: 2, width: "18%", color: "bg-orange-400", total: 5 },
-                  { star: 1, width: "10%", color: "bg-red-400", total: 3 },
-                ].map((item, index) => (
+                {[5, 4, 3, 2, 1].map((star, index) => (
                   <div key={index} className="flex items-center gap-2">
-                    <span className="text-[11px] font-medium text-gray-900 dark:text-gray-100 w-3">{item.star}</span>
+                    <span className="text-[11px] font-medium text-gray-900 dark:text-gray-100 w-3">{star}</span>
                     <div className="flex-1 h-1.5 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
                       <div
-                        className={`h-full rounded-full ${item.color}`}
-                        style={{ width: item.width }}
+                        className="h-full rounded-full bg-green-500"
+                        style={{
+                          width: totalReviews ? `${(ratingCounts[index] / totalReviews) * 100}%` : "0%",
+                        }}
                       />
                     </div>
-                    <span className="text-[10px] text-gray-500 dark:text-gray-400">{item.total}</span>
+                    <span className="text-[10px] text-gray-500 dark:text-gray-400">{ratingCounts[index]}</span>
                   </div>
                 ))}
               </div>
@@ -345,36 +530,32 @@ export default function DashboardPage() {
               <h3 className="text-[15px] font-semibold text-gray-900 dark:text-gray-100">Review Sentiment</h3>
             </div>
             <div className="flex flex-col justify-center flex-1 mt-2 space-y-4">
-              {/* Positive */}
               <div className="flex items-center gap-3">
                 <div className="w-2.5 h-2.5 rounded-full bg-green-500" />
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-[13px] font-medium text-gray-900 dark:text-gray-100">Positive</span>
-                    <span className="text-[13px] font-semibold text-green-600 dark:text-green-400">85%</span>
+                    <span className="text-[13px] font-semibold text-green-600 dark:text-green-400">{sentiment.positive}%</span>
                   </div>
                   <div className="w-full h-2 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
-                    <div className="h-full bg-green-500 rounded-full" style={{ width: "85%" }} />
+                    <div className="h-full bg-green-500 rounded-full" style={{ width: `${sentiment.positive}%` }} />
                   </div>
                 </div>
               </div>
-
-              {/* Negative */}
               <div className="flex items-center gap-3">
                 <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
                     <span className="text-[13px] font-medium text-gray-900 dark:text-gray-100">Negative</span>
-                    <span className="text-[13px] font-semibold text-red-500 dark:text-red-400">15%</span>
+                    <span className="text-[13px] font-semibold text-red-500 dark:text-red-400">{sentiment.negative}%</span>
                   </div>
                   <div className="w-full h-2 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
-                    <div className="h-full bg-red-500 rounded-full" style={{ width: "15%" }} />
+                    <div className="h-full bg-red-500 rounded-full" style={{ width: `${sentiment.negative}%` }} />
                   </div>
                 </div>
               </div>
-
               <p className="text-[11px] text-gray-500 dark:text-gray-400 text-center">
-                Based on last 100 reviews
+                Based on last {totalReviews} reviews
               </p>
             </div>
           </div>
@@ -385,29 +566,38 @@ export default function DashboardPage() {
               <h3 className="text-[15px] font-semibold text-gray-900 dark:text-gray-100">Unanswered Reviews</h3>
             </div>
             <div className="flex-1 overflow-y-auto mt-4 space-y-4 pr-1 scrollbar-thin">
-              {[1, 2, 3, 4].map((item) => (
-                <div key={item} className="flex items-start justify-between">
-                  <div className="flex gap-3">
-                    <div className="w-7 h-7 rounded-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 flex items-center justify-center text-[12px] font-semibold text-gray-900 dark:text-gray-100">
-                      G
+              {unansweredReviews.length === 0 ? (
+                <p className="text-gray-500 dark:text-gray-400 text-sm text-center">No unanswered reviews</p>
+              ) : (
+                unansweredReviews.map((review, index) => (
+                  <div key={index} className="flex items-start justify-between">
+                    <div className="flex gap-3">
+                      <div className="w-7 h-7 rounded-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 flex items-center justify-center text-[12px] font-semibold text-gray-900 dark:text-gray-100">
+                        {review.initial || "?"}
+                      </div>
+                      <div>
+                        <h4 className="text-[13px] font-semibold text-gray-900 dark:text-gray-100">{review.name}</h4>
+                        <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-1">{review.text}</p>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="text-[13px] font-semibold text-gray-900 dark:text-gray-100">Emily Davis</h4>
-                      <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-1">
-                        Please improve your service.
-                      </p>
+                    <div className="flex items-center gap-1">
+                      {Array(5)
+                        .fill(0)
+                        .map((_, i) => (
+                          <Star
+                            key={i}
+                            className={`w-3.5 h-3.5 ${
+                              i < review.rating
+                                ? "fill-yellow-400 dark:fill-yellow-300 text-yellow-400 dark:text-yellow-300"
+                                : "text-gray-300 dark:text-gray-600"
+                            }`}
+                          />
+                        ))}
+                      <span className="text-[11px] text-gray-500 dark:text-gray-400 ml-2">{review.rating}.0</span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Star className="w-3.5 h-3.5 fill-yellow-400 dark:fill-yellow-300 text-yellow-400 dark:text-yellow-300" />
-                    <Star className="w-3.5 h-3.5 fill-yellow-400 dark:fill-yellow-300 text-yellow-400 dark:text-yellow-300" />
-                    <Star className="w-3.5 h-3.5 fill-yellow-400 dark:fill-yellow-300 text-yellow-400 dark:text-yellow-300" />
-                    <Star className="w-3.5 h-3.5 text-gray-300 dark:text-gray-600" />
-                    <Star className="w-3.5 h-3.5 text-gray-300 dark:text-gray-600" />
-                    <span className="text-[11px] text-gray-500 dark:text-gray-400 ml-2">3.0</span>
-                  </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         </div>
@@ -420,34 +610,42 @@ export default function DashboardPage() {
               <h3 className="text-[16px] font-semibold text-gray-900 dark:text-gray-100">Recent Reviews</h3>
             </div>
             <div className="flex-1 overflow-y-auto mt-4 space-y-4 pr-1 scrollbar-thin">
-              {[
-                { name: "James Anderson", text: "Excellent service! Highly recommended.", rating: 5, status: "Replied", color: "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400" },
-                { name: "Linda Martinez", text: "Good experience overall.", rating: 4, status: "Replied", color: "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400" },
-                { name: "Robert Taylor", text: "Not satisfied with the support.", rating: 2, status: "Pending", color: "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400" },
-                { name: "Patricia Brown", text: "Average experience.", rating: 3, status: "Replied", color: "bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400" },
-              ].map((item, index) => (
-                <div key={index} className="flex items-start justify-between">
-                  <div className="flex gap-3">
-                    <div className="w-7 h-7 rounded-full border border-gray-200 dark:border-gray-600 flex items-center justify-center text-[12px] font-semibold text-gray-900 dark:text-gray-100">
-                      G
+              {recentReviews.length === 0 ? (
+                <p className="text-gray-500 dark:text-gray-400 text-sm text-center">No recent reviews</p>
+              ) : (
+                recentReviews.map((review, index) => (
+                  <div key={index} className="flex items-start justify-between">
+                    <div className="flex gap-3">
+                      <div className="w-7 h-7 rounded-full border border-gray-200 dark:border-gray-600 flex items-center justify-center text-[12px] font-semibold text-gray-900 dark:text-gray-100">
+                        {review.initial || "?"}
+                      </div>
+                      <div>
+                        <h4 className="text-[13px] font-semibold text-gray-900 dark:text-gray-100">{review.name}</h4>
+                        <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-1">{review.text}</p>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="text-[13px] font-semibold text-gray-900 dark:text-gray-100">{item.name}</h4>
-                      <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-1">{item.text}</p>
+                    <div className="flex items-center gap-3">
+                      <div className="flex gap-0.5">
+                        {Array(5)
+                          .fill(0)
+                          .map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`w-3.5 h-3.5 ${
+                                i < review.rating
+                                  ? "fill-yellow-400 dark:fill-yellow-300 text-yellow-400 dark:text-yellow-300"
+                                  : "text-gray-300 dark:text-gray-600"
+                              }`}
+                            />
+                          ))}
+                      </div>
+                      <span className={`text-[11px] font-medium px-2 py-1 rounded-md ${review.statusColor || "bg-gray-100 text-gray-600"}`}>
+                        {review.status}
+                      </span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="flex gap-0.5">
-                      {Array(5).fill(0).map((_, i) => (
-                        <Star key={i} className={`w-3.5 h-3.5 ${i < item.rating ? "fill-yellow-400 dark:fill-yellow-300 text-yellow-400 dark:text-yellow-300" : "text-gray-300 dark:text-gray-600"}`} />
-                      ))}
-                    </div>
-                    <span className={`text-[11px] font-medium px-2 py-1 rounded-md ${item.color}`}>
-                      {item.status}
-                    </span>
-                  </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
 
@@ -457,26 +655,24 @@ export default function DashboardPage() {
               <h3 className="text-[15px] font-semibold text-gray-900 dark:text-gray-100">Top Keywords</h3>
             </div>
             <div className="flex-1 overflow-y-auto mt-4 space-y-3 pr-1 scrollbar-thin">
-              {[
-                { name: "Service", value: "45 (32%)", width: "80%" },
-                { name: "Quality", value: "30 (21%)", width: "60%" },
-                { name: "Support", value: "25 (18%)", width: "50%" },
-                { name: "Experience", value: "20 (14%)", width: "40%" },
-                { name: "Product", value: "10 (7%)", width: "25%" },
-              ].map((item, index) => (
-                <div key={index} className="flex items-center gap-3">
-                  <span className="text-[12px] font-semibold text-blue-600 dark:text-blue-400 w-4">{index + 1}</span>
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-[12px] text-gray-900 dark:text-gray-100">{item.name}</span>
-                      <span className="text-[11px] text-gray-500 dark:text-gray-400">{item.value}</span>
-                    </div>
-                    <div className="w-full h-2 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
-                      <div className="h-full bg-blue-500 dark:bg-blue-400 rounded-full" style={{ width: item.width }} />
+              {topKeywords.length === 0 ? (
+                <p className="text-gray-500 dark:text-gray-400 text-sm text-center">No keywords yet</p>
+              ) : (
+                topKeywords.map((item, index) => (
+                  <div key={index} className="flex items-center gap-3">
+                    <span className="text-[12px] font-semibold text-blue-600 dark:text-blue-400 w-4">{index + 1}</span>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-[12px] text-gray-900 dark:text-gray-100">{item.name}</span>
+                        <span className="text-[11px] text-gray-500 dark:text-gray-400">{item.value}</span>
+                      </div>
+                      <div className="w-full h-2 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden">
+                        <div className="h-full bg-blue-500 dark:bg-blue-400 rounded-full" style={{ width: item.width }} />
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </div>
         </div>
@@ -487,21 +683,11 @@ export default function DashboardPage() {
           <div className="bg-white dark:bg-gray-800 rounded-[24px] border border-gray-200 dark:border-gray-700 shadow-sm dark:shadow-gray-900/30 p-5 h-[205px] flex flex-col">
             <h3 className="text-[15px] font-semibold text-gray-900 dark:text-gray-100 mb-3">Review Analysis</h3>
             <div className="flex items-end justify-between gap-1 flex-1 px-2">
-              {[
-                { month: "Jan", value: 35 },
-                { month: "Feb", value: 45 },
-                { month: "Mar", value: 30 },
-                { month: "Apr", value: 60 },
-                { month: "May", value: 50 },
-                { month: "Jun", value: 70 },
-              ].map((item) => (
-                <div key={item.month} className="flex flex-col items-center gap-1 flex-1">
-                  <div className="w-full bg-blue-100 dark:bg-blue-900/30 rounded-t-md relative" style={{ height: `${(item.value / 70) * 100}%` }}>
-                    <div className="absolute inset-x-0 top-0 h-full bg-blue-500 dark:bg-blue-400 rounded-t-md opacity-80" style={{ height: `${(item.value / 70) * 100}%` }}></div>
-                  </div>
-                  <span className="text-[10px] text-gray-500 dark:text-gray-400">{item.month}</span>
-                </div>
-              ))}
+              {/* Placeholder for chart – bars will be rendered from data later */}
+              <div className="flex-1 flex flex-col items-center gap-1">
+                <div className="w-full h-0 bg-blue-100 rounded-t-md relative"></div>
+                <span className="text-[10px] text-gray-500 dark:text-gray-400">No data</span>
+              </div>
             </div>
           </div>
 
@@ -509,26 +695,7 @@ export default function DashboardPage() {
           <div className="bg-white dark:bg-gray-800 rounded-[24px] border border-gray-200 dark:border-gray-700 shadow-sm dark:shadow-gray-900/30 p-5 h-[205px] flex flex-col">
             <h3 className="text-[15px] font-semibold text-gray-900 dark:text-gray-100 mb-3">Monthly History</h3>
             <div className="flex-1 flex items-center justify-center relative">
-              <svg viewBox="0 0 200 80" className="w-full h-full">
-                <polyline
-                  points="10,60 40,30 70,50 100,10 130,40 160,25 190,55"
-                  fill="none"
-                  className="stroke-indigo-500 dark:stroke-indigo-300"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                <circle cx="10" cy="60" r="2" className="fill-indigo-500 dark:fill-indigo-300" />
-                <circle cx="40" cy="30" r="2" className="fill-indigo-500 dark:fill-indigo-300" />
-                <circle cx="70" cy="50" r="2" className="fill-indigo-500 dark:fill-indigo-300" />
-                <circle cx="100" cy="10" r="2" className="fill-indigo-500 dark:fill-indigo-300" />
-                <circle cx="130" cy="40" r="2" className="fill-indigo-500 dark:fill-indigo-300" />
-                <circle cx="160" cy="25" r="2" className="fill-indigo-500 dark:fill-indigo-300" />
-                <circle cx="190" cy="55" r="2" className="fill-indigo-500 dark:fill-indigo-300" />
-              </svg>
-              <div className="absolute bottom-2 left-2 right-2 flex justify-between text-[9px] text-gray-400 dark:text-gray-500">
-                <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span>
-              </div>
+              <p className="text-gray-500 dark:text-gray-400 text-sm">Chart data loading...</p>
             </div>
           </div>
 
@@ -539,7 +706,7 @@ export default function DashboardPage() {
             </div>
             <div className="flex items-center justify-between mt-3 flex-1">
               <div className="relative w-[90px] h-[90px] rounded-full border-[8px] border-green-500 dark:border-green-400 flex flex-col items-center justify-center">
-                <h2 className="text-[26px] font-bold text-gray-900 dark:text-gray-100 leading-none">128</h2>
+                <h2 className="text-[26px] font-bold text-gray-900 dark:text-gray-100 leading-none">{responseTracking.total}</h2>
                 <p className="text-[10px] text-gray-500 dark:text-gray-400">Total</p>
               </div>
               <div className="flex flex-col gap-3">
@@ -547,21 +714,27 @@ export default function DashboardPage() {
                   <div className="w-2.5 h-2.5 rounded-full bg-green-500" />
                   <div>
                     <p className="text-[12px] font-medium text-gray-900 dark:text-gray-100">Replied</p>
-                    <p className="text-[11px] text-gray-500 dark:text-gray-400">109 (85%)</p>
+                    <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                      {responseTracking.replied} ({responseTracking.total ? Math.round((responseTracking.replied / responseTracking.total) * 100) : 0}%)
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
                   <div>
                     <p className="text-[12px] font-medium text-gray-900 dark:text-gray-100">Pending</p>
-                    <p className="text-[11px] text-gray-500 dark:text-gray-400">19 (15%)</p>
+                    <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                      {responseTracking.pending} ({responseTracking.total ? Math.round((responseTracking.pending / responseTracking.total) * 100) : 0}%)
+                    </p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
                   <div>
                     <p className="text-[12px] font-medium text-gray-900 dark:text-gray-100">No Reply</p>
-                    <p className="text-[11px] text-gray-500 dark:text-gray-400">0 (0%)</p>
+                    <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                      {responseTracking.noReply} ({responseTracking.total ? Math.round((responseTracking.noReply / responseTracking.total) * 100) : 0}%)
+                    </p>
                   </div>
                 </div>
               </div>
