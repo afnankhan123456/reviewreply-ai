@@ -117,13 +117,37 @@ export default function DashboardPage() {
     }
   }
 
+  // 🔥 NEW: Fetch dashboard stats from backend
+  async function loadDashboardStats() {
+    try {
+      const response = await fetch("/api/dashboard-stats");
+      const data = await response.json();
+      if (data.success) {
+        const d = data.data;
+        setReviewsSynced(d.reviewsSynced);
+        setSyncStatus(d.syncStatus);
+        setAverageRating(d.averageRating);
+        setTotalReviews(d.totalReviews);
+        setRatingCounts(d.ratingCounts);
+        setSentiment(d.sentiment);
+        setUnansweredReviews(d.unansweredReviews);
+        setRecentReviews(d.recentReviews);
+        setTopKeywords(d.topKeywords);
+        setResponseTracking(d.responseTracking);
+      }
+    } catch (err) {
+      console.error("Failed to load dashboard stats", err);
+    }
+  }
+
   useEffect(() => {
     loadGoogleBusiness();
-    // later: loadDashboardStats();
+    loadDashboardStats();
   }, []);
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">
+      {/* Thin scrollbar styles – light & dark */}
       <style jsx>{`
         .scrollbar-thin::-webkit-scrollbar {
           width: 4px;
