@@ -50,9 +50,19 @@ export async function GET(req: any) {
 
     const locationsData = await locationsResponse.json();
 
+    const locations = locationsData.locations || [];
+
     return NextResponse.json({
       success: true,
-      locations: locationsData.locations || [],
+
+      totalLocations: locations.length,
+
+      locations: locations.map((location: any) => ({
+        id: location.name,
+        title: location.title,
+        address:
+          location.storefrontAddress?.addressLines?.join(", ") || "",
+      })),
     });
 
   } catch (error) {
