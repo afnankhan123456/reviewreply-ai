@@ -1,22 +1,27 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
+import { prisma } from "../../../../lib/prisma";
+import { getToken } from "next-auth/jwt";
 
-import { prisma } from "../../../lib/prisma";
-
-export async function POST(req: NextRequest) {
+export async function POST(req: any) {
 
   try {
 
-    const body = await req.json();
+    const token: any = await getToken({
+      req,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
 
-    const {
-      userId,
-      businessLocationId,
-      reviews,
-    } = body;
+    if (!token?.email) {
+
+      return NextResponse.json({
+        success: false,
+        error: "Unauthorized",
+      });
+    }
 
     const user = await prisma.user.findUnique({
       where: {
-        id: userId,
+        email: token.email,
       },
     });
 
@@ -36,74 +41,24 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    let savedCount = 0;
-
-    for (const review of reviews) {
-
-      if (savedCount >= user.reviewsLimit) {
-        break;
-      }
-
-      const existingReview = await prisma.review.findUnique({
-        where: {
-          googleReviewId: review.reviewId,
-        },
-      });
-
-      if (existingReview) {
-        continue;
-      }
-
-      await prisma.review.create({
-        data: {
-          userId,
-          businessLocationId,
-
-          googleReviewId: review.reviewId,
-
-          reviewerName:
-            review.reviewer?.displayName || "Google User",
-
-          rating:
-            review.starRating || 5,
-
-          comment:
-            review.comment || "",
-
-          reviewReply:
-            review.reviewReply?.comment || "",
-
-          replied:
-            !!review.reviewReply,
-
-          reviewDate:
-            review.createTime
-              ? new Date(review.createTime)
-              : new Date(),
-
-          syncedAt: new Date(),
-        },
-      });
-
-      savedCount++;
-    }
-
-    await prisma.user.update({
+    const locations = await prisma.businessLocation.findMany({
       where: {
-        id: userId,
-      },
-      data: {
-        reviewsUsed: {
-          increment: savedCount,
-        },
+        userId: user.id,
       },
     });
 
+    if (!locations.length) {
+
+      return NextResponse.json({
+        success: false,
+        error: "No business location connected",
+      });
+    }
+
     return NextResponse.json({
       success: true,
-      savedReviews: savedCount,
-      remaining:
-        user.reviewsLimit - (user.reviewsUsed + savedCount),
+      message: "Manual sync started",
+      locations,
     });
 
   } catch (error) {
