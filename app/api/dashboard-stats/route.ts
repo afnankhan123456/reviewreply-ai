@@ -2,6 +2,23 @@ import { NextResponse } from "next/server";
 import { prisma } from "../../../lib/prisma";
 import { getToken } from "next-auth/jwt";
 
+// Simple stop words list (extend as needed)
+const STOP_WORDS = new Set([
+  "a", "an", "the", "and", "or", "but", "in", "on", "at", "to", "for",
+  "of", "with", "is", "are", "was", "were", "be", "been", "being",
+  "have", "has", "had", "do", "does", "did", "will", "would", "could",
+  "should", "may", "might", "shall", "can", "need", "dare", "ought",
+  "used", "i", "you", "he", "she", "it", "we", "they", "me", "him",
+  "her", "us", "them", "my", "your", "his", "its", "our", "their",
+  "mine", "yours", "hers", "ours", "theirs", "this", "that", "these",
+  "those", "not", "no", "nor", "just", "very", "too", "so", "than",
+  "also", "if", "then", "else", "when", "where", "why", "how", "all",
+  "each", "every", "both", "few", "more", "most", "other", "some",
+  "such", "only", "own", "same", "into", "over", "about", "again",
+  "further", "once", "here", "there", "up", "down", "out", "off",
+  "above", "below", "between", "among", "from", "by", "without",
+]);
+
 export async function GET(req: any) {
   try {
     const token: any = await getToken({
@@ -22,22 +39,19 @@ export async function GET(req: any) {
       return NextResponse.json({ success: false, error: "User not found" }, { status: 404 });
     }
 
-    // Reviews Synced stats
+    const allReviews = user.reviews;
+
+    // Basic stats
     const reviewsSynced = {
       current: user.reviewsUsed,
       total: user.reviewsLimit,
     };
 
-    // Sync status
     const syncStatus = {
       active: user.syncEnabled,
       lastSynced: user.lastReviewSync ? user.lastReviewSync.toISOString() : "",
     };
 
-    // All reviews
-    const allReviews = user.reviews;
-
-    // Average rating
     const totalReviews = allReviews.length;
     const averageRating =
       totalReviews > 0
@@ -48,7 +62,7 @@ export async function GET(req: any) {
     const ratingCounts = [0, 0, 0, 0, 0];
     allReviews.forEach((r) => {
       if (r.rating >= 1 && r.rating <= 5) {
-        ratingCounts[5 - r.rating]++; // index 0 -> 5 stars, 4 -> 1 star
+        ratingCounts[5 - r.rating]++;
       }
     });
 
@@ -64,7 +78,7 @@ export async function GET(req: any) {
       negative: totalReviews > 0 ? Math.round((negative / totalReviews) * 100) : 0,
     };
 
-    // Unanswered reviews (replied = false)
+    // Unanswered reviews
     const unansweredReviews = allReviews
       .filter((r) => !r.replied)
       .map((r) => ({
@@ -89,8 +103,45 @@ export async function GET(req: any) {
           : "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400",
       }));
 
-    // Top keywords (empty for now)
-    const topKeywords: any[] = [];
+    // -----------------------------------------------
+    // Top Keywords extraction
+    // -----------------------------------------------
+    const wordCounts: Record<string, number> = {};
+    allReviews.forEach((r) => {
+      const words = (r.comment || "")
+        .toLowerCase()
+        .replace(/[^a-z\s]/g, "")   // remove punctuation
+        .split(/\s+/)
+        .filter((word) => word.length > 2 && !STOP_WORDS.has(word));
+
+      words.forEach((word) => {
+        wordCounts[word] = (wordCounts[word] || 0) + 1;
+      });
+    });
+
+    const sortedKeywords = Object.entries(wordCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5);
+
+    const maxKeywordCount = sortedKeywords.length > 0 ? sortedKeywords[0][1] : 1;
+    const topKeywords = sortedKeywords.map(([word, count]) => ({
+      name: word.charAt(0).toUpperCase() + word.slice(1),
+      value: `${count} (${Math.round((count / totalReviews) * 100)}%)`,
+      width: `${Math.round((count / maxKeywordCount) * 100)}%`,
+    }));
+
+    // -----------------------------------------------
+    // Monthly review counts for charts
+    // -----------------------------------------------
+    const reviewsPerMonth: Record<string, number> = {};
+    allReviews.forEach((r) => {
+      const month = r.reviewDate.toISOString().slice(0, 7); // "YYYY-MM"
+      reviewsPerMonth[month] = (reviewsPerMonth[month] || 0) + 1;
+    });
+
+    const monthlyData = Object.entries(reviewsPerMonth)
+      .map(([month, count]) => ({ month, count }))
+      .sort((a, b) => a.month.localeCompare(b.month));
 
     // Response tracking
     const repliedCount = allReviews.filter((r) => r.replied).length;
@@ -99,7 +150,7 @@ export async function GET(req: any) {
       total: totalReviews,
       replied: repliedCount,
       pending: pendingCount,
-      noReply: 0, // You can adjust later
+      noReply: 0,
     };
 
     return NextResponse.json({
@@ -113,7 +164,8 @@ export async function GET(req: any) {
         sentiment,
         unansweredReviews,
         recentReviews,
-        topKeywords,
+        topKeywords,         // ✅ now real keywords
+        monthlyData,         // ✅ for bar/line charts
         responseTracking,
       },
     });
