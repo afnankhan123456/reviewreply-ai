@@ -28,10 +28,14 @@ model User {
 
   googleConnected     Boolean             @default(false)
 
+  lastReviewSync      DateTime?
+  syncEnabled         Boolean             @default(true)
+
   createdAt           DateTime            @default(now())
   lastLogin           DateTime            @default(now())
 
   businessLocations   BusinessLocation[]
+  reviews             Review[]
 }
 
 model BusinessLocation {
@@ -43,6 +47,36 @@ model BusinessLocation {
   googleLocationId String   @unique
   businessName     String
   address          String?
+
+  createdAt        DateTime @default(now())
+
+  reviews          Review[]
+}
+
+model Review {
+  id               String   @id @default(cuid())
+
+  userId           String
+  user             User     @relation(fields: [userId], references: [id])
+
+  businessLocationId String
+  businessLocation   BusinessLocation @relation(fields: [businessLocationId], references: [id])
+
+  googleReviewId   String   @unique
+
+  reviewerName     String
+  reviewerPhoto    String?
+
+  rating           Int
+
+  comment          String?
+
+  reviewReply      String?
+
+  replied          Boolean  @default(false)
+
+  reviewDate       DateTime
+  syncedAt         DateTime @default(now())
 
   createdAt        DateTime @default(now())
 }
