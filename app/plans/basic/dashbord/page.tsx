@@ -48,15 +48,13 @@ const featureCards = [
 ];
 
 export default function DashboardPage() {
-  // Google Business Locations states
   const [locations, setLocations] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // Dashboard stats states (initially empty/zero)
-  const [reviewsSynced, setReviewsSynced] = useState({ current: 0, total: 0 });
+  const [reviewsSynced, setReviewsSynced] = useState({ current: 0, total: 100 });
   const [syncStatus, setSyncStatus] = useState({ active: false, lastSynced: "" });
   const [averageRating, setAverageRating] = useState(0);
   const [totalReviews, setTotalReviews] = useState(0);
@@ -71,12 +69,6 @@ export default function DashboardPage() {
     pending: 0,
     noReply: 0,
   });
-
-  // Google Reviews Sync card states
-  const [syncLimit] = useState(100); // Basic plan limit
-  const [autoSync, setAutoSync] = useState(true);
-  const [syncStatusText, setSyncStatusText] = useState("Ready");
-  const [syncedReviewsList, setSyncedReviewsList] = useState<any[]>([]);
 
   async function loadGoogleBusiness() {
     try {
@@ -104,9 +96,7 @@ export default function DashboardPage() {
 
       const response = await fetch("/api/save-location", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           googleLocationId: location.name,
           businessName: location.title,
@@ -115,12 +105,10 @@ export default function DashboardPage() {
       });
 
       const data = await response.json();
-
       if (!data.success) {
         setError(data.error || "Failed to save location");
         return;
       }
-
       setSuccess("Business location connected successfully");
     } catch (error) {
       setError("Something went wrong while saving location");
@@ -131,12 +119,11 @@ export default function DashboardPage() {
 
   useEffect(() => {
     loadGoogleBusiness();
-    // In production, load all dashboard data here (e.g. loadDashboardStats())
+    // later: loadDashboardStats();
   }, []);
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">
-      {/* Thin scrollbar styles – light & dark */}
       <style jsx>{`
         .scrollbar-thin::-webkit-scrollbar {
           width: 4px;
@@ -179,9 +166,7 @@ export default function DashboardPage() {
                 {locations.length} / 1
               </div>
               <button
-                onClick={() => {
-                  // OAuth connect logic – example: window.location.href = "/api/google/auth";
-                }}
+                onClick={() => {}}
                 className="bg-black dark:bg-white dark:text-black text-white px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap"
               >
                 Connect Google Business
@@ -189,9 +174,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {loading && (
-            <p className="text-gray-500 dark:text-gray-400">Loading locations...</p>
-          )}
+          {loading && <p className="text-gray-500 dark:text-gray-400">Loading locations...</p>}
 
           {error && (
             <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 p-4 rounded-xl mb-4">
@@ -231,162 +214,6 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* GOOGLE REVIEWS SYNC CARD */}
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 mt-7">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-6">
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                Google Reviews Sync
-              </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                Sync and manage Google Business reviews
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => {
-                  // Manual sync logic – e.g., fetch("/api/sync-reviews")
-                }}
-                className="bg-black dark:bg-white dark:text-black text-white px-4 py-2 rounded-xl text-sm font-medium"
-              >
-                Manual Sync
-              </button>
-            </div>
-          </div>
-
-          {/* STATS */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {/* Reviews Usage */}
-            <div className="border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Reviews Synced
-              </p>
-              <div className="flex items-end gap-2 mt-2">
-                <h3 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-                  {reviewsSynced.current}
-                </h3>
-                <span className="text-gray-500 dark:text-gray-400 mb-1">
-                  /{syncLimit}
-                </span>
-              </div>
-              <p className="text-xs text-gray-400 mt-1">Monthly Limit</p>
-            </div>
-
-            {/* Auto Sync */}
-            <div className="border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Auto Sync
-              </p>
-              <h3
-                className={`text-2xl font-bold mt-2 ${
-                  autoSync
-                    ? "text-green-600 dark:text-green-400"
-                    : "text-gray-500 dark:text-gray-400"
-                }`}
-              >
-                {autoSync ? "Active" : "Inactive"}
-              </h3>
-              <p className="text-xs text-gray-400 mt-1">
-                {autoSync
-                  ? "Daily review sync enabled"
-                  : "Auto sync is turned off"}
-              </p>
-            </div>
-
-            {/* Sync Status */}
-            <div className="border border-gray-200 dark:border-gray-700 rounded-xl p-4">
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Sync Status
-              </p>
-              <h3 className="text-2xl font-bold text-blue-600 dark:text-blue-400 mt-2">
-                {syncStatusText}
-              </h3>
-              <p className="text-xs text-gray-400 mt-1">
-                {syncStatusText === "Ready"
-                  ? "Waiting for manual sync"
-                  : "Sync in progress..."}
-              </p>
-            </div>
-          </div>
-
-          {/* LIMIT WARNING */}
-          <div className="mt-5 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-xl p-4">
-            <div className="flex items-start gap-3">
-              <AlertTriangle className="w-5 h-5 text-yellow-600 dark:text-yellow-400 mt-0.5" />
-              <div>
-                <h4 className="text-sm font-semibold text-yellow-700 dark:text-yellow-300">
-                  Monthly Sync Limit
-                </h4>
-                <p className="text-sm text-yellow-600 dark:text-yellow-400 mt-1">
-                  Basic plan supports maximum {syncLimit} Google reviews sync per month.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* RECENT SYNCED REVIEWS */}
-          <div className="mt-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                Latest Synced Reviews
-              </h3>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
-                {syncedReviewsList.length} Reviews
-              </span>
-            </div>
-
-            <div className="space-y-4">
-              {syncedReviewsList.length === 0 ? (
-                <p className="text-gray-500 dark:text-gray-400 text-sm text-center">
-                  No synced reviews yet. Click "Manual Sync" to pull the latest.
-                </p>
-              ) : (
-                syncedReviewsList.map((review, index) => (
-                  <div
-                    key={index}
-                    className="border border-gray-200 dark:border-gray-700 rounded-xl p-4"
-                  >
-                    <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-sm font-semibold text-gray-700 dark:text-gray-300">
-                            {review.initial || "G"}
-                          </div>
-                          <div>
-                            <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-                              {review.name}
-                            </h4>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                              Synced {review.syncedAt || "recently"}
-                            </p>
-                          </div>
-                        </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-300 mt-3">
-                          {review.text}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        {Array(5)
-                          .fill(0)
-                          .map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`w-4 h-4 ${
-                                i < review.rating
-                                  ? "fill-yellow-400 text-yellow-400"
-                                  : "text-gray-300 dark:text-gray-600"
-                              }`}
-                            />
-                          ))}
-                      </div>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-
         {/* TOP 4 CARDS — height 80px */}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mt-7">
           {/* CARD 1 */}
@@ -398,7 +225,7 @@ export default function DashboardPage() {
               <p className="text-[11px] text-gray-500 dark:text-gray-400 leading-tight">Reviews Synced</p>
               <div className="flex items-baseline gap-1">
                 <h3 className="text-[22px] font-bold text-gray-900 dark:text-gray-100 leading-none">{reviewsSynced.current}</h3>
-                <span className="text-[13px] text-gray-500 dark:text-gray-400">/{syncLimit}</span>
+                <span className="text-[13px] text-gray-500 dark:text-gray-400">/{reviewsSynced.total}</span>
               </div>
               <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">This Month</p>
             </div>
@@ -480,9 +307,7 @@ export default function DashboardPage() {
                   item.span ? "xl:col-span-2" : ""
                 }`}
               >
-                <div
-                  className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${item.color}`}
-                >
+                <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${item.color}`}>
                   <Icon className="w-4 h-4" />
                 </div>
                 <p className="text-[11px] font-semibold text-gray-900 dark:text-gray-100 leading-tight text-center px-1 line-clamp-2">
@@ -683,7 +508,6 @@ export default function DashboardPage() {
           <div className="bg-white dark:bg-gray-800 rounded-[24px] border border-gray-200 dark:border-gray-700 shadow-sm dark:shadow-gray-900/30 p-5 h-[205px] flex flex-col">
             <h3 className="text-[15px] font-semibold text-gray-900 dark:text-gray-100 mb-3">Review Analysis</h3>
             <div className="flex items-end justify-between gap-1 flex-1 px-2">
-              {/* Placeholder for chart – bars will be rendered from data later */}
               <div className="flex-1 flex flex-col items-center gap-1">
                 <div className="w-full h-0 bg-blue-100 rounded-t-md relative"></div>
                 <span className="text-[10px] text-gray-500 dark:text-gray-400">No data</span>
