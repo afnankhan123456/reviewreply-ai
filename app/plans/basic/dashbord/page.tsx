@@ -70,6 +70,9 @@ export default function DashboardPage() {
     noReply: 0,
   });
 
+  // New state for monthly chart data
+  const [monthlyData, setMonthlyData] = useState<any[]>([]);
+
   async function loadGoogleBusiness() {
     try {
       setLoading(true);
@@ -117,7 +120,7 @@ export default function DashboardPage() {
     }
   }
 
-  // 🔥 NEW: Fetch dashboard stats from backend
+  // Fetch dashboard stats (including monthlyData and topKeywords)
   async function loadDashboardStats() {
     try {
       const response = await fetch("/api/dashboard-stats");
@@ -134,6 +137,7 @@ export default function DashboardPage() {
         setRecentReviews(d.recentReviews);
         setTopKeywords(d.topKeywords);
         setResponseTracking(d.responseTracking);
+        setMonthlyData(d.monthlyData || []); // <-- new monthly data
       }
     } catch (err) {
       console.error("Failed to load dashboard stats", err);
@@ -147,7 +151,6 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950">
-      {/* Thin scrollbar styles – light & dark */}
       <style jsx>{`
         .scrollbar-thin::-webkit-scrollbar {
           width: 4px;
@@ -528,22 +531,92 @@ export default function DashboardPage() {
 
         {/* CHARTS ROW: Review Analysis + Monthly History + Response Tracking */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7">
-          {/* Review Analysis – Simple Bar Chart */}
+          {/* Review Analysis – Bar Chart (real data) */}
           <div className="bg-white dark:bg-gray-800 rounded-[24px] border border-gray-200 dark:border-gray-700 shadow-sm dark:shadow-gray-900/30 p-5 h-[205px] flex flex-col">
             <h3 className="text-[15px] font-semibold text-gray-900 dark:text-gray-100 mb-3">Review Analysis</h3>
             <div className="flex items-end justify-between gap-1 flex-1 px-2">
-              <div className="flex-1 flex flex-col items-center gap-1">
-                <div className="w-full h-0 bg-blue-100 rounded-t-md relative"></div>
-                <span className="text-[10px] text-gray-500 dark:text-gray-400">No data</span>
-              </div>
+              {monthlyData.length === 0 ? (
+                <div className="flex-1 flex flex-col items-center gap-1">
+                  <div className="w-full h-0 bg-blue-100 rounded-t-md relative"></div>
+                  <span className="text-[10px] text-gray-500 dark:text-gray-400">No data</span>
+                </div>
+              ) : (
+                monthlyData.map((item, idx) => {
+                  const maxVal = Math.max(...monthlyData.map((d: any) => d.count), 1);
+                  const heightPercent = (item.count / maxVal) * 100;
+                  return (
+                    <div key={idx} className="flex flex-col items-center gap-1 flex-1">
+                      <div
+                        className="w-full bg-blue-100 dark:bg-blue-900/30 rounded-t-md relative"
+                        style={{ height: `${heightPercent}%` }}
+                      >
+                        <div
+                          className="absolute inset-x-0 bottom-0 bg-blue-500 dark:bg-blue-400 rounded-t-md opacity-80"
+                          style={{ height: `${heightPercent}%` }}
+                        />
+                      </div>
+                      <span className="text-[10px] text-gray-500 dark:text-gray-400">
+                        {new Date(item.month + "-01").toLocaleString("en-US", { month: "short" })}
+                      </span>
+                    </div>
+                  );
+                })
+              )}
             </div>
           </div>
 
-          {/* Monthly History – Simple Line Chart */}
+          {/* Monthly History – Line Chart (real data) */}
           <div className="bg-white dark:bg-gray-800 rounded-[24px] border border-gray-200 dark:border-gray-700 shadow-sm dark:shadow-gray-900/30 p-5 h-[205px] flex flex-col">
             <h3 className="text-[15px] font-semibold text-gray-900 dark:text-gray-100 mb-3">Monthly History</h3>
             <div className="flex-1 flex items-center justify-center relative">
-              <p className="text-gray-500 dark:text-gray-400 text-sm">Chart data loading...</p>
+              {monthlyData.length === 0 ? (
+                <p className="text-gray-500 dark:text-gray-400 text-sm">No data</p>
+              ) : (
+                <svg viewBox="0 0 200 80" className="w-full h-full">
+                  <polyline
+                    points={monthlyData
+                      .map((item, i) => {
+                        const maxVal = Math.max(...monthlyData.map((d: any) => d.count), 1);
+                        const x = (i / (monthlyData.length - 1 || 1)) * 200;
+                        const y = 80 - (item.count / maxVal) * 70;
+                        return `${x},${y}`;
+                      })
+                      .join(" ")}
+                    fill="none"
+                    className="stroke-indigo-500 dark:stroke-indigo-300"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  {monthlyData.map((item, i) => {
+                    const maxVal = Math.max(...monthlyData.map((d: any) => d.count), 1);
+                    const cx = (i / (monthlyData.length - 1 || 1)) * 200;
+                    const cy = 80 - (item.count / maxVal) * 70;
+                    return (
+                      <circle
+                        key={i}
+                        cx={cx}
+                        cy={cy}
+                        r="2"
+                        className="fill-indigo-500 dark:fill-indigo-300"
+                      />
+                    );
+                  })}
+                  {/* Month labels */}
+                  {monthlyData.map((item, i) => (
+                    <text
+                      key={i}
+                      x={(i / (monthlyData.length - 1 || 1)) * 200}
+                      y={78}
+                      textAnchor="middle"
+                      className="fill-gray-400 dark:fill-gray-500 text-[8px]"
+                      fontSize="6"
+                    >
+                      {new Date(item.month + "-01").toLocaleString("en-US", { month: "short" })}
+                    </text>
+                  ))}
+                </svg>
+              )}
             </div>
           </div>
 
