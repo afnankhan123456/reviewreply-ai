@@ -62,8 +62,8 @@ export async function GET(req: any) {
               googleReviewId: review.reviewId,
               reviewerName: review.reviewer?.displayName || "Anonymous",
               rating: review.starRating || 0,
-              text: review.comment || "",
-              reply: review.reviewReply?.comment || "",
+              comment: review.comment || "",               // ✅ field name fixed
+              reviewReply: review.reviewReply?.comment || "", // ✅ field name fixed
               replied: !!review.reviewReply,
               reviewDate: new Date(review.createTime),
               syncedAt: new Date(),
