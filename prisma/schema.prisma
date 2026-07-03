@@ -31,6 +31,8 @@ model User {
   lastReviewSync      DateTime?
   syncEnabled         Boolean             @default(true)
 
+  monthlyResetDate    DateTime?           // 30‑day sync window start
+
   createdAt           DateTime            @default(now())
   lastLogin           DateTime            @default(now())
 
