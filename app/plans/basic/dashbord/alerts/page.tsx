@@ -6,11 +6,13 @@ import {
   BellRing,
   MessageSquareWarning,
   Star,
+  X,
 } from "lucide-react";
 
 export default function AlertsPage() {
   const [alerts, setAlerts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedAlert, setSelectedAlert] = useState<any | null>(null);
 
   useEffect(() => {
     async function fetchAlerts() {
@@ -29,11 +31,10 @@ export default function AlertsPage() {
     fetchAlerts();
   }, []);
 
-  // Compute real stats from the alerts array
   const lowRatingCount = alerts.length;
   const unansweredCount = alerts.filter((a) => !a.replied).length;
-  const negativeCount = lowRatingCount; // All alerts are low rating (rating <= 2)
-  const newNotificationsCount = lowRatingCount; // For now, all alerts are "new"
+  const negativeCount = lowRatingCount;
+  const newNotificationsCount = lowRatingCount;
 
   return (
     <div className="p-6 lg:p-8">
@@ -164,7 +165,10 @@ export default function AlertsPage() {
                   </div>
                 </div>
 
-                <button className="px-4 py-2 rounded-xl bg-red-50 dark:bg-red-500/20 text-red-500 dark:text-red-400 text-sm font-medium hover:bg-red-100 dark:hover:bg-red-500/30 transition">
+                <button
+                  onClick={() => setSelectedAlert(alert)}
+                  className="px-4 py-2 rounded-xl bg-red-50 dark:bg-red-500/20 text-red-500 dark:text-red-400 text-sm font-medium hover:bg-red-100 dark:hover:bg-red-500/30 transition"
+                >
                   View
                 </button>
               </div>
@@ -172,6 +176,36 @@ export default function AlertsPage() {
           )}
         </div>
       </div>
+
+      {/* VIEW MODAL */}
+      {selectedAlert && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white dark:bg-zinc-800 rounded-2xl p-6 w-full max-w-lg mx-4 shadow-xl relative">
+            <button
+              onClick={() => setSelectedAlert(null)}
+              className="absolute top-4 right-4 text-zinc-400 hover:text-zinc-600"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <h2 className="text-lg font-bold text-black dark:text-white mb-4">
+              Alert Details
+            </h2>
+            <div className="space-y-3 text-sm text-zinc-600 dark:text-zinc-300">
+              <p><span className="font-medium">Name:</span> {selectedAlert.reviewerName || "Anonymous"}</p>
+              <p><span className="font-medium">Rating:</span> {selectedAlert.rating} ⭐</p>
+              <p><span className="font-medium">Comment:</span> {selectedAlert.comment || "No comment"}</p>
+              {selectedAlert.reviewReply && (
+                <p><span className="font-medium">Reply:</span> {selectedAlert.reviewReply}</p>
+              )}
+              <p><span className="font-medium">Date:</span> {new Date(selectedAlert.reviewDate).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}</p>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
