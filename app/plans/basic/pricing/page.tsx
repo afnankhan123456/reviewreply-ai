@@ -5,11 +5,11 @@ import { useState } from "react";
 
 export default function BasicPricingPage() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const [activatingPlan, setActivatingPlan] = useState<string | null>(null);
 
   const handlePlanActivation = async (planType: string) => {
     try {
-      setLoading(true);
+      setActivatingPlan(planType); // sirf yahi plan active ho raha hai
       const res = await fetch("/api/activate-plan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -24,7 +24,7 @@ export default function BasicPricingPage() {
     } catch (err) {
       alert("Something went wrong");
     } finally {
-      setLoading(false);
+      setActivatingPlan(null);
     }
   };
 
@@ -52,7 +52,7 @@ export default function BasicPricingPage() {
               <div className="p-4">PAY</div>
             </div>
 
-            {/* ROW 1 */}
+            {/* ROW 1 - 1 Month */}
             <div className="grid grid-cols-5 border-t border-zinc-800 min-h-[90px]">
               <div className="flex items-center gap-2 p-4 border-r border-zinc-800 font-semibold text-lg">
                 📅 1 Month
@@ -63,15 +63,15 @@ export default function BasicPricingPage() {
               <div className="flex items-center justify-center p-4">
                 <button
                   onClick={() => handlePlanActivation("1m")}
-                  disabled={loading}
+                  disabled={activatingPlan !== null}
                   className="text-blue-400 font-bold text-lg hover:text-blue-300 transition-all disabled:opacity-50"
                 >
-                  {loading ? "Activating..." : "Pay"}
+                  {activatingPlan === "1m" ? "Activating..." : "Pay"}
                 </button>
               </div>
             </div>
 
-            {/* ROW 2 */}
+            {/* ROW 2 - 3 Months */}
             <div className="grid grid-cols-5 border-t border-zinc-800 min-h-[90px]">
               <div className="flex items-center gap-2 p-4 border-r border-zinc-800 font-semibold text-lg">
                 📅 3 Months
@@ -84,15 +84,15 @@ export default function BasicPricingPage() {
               <div className="flex items-center justify-center p-4">
                 <button
                   onClick={() => handlePlanActivation("3m")}
-                  disabled={loading}
+                  disabled={activatingPlan !== null}
                   className="text-blue-400 font-bold text-lg hover:text-blue-300 transition-all disabled:opacity-50"
                 >
-                  {loading ? "Activating..." : "Pay"}
+                  {activatingPlan === "3m" ? "Activating..." : "Pay"}
                 </button>
               </div>
             </div>
 
-            {/* ROW 3 */}
+            {/* ROW 3 - 6 Months */}
             <div className="grid grid-cols-5 border-t border-zinc-800 min-h-[90px]">
               <div className="flex items-center gap-2 p-4 border-r border-zinc-800 font-semibold text-lg">
                 📅 6 Months
@@ -105,15 +105,15 @@ export default function BasicPricingPage() {
               <div className="flex items-center justify-center p-4">
                 <button
                   onClick={() => handlePlanActivation("6m")}
-                  disabled={loading}
+                  disabled={activatingPlan !== null}
                   className="text-blue-400 font-bold text-lg hover:text-blue-300 transition-all disabled:opacity-50"
                 >
-                  {loading ? "Activating..." : "Pay"}
+                  {activatingPlan === "6m" ? "Activating..." : "Pay"}
                 </button>
               </div>
             </div>
 
-            {/* ROW 4 */}
+            {/* ROW 4 - 12 Months */}
             <div className="grid grid-cols-5 border-t border-zinc-800 min-h-[90px]">
               <div className="flex items-center gap-2 p-4 border-r border-zinc-800 font-semibold text-lg">
                 📅 12 Months
@@ -126,10 +126,10 @@ export default function BasicPricingPage() {
               <div className="flex items-center justify-center p-4">
                 <button
                   onClick={() => handlePlanActivation("12m")}
-                  disabled={loading}
+                  disabled={activatingPlan !== null}
                   className="text-blue-400 font-bold text-lg hover:text-blue-300 transition-all disabled:opacity-50"
                 >
-                  {loading ? "Activating..." : "Pay"}
+                  {activatingPlan === "12m" ? "Activating..." : "Pay"}
                 </button>
               </div>
             </div>
@@ -137,11 +137,9 @@ export default function BasicPricingPage() {
 
           {/* RIGHT FEATURE BOX */}
           <div className="w-[28%] border-l border-zinc-800">
-            {/* FEATURE HEADER */}
             <div className="bg-[#0B2C74] text-white font-semibold text-center text-sm p-4">
               FEATURES INCLUDED
             </div>
-            {/* FEATURE AREA */}
             <div className="p-4 grid grid-cols-2 gap-x-3 gap-y-3 text-[14px] leading-tight text-zinc-300">
               <div>✓ 1 Business Location</div>
               <div>✓ Low Rating Alerts</div>
