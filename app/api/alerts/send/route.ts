@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
-import { prisma } from "../../../lib/prisma";
+import { prisma } from "../../../../lib/prisma";      // ✅ fixed path
 import { getToken } from "next-auth/jwt";
 import nodemailer from "nodemailer";
 
 // Email template helper
 function buildAlertEmail(alertType: string, reviewInfo: any) {
-  // Simple example – you can customize later
   return `
     <h2>${alertType}</h2>
     <p><strong>Reviewer:</strong> ${reviewInfo.reviewerName}</p>
@@ -44,11 +43,9 @@ export async function POST(req: any) {
     const alertLimit = user.alertEmailsLimit ?? 100;
     const now = new Date();
 
-    // Monthly reset logic (30 days)
     if (user.alertMonthlyReset) {
       const daysSinceReset = Math.floor((now.getTime() - new Date(user.alertMonthlyReset).getTime()) / (1000 * 60 * 60 * 24));
       if (daysSinceReset >= 30) {
-        // Reset counter
         await prisma.user.update({
           where: { id: user.id },
           data: {
@@ -59,7 +56,6 @@ export async function POST(req: any) {
         currentAlertCount = 0;
       }
     } else {
-      // First time, set reset date
       await prisma.user.update({
         where: { id: user.id },
         data: { alertMonthlyReset: now },
@@ -73,20 +69,17 @@ export async function POST(req: any) {
       }, { status: 429 });
     }
 
-    // ============  SEND EMAIL (example alert) ============
-    // In real scenario you'd fetch latest low rating or new review from DB.
-    // Here we just send a test email.
+    // ============ SEND EMAIL ============
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 587,
-      secure: false, // true for 465
+      secure: false,
       auth: {
-        user: process.env.GMAIL_USER,       // your business Gmail
-        pass: process.env.GMAIL_APP_PASSWORD, // app password
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD,
       },
     });
 
-    // Example dummy review for test
     const dummyReview = {
       reviewerName: "Test Customer",
       rating: 2,
@@ -96,19 +89,16 @@ export async function POST(req: any) {
 
     const mailOptions = {
       from: `"ReviewReply Alerts" <${process.env.GMAIL_USER}>`,
-      to: user.email, // send to user's email
+      to: user.email,
       subject: "🔔 New Low Rating Review Alert",
       html: buildAlertEmail("Low Rating Alert", dummyReview),
     };
 
     await transporter.sendMail(mailOptions);
 
-    // Increment sent count
     await prisma.user.update({
       where: { id: user.id },
-      data: {
-        alertEmailsSent: { increment: 1 },
-      },
+      data: { alertEmailsSent: { increment: 1 } },
     });
 
     return NextResponse.json({
