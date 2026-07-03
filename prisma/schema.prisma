@@ -33,6 +33,12 @@ model User {
 
   monthlyResetDate    DateTime?           // 30‑day sync window start
 
+  // Gmail alert fields
+  gmailConnected      Boolean             @default(false)   // whether Gmail is connected for alerts
+  alertEmailsSent     Int                 @default(0)       // count of alert emails sent this month
+  alertEmailsLimit    Int                 @default(100)     // 100 emails/month limit
+  alertMonthlyReset   DateTime?           // 30‑day reset date for alert counter
+
   createdAt           DateTime            @default(now())
   lastLogin           DateTime            @default(now())
 
