@@ -103,14 +103,12 @@ export async function GET(req: any) {
           : "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400",
       }));
 
-    // -----------------------------------------------
     // Top Keywords extraction
-    // -----------------------------------------------
     const wordCounts: Record<string, number> = {};
     allReviews.forEach((r) => {
       const words = (r.comment || "")
         .toLowerCase()
-        .replace(/[^a-z\s]/g, "")   // remove punctuation
+        .replace(/[^a-z\s]/g, "")
         .split(/\s+/)
         .filter((word) => word.length > 2 && !STOP_WORDS.has(word));
 
@@ -130,11 +128,18 @@ export async function GET(req: any) {
       width: `${Math.round((count / maxKeywordCount) * 100)}%`,
     }));
 
-    // -----------------------------------------------
-    // Monthly review counts for charts
-    // -----------------------------------------------
+    // -------------------------------------------------
+    // Filter reviews by plan duration for monthly charts
+    // -------------------------------------------------
+    const planStart = user.subscriptionStart;
+    const planEnd = user.subscriptionEnd ?? new Date();   // if no end date, use now
+
+    const planReviews = allReviews.filter((r) => {
+      return r.reviewDate >= planStart && r.reviewDate <= planEnd;
+    });
+
     const reviewsPerMonth: Record<string, number> = {};
-    allReviews.forEach((r) => {
+    planReviews.forEach((r) => {
       const month = r.reviewDate.toISOString().slice(0, 7); // "YYYY-MM"
       reviewsPerMonth[month] = (reviewsPerMonth[month] || 0) + 1;
     });
@@ -164,8 +169,8 @@ export async function GET(req: any) {
         sentiment,
         unansweredReviews,
         recentReviews,
-        topKeywords,         // ✅ now real keywords
-        monthlyData,         // ✅ for bar/line charts
+        topKeywords,
+        monthlyData,            // now plan‑period filtered
         responseTracking,
       },
     });
