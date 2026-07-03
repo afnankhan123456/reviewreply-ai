@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { prisma } from "../../../../../lib/prisma";
 import { getToken } from "next-auth/jwt";
 
-export async function POST(req: any, { params }: { params: { id: string } }) {
+export async function POST(req: any, context: any) {
   try {
     const token: any = await getToken({
       req,
@@ -27,7 +27,7 @@ export async function POST(req: any, { params }: { params: { id: string } }) {
     }
 
     const review = await prisma.review.findUnique({
-      where: { id: params.id },
+      where: { id: context.params.id },
     });
 
     if (!review) {
@@ -39,7 +39,7 @@ export async function POST(req: any, { params }: { params: { id: string } }) {
     }
 
     await prisma.review.update({
-      where: { id: params.id },
+      where: { id: context.params.id },
       data: {
         reviewReply: reply,
         replied: true,
