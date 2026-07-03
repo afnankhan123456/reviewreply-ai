@@ -1,6 +1,18 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../lib/prisma";
 import { getToken } from "next-auth/jwt";
+import nodemailer from "nodemailer";
+
+// Simple email template helper
+function buildAlertEmail(alertType: string, reviewInfo: any) {
+  return `
+    <h2>${alertType}</h2>
+    <p><strong>Reviewer:</strong> ${reviewInfo.reviewerName}</p>
+    <p><strong>Rating:</strong> ${reviewInfo.rating} ⭐</p>
+    <p><strong>Comment:</strong> ${reviewInfo.comment}</p>
+    <p><strong>Date:</strong> ${reviewInfo.reviewDate}</p>
+  `;
+}
 
 export async function GET(req: any) {
   try {
@@ -23,7 +35,7 @@ export async function GET(req: any) {
     });
 
     for (const user of users) {
-      // 🔁 Monthly reset logic per user before syncing
+      // --- Monthly sync reset (reviewsUsed) ---
       if (user.monthlyResetDate) {
         const now = new Date();
         const daysSinceReset = Math.floor(
@@ -74,7 +86,7 @@ export async function GET(req: any) {
             continue;
           }
 
-          await prisma.review.create({
+          const newReview = await prisma.review.create({
             data: {
               userId: user.id,
               businessLocationId: location.id,
@@ -96,8 +108,80 @@ export async function GET(req: any) {
             },
           });
 
-          // Update local count after increment
           user.reviewsUsed++;
+
+          // -------------------- LOW RATING ALERT --------------------
+          if (newReview.rating <= 2 && user.gmailConnected) {
+            // Monthly alert reset
+            let alertCount = user.alertEmailsSent ?? 0;
+            const alertLimit = user.alertEmailsLimit ?? 100;
+            const now = new Date();
+
+            if (user.alertMonthlyReset) {
+              const daysSinceAlertReset = Math.floor(
+                (now.getTime() - new Date(user.alertMonthlyReset).getTime()) / (1000 * 60 * 60 * 24)
+              );
+              if (daysSinceAlertReset >= 30) {
+                await prisma.user.update({
+                  where: { id: user.id },
+                  data: {
+                    alertEmailsSent: 0,
+                    alertMonthlyReset: now,
+                  },
+                });
+                alertCount = 0;
+                user.alertEmailsSent = 0;
+                user.alertMonthlyReset = now;
+              }
+            } else {
+              // first time, set reset date
+              await prisma.user.update({
+                where: { id: user.id },
+                data: { alertMonthlyReset: now },
+              });
+              user.alertMonthlyReset = now;
+            }
+
+            if (alertCount < alertLimit) {
+              // Send email
+              try {
+                const transporter = nodemailer.createTransport({
+                  host: "smtp.gmail.com",
+                  port: 587,
+                  secure: false,
+                  auth: {
+                    user: process.env.GMAIL_USER,
+                    pass: process.env.GMAIL_APP_PASSWORD,
+                  },
+                });
+
+                const mailOptions = {
+                  from: `"ReviewReply Alerts" <${process.env.GMAIL_USER}>`,
+                  to: user.email,
+                  subject: "🔔 New Low Rating Review Alert",
+                  html: buildAlertEmail("Low Rating Alert", {
+                    reviewerName: newReview.reviewerName,
+                    rating: newReview.rating,
+                    comment: newReview.comment,
+                    reviewDate: newReview.reviewDate.toISOString(),
+                  }),
+                };
+
+                await transporter.sendMail(mailOptions);
+
+                await prisma.user.update({
+                  where: { id: user.id },
+                  data: {
+                    alertEmailsSent: { increment: 1 },
+                  },
+                });
+                user.alertEmailsSent = (user.alertEmailsSent ?? 0) + 1;
+              } catch (emailError) {
+                console.error("Failed to send alert email for user", user.email, emailError);
+                // Continue syncing even if email fails
+              }
+            }
+          }
         }
       }
     }
