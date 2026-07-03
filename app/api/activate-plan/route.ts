@@ -36,6 +36,7 @@ export async function POST(req: any) {
         subscriptionStart: start,
         subscriptionEnd: end,
         plan: planType,
+        reviewsUsed: 0,           // ✅ naye plan ke saath counter reset
       },
     });
 
@@ -44,7 +45,3 @@ export async function POST(req: any) {
     return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
   }
 }
-
-
-
-
