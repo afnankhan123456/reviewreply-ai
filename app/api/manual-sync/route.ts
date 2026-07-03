@@ -29,6 +29,23 @@ export async function POST(req: any) {
       });
     }
 
+    // 🔁 Monthly reset logic
+    if (user.monthlyResetDate) {
+      const now = new Date();
+      const daysSinceReset = Math.floor((now.getTime() - new Date(user.monthlyResetDate).getTime()) / (1000 * 60 * 60 * 24));
+      if (daysSinceReset >= 30) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            reviewsUsed: 0,
+            monthlyResetDate: now,
+          },
+        });
+        user.reviewsUsed = 0;          // update local object for immediate check
+        user.monthlyResetDate = now;
+      }
+    }
+
     if (user.reviewsUsed >= user.reviewsLimit) {
       return NextResponse.json({
         success: false,
