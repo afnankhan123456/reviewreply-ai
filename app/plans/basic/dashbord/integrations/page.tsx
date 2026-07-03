@@ -16,6 +16,7 @@ export default function IntegrationsPage() {
   const [pendingSetup, setPendingSetup] = useState(0);
   const [locationsManaged, setLocationsManaged] = useState(0);
   const [googleConnected, setGoogleConnected] = useState(false);
+  const [gmailConnected, setGmailConnected] = useState(false); // new
   const [locations, setLocations] = useState<any[]>([]);
 
   useEffect(() => {
@@ -24,14 +25,29 @@ export default function IntegrationsPage() {
         const res = await fetch("/api/integrations");
         const data = await res.json();
         if (data.success) {
-          const { googleConnected: connected, locationsCount, locations: locs } = data.integrations;
+          const {
+            googleConnected: connected,
+            locationsCount,
+            locations: locs,
+            gmailConnected: gmConnected, // from API
+          } = data.integrations;
           setGoogleConnected(connected);
           setLocationsManaged(locationsCount);
           setLocations(locs || []);
-          // Update stats based on real data
-          setConnectedApps(connected ? 1 : 0);
-          setActiveSyncs(connected ? 1 : 0);
-          setPendingSetup(connected ? 0 : 1);
+          setGmailConnected(gmConnected || false); // fallback if field missing
+
+          // Update stats dynamically
+          let apps = 0;
+          let syncs = 0;
+          let pending = 0;
+          if (connected) apps++;
+          if (gmConnected) apps++;
+          if (connected && locationsCount > 0) syncs = 1;
+          if (!connected) pending++;
+          if (!gmConnected) pending++;
+          setConnectedApps(apps);
+          setActiveSyncs(syncs);
+          setPendingSetup(pending);
         }
       } catch (err) {
         console.error("Failed to load integrations", err);
@@ -168,14 +184,20 @@ export default function IntegrationsPage() {
             </button>
           </div>
 
-          {/* GMAIL */}
+          {/* GMAIL (updated) */}
           <div className="border border-zinc-200 dark:border-zinc-700 rounded-3xl p-5 hover:shadow-md transition bg-white dark:bg-zinc-900">
             <div className="flex items-center justify-between">
               <div className="w-14 h-14 rounded-2xl bg-yellow-100 flex items-center justify-center">
                 <Mail className="w-7 h-7 text-yellow-500" />
               </div>
-              <span className="px-3 py-1 rounded-full bg-zinc-100 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300 text-xs font-medium">
-                Available
+              <span
+                className={`px-3 py-1 rounded-full text-xs font-medium ${
+                  gmailConnected
+                    ? "bg-green-100 text-green-600"
+                    : "bg-zinc-100 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300"
+                }`}
+              >
+                {gmailConnected ? "Connected" : "Available"}
               </span>
             </div>
 
@@ -183,11 +205,20 @@ export default function IntegrationsPage() {
               Gmail Alerts
             </h3>
             <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2">
-              Receive email alerts for low ratings and new reviews.
+              {gmailConnected
+                ? "You are connected. Alerts will be sent to your Gmail."
+                : "Receive email alerts for low ratings and new reviews."}
             </p>
 
-            <button className="mt-5 w-full py-3 rounded-2xl bg-black dark:bg-white dark:text-black text-white font-medium hover:opacity-90 transition">
-              Connect Gmail
+            <button
+              disabled={gmailConnected}
+              className={`mt-5 w-full py-3 rounded-2xl font-medium transition ${
+                gmailConnected
+                  ? "bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                  : "bg-black dark:bg-white dark:text-black text-white hover:opacity-90"
+              }`}
+            >
+              {gmailConnected ? "Already Connected" : "Connect Gmail"}
             </button>
           </div>
         </div>
