@@ -36,7 +36,8 @@ export async function POST(req: any) {
         subscriptionStart: start,
         subscriptionEnd: end,
         plan: planType,
-        reviewsUsed: 0,           // ✅ naye plan ke saath counter reset
+        reviewsUsed: 0,
+        monthlyResetDate: start,  // ← naya field
       },
     });
 
