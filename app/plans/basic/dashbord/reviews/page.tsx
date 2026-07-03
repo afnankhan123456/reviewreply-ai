@@ -7,12 +7,21 @@ import {
   Reply,
   TrendingUp,
   Search,
+  X,
 } from "lucide-react";
 
 export default function ReviewsPage() {
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+
+  // View modal state
+  const [selectedReview, setSelectedReview] = useState<any | null>(null);
+
+  // Reply state
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     async function fetchReviews() {
@@ -38,13 +47,56 @@ export default function ReviewsPage() {
       ? reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews
       : 0;
   const repliedCount = reviews.filter((r) => r.replied).length;
-  const growth = totalReviews > 0 ? "+0%" : "0%"; // Placeholder – can be calculated from monthly data later
+  const growth = totalReviews > 0 ? "+0%" : "0%";
 
   // Filter by search
-  const filteredReviews = reviews.filter((r) =>
-    r.reviewerName?.toLowerCase().includes(search.toLowerCase()) ||
-    r.comment?.toLowerCase().includes(search.toLowerCase())
+  const filteredReviews = reviews.filter(
+    (r) =>
+      r.reviewerName?.toLowerCase().includes(search.toLowerCase()) ||
+      r.comment?.toLowerCase().includes(search.toLowerCase())
   );
+
+  // Handle view button
+  const handleView = (review: any) => {
+    setSelectedReview(review);
+  };
+
+  // Handle reply button
+  const handleReplyClick = (reviewId: string) => {
+    setReplyingTo(reviewId);
+    setReplyText("");
+  };
+
+  const handleSubmitReply = async (reviewId: string) => {
+    if (!replyText.trim()) return;
+    setSubmitting(true);
+    try {
+      const res = await fetch(`/api/reviews/${reviewId}/reply`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reply: replyText }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        // Update local state to reflect the reply
+        setReviews((prev) =>
+          prev.map((r) =>
+            r.id === reviewId
+              ? { ...r, reviewReply: replyText, replied: true }
+              : r
+          )
+        );
+        setReplyingTo(null);
+        setReplyText("");
+      } else {
+        alert(data.error || "Failed to submit reply");
+      }
+    } catch (err) {
+      alert("Something went wrong");
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="p-6 lg:p-8">
@@ -212,11 +264,17 @@ export default function ReviewsPage() {
                 {/* ACTIONS */}
                 <div className="flex items-center gap-3">
                   {!review.replied && (
-                    <button className="px-4 py-2 rounded-xl bg-blue-50 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 text-sm font-medium hover:bg-blue-100 dark:hover:bg-blue-500/30 transition">
+                    <button
+                      onClick={() => handleReplyClick(review.id)}
+                      className="px-4 py-2 rounded-xl bg-blue-50 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 text-sm font-medium hover:bg-blue-100 dark:hover:bg-blue-500/30 transition"
+                    >
                       Reply
                     </button>
                   )}
-                  <button className="px-4 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-200 text-sm font-medium hover:bg-zinc-200 dark:hover:bg-zinc-600 transition">
+                  <button
+                    onClick={() => handleView(review)}
+                    className="px-4 py-2 rounded-xl bg-zinc-100 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-200 text-sm font-medium hover:bg-zinc-200 dark:hover:bg-zinc-600 transition"
+                  >
                     View
                   </button>
                 </div>
@@ -225,6 +283,67 @@ export default function ReviewsPage() {
           )}
         </div>
       </div>
+
+      {/* VIEW MODAL */}
+      {selectedReview && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white dark:bg-zinc-800 rounded-2xl p-6 w-full max-w-lg mx-4 shadow-xl relative">
+            <button
+              onClick={() => setSelectedReview(null)}
+              className="absolute top-4 right-4 text-zinc-400 hover:text-zinc-600"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <h2 className="text-lg font-bold text-black dark:text-white mb-4">
+              Review Details
+            </h2>
+            <div className="space-y-3 text-sm text-zinc-600 dark:text-zinc-300">
+              <p><span className="font-medium">Name:</span> {selectedReview.reviewerName || "Anonymous"}</p>
+              <p><span className="font-medium">Rating:</span> {selectedReview.rating} ⭐</p>
+              <p><span className="font-medium">Comment:</span> {selectedReview.comment || "No comment"}</p>
+              {selectedReview.reviewReply && (
+                <p><span className="font-medium">Reply:</span> {selectedReview.reviewReply}</p>
+              )}
+              <p><span className="font-medium">Date:</span> {new Date(selectedReview.reviewDate).toLocaleDateString("en-US", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* REPLY MODAL / FORM */}
+      {replyingTo && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white dark:bg-zinc-800 rounded-2xl p-6 w-full max-w-md mx-4 shadow-xl relative">
+            <button
+              onClick={() => setReplyingTo(null)}
+              className="absolute top-4 right-4 text-zinc-400 hover:text-zinc-600"
+            >
+              <X className="w-5 h-5" />
+            </button>
+            <h2 className="text-lg font-bold text-black dark:text-white mb-4">
+              Reply to Review
+            </h2>
+            <textarea
+              value={replyText}
+              onChange={(e) => setReplyText(e.target.value)}
+              placeholder="Write your reply..."
+              rows={4}
+              className="w-full border border-zinc-200 dark:border-zinc-600 rounded-xl p-3 bg-transparent text-black dark:text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <button
+              onClick={() => handleSubmitReply(replyingTo)}
+              disabled={submitting || !replyText.trim()}
+              className="mt-4 w-full py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium disabled:opacity-50 transition"
+            >
+              {submitting ? "Submitting..." : "Submit Reply"}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
