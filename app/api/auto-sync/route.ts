@@ -23,6 +23,25 @@ export async function GET(req: any) {
     });
 
     for (const user of users) {
+      // 🔁 Monthly reset logic per user before syncing
+      if (user.monthlyResetDate) {
+        const now = new Date();
+        const daysSinceReset = Math.floor(
+          (now.getTime() - new Date(user.monthlyResetDate).getTime()) / (1000 * 60 * 60 * 24)
+        );
+        if (daysSinceReset >= 30) {
+          await prisma.user.update({
+            where: { id: user.id },
+            data: {
+              reviewsUsed: 0,
+              monthlyResetDate: now,
+            },
+          });
+          user.reviewsUsed = 0;
+          user.monthlyResetDate = now;
+        }
+      }
+
       if (user.reviewsUsed >= user.reviewsLimit) {
         continue;
       }
@@ -62,8 +81,8 @@ export async function GET(req: any) {
               googleReviewId: review.reviewId,
               reviewerName: review.reviewer?.displayName || "Anonymous",
               rating: review.starRating || 0,
-              comment: review.comment || "",               // ✅ field name fixed
-              reviewReply: review.reviewReply?.comment || "", // ✅ field name fixed
+              comment: review.comment || "",
+              reviewReply: review.reviewReply?.comment || "",
               replied: !!review.reviewReply,
               reviewDate: new Date(review.createTime),
               syncedAt: new Date(),
@@ -71,15 +90,14 @@ export async function GET(req: any) {
           });
 
           await prisma.user.update({
-            where: {
-              id: user.id,
-            },
+            where: { id: user.id },
             data: {
-              reviewsUsed: {
-                increment: 1,
-              },
+              reviewsUsed: { increment: 1 },
             },
           });
+
+          // Update local count after increment
+          user.reviewsUsed++;
         }
       }
     }
