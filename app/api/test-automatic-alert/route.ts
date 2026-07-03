@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "../../../../lib/prisma";   // ✅ 4 levels up (app/api/test-automatic-alert/ → lib)
+import { prisma } from "../../../lib/prisma";   // ✅ 3 levels up (app/api/test-automatic-alert/ → root)
 import { getToken } from "next-auth/jwt";
 import nodemailer from "nodemailer";
 
@@ -33,7 +33,6 @@ export async function GET(req: any) {
       return NextResponse.json({ success: false, error: "User not found" }, { status: 404 });
     }
 
-    // Use first business location ID if available, else fallback to test location
     const locationId = user.businessLocations[0]?.id || "11111111-1111-1111-1111-111111111111";
 
     const dummyReview = await prisma.review.create({
@@ -57,7 +56,6 @@ export async function GET(req: any) {
     const alertLimit = user.alertEmailsLimit ?? 100;
     const now = new Date();
 
-    // Monthly alert reset
     if (user.alertMonthlyReset) {
       const daysSinceReset = Math.floor(
         (now.getTime() - new Date(user.alertMonthlyReset).getTime()) / (1000 * 60 * 60 * 24)
