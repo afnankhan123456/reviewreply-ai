@@ -16,7 +16,7 @@ export default function IntegrationsPage() {
   const [pendingSetup, setPendingSetup] = useState(0);
   const [locationsManaged, setLocationsManaged] = useState(0);
   const [googleConnected, setGoogleConnected] = useState(false);
-  const [gmailConnected, setGmailConnected] = useState(false); // new
+  const [gmailConnected, setGmailConnected] = useState(false);
   const [locations, setLocations] = useState<any[]>([]);
 
   useEffect(() => {
@@ -29,12 +29,12 @@ export default function IntegrationsPage() {
             googleConnected: connected,
             locationsCount,
             locations: locs,
-            gmailConnected: gmConnected, // from API
+            gmailConnected: gmConnected,
           } = data.integrations;
           setGoogleConnected(connected);
           setLocationsManaged(locationsCount);
           setLocations(locs || []);
-          setGmailConnected(gmConnected || false); // fallback if field missing
+          setGmailConnected(gmConnected || false);
 
           // Update stats dynamically
           let apps = 0;
@@ -57,6 +57,24 @@ export default function IntegrationsPage() {
     }
     fetchIntegrations();
   }, []);
+
+  // 🔥 Handle Gmail connection
+  const handleConnectGmail = async () => {
+    try {
+      const res = await fetch("/api/gmail/connect", { method: "POST" });
+      const data = await res.json();
+      if (data.success) {
+        // Update local state so UI changes immediately
+        setGmailConnected(true);
+        setConnectedApps((prev) => prev + 1);
+        setPendingSetup((prev) => prev - 1);
+      } else {
+        alert(data.error || "Failed to connect Gmail");
+      }
+    } catch (err) {
+      alert("Something went wrong while connecting Gmail");
+    }
+  };
 
   return (
     <div className="p-6 lg:p-8">
@@ -184,7 +202,7 @@ export default function IntegrationsPage() {
             </button>
           </div>
 
-          {/* GMAIL (updated) */}
+          {/* GMAIL (with onClick fix) */}
           <div className="border border-zinc-200 dark:border-zinc-700 rounded-3xl p-5 hover:shadow-md transition bg-white dark:bg-zinc-900">
             <div className="flex items-center justify-between">
               <div className="w-14 h-14 rounded-2xl bg-yellow-100 flex items-center justify-center">
@@ -211,6 +229,7 @@ export default function IntegrationsPage() {
             </p>
 
             <button
+              onClick={handleConnectGmail}
               disabled={gmailConnected}
               className={`mt-5 w-full py-3 rounded-2xl font-medium transition ${
                 gmailConnected
