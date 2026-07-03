@@ -22,12 +22,16 @@ export async function GET(req: any) {
       return NextResponse.json({ success: false, error: "User not found" }, { status: 404 });
     }
 
+    // Determine Gmail connection – true if logged in via Google (provider === 'google')
+    const gmailConnected = token.provider === "google";
+
     return NextResponse.json({
       success: true,
       integrations: {
         googleConnected: user.googleConnected,
         locationsCount: user.businessLocations.length,
         locations: user.businessLocations,
+        gmailConnected, // 👈 new field
       },
     });
   } catch (error) {
