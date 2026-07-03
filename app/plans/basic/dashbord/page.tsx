@@ -70,7 +70,6 @@ export default function DashboardPage() {
     noReply: 0,
   });
 
-  // New state for monthly chart data
   const [monthlyData, setMonthlyData] = useState<any[]>([]);
 
   async function loadGoogleBusiness() {
@@ -120,7 +119,6 @@ export default function DashboardPage() {
     }
   }
 
-  // Fetch dashboard stats (including monthlyData and topKeywords)
   async function loadDashboardStats() {
     try {
       const response = await fetch("/api/dashboard-stats");
@@ -137,7 +135,7 @@ export default function DashboardPage() {
         setRecentReviews(d.recentReviews);
         setTopKeywords(d.topKeywords);
         setResponseTracking(d.responseTracking);
-        setMonthlyData(d.monthlyData || []); // <-- new monthly data
+        setMonthlyData(d.monthlyData || []);
       }
     } catch (err) {
       console.error("Failed to load dashboard stats", err);
@@ -531,30 +529,22 @@ export default function DashboardPage() {
 
         {/* CHARTS ROW: Review Analysis + Monthly History + Response Tracking */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7">
-          {/* Review Analysis – Bar Chart (real data) */}
+          {/* Review Analysis – Bar Chart (FIXED with pixel heights) */}
           <div className="bg-white dark:bg-gray-800 rounded-[24px] border border-gray-200 dark:border-gray-700 shadow-sm dark:shadow-gray-900/30 p-5 h-[205px] flex flex-col">
             <h3 className="text-[15px] font-semibold text-gray-900 dark:text-gray-100 mb-3">Review Analysis</h3>
-            <div className="flex items-end justify-between gap-1 flex-1 px-2">
+            <div className="flex items-end justify-between gap-1 flex-1 px-2 overflow-hidden">
               {monthlyData.length === 0 ? (
-                <div className="flex-1 flex flex-col items-center gap-1">
-                  <div className="w-full h-0 bg-blue-100 rounded-t-md relative"></div>
-                  <span className="text-[10px] text-gray-500 dark:text-gray-400">No data</span>
-                </div>
+                <div className="w-full text-center text-[10px] text-gray-500 dark:text-gray-400 self-center">No data</div>
               ) : (
                 monthlyData.map((item, idx) => {
                   const maxVal = Math.max(...monthlyData.map((d: any) => d.count), 1);
-                  const heightPercent = (item.count / maxVal) * 100;
+                  const barHeight = Math.round((item.count / maxVal) * 100); // max 100px
                   return (
                     <div key={idx} className="flex flex-col items-center gap-1 flex-1">
                       <div
-                        className="w-full bg-blue-100 dark:bg-blue-900/30 rounded-t-md relative"
-                        style={{ height: `${heightPercent}%` }}
-                      >
-                        <div
-                          className="absolute inset-x-0 bottom-0 bg-blue-500 dark:bg-blue-400 rounded-t-md opacity-80"
-                          style={{ height: `${heightPercent}%` }}
-                        />
-                      </div>
+                        className="w-full rounded-t-md bg-blue-500 dark:bg-blue-400"
+                        style={{ height: `${barHeight}px` }}
+                      />
                       <span className="text-[10px] text-gray-500 dark:text-gray-400">
                         {new Date(item.month + "-01").toLocaleString("en-US", { month: "short" })}
                       </span>
@@ -602,7 +592,6 @@ export default function DashboardPage() {
                       />
                     );
                   })}
-                  {/* Month labels */}
                   {monthlyData.map((item, i) => (
                     <text
                       key={i}
@@ -666,7 +655,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-
-
-
-
