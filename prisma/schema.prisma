@@ -45,6 +45,7 @@ model User {
   businessLocations   BusinessLocation[]
   reviews             Review[]
   templates           Template[]          // relation to templates
+  reports             Report[]            // relation to reports
 }
 
 model BusinessLocation {
@@ -100,4 +101,16 @@ model Template {
   active    Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model Report {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+  title          String
+  type           String   @default("monthly")   // "monthly", "custom"
+  averageRating  Float?
+  totalReviews   Int?
+  fileUrl        String?                       // URL to download the report (if generated)
+  createdAt      DateTime @default(now())
 }
