@@ -13,14 +13,24 @@ import {
 export default function HelpCenterPage() {
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [showBugModal, setShowBugModal] = useState(false);
+  const [bugFeature, setBugFeature] = useState("");
+  const [bugIssueType, setBugIssueType] = useState("");
   const [bugDescription, setBugDescription] = useState("");
 
   const handleBugSubmit = () => {
-    if (!bugDescription.trim()) return;
-    const subject = encodeURIComponent("Bug Report");
-    const body = encodeURIComponent(bugDescription);
+    if (!bugFeature || !bugIssueType || !bugDescription.trim()) return;
+
+    const subject = encodeURIComponent(
+      `Bug Report: [${bugFeature}] – [${bugIssueType}]`
+    );
+    const body = encodeURIComponent(
+      `Feature: ${bugFeature}\nIssue type: ${bugIssueType}\nDescription: ${bugDescription}`
+    );
+
     window.location.href = `mailto:afnank6789@gmail.com?subject=${subject}&body=${body}`;
     setShowBugModal(false);
+    setBugFeature("");
+    setBugIssueType("");
     setBugDescription("");
   };
 
@@ -190,25 +200,78 @@ export default function HelpCenterPage() {
         </>
       )}
 
-      {/* BUG REPORT MODAL */}
+      {/* BUG REPORT MODAL (updated with dropdowns) */}
       {showBugModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white dark:bg-zinc-800 rounded-2xl p-6 w-full max-w-md mx-4 shadow-xl relative">
-            <button onClick={() => setShowBugModal(false)} className="absolute top-4 right-4 text-zinc-400 hover:text-zinc-600">
+            <button
+              onClick={() => setShowBugModal(false)}
+              className="absolute top-4 right-4 text-zinc-400 hover:text-zinc-600"
+            >
               <X className="w-5 h-5" />
             </button>
+
             <h2 className="text-lg font-bold text-black dark:text-white mb-4">Report a Bug</h2>
+
+            {/* 1. Feature selector */}
+            <label className="block mb-1 text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              Kaunse feature mein issue hai?
+            </label>
+            <select
+              value={bugFeature}
+              onChange={(e) => setBugFeature(e.target.value)}
+              className="w-full border border-zinc-200 dark:border-zinc-600 rounded-xl px-3 py-2 mb-4 bg-transparent text-black dark:text-white"
+            >
+              <option value="">-- Select feature --</option>
+              <option>Dashboard</option>
+              <option>Reviews</option>
+              <option>Alerts</option>
+              <option>Unanswered</option>
+              <option>Analytics</option>
+              <option>Settings</option>
+              <option>Integrations</option>
+              <option>Templates</option>
+              <option>Reports</option>
+              <option>Export</option>
+              <option>Help Center</option>
+              <option>Other</option>
+            </select>
+
+            {/* 2. Problem type selector */}
+            <label className="block mb-1 text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              Kis tarah ki problem hai?
+            </label>
+            <select
+              value={bugIssueType}
+              onChange={(e) => setBugIssueType(e.target.value)}
+              className="w-full border border-zinc-200 dark:border-zinc-600 rounded-xl px-3 py-2 mb-4 bg-transparent text-black dark:text-white"
+            >
+              <option value="">-- Select issue type --</option>
+              <option>UI / Design glitch</option>
+              <option>Data load nahi ho raha</option>
+              <option>Button kaam nahi kar raha</option>
+              <option>Wrong data dikh raha hai</option>
+              <option>Sync issue</option>
+              <option>Email alert issue</option>
+              <option>Other</option>
+            </select>
+
+            {/* 3. Description */}
+            <label className="block mb-1 text-sm font-medium text-zinc-700 dark:text-zinc-300">
+              Description
+            </label>
             <textarea
               value={bugDescription}
               onChange={(e) => setBugDescription(e.target.value)}
               placeholder="Describe the issue..."
-              rows={5}
-              className="w-full border border-zinc-200 dark:border-zinc-600 rounded-xl p-3 bg-transparent text-black dark:text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              rows={4}
+              className="w-full border border-zinc-200 dark:border-zinc-600 rounded-xl p-3 bg-transparent text-black dark:text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
             />
+
             <button
               onClick={handleBugSubmit}
-              disabled={!bugDescription.trim()}
-              className="mt-4 w-full py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium disabled:opacity-50 transition"
+              disabled={!bugFeature || !bugIssueType || !bugDescription.trim()}
+              className="w-full py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium disabled:opacity-50 transition"
             >
               Submit Bug Report
             </button>
