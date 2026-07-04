@@ -17,21 +17,33 @@ export default function HelpCenterPage() {
   const [bugIssueType, setBugIssueType] = useState("");
   const [bugDescription, setBugDescription] = useState("");
 
+  // Custom fields when "Other" is selected
+  const [customFeature, setCustomFeature] = useState("");
+  const [customIssueType, setCustomIssueType] = useState("");
+
   const handleBugSubmit = () => {
-    if (!bugFeature || !bugIssueType || !bugDescription.trim()) return;
+    // Determine final feature and issue type
+    const finalFeature = bugFeature === "Other" ? customFeature.trim() : bugFeature;
+    const finalIssueType = bugIssueType === "Other" ? customIssueType.trim() : bugIssueType;
+
+    if (!finalFeature || !finalIssueType || !bugDescription.trim()) return;
 
     const subject = encodeURIComponent(
-      `Bug Report: [${bugFeature}] – [${bugIssueType}]`
+      `Bug Report: [${finalFeature}] – [${finalIssueType}]`
     );
     const body = encodeURIComponent(
-      `Feature: ${bugFeature}\nIssue type: ${bugIssueType}\nDescription: ${bugDescription}`
+      `Feature: ${finalFeature}\nIssue type: ${finalIssueType}\nDescription: ${bugDescription}`
     );
 
     window.location.href = `mailto:afnank6789@gmail.com?subject=${subject}&body=${body}`;
+
+    // Reset all fields
     setShowBugModal(false);
     setBugFeature("");
     setBugIssueType("");
     setBugDescription("");
+    setCustomFeature("");
+    setCustomIssueType("");
   };
 
   const faqs = [
@@ -63,7 +75,9 @@ export default function HelpCenterPage() {
         <>
           <div className="mb-8">
             <h1 className="text-3xl font-bold text-black dark:text-white">Help Center</h1>
-            <p className="text-zinc-500 dark:text-zinc-400 mt-2">Find answers, documentation, and support.</p>
+            <p className="text-zinc-500 dark:text-zinc-400 mt-2">
+              Find answers, documentation, and support.
+            </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -78,7 +92,9 @@ export default function HelpCenterPage() {
                 </div>
                 <div>
                   <h2 className="text-lg font-semibold text-black dark:text-white">FAQs</h2>
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">Common questions and quick answers.</p>
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+                    Common questions and quick answers.
+                  </p>
                 </div>
               </div>
             </div>
@@ -94,7 +110,9 @@ export default function HelpCenterPage() {
                 </div>
                 <div>
                   <h2 className="text-lg font-semibold text-black dark:text-white">Documentation</h2>
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">Step‑by‑step guides to get started.</p>
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+                    Step‑by‑step guides to get started.
+                  </p>
                 </div>
               </div>
             </div>
@@ -128,7 +146,9 @@ export default function HelpCenterPage() {
                 </div>
                 <div>
                   <h2 className="text-lg font-semibold text-black dark:text-white">Report a Bug</h2>
-                  <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">Found an issue? Let us know.</p>
+                  <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">
+                    Found an issue? Let us know.
+                  </p>
                 </div>
               </div>
             </div>
@@ -150,7 +170,9 @@ export default function HelpCenterPage() {
               <div className="space-y-4">
                 {faqs.map((faq, idx) => (
                   <div key={idx} className="bg-white dark:bg-zinc-800 border rounded-2xl p-5">
-                    <h3 className="font-semibold text-lg text-black dark:text-white">{faq.q}</h3>
+                    <h3 className="font-semibold text-lg text-black dark:text-white">
+                      {faq.q}
+                    </h3>
                     <p className="text-zinc-500 dark:text-zinc-400 mt-2">{faq.a}</p>
                   </div>
                 ))}
@@ -164,35 +186,78 @@ export default function HelpCenterPage() {
               <div className="prose dark:prose-invert max-w-none space-y-6">
                 <section>
                   <h2 className="text-xl font-semibold">Getting Started</h2>
-                  <p>Welcome to ReviewReply AI! This guide will help you set up your account and start managing customer reviews effectively.</p>
+                  <p>
+                    Welcome to ReviewReply AI! This guide will help you set up your
+                    account and start managing customer reviews effectively.
+                  </p>
                 </section>
                 <section>
                   <h2 className="text-xl font-semibold">1. Connect Google Business</h2>
-                  <p>Go to <strong>Integrations</strong> from the sidebar. Click <strong>Connect Google Business</strong> and log in with the Google account that manages your business profile. Choose the location you want to link. The basic plan supports one location.</p>
+                  <p>
+                    Go to <strong>Integrations</strong> from the sidebar. Click{" "}
+                    <strong>Connect Google Business</strong> and log in with the Google
+                    account that manages your business profile. Choose the location you
+                    want to link. The basic plan supports one location.
+                  </p>
                 </section>
                 <section>
                   <h2 className="text-xl font-semibold">2. Sync Reviews</h2>
-                  <p>Once connected, reviews will be synced automatically every few hours. You can also manually trigger a sync from the <strong>Dashboard</strong> using the <strong>Manual Sync</strong> button. New reviews will appear under <strong>Reviews</strong> and <strong>Unanswered</strong>.</p>
+                  <p>
+                    Once connected, reviews will be synced automatically every few
+                    hours. You can also manually trigger a sync from the{" "}
+                    <strong>Dashboard</strong> using the <strong>Manual Sync</strong>{" "}
+                    button. New reviews will appear under <strong>Reviews</strong> and{" "}
+                    <strong>Unanswered</strong>.
+                  </p>
                 </section>
                 <section>
                   <h2 className="text-xl font-semibold">3. Reply to Reviews</h2>
-                  <p>Navigate to <strong>Reviews</strong> or <strong>Unanswered</strong>. Click <strong>Reply</strong> on any review, write your response, and submit. The review status will update to <em>Replied</em>. You can also use <strong>Templates</strong> to save and reuse common replies.</p>
+                  <p>
+                    Navigate to <strong>Reviews</strong> or{" "}
+                    <strong>Unanswered</strong>. Click <strong>Reply</strong> on any
+                    review, write your response, and submit. The review status will
+                    update to <em>Replied</em>. You can also use{" "}
+                    <strong>Templates</strong> to save and reuse common replies.
+                  </p>
                 </section>
                 <section>
                   <h2 className="text-xl font-semibold">4. View Analytics</h2>
-                  <p>The <strong>Analytics</strong> page shows key metrics: total reviews, average rating, reply rate, sentiment breakdown, and monthly charts. Use it to track performance over time.</p>
+                  <p>
+                    The <strong>Analytics</strong> page shows key metrics: total
+                    reviews, average rating, reply rate, sentiment breakdown, and
+                    monthly charts. Use it to track performance over time.
+                  </p>
                 </section>
                 <section>
                   <h2 className="text-xl font-semibold">5. Export Data</h2>
-                  <p>Go to <strong>Export</strong> to download reviews as CSV or PDF. The CSV file contains all review details; the PDF provides a formatted report.</p>
+                  <p>
+                    Go to <strong>Export</strong> to download reviews as CSV or PDF.
+                    The CSV file contains all review details; the PDF provides a
+                    formatted report.
+                  </p>
                 </section>
                 <section>
                   <h2 className="text-xl font-semibold">6. Manage Alerts</h2>
-                  <p>Enable <strong>Gmail Alerts</strong> from the <strong>Integrations</strong> page to receive email notifications for low‑rating reviews. The basic plan includes up to 100 alert emails per month.</p>
+                  <p>
+                    Enable <strong>Gmail Alerts</strong> from the{" "}
+                    <strong>Integrations</strong> page to receive email notifications
+                    for low‑rating reviews. The basic plan includes up to 100 alert
+                    emails per month.
+                  </p>
                 </section>
                 <section>
                   <h2 className="text-xl font-semibold">7. Need Help?</h2>
-                  <p>If you have any questions, visit the <strong>FAQs</strong> page or contact our support team at <a href="mailto:afnank6789@gmail.com" className="text-blue-600 underline">afnank6789@gmail.com</a>.</p>
+                  <p>
+                    If you have any questions, visit the <strong>FAQs</strong> page or
+                    contact our support team at{" "}
+                    <a
+                      href="mailto:afnank6789@gmail.com"
+                      className="text-blue-600 underline"
+                    >
+                      afnank6789@gmail.com
+                    </a>
+                    .
+                  </p>
                 </section>
               </div>
             </div>
@@ -200,7 +265,7 @@ export default function HelpCenterPage() {
         </>
       )}
 
-      {/* BUG REPORT MODAL (updated with dropdowns) */}
+      {/* BUG REPORT MODAL */}
       {showBugModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white dark:bg-zinc-800 rounded-2xl p-6 w-full max-w-md mx-4 shadow-xl relative">
@@ -211,15 +276,20 @@ export default function HelpCenterPage() {
               <X className="w-5 h-5" />
             </button>
 
-            <h2 className="text-lg font-bold text-black dark:text-white mb-4">Report a Bug</h2>
+            <h2 className="text-lg font-bold text-black dark:text-white mb-4">
+              Report a Bug
+            </h2>
 
-            {/* 1. Feature selector */}
+            {/* Feature dropdown */}
             <label className="block mb-1 text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Kaunse feature mein issue hai?
+              Which feature has the issue?
             </label>
             <select
               value={bugFeature}
-              onChange={(e) => setBugFeature(e.target.value)}
+              onChange={(e) => {
+                setBugFeature(e.target.value);
+                if (e.target.value !== "Other") setCustomFeature("");
+              }}
               className="w-full border border-zinc-200 dark:border-zinc-600 rounded-xl px-3 py-2 mb-4 bg-transparent text-black dark:text-white"
             >
               <option value="">-- Select feature --</option>
@@ -237,26 +307,51 @@ export default function HelpCenterPage() {
               <option>Other</option>
             </select>
 
-            {/* 2. Problem type selector */}
+            {/* Custom feature input (visible only when "Other" selected) */}
+            {bugFeature === "Other" && (
+              <input
+                type="text"
+                placeholder="Enter feature name"
+                value={customFeature}
+                onChange={(e) => setCustomFeature(e.target.value)}
+                className="w-full border border-zinc-200 dark:border-zinc-600 rounded-xl px-3 py-2 mb-4 bg-transparent text-black dark:text-white placeholder-zinc-400"
+              />
+            )}
+
+            {/* Problem type dropdown */}
             <label className="block mb-1 text-sm font-medium text-zinc-700 dark:text-zinc-300">
-              Kis tarah ki problem hai?
+              What type of problem is it?
             </label>
             <select
               value={bugIssueType}
-              onChange={(e) => setBugIssueType(e.target.value)}
+              onChange={(e) => {
+                setBugIssueType(e.target.value);
+                if (e.target.value !== "Other") setCustomIssueType("");
+              }}
               className="w-full border border-zinc-200 dark:border-zinc-600 rounded-xl px-3 py-2 mb-4 bg-transparent text-black dark:text-white"
             >
               <option value="">-- Select issue type --</option>
               <option>UI / Design glitch</option>
-              <option>Data load nahi ho raha</option>
-              <option>Button kaam nahi kar raha</option>
-              <option>Wrong data dikh raha hai</option>
+              <option>Data not loading</option>
+              <option>Button not working</option>
+              <option>Wrong data shown</option>
               <option>Sync issue</option>
               <option>Email alert issue</option>
               <option>Other</option>
             </select>
 
-            {/* 3. Description */}
+            {/* Custom issue type input (visible only when "Other" selected) */}
+            {bugIssueType === "Other" && (
+              <input
+                type="text"
+                placeholder="Enter problem type"
+                value={customIssueType}
+                onChange={(e) => setCustomIssueType(e.target.value)}
+                className="w-full border border-zinc-200 dark:border-zinc-600 rounded-xl px-3 py-2 mb-4 bg-transparent text-black dark:text-white placeholder-zinc-400"
+              />
+            )}
+
+            {/* Description */}
             <label className="block mb-1 text-sm font-medium text-zinc-700 dark:text-zinc-300">
               Description
             </label>
@@ -270,7 +365,13 @@ export default function HelpCenterPage() {
 
             <button
               onClick={handleBugSubmit}
-              disabled={!bugFeature || !bugIssueType || !bugDescription.trim()}
+              disabled={
+                !bugFeature ||
+                !bugIssueType ||
+                !bugDescription.trim() ||
+                (bugFeature === "Other" && !customFeature.trim()) ||
+                (bugIssueType === "Other" && !customIssueType.trim())
+              }
               className="w-full py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium disabled:opacity-50 transition"
             >
               Submit Bug Report
