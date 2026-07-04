@@ -46,6 +46,7 @@ model User {
   reviews             Review[]
   templates           Template[]          // relation to templates
   reports             Report[]            // relation to reports
+  exports             Export[]            // relation to exports
 }
 
 model BusinessLocation {
@@ -113,4 +114,13 @@ model Report {
   totalReviews   Int?
   fileUrl        String?                       // URL to download the report (if generated)
   createdAt      DateTime @default(now())
+}
+
+model Export {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  type      String   // "csv" or "pdf"
+  fileName  String
+  createdAt DateTime @default(now())
 }
