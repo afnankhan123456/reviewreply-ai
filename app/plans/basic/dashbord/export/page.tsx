@@ -44,13 +44,15 @@ export default function ExportPage() {
     window.open("/api/exports/csv", "_blank");
   };
 
+  const handleExportPDF = () => {
+    window.open("/api/exports/pdf", "_blank");
+  };
+
   return (
     <div className="p-6 lg:p-8">
       {/* HEADER */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-black dark:text-white">
-          Export
-        </h1>
+        <h1 className="text-3xl font-bold text-black dark:text-white">Export</h1>
         <p className="text-zinc-500 dark:text-zinc-400 mt-2">
           Export reviews, analytics, and business reports.
         </p>
@@ -141,6 +143,23 @@ export default function ExportPage() {
               Export CSV
             </button>
           </div>
+
+          {/* PDF EXPORT */}
+          <div className="border border-zinc-200 dark:border-zinc-700 rounded-3xl p-5 hover:shadow-md transition bg-white dark:bg-zinc-900">
+            <div className="w-14 h-14 rounded-2xl bg-yellow-100 flex items-center justify-center">
+              <FileText className="w-7 h-7 text-yellow-500" />
+            </div>
+            <h3 className="text-lg font-bold text-black dark:text-white mt-5">Export PDF</h3>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-2">
+              Generate detailed analytics reports in PDF format.
+            </p>
+            <button
+              onClick={handleExportPDF}
+              className="mt-5 w-full py-3 rounded-2xl bg-black dark:bg-white dark:text-black text-white font-medium hover:opacity-90 transition"
+            >
+              Export PDF
+            </button>
+          </div>
         </div>
       </div>
 
@@ -182,9 +201,8 @@ export default function ExportPage() {
                 </div>
                 <button
                   onClick={() => {
-                    if (exp.type === "csv") {
-                      handleExportCSV();
-                    }
+                    if (exp.type === "csv") handleExportCSV();
+                    else if (exp.type === "pdf") handleExportPDF();
                   }}
                   className="flex items-center gap-2 px-4 py-2 rounded-xl bg-black dark:bg-white dark:text-black text-white text-sm font-medium hover:opacity-90 transition"
                 >
