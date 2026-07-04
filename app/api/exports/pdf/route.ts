@@ -63,6 +63,9 @@ export async function GET(req: any) {
       pdfDoc.getBuffer((buffer: Buffer) => resolve(buffer));
     });
 
+    // ✅ Convert Buffer to Uint8Array for NextResponse compatibility
+    const pdfArray = new Uint8Array(pdfBuffer);
+
     await prisma.export.create({
       data: {
         userId: user.id,
@@ -71,7 +74,7 @@ export async function GET(req: any) {
       },
     });
 
-    return new NextResponse(pdfBuffer, {
+    return new NextResponse(pdfArray, {
       headers: {
         "Content-Type": "application/pdf",
         "Content-Disposition": `attachment; filename="reviews-report-${new Date().toISOString().slice(0, 10)}.pdf"`,
