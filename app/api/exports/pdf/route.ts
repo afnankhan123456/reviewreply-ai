@@ -1,12 +1,14 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../lib/prisma";
 import { getToken } from "next-auth/jwt";
-import pdfMake from "pdfmake/build/pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
-pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 export async function GET(req: any) {
   try {
+    // Dynamic import to avoid build‑time issues
+    const pdfMake = (await import("pdfmake/build/pdfmake")).default;
+    const pdfFonts = (await import("pdfmake/build/vfs_fonts"));
+    pdfMake.vfs = pdfFonts.default?.pdfMake?.vfs || pdfFonts.default;
+
     const token: any = await getToken({
       req,
       secret: process.env.NEXTAUTH_SECRET,
@@ -63,7 +65,6 @@ export async function GET(req: any) {
       pdfDoc.getBuffer((buffer: Buffer) => resolve(buffer));
     });
 
-    // ✅ Convert Buffer to Uint8Array for NextResponse compatibility
     const pdfArray = new Uint8Array(pdfBuffer);
 
     await prisma.export.create({
