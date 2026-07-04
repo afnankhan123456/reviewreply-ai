@@ -13,6 +13,7 @@ import {
   FileText,
   FileBarChart,
   Download,
+  HelpCircle,
 } from "lucide-react";
 
 export default function Sidebar() {
@@ -68,6 +69,11 @@ export default function Sidebar() {
       name: "Export",
       href: "/plans/basic/dashbord/export",
       icon: Download,
+    },
+    {
+      name: "Help Center",
+      href: "/plans/basic/dashbord/help",
+      icon: HelpCircle,
     },
   ];
 
