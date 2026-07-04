@@ -44,6 +44,7 @@ model User {
 
   businessLocations   BusinessLocation[]
   reviews             Review[]
+  templates           Template[]          // relation to templates
 }
 
 model BusinessLocation {
@@ -87,4 +88,16 @@ model Review {
   syncedAt         DateTime @default(now())
 
   createdAt        DateTime @default(now())
+}
+
+model Template {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  title     String
+  content   String
+  category  String   @default("general")   // e.g., "positive", "negative", "general"
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
