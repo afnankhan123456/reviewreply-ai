@@ -8,9 +8,9 @@ import {
   Star,
   Brain,
   Zap,
-  TrendingUp,
   MessageSquare,
-  CheckCircle
+  CheckCircle,
+  Users // ✅ Added missing import
 } from "lucide-react";
 
 export default function LoginPage() {
