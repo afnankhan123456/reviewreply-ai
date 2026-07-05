@@ -21,7 +21,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen overflow-hidden relative bg-[#f8faff]">
+    {/* ✅ overflow-hidden hata diya hai, taaki 3D tilt clear dikhe */}
+    <div className="min-h-screen relative bg-[#f8faff]">
+      
       {/* 🌌 Soft Glowing Gradient Blobs (Purple & Blue) */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-[-150px] left-[-100px] w-[600px] h-[600px] bg-[#7b6dff]/15 blur-[140px] rounded-full" />
@@ -30,7 +32,7 @@ export default function LoginPage() {
         <div className="absolute bottom-[-50px] right-[10%] w-[550px] h-[550px] bg-[#bba8ff]/15 blur-[130px] rounded-full" />
       </div>
 
-      {/* 🌊 FIXED: 2 Inch Tall Waves + Progressive Light Blue Layers */}
+      {/* 🌊 WAVES: Niche se 3 inch upar float (bottom-20) */}
       <style>{`
         @keyframes waveFlow {
           0% { transform: translateX(0px) translateY(0px); }
@@ -43,10 +45,8 @@ export default function LoginPage() {
         .animate-wave-delay-3 { animation: waveFlow 10s ease-in-out 4.5s infinite; }
       `}</style>
       
-      {/* ✅ Height badha kar h-56 (224px / ~2 inches) kar diya hai */}
-      <div className="absolute bottom-0 left-0 w-full h-56 overflow-hidden leading-none z-0 pointer-events-none">
+      <div className="absolute bottom-20 left-0 w-full h-56 overflow-hidden leading-none z-0 pointer-events-none">
         <svg viewBox="0 0 1440 200" className="w-full h-full block" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-          {/* 4 Layers of Waves. Colors: Halka dark blue -> usse halka -> usse halka -> sabse halka */}
           <path className="animate-wave" fill="#7ca9f0" fillOpacity="0.35" d="M0,120 L48,130 C96,140,192,160,288,180 C384,200,480,210,576,190 C672,170,768,140,864,150 C960,160,1056,190,1152,200 C1248,210,1344,190,1392,170 L1440,150 L1440,320 L0,320 Z" />
           <path className="animate-wave-delay" fill="#9ebdf5" fillOpacity="0.3" d="M0,140 L48,150 C96,160,192,180,288,200 C384,220,480,230,576,210 C672,190,768,160,864,170 C960,180,1056,210,1152,220 C1248,230,1344,210,1392,190 L1440,170 L1440,320 L0,320 Z" />
           <path className="animate-wave-delay-2" fill="#c4d6fa" fillOpacity="0.25" d="M0,160 L48,170 C96,180,192,200,288,220 C384,240,480,250,576,230 C672,210,768,180,864,190 C960,200,1056,230,1152,240 C1248,250,1344,230,1392,210 L1440,190 L1440,320 L0,320 Z" />
@@ -54,7 +54,7 @@ export default function LoginPage() {
         </svg>
       </div>
 
-      {/* Main Content (Baki Sab Bilkul Same Rakha Hai) */}
+      {/* Main Content */}
       <div className="relative z-10 grid xl:grid-cols-2 min-h-screen">
         {/* LEFT SIDE */}
         <div className="flex flex-col justify-center px-6 lg:px-16 py-6 space-y-6">
@@ -99,7 +99,7 @@ export default function LoginPage() {
             })}
           </div>
 
-          {/* 🚀 TILTED DASHBOARD OVERVIEW CARD (Tilt 10deg exact same) */}
+          {/* 🚀 TILTED DASHBOARD OVERVIEW CARD (3D EFFECT PERFECTLY FIXED) */}
           <div className="perspective-[900px] max-w-[900px] mt-4">
             <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-[0_20px_60px_-15px_rgba(108,99,255,0.25)] transition-transform duration-500 transform rotateX(10deg) rotateY(-1deg) [transform-origin:bottom] [transform-style:preserve-3d]">
               
@@ -147,10 +147,8 @@ export default function LoginPage() {
                 })}
               </div>
 
-              {/* Charts Area (Line Chart + Donut Chart) */}
+              {/* Charts Area */}
               <div className="grid grid-cols-2 gap-3">
-                
-                {/* Reviews Over Time (SVG Line Chart) */}
                 <div className="bg-[#f8fafc] rounded-xl p-2 border border-[#f1f5f9] h-32 flex flex-col">
                   <h4 className="text-xs font-bold text-[#111827] mb-2">Reviews Over Time</h4>
                   <div className="flex-1 relative w-full">
@@ -171,18 +169,15 @@ export default function LoginPage() {
                   </div>
                 </div>
 
-                {/* Sentiment Analysis (Donut Chart) */}
                 <div className="bg-[#f8fafc] rounded-xl p-2 border border-[#f1f5f9] h-32 flex flex-col">
                   <h4 className="text-xs font-bold text-[#111827] mb-2">Sentiment Analysis</h4>
                   <div className="flex-1 flex items-center justify-between px-2">
-                    {/* Donut */}
                     <div className="w-20 h-20 rounded-full relative" style={{ background: "conic-gradient(#22c55e 0% 75%, #e5e7eb 75% 90%, #ef4444 90% 100%)" }}>
                       <div className="absolute inset-0 m-2 bg-[#f8fafc] rounded-full flex items-center justify-center flex-col border border-white">
                         <span className="text-[8px] font-bold text-[#111827]">89%</span>
                         <span className="text-[6px] text-gray-400">Growth</span>
                       </div>
                     </div>
-                    {/* Legend */}
                     <div className="flex flex-col gap-1 text-[9px]">
                       <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-[#22c55e]"></div><span className="text-gray-600">Positive</span><span className="text-gray-900 font-bold ml-auto">75%</span></div>
                       <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-[#e5e7eb]"></div><span className="text-gray-600">Neutral</span><span className="text-gray-900 font-bold ml-auto">15%</span></div>
@@ -194,7 +189,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Bottom Stats (Light Pill Container) */}
+          {/* Bottom Stats */}
           <div className="grid grid-cols-3 gap-3 max-w-[720px] bg-[#eff1f8]/50 border border-white/60 p-4 rounded-2xl backdrop-blur-sm mt-2">
             {[
               { icon: Users, value: "10K+", label: "Businesses Trust Us" },
@@ -220,7 +215,6 @@ export default function LoginPage() {
         {/* RIGHT SIDE - LOGIN CARD */}
         <div className="flex items-center justify-center px-6 py-6">
           <div className="w-full max-w-md bg-white rounded-3xl p-8 shadow-[0_20px_60px_-10px_rgba(0,0,0,0.08)] border border-gray-100">
-            {/* Logo (Preserved) */}
             <div className="flex justify-center mb-6">
               <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#7b6dff] to-[#5b7cff] flex items-center justify-center shadow-lg">
                 <img src="/ai-logo.png" alt="logo" className="w-10 h-10 object-contain filter brightness-0 invert" />
