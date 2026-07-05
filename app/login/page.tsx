@@ -31,7 +31,7 @@ export default function LoginPage() {
         <div className="absolute bottom-[-50px] right-[10%] w-[550px] h-[550px] bg-[#bba8ff]/15 blur-[130px] rounded-full" />
       </div>
 
-      {/* 🌊 WAVES: Niche se 3 inch upar float (bottom-20) */}
+      {/* 🌊 WAVES */}
       <style>{`
         @keyframes waveFlow {
           0% { transform: translateX(0px) translateY(0px); }
@@ -56,7 +56,7 @@ export default function LoginPage() {
       {/* Main Content */}
       <div className="relative z-10 grid xl:grid-cols-2 min-h-screen">
         {/* LEFT SIDE */}
-        <div className="flex flex-col justify-center px-6 lg:px-16 py-6 space-y-6">
+        <div className="flex flex-col justify-start px-6 lg:px-16 py-6 space-y-6 min-h-screen">
           {/* LOGO */}
           <div className="flex items-center gap-2 mb-2">
             <img src="/ai-logo.png" alt="ReviewReply AI" className="w-10 h-10 object-contain" />
@@ -98,7 +98,7 @@ export default function LoginPage() {
             })}
           </div>
 
-          {/* 🚀 TILTED DASHBOARD OVERVIEW CARD (3D EFFECT PERFECTLY FIXED) */}
+          {/* 🚀 TILTED DASHBOARD OVERVIEW CARD */}
           <div className="perspective-[900px] max-w-[900px] mt-4">
             <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-[0_20px_60px_-15px_rgba(108,99,255,0.25)] transition-transform duration-500 transform rotateX(10deg) rotateY(-1deg) [transform-origin:bottom] [transform-style:preserve-3d]">
               
@@ -188,26 +188,28 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Bottom Stats */}
-          <div className="grid grid-cols-3 gap-3 max-w-[720px] bg-[#eff1f8]/50 border border-white/60 p-4 rounded-2xl backdrop-blur-sm mt-2">
-            {[
-              { icon: Users, value: "10K+", label: "Businesses Trust Us" },
-              { icon: Star, value: "500K+", label: "Reviews Managed" },
-              { icon: Zap, value: "Instant", label: "AI Reply Generation" },
-            ].map((item, idx) => {
-              const Icon = item.icon;
-              return (
-                <div key={idx} className="flex items-center gap-3 bg-transparent">
-                  <div className="p-2 rounded-xl bg-[#e5e7fb] text-[#6c63ff]">
-                    <Icon className="w-5 h-5" />
+          {/* 🔥 DARK BLUE 2-LAYER BOTTOM STATS - Touch bottom border, no white background */}
+          <div className="mt-auto w-full bg-gradient-to-b from-[#0c1429] to-[#060b1a] border-t border-blue-900/50 px-4 py-5 rounded-none">
+            <div className="grid grid-cols-3 gap-4 max-w-[720px] mx-auto">
+              {[
+                { icon: Users, value: "10K+", label: "Businesses Trust Us" },
+                { icon: Star, value: "500K+", label: "Reviews Managed" },
+                { icon: Zap, value: "Instant", label: "AI Reply Generation" },
+              ].map((item, idx) => {
+                const Icon = item.icon;
+                return (
+                  <div key={idx} className="flex items-center gap-3 bg-transparent">
+                    <div className="p-2 rounded-xl bg-blue-900/30 text-blue-300">
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-extrabold text-white">{item.value}</h3>
+                      <p className="text-[10px] text-blue-200/70 font-medium">{item.label}</p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-xl font-extrabold text-[#111827]">{item.value}</h3>
-                    <p className="text-[10px] text-gray-500 font-medium">{item.label}</p>
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
 
