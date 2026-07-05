@@ -8,6 +8,7 @@ import {
   Star,
   Brain,
   Zap,
+  MessageCircle,
 } from "lucide-react";
 
 export default function LoginPage() {
@@ -18,166 +19,241 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen overflow-hidden relative bg-[#0b0d1a]">
-      {/* 🌌 Aurora Mesh Gradient Background (multiple soft glowing blobs) */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute top-[-150px] left-[-100px] w-[500px] h-[500px] bg-[#7b6dff]/20 blur-[120px] rounded-full" />
-        <div className="absolute top-[20%] right-[-50px] w-[400px] h-[400px] bg-[#5b7cff]/15 blur-[100px] rounded-full" />
-        <div className="absolute bottom-[-100px] left-[30%] w-[600px] h-[300px] bg-[#8ea6ff]/15 blur-[130px] rounded-full" />
-        <div className="absolute bottom-[-50px] right-[10%] w-[450px] h-[450px] bg-[#bba8ff]/20 blur-[120px] rounded-full" />
+    <div className="relative min-h-screen overflow-hidden bg-[#fafbff] text-[#13213a]">
+      {/* Background blobs */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute left-[-120px] top-[-80px] h-[360px] w-[360px] rounded-full bg-[#d9d4ff]/40 blur-[110px]" />
+        <div className="absolute right-[-80px] top-[-60px] h-[420px] w-[420px] rounded-full bg-[#e6ecff]/70 blur-[120px]" />
+        <div className="absolute bottom-[-120px] left-[18%] h-[360px] w-[720px] rounded-full bg-[#7b6dff]/20 blur-[140px]" />
+        <div className="absolute bottom-[-120px] right-[8%] h-[300px] w-[300px] rounded-full bg-[#5b7cff]/25 blur-[120px]" />
+        <div className="absolute left-[52%] top-[18%] h-7 w-7 rotate-45 bg-white/90 blur-[1px] [clip-path:polygon(50%_0%,60%_40%,100%_50%,60%_60%,50%_100%,40%_60%,0%_50%,40%_40%)]" />
       </div>
 
-      {/* 🌊 Glowing wave layers at the bottom (SVG for a modern SaaS feel) */}
-      <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-0">
+      {/* Bottom wave */}
+      <div className="pointer-events-none absolute bottom-0 left-0 right-0 z-0">
         <svg
-          viewBox="0 0 1440 200"
-          className="w-full h-auto block"
+          viewBox="0 0 1440 220"
+          className="block h-auto w-full"
           preserveAspectRatio="none"
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
-            fill="url(#wave1)"
-            fillOpacity="0.15"
-            d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,213.3C672,192,768,128,864,128C960,128,1056,192,1152,208C1248,224,1344,192,1392,176L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+            fill="#7b6dff"
+            fillOpacity="0.12"
+            d="M0,140L48,128C96,116,192,92,288,101.3C384,111,480,149,576,160C672,171,768,149,864,138.7C960,128,1056,128,1152,149.3C1248,171,1344,213,1392,234.7L1440,256L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
           />
           <path
-            fill="url(#wave2)"
-            fillOpacity="0.1"
-            d="M0,160L48,149.3C96,139,192,117,288,128C384,139,480,181,576,181.3C672,181,768,139,864,133.3C960,128,1056,160,1152,176C1248,192,1344,192,1392,192L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+            fill="#5b7cff"
+            fillOpacity="0.08"
+            d="M0,176L48,165.3C96,155,192,133,288,133.3C384,133,480,155,576,160C672,165,768,155,864,149.3C960,144,1056,144,1152,160C1248,176,1344,208,1392,224L1440,240L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
           />
-          <defs>
-            <linearGradient id="wave1" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#7b6dff" />
-              <stop offset="100%" stopColor="#5b7cff" />
-            </linearGradient>
-            <linearGradient id="wave2" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#8ea6ff" />
-              <stop offset="100%" stopColor="#bba8ff" />
-            </linearGradient>
-          </defs>
         </svg>
       </div>
 
-      {/* Main Content */}
-      <div className="relative z-10 grid xl:grid-cols-2 min-h-screen">
+      <div className="relative z-10 grid min-h-screen xl:grid-cols-2">
         {/* LEFT SIDE */}
-        <div className="flex flex-col justify-center px-6 lg:px-10 py-6 space-y-6 text-white">
-          {/* LOGO */}
-          <div className="flex items-center gap-2">
-            <img src="/ai-logo.png" alt="ReviewReply AI" className="w-10 h-10 object-contain" />
-            <h1 className="text-2xl font-extrabold tracking-tight">
-              ReviewReply <span className="text-[#6c63ff]">AI</span>
+        <div className="flex flex-col justify-center px-6 py-8 lg:px-10">
+          {/* Logo */}
+          <div className="mb-10 flex items-center gap-3">
+            <img
+              src="/ai-logo.png"
+              alt="ReviewReply AI"
+              className="h-10 w-10 object-contain"
+            />
+            <h1 className="text-[26px] font-extrabold tracking-tight text-[#15203a]">
+              ReviewReply <span className="text-[#5b7cff]">AI</span>
             </h1>
           </div>
 
-          {/* HEADING */}
-          <div>
-            <h2 className="text-4xl lg:text-5xl font-extrabold leading-tight">
-              Turn Every Review Into <span className="text-[#6c63ff]">Growth</span>
+          {/* Hero */}
+          <div className="max-w-[660px]">
+            <h2 className="max-w-[600px] text-[58px] font-extrabold leading-[0.98] tracking-tight text-[#13213a] lg:text-[74px]">
+              Turn Every Review
+              <br />
+              Into{" "}
+              <span className="bg-gradient-to-r from-[#4f78ff] to-[#6d63ff] bg-clip-text text-transparent">
+                Growth
+              </span>
             </h2>
-            <p className="text-white/60 text-lg mt-3 max-w-lg">
-              AI-powered review management for modern businesses. Generate smart replies,
-              track sentiment and improve your online reputation — all in one place.
+
+            <p className="mt-7 max-w-[560px] text-[19px] leading-8 text-[#51607d]">
+              AI-powered review management for modern businesses.
+              <br />
+              Generate smart replies, track sentiment and improve your
+              <br />
+              online reputation — all in one place.
             </p>
           </div>
 
-          {/* FEATURES */}
-          <div className="grid grid-cols-3 gap-3">
+          {/* Feature row */}
+          <div className="mt-12 grid max-w-[720px] gap-6 md:grid-cols-3">
             {[
-              { icon: Sparkles, color: "bg-[#f1eeff]/10 text-[#b4a7ff]", title: "AI-Powered Replies", desc: "Human-like replies in seconds" },
-              { icon: BarChart3, color: "bg-[#eef3ff]/10 text-[#8ea6ff]", title: "Review Analytics", desc: "Sentiment, ratings, insights" },
-              { icon: ShieldCheck, color: "bg-[#eef0ff]/10 text-[#9b8eff]", title: "Reputation Growth", desc: "Improve ratings & trust" },
+              {
+                icon: Sparkles,
+                title: "AI-Powered Replies",
+                desc: "Generate human-like\nresponses in seconds",
+              },
+              {
+                icon: BarChart3,
+                title: "Review Analytics",
+                desc: "Track sentiment, ratings\nand key insights",
+              },
+              {
+                icon: ShieldCheck,
+                title: "Reputation Growth",
+                desc: "Improve ratings and build\ncustomer trust",
+              },
             ].map((item, idx) => {
               const Icon = item.icon;
               return (
-                <div key={idx} className="flex items-start gap-2">
-                  <div className={`w-10 h-10 rounded-xl ${item.color} flex items-center justify-center`}>
-                    <Icon className="w-5 h-5" />
+                <div key={idx} className="flex items-start gap-3">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#eef1ff] text-[#6f63ff] shadow-[0_6px_24px_rgba(111,99,255,0.10)]">
+                    <Icon className="h-5 w-5" />
                   </div>
                   <div>
-                    <h3 className="text-sm font-bold">{item.title}</h3>
-                    <p className="text-xs text-white/50 mt-0.5 leading-4">{item.desc}</p>
+                    <h3 className="text-[16px] font-extrabold text-[#15203a]">
+                      {item.title}
+                    </h3>
+                    <p className="mt-1 whitespace-pre-line text-[14px] leading-6 text-[#5f6f8c]">
+                      {item.desc}
+                    </p>
                   </div>
                 </div>
               );
             })}
           </div>
 
-          {/* TILTED DASHBOARD PREVIEW */}
-          <div className="perspective-[1200px] max-w-[720px]">
-            <div className="bg-white border border-white/10 rounded-2xl p-4 shadow-[0_15px_60px_rgba(108,99,255,0.2)] transition-transform duration-300 transform rotateX(2deg) rotateY(-1deg) hover:rotateX(0) hover:rotateY(0)">
-              {/* Header */}
-              <div className="flex items-center justify-between mb-3">
+          {/* Dashboard preview */}
+          <div className="mt-12 max-w-[760px]">
+            <div
+              className="rounded-[26px] border border-white bg-white p-4 shadow-[0_18px_60px_rgba(87,101,255,0.16)]"
+              style={{
+                transform: "perspective(1400px) rotateX(3deg) rotateY(-10deg)",
+                transformOrigin: "center",
+              }}
+            >
+              <div className="flex items-center justify-between pb-4">
                 <div className="flex items-center gap-2">
-                  <img src="/ai-logo.png" className="w-6 h-6" />
-                  <span className="font-bold text-sm text-[#111827]">ReviewReply AI</span>
+                  <img
+                    src="/ai-logo.png"
+                    alt="ReviewReply AI"
+                    className="h-6 w-6 object-contain"
+                  />
+                  <span className="text-sm font-bold text-[#1b2540]">
+                    ReviewReply AI
+                  </span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <div className="bg-[#f4f6fb] px-3 py-1 rounded-lg text-xs text-[#6b7280]">Last 6 Months</div>
-                  <div className="flex items-center gap-1">
-                    <div className="w-7 h-7 rounded-full bg-[#6c63ff]"></div>
+
+                <div className="flex items-center gap-3">
+                  <div className="rounded-lg bg-[#f7f8fc] px-3 py-1.5 text-xs font-medium text-[#7a849b]">
+                    Last 6 Months
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="h-8 w-8 rounded-full bg-[url('https://i.pravatar.cc/100?img=12')] bg-cover bg-center" />
                     <div>
-                      <p className="text-xs font-bold text-[#111827]">John Doe</p>
-                      <p className="text-[10px] text-[#7b8496]">Business Owner</p>
+                      <div className="text-xs font-bold text-[#1b2540]">
+                        John Doe
+                      </div>
+                      <div className="text-[10px] text-[#7d879f]">
+                        Business Owner
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
 
-              <h3 className="text-base font-bold text-[#111827] mb-3">Dashboard Overview</h3>
+              <h3 className="mb-3 text-[15px] font-semibold text-[#1b2540]">
+                Dashboard Overview
+              </h3>
 
-              {/* Cards */}
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-4 gap-3">
                 {[
                   { label: "Total Reviews", value: "1,248", change: "+12.5%" },
-                  { label: "Avg Rating", value: "⭐ 4.6", change: "+0.4" },
-                  { label: "AI Replies", value: "892", change: "+18.2%" },
+                  { label: "Average Rating", value: "⭐ 4.6", change: "+0.4" },
+                  { label: "AI Replies Sent", value: "892", change: "+18.2%" },
                   { label: "Response Rate", value: "98%", change: "+8.7%" },
                 ].map((card, i) => (
-                  <div key={i} className="bg-[#fafbff] rounded-xl p-3 border border-[#f1f2f6]">
-                    <p className="text-[10px] text-[#8b95a7]">{card.label}</p>
-                    <h4 className="text-xl font-extrabold text-[#111827] mt-1">{card.value}</h4>
-                    <p className="text-[10px] text-green-500 mt-1">{card.change} this month</p>
+                  <div
+                    key={i}
+                    className="rounded-2xl border border-[#eef1f7] bg-[#fafbff] p-3"
+                  >
+                    <p className="text-[10px] text-[#8c95aa]">{card.label}</p>
+                    <h4 className="mt-1 text-[26px] font-extrabold leading-none text-[#16233f]">
+                      {card.value}
+                    </h4>
+                    <p className="mt-2 text-[10px] text-[#44b46a]">
+                      {card.change} this month
+                    </p>
                   </div>
                 ))}
               </div>
 
-              {/* Charts */}
-              <div className="grid grid-cols-2 gap-3 mt-3">
-                {/* Line Chart Placeholder */}
-                <div className="bg-[#fafbff] rounded-xl p-3 border border-[#f1f2f6] h-36 flex flex-col">
-                  <h4 className="text-xs font-bold text-[#111827] mb-1">Reviews Over Time</h4>
-                  <div className="flex-1 flex items-end">
-                    {[60, 80, 45, 90, 50, 70, 85, 95].map((val, idx) => (
-                      <div key={idx} className="flex-1 mx-[1px] bg-[#6c63ff]/20 rounded-t relative" style={{ height: `${val}%` }}>
-                        <div className="absolute bottom-0 left-0 right-0 bg-[#6c63ff] rounded-t" style={{ height: `${val * 0.8}%` }}></div>
+              <div className="mt-3 grid grid-cols-2 gap-3">
+                <div className="flex h-[162px] flex-col rounded-2xl border border-[#eef1f7] bg-[#fafbff] p-3">
+                  <h4 className="text-xs font-bold text-[#1b2540]">
+                    Reviews Over Time
+                  </h4>
+                  <div className="mt-auto flex h-[110px] items-end gap-2">
+                    {[18, 26, 22, 34, 29, 40, 36, 52, 48, 58].map((h, idx) => (
+                      <div key={idx} className="flex-1">
+                        <div
+                          className="mx-auto w-full rounded-t-full bg-[#6f63ff]"
+                          style={{ height: `${h}px`, opacity: 0.18 + idx * 0.04 }}
+                        />
                       </div>
                     ))}
                   </div>
                 </div>
-                {/* Pie placeholder */}
-                <div className="bg-[#fafbff] rounded-xl p-3 border border-[#f1f2f6] h-36 flex flex-col items-center justify-center">
-                  <h4 className="text-xs font-bold text-[#111827] mb-2">Sentiment</h4>
-                  <div className="w-24 h-24 rounded-full border-[10px] border-[#22c55e] border-r-[#e5e7eb] border-b-[#ef4444] rotate-45"></div>
+
+                <div className="flex h-[162px] flex-col items-center justify-center rounded-2xl border border-[#eef1f7] bg-[#fafbff] p-3">
+                  <h4 className="mb-2 text-xs font-bold text-[#1b2540]">
+                    Sentiment Analysis
+                  </h4>
+                  <div className="relative h-24 w-24 rounded-full border-[10px] border-[#52d6b0] border-r-[#d9dde8] border-b-[#5b7cff] rotate-45">
+                    <div className="absolute inset-0 flex -rotate-45 items-center justify-center">
+                      <span className="text-center text-[11px] font-bold leading-4 text-[#6d63ff]">
+                        AI
+                        <br />
+                        Score
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="mt-2 flex w-full items-center justify-end gap-4 text-[12px]">
+                    <div className="flex items-center gap-1">
+                      <span className="h-2 w-2 rounded-full bg-[#52d6b0]" />
+                      <span className="text-[#7a849b]">Positive 75%</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="h-2 w-2 rounded-full bg-[#d6d9e3]" />
+                      <span className="text-[#7a849b]">Neutral 15%</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="h-2 w-2 rounded-full bg-[#ff5a5f]" />
+                      <span className="text-[#7a849b]">Negative 10%</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Bottom Stats */}
-          <div className="grid grid-cols-3 gap-3 max-w-[720px]">
+          {/* Bottom stats */}
+          <div className="mt-10 grid max-w-[760px] grid-cols-3 gap-4 rounded-[22px] bg-white/70 p-5 shadow-[0_12px_35px_rgba(111,99,255,0.10)] backdrop-blur-md">
             {[
-              { icon: Star, value: "10K+", label: "Businesses" },
-              { icon: Brain, value: "500K+", label: "Reviews Managed" },
+              { icon: Star, value: "10K+", label: "Businesses Trust Us" },
+              { icon: Star, value: "500K+", label: "Reviews Managed" },
               { icon: Zap, value: "Instant", label: "AI Reply Generation" },
             ].map((item, idx) => {
               const Icon = item.icon;
               return (
-                <div key={idx} className="bg-white/5 border border-white/10 backdrop-blur-md rounded-xl p-4 flex items-center gap-3 shadow-sm text-white">
-                  <Icon className="text-[#6c63ff] w-6 h-6" />
+                <div key={idx} className="flex items-center gap-3">
+                  <Icon className="h-8 w-8 text-[#6f63ff]" />
                   <div>
-                    <h3 className="text-2xl font-extrabold">{item.value}</h3>
-                    <p className="text-xs text-white/50">{item.label}</p>
+                    <h3 className="text-[34px] font-extrabold leading-none text-[#15203a]">
+                      {item.value}
+                    </h3>
+                    <p className="mt-1 text-sm text-[#5f6f8c]">{item.label}</p>
                   </div>
                 </div>
               );
@@ -185,63 +261,95 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* RIGHT SIDE - LOGIN CARD */}
-        <div className="flex items-center justify-center px-6 py-6">
-          <div className="w-full max-w-md bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-8 shadow-[0_20px_60px_rgba(0,0,0,0.3)] text-white">
-            {/* Logo */}
-            <div className="flex justify-center mb-6">
-              <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-[#7b6dff] to-[#5b7cff] flex items-center justify-center shadow-lg">
-                <img src="/ai-logo.png" alt="logo" className="w-12 h-12 object-contain" />
+        {/* RIGHT SIDE */}
+        <div className="flex items-center justify-center px-6 py-8">
+          <div className="w-full max-w-[560px] rounded-[34px] border border-[#edf0fb] bg-white/75 p-10 shadow-[0_22px_70px_rgba(86,96,170,0.12)] backdrop-blur-xl">
+            <div className="mb-8 flex justify-center">
+              <div className="flex h-[96px] w-[96px] items-center justify-center rounded-[28px] bg-gradient-to-br from-[#7b6dff] to-[#5b7cff] shadow-[0_16px_36px_rgba(91,124,255,0.28)]">
+                <img
+                  src="/ai-logo.png"
+                  alt="logo"
+                  className="h-12 w-12 object-contain"
+                />
               </div>
             </div>
 
-            <h2 className="text-3xl font-extrabold text-center">Welcome Back</h2>
-            <p className="text-white/60 text-center mt-3 text-base">Sign in to continue to your dashboard</p>
+            <h2 className="text-center text-[38px] font-extrabold tracking-tight text-[#15203a]">
+              Welcome Back
+            </h2>
+            <p className="mt-4 text-center text-[18px] text-[#5f6f8c]">
+              Sign in to continue to your dashboard
+            </p>
 
             <button
               onClick={handleLogin}
-              className="w-full mt-8 bg-white hover:bg-white/90 transition-all py-4 rounded-2xl text-lg font-bold flex items-center justify-center gap-3 text-[#111827] shadow-lg"
+              className="mt-10 flex w-full items-center justify-center gap-4 rounded-[18px] border border-[#eef1f8] bg-white py-4 text-[20px] font-bold text-[#15203a] shadow-[0_10px_30px_rgba(44,62,103,0.08)] transition hover:scale-[0.99] hover:bg-[#fbfcff]"
             >
-              <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-6 h-6" />
+              <img
+                src="https://www.svgrepo.com/show/475656/google-color.svg"
+                alt="Google"
+                className="h-7 w-7"
+              />
               Continue with Google
             </button>
 
-            <div className="flex items-center justify-center gap-4 my-6">
-              <div className="h-px bg-white/20 flex-1"></div>
-              <p className="text-white/50 text-sm font-medium">Secure & Fast Login</p>
-              <div className="h-px bg-white/20 flex-1"></div>
+            <div className="my-8 flex items-center gap-4">
+              <div className="h-px flex-1 bg-[#e9edf7]" />
+              <p className="text-[16px] font-medium text-[#5f6f8c]">
+                Secure & Fast Login
+              </p>
+              <div className="h-px flex-1 bg-[#e9edf7]" />
             </div>
 
-            <div className="bg-white/10 rounded-2xl p-4 border border-white/10 flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#6c63ff] flex items-center justify-center">
-                <ShieldCheck className="text-white w-5 h-5" />
+            <div className="rounded-[18px] bg-[#eef3ff] px-5 py-5">
+              <div className="flex items-start gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#6f63ff]">
+                  <ShieldCheck className="h-5 w-5 text-white" />
+                </div>
+                <p className="text-[16px] leading-7 text-[#44526f]">
+                  We use Google secure OAuth to keep your account and data safe.
+                </p>
               </div>
-              <p className="text-white/70 text-sm leading-5">We use Google secure OAuth to keep your account and data safe.</p>
             </div>
 
-            <div className="grid grid-cols-3 gap-4 mt-6">
+            <div className="mt-8 grid grid-cols-3 gap-4">
               {[
-                { icon: ShieldCheck, color: "bg-white/10 text-[#b4a7ff]", title: "Secure OAuth", desc: "Google Protected" },
-                { icon: BarChart3, color: "bg-white/10 text-[#8ea6ff]", title: "GDPR Ready", desc: "Privacy Compliant" },
-                { icon: Brain, color: "bg-white/10 text-[#9b8eff]", title: "AI Powered", desc: "Smart Automation" },
+                {
+                  icon: ShieldCheck,
+                  title: "Secure OAuth",
+                  desc: "Google Protected",
+                },
+                {
+                  icon: BarChart3,
+                  title: "GDPR Ready",
+                  desc: "Privacy Compliant",
+                },
+                {
+                  icon: Brain,
+                  title: "AI Powered",
+                  desc: "Smart Automation",
+                },
               ].map((item, idx) => {
                 const Icon = item.icon;
                 return (
                   <div key={idx} className="text-center">
-                    <div className={`w-14 h-14 rounded-2xl ${item.color} mx-auto flex items-center justify-center`}>
-                      <Icon className="w-6 h-6" />
+                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[20px] bg-[#eef3ff] text-[#6f63ff] shadow-[0_8px_22px_rgba(87,101,255,0.08)]">
+                      <Icon className="h-7 w-7" />
                     </div>
-                    <h4 className="font-bold text-sm mt-2">{item.title}</h4>
-                    <p className="text-xs text-white/50 mt-0.5">{item.desc}</p>
+                    <h4 className="mt-3 text-[16px] font-bold text-[#1b2540]">
+                      {item.title}
+                    </h4>
+                    <p className="mt-1 text-[14px] text-[#5f6f8c]">{item.desc}</p>
                   </div>
                 );
               })}
             </div>
 
-            <p className="text-white/50 text-center text-xs mt-6">
+            <p className="mt-10 text-center text-[14px] leading-7 text-[#6f7b92]">
               By continuing, you agree to our{" "}
-              <span className="text-[#6c63ff] font-semibold">Terms of Service</span> and{" "}
-              <span className="text-[#5b7cff] font-semibold">Privacy Policy</span>
+              <span className="font-semibold text-[#4f78ff]">Terms of Service</span>{" "}
+              and{" "}
+              <span className="font-semibold text-[#4f78ff]">Privacy Policy</span>.
             </p>
           </div>
         </div>
