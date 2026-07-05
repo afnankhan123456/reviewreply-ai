@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Bug,
+  Settings,   // ← import Settings icon
 } from "lucide-react";
 
 export default function AdminLayout({
@@ -25,6 +26,11 @@ export default function AdminLayout({
       name: "Bug Reports",
       href: "/admin/bugs",
       icon: Bug,
+    },
+    {
+      name: "Settings",           // ← add Settings item
+      href: "/admin/settings",
+      icon: Settings,
     },
   ];
 
