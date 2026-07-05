@@ -10,11 +10,7 @@ import {
   Zap,
   MessageSquare,
   CheckCircle,
-  Users,
-  LayoutDashboard,
-  Bell,
-  Layers,
-  Settings
+  Users // ✅ Added missing import
 } from "lucide-react";
 
 export default function LoginPage() {
@@ -25,10 +21,10 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen overflow-hidden relative bg-[#f8faff] font-sans">
-      {/* 🌌 Soft Glowing Gradient Background */}
+    <div className="min-h-screen overflow-hidden relative bg-[#f8faff]">
+      {/* 🌌 Soft Glowing Gradient Blobs (Purple & Blue) */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute top-[-150px] left-[-100px] w-[600px] h-[600px] bg-[#7b6dff]/20 blur-[140px] rounded-full" />
+        <div className="absolute top-[-150px] left-[-100px] w-[600px] h-[600px] bg-[#7b6dff]/15 blur-[140px] rounded-full" />
         <div className="absolute top-[10%] right-[-50px] w-[500px] h-[500px] bg-[#5b7cff]/10 blur-[120px] rounded-full" />
         <div className="absolute bottom-[-100px] left-[30%] w-[700px] h-[400px] bg-[#8ea6ff]/10 blur-[150px] rounded-full" />
         <div className="absolute bottom-[-50px] right-[10%] w-[550px] h-[550px] bg-[#bba8ff]/15 blur-[130px] rounded-full" />
@@ -38,7 +34,7 @@ export default function LoginPage() {
       <div className="relative z-10 grid xl:grid-cols-2 min-h-screen">
         {/* LEFT SIDE */}
         <div className="flex flex-col justify-center px-6 lg:px-16 py-6 space-y-6">
-          {/* LOGO (Unchanged as requested) */}
+          {/* LOGO */}
           <div className="flex items-center gap-2 mb-2">
             <img src="/ai-logo.png" alt="ReviewReply AI" className="w-10 h-10 object-contain" />
             <h1 className="text-2xl font-extrabold tracking-tight text-[#111827]">
@@ -79,149 +75,128 @@ export default function LoginPage() {
             })}
           </div>
 
-          {/* 🚀 EXACT DASHBOARD CARD WITH SIDEBAR, STATS, & CHARTS */}
-          <div className="perspective-[1200px] max-w-[900px] mt-4 w-full">
-            
-            {/* Main Dashboard Card Container */}
-            <div className="bg-white rounded-2xl shadow-[0_25px_70px_-15px_rgba(108,99,255,0.2)] transition-transform duration-500 transform rotateX(3deg) rotateY(-1deg) hover:rotateX(0) hover:rotateY(0) flex flex-row overflow-hidden border border-gray-100">
+          {/* 🚀 TILTED DASHBOARD OVERVIEW CARD (UPDATED: Wider & Shorter) */}
+          <div className="perspective-[1200px] max-w-[900px] mt-4"> {/* ✅ Width badha di (720px -> 900px) */}
+            <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-[0_20px_60px_-15px_rgba(108,99,255,0.25)] transition-transform duration-500 transform rotateX(3deg) rotateY(-1deg) hover:rotateX(0) hover:rotateY(0)"> {/* ✅ Padding kam kar di (p-6 -> p-4) */}
               
-              {/* 1. Sidebar */}
-              <div className="w-[180px] flex-shrink-0 p-5 bg-[#fafbff] border-r border-gray-100 hidden lg:flex flex-col gap-4">
-                <div className="flex items-center gap-2 px-2 mb-2">
-                  <img src="/ai-logo.png" className="w-7 h-7" />
-                  <span className="font-bold text-sm text-[#111827] tracking-tight">ReviewReply AI</span>
+              {/* Dashboard Header */}
+              <div className="flex items-center justify-between mb-3"> {/* ✅ Margin-bottom kam kar di (mb-4 -> mb-3) */}
+                <div className="flex items-center gap-2">
+                  <img src="/ai-logo.png" className="w-6 h-6" />
+                  <span className="font-bold text-sm text-[#111827]">ReviewReply AI</span>
                 </div>
-                <div className="flex flex-col gap-1 text-[13px]">
-                  <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-[#f1eeff] text-[#6c63ff] font-semibold cursor-pointer"><LayoutDashboard className="w-4 h-4" /> Dashboard</div>
-                  <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:bg-gray-100 cursor-pointer font-medium"><MessageSquare className="w-4 h-4" /> Reviews</div>
-                  <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:bg-gray-100 cursor-pointer font-medium"><Sparkles className="w-4 h-4" /> AI Reply</div>
-                  <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:bg-gray-100 cursor-pointer font-medium"><BarChart3 className="w-4 h-4" /> Analytics</div>
-                  <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:bg-gray-100 cursor-pointer font-medium"><Bell className="w-4 h-4" /> Alerts</div>
-                  <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:bg-gray-100 cursor-pointer font-medium"><Layers className="w-4 h-4" /> Integrations</div>
-                  <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-gray-500 hover:bg-gray-100 cursor-pointer font-medium"><Settings className="w-4 h-4" /> Settings</div>
+                <div className="flex items-center gap-3">
+                  <div className="bg-[#f4f6fb] px-3 py-1 rounded-lg text-xs font-medium text-[#6b7280] flex items-center gap-1 cursor-pointer">
+                    Last 6 Months <span className="text-gray-400">▼</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#7b6dff] to-[#5b7cff] flex items-center justify-center text-white text-xs font-bold">JD</div>
+                    <div className="hidden sm:block">
+                      <p className="text-xs font-bold text-[#111827] leading-tight">John Doe</p>
+                      <p className="text-[10px] text-[#7b8496]">Business Owner</p>
+                    </div>
+                  </div>
                 </div>
               </div>
 
-              {/* 2. Main Content Area */}
-              <div className="flex-1 p-6 bg-white">
+              <h3 className="text-base font-bold text-[#111827] mb-3">Dashboard Overview</h3> {/* ✅ Margin-bottom kam kar di (mb-4 -> mb-3) */}
+
+              {/* 4 Stats Cards */}
+              <div className="grid grid-cols-4 gap-2 mb-3"> {/* ✅ Gaps aur margin kam kar di (gap-3 mb-4 -> gap-2 mb-3) */}
+                {[
+                  { label: "Total Reviews", value: "1,248", change: "+12.5%", icon: MessageSquare, color: "text-purple-600 bg-purple-50" },
+                  { label: "Average Rating", value: "⭐ 4.6", change: "+0.4", icon: Star, color: "text-yellow-500 bg-yellow-50" },
+                  { label: "AI Replies", value: "892", change: "+18.2%", icon: Zap, color: "text-blue-600 bg-blue-50" },
+                  { label: "Response Rate", value: "98%", change: "+8.7%", icon: CheckCircle, color: "text-green-600 bg-green-50" },
+                ].map((card, i) => {
+                  const Icon = card.icon;
+                  return (
+                    <div key={i} className="bg-[#f8fafc] rounded-xl p-2 border border-[#f1f5f9] relative"> {/* ✅ Padding kam kar di (p-3 -> p-2) */}
+                      <div className={`absolute top-2 right-2 p-1 rounded-full ${card.color}`}>
+                         <Icon className="w-3 h-3" />
+                      </div>
+                      <p className="text-[10px] text-[#8b95a7] font-medium">{card.label}</p>
+                      <h4 className="text-lg font-extrabold text-[#111827] mt-1">{card.value}</h4>
+                      <p className="text-[10px] text-green-500 mt-1 font-semibold">{card.change} this month</p>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Charts Area (Line Chart + Donut Chart) */}
+              <div className="grid grid-cols-2 gap-3"> {/* ✅ Gap kam kar di (gap-4 -> gap-3) */}
                 
-                {/* Dashboard Header */}
-                <div className="flex items-center justify-between mb-5 border-b border-gray-50 pb-3">
-                  <h3 className="text-base font-bold text-[#111827]">Dashboard Overview</h3>
-                  <div className="flex items-center gap-3">
-                    <div className="bg-[#f4f6fb] px-3 py-1.5 rounded-lg text-xs font-medium text-[#6b7280] flex items-center gap-2 cursor-pointer border border-gray-100">
-                      Last 6 Months <span className="text-gray-400 text-[10px]">▼</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#7b6dff] to-[#5b7cff] flex items-center justify-center text-white text-[10px] font-bold">JD</div>
-                      <div className="hidden sm:block">
-                        <p className="text-[11px] font-bold text-[#111827] leading-tight">John Doe</p>
-                        <p className="text-[9px] text-[#7b8496]">Business Owner</p>
-                      </div>
+                {/* Reviews Over Time (SVG Line Chart) */}
+                <div className="bg-[#f8fafc] rounded-xl p-2 border border-[#f1f5f9] h-32 flex flex-col"> {/* ✅ Height aur padding kam kar di (h-40 p-3 -> h-32 p-2) */}
+                  <h4 className="text-xs font-bold text-[#111827] mb-2">Reviews Over Time</h4>
+                  <div className="flex-1 relative w-full">
+                    <svg viewBox="0 0 100 50" className="w-full h-24 absolute bottom-0">
+                      <defs>
+                        <linearGradient id="lineGradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stopColor="#6c63ff" stopOpacity="0.3"/>
+                          <stop offset="100%" stopColor="#6c63ff" stopOpacity="0"/>
+                        </linearGradient>
+                      </defs>
+                      <path d="M0,40 C20,40 30,20 50,25 C70,30 80,10 100,10" fill="none" stroke="#6c63ff" strokeWidth="2" strokeLinecap="round" />
+                      <path d="M0,40 C20,40 30,20 50,25 C70,30 80,10 100,10 V50 H0 Z" fill="url(#lineGradient)" />
+                      <circle cx="100" cy="10" r="2" fill="#6c63ff" />
+                    </svg>
+                    <div className="absolute bottom-0 w-full flex justify-between text-[8px] text-gray-400 px-1">
+                      <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
                     </div>
                   </div>
                 </div>
 
-                {/* 3. 4 Stats Cards */}
-                <div className="grid grid-cols-4 gap-3 mb-5">
-                  {[
-                    { label: "Total Reviews", value: "1,248", change: "+12.5% this month", highlight: "text-green-500", icon: null },
-                    { label: "Average Rating", value: "4.6", change: "+0.4 this month", highlight: "text-green-500", icon: Star },
-                    { label: "AI Replies Sent", value: "892", change: "+18.2% this month", highlight: "text-green-500", icon: null },
-                    { label: "Response Rate", value: "98%", change: "+8.7% this month", highlight: "text-green-500", icon: null },
-                  ].map((card, i) => (
-                    <div key={i} className="bg-[#fafbff] rounded-xl p-4 border border-[#f1f2f6] shadow-sm relative">
-                      <p className="text-[10px] font-medium text-[#8b95a7]">{card.label}</p>
-                      <div className="flex items-center gap-1.5 mt-1">
-                        {card.icon && <card.icon className="w-4 h-4 text-yellow-400 fill-yellow-400" />}
-                        <h4 className="text-xl font-extrabold text-[#111827] leading-none">{card.value}</h4>
-                      </div>
-                      <p className={`text-[10px] ${card.highlight} mt-1.5 font-medium`}>{card.change}</p>
-                    </div>
-                  ))}
-                </div>
-
-                {/* 4. Charts Area */}
-                <div className="grid grid-cols-2 gap-4">
-                  
-                  {/* Reviews Over Time (Line Chart) */}
-                  <div className="bg-[#fafbff] rounded-xl p-4 border border-[#f1f2f6] h-[180px] flex flex-col relative">
-                    <h4 className="text-xs font-bold text-[#111827] mb-2">Reviews Over Time</h4>
-                    <div className="flex-1 relative w-full">
-                      <div className="absolute left-0 top-2 bottom-4 flex flex-col justify-between text-[8px] text-gray-400 w-5">
-                        <span>200</span><span>150</span><span>100</span><span>50</span>
-                      </div>
-                      <div className="absolute top-0 bottom-0 right-0 left-6 flex flex-col justify-end">
-                        <svg viewBox="0 0 100 50" className="w-full h-full">
-                          <defs>
-                            <linearGradient id="lineGradient" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="0%" stopColor="#6c63ff" stopOpacity="0.3"/>
-                              <stop offset="100%" stopColor="#6c63ff" stopOpacity="0"/>
-                            </linearGradient>
-                          </defs>
-                          <path d="M0,38 C20,38 30,35 40,30 C50,20 60,32 70,28 C80,22 90,12 100,8" fill="none" stroke="#6c63ff" strokeWidth="2" strokeLinecap="round" />
-                          <path d="M0,38 C20,38 30,35 40,30 C50,20 60,32 70,28 C80,22 90,12 100,8 V50 H0 Z" fill="url(#lineGradient)" />
-                          <circle cx="100" cy="8" r="2.5" fill="#6c63ff" />
-                          <rect x="88" y="-6" width="24" height="14" fill="white" rx="2" stroke="#6c63ff" strokeWidth="0.5"/>
-                          <text x="92" y="4" fontSize="4.5" fill="#6c63ff" fontWeight="bold">1,248</text>
-                        </svg>
-                        <div className="flex justify-between text-[8px] text-gray-400 w-full border-t border-gray-200 pt-1.5 px-1">
-                          <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
-                        </div>
+                {/* Sentiment Analysis (Donut Chart) */}
+                <div className="bg-[#f8fafc] rounded-xl p-2 border border-[#f1f5f9] h-32 flex flex-col"> {/* ✅ Height aur padding kam kar di (h-40 p-3 -> h-32 p-2) */}
+                  <h4 className="text-xs font-bold text-[#111827] mb-2">Sentiment Analysis</h4>
+                  <div className="flex-1 flex items-center justify-between px-2">
+                    {/* Donut */}
+                    <div className="w-20 h-20 rounded-full relative" style={{ background: "conic-gradient(#22c55e 0% 75%, #e5e7eb 75% 90%, #ef4444 90% 100%)" }}>
+                      <div className="absolute inset-0 m-2 bg-[#f8fafc] rounded-full flex items-center justify-center flex-col border border-white">
+                        <span className="text-[8px] font-bold text-[#111827]">89%</span>
+                        <span className="text-[6px] text-gray-400">Growth</span>
                       </div>
                     </div>
-                  </div>
-
-                  {/* Sentiment Analysis (Donut Chart) */}
-                  <div className="bg-[#fafbff] rounded-xl p-4 border border-[#f1f2f6] h-[180px] flex flex-col">
-                    <h4 className="text-xs font-bold text-[#111827] mb-2">Sentiment Analysis</h4>
-                    <div className="flex-1 flex items-center justify-between px-2">
-                      <div className="w-20 h-20 rounded-full relative" style={{ background: "conic-gradient(#22c55e 0% 75%, #e5e7eb 75% 90%, #ef4444 90% 100%)" }}>
-                        <div className="absolute inset-0 m-1.5 bg-[#fafbff] rounded-full flex flex-col items-center justify-center">
-                          <span className="text-[10px] font-bold text-[#111827] leading-tight">89%</span>
-                          <span className="text-[7px] text-gray-400">Growth</span>
-                        </div>
-                      </div>
-                      <div className="flex flex-col gap-1.5 text-[10px] flex-1 pl-4">
-                        <div className="flex items-center justify-between"><div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-[#22c55e]"></div><span className="text-gray-500">Positive</span></div><span className="font-bold text-[#111827]">75%</span></div>
-                        <div className="flex items-center justify-between"><div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-[#e5e7eb]"></div><span className="text-gray-500">Neutral</span></div><span className="font-bold text-[#111827]">15%</span></div>
-                        <div className="flex items-center justify-between"><div className="flex items-center gap-1.5"><div className="w-2 h-2 rounded-full bg-[#ef4444]"></div><span className="text-gray-500">Negative</span></div><span className="font-bold text-[#111827]">10%</span></div>
-                      </div>
+                    {/* Legend */}
+                    <div className="flex flex-col gap-1 text-[9px]">
+                      <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-[#22c55e]"></div><span className="text-gray-600">Positive</span><span className="text-gray-900 font-bold ml-auto">75%</span></div>
+                      <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-[#e5e7eb]"></div><span className="text-gray-600">Neutral</span><span className="text-gray-900 font-bold ml-auto">15%</span></div>
+                      <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-[#ef4444]"></div><span className="text-gray-600">Negative</span><span className="text-gray-900 font-bold ml-auto">10%</span></div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
 
-            {/* 🟦 5. BOTTOM LIGHT BLUE LAYER / PILL */}
-            <div className="w-full mt-4 bg-[#eef2fa] p-5 rounded-2xl flex justify-around items-center">
-              {[
-                { icon: Users, value: "10K+", label: "Businesses Trust Us" },
-                { icon: Star, value: "500K+", label: "Reviews Managed" },
-                { icon: Zap, value: "Instant", label: "AI Reply Generation" },
-              ].map((item, idx) => {
-                const Icon = item.icon;
-                return (
-                  <div key={idx} className="flex items-center gap-4">
-                    <div className="p-2.5 rounded-full bg-[#e3e7f8] text-[#6c63ff]">
-                      <Icon className="w-6 h-6" />
-                    </div>
-                    <div>
-                      <h3 className="text-2xl font-extrabold text-[#111827]">{item.value}</h3>
-                      <p className="text-[11px] text-gray-500 font-medium">{item.label}</p>
-                    </div>
+          {/* Bottom Stats (Light Pill Container) */}
+          <div className="grid grid-cols-3 gap-3 max-w-[720px] bg-[#eff1f8]/50 border border-white/60 p-4 rounded-2xl backdrop-blur-sm mt-2">
+            {[
+              { icon: Users, value: "10K+", label: "Businesses Trust Us" },
+              { icon: Star, value: "500K+", label: "Reviews Managed" },
+              { icon: Zap, value: "Instant", label: "AI Reply Generation" },
+            ].map((item, idx) => {
+              const Icon = item.icon;
+              return (
+                <div key={idx} className="flex items-center gap-3 bg-transparent">
+                  <div className="p-2 rounded-xl bg-[#e5e7fb] text-[#6c63ff]">
+                    <Icon className="w-5 h-5" />
                   </div>
-                );
-              })}
-            </div>
-
+                  <div>
+                    <h3 className="text-xl font-extrabold text-[#111827]">{item.value}</h3>
+                    <p className="text-[10px] text-gray-500 font-medium">{item.label}</p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
 
-        {/* RIGHT SIDE - LOGIN CARD */}
+        {/* RIGHT SIDE - LOGIN CARD (Solid White Clean Look) */}
         <div className="flex items-center justify-center px-6 py-6">
           <div className="w-full max-w-md bg-white rounded-3xl p-8 shadow-[0_20px_60px_-10px_rgba(0,0,0,0.08)] border border-gray-100">
-            {/* Logo Center (Preserved) */}
+            {/* Logo (Preserved) */}
             <div className="flex justify-center mb-6">
               <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#7b6dff] to-[#5b7cff] flex items-center justify-center shadow-lg">
                 <img src="/ai-logo.png" alt="logo" className="w-10 h-10 object-contain filter brightness-0 invert" />
