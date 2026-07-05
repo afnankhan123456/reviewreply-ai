@@ -30,6 +30,29 @@ export default function LoginPage() {
         <div className="absolute bottom-[-50px] right-[10%] w-[550px] h-[550px] bg-[#bba8ff]/15 blur-[130px] rounded-full" />
       </div>
 
+      {/* 🌊 FIXED: Windows 11 Style Wavy Bottom Layers (Colors ab clearly dikhenge) */}
+      <style>{`
+        @keyframes waveFlow {
+          0% { transform: translateX(0px) translateY(0px); }
+          50% { transform: translateX(-25px) translateY(10px); }
+          100% { transform: translateX(0px) translateY(0px); }
+        }
+        .animate-wave { animation: waveFlow 10s ease-in-out infinite; }
+        .animate-wave-delay { animation: waveFlow 10s ease-in-out 1.5s infinite; }
+        .animate-wave-delay-2 { animation: waveFlow 10s ease-in-out 3s infinite; }
+        .animate-wave-delay-3 { animation: waveFlow 10s ease-in-out 4.5s infinite; }
+      `}</style>
+      
+      <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-0 pointer-events-none">
+        <svg viewBox="0 0 1440 200" className="w-full h-auto block" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          {/* 4 Layers of Waves with clear Light-Blue/Purple colors */}
+          <path className="animate-wave" fill="#c4b5fd" fillOpacity="0.4" d="M0,120 L48,130 C96,140,192,160,288,180 C384,200,480,210,576,190 C672,170,768,140,864,150 C960,160,1056,190,1152,200 C1248,210,1344,190,1392,170 L1440,150 L1440,320 L0,320 Z" />
+          <path className="animate-wave-delay" fill="#a5b4fc" fillOpacity="0.35" d="M0,140 L48,150 C96,160,192,180,288,200 C384,220,480,230,576,210 C672,190,768,160,864,170 C960,180,1056,210,1152,220 C1248,230,1344,210,1392,190 L1440,170 L1440,320 L0,320 Z" />
+          <path className="animate-wave-delay-2" fill="#bfdbfe" fillOpacity="0.3" d="M0,160 L48,170 C96,180,192,200,288,220 C384,240,480,250,576,230 C672,210,768,180,864,190 C960,200,1056,230,1152,240 C1248,250,1344,230,1392,210 L1440,190 L1440,320 L0,320 Z" />
+          <path className="animate-wave-delay-3" fill="#ddd6fe" fillOpacity="0.3" d="M0,180 L48,190 C96,200,192,220,288,240 C384,260,480,270,576,250 C672,230,768,200,864,210 C960,220,1056,250,1152,260 C1248,270,1344,250,1392,230 L1440,210 L1440,320 L0,320 Z" />
+        </svg>
+      </div>
+
       {/* Main Content */}
       <div className="relative z-10 grid xl:grid-cols-2 min-h-screen">
         {/* LEFT SIDE */}
