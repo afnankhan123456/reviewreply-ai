@@ -21,29 +21,45 @@ export default function HelpCenterPage() {
   const [customFeature, setCustomFeature] = useState("");
   const [customIssueType, setCustomIssueType] = useState("");
 
-  const handleBugSubmit = () => {
+  const [submittingBug, setSubmittingBug] = useState(false);
+
+  const handleBugSubmit = async () => {
     // Determine final feature and issue type
     const finalFeature = bugFeature === "Other" ? customFeature.trim() : bugFeature;
     const finalIssueType = bugIssueType === "Other" ? customIssueType.trim() : bugIssueType;
 
     if (!finalFeature || !finalIssueType || !bugDescription.trim()) return;
 
-    const subject = encodeURIComponent(
-      `Bug Report: [${finalFeature}] – [${finalIssueType}]`
-    );
-    const body = encodeURIComponent(
-      `Feature: ${finalFeature}\nIssue type: ${finalIssueType}\nDescription: ${bugDescription}`
-    );
+    setSubmittingBug(true);
+    try {
+      const res = await fetch("/api/bug-report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          feature: finalFeature,
+          issueType: finalIssueType,
+          description: bugDescription,
+        }),
+      });
 
-    window.location.href = `mailto:afnank6789@gmail.com?subject=${subject}&body=${body}`;
-
-    // Reset all fields
-    setShowBugModal(false);
-    setBugFeature("");
-    setBugIssueType("");
-    setBugDescription("");
-    setCustomFeature("");
-    setCustomIssueType("");
+      const data = await res.json();
+      if (data.success) {
+        alert("Bug report submitted successfully. Thank you!");
+        // Reset all fields
+        setShowBugModal(false);
+        setBugFeature("");
+        setBugIssueType("");
+        setBugDescription("");
+        setCustomFeature("");
+        setCustomIssueType("");
+      } else {
+        alert(data.error || "Failed to submit bug report. Please try again.");
+      }
+    } catch (err) {
+      alert("Something went wrong. Please try again.");
+    } finally {
+      setSubmittingBug(false);
+    }
   };
 
   const faqs = [
@@ -370,11 +386,12 @@ export default function HelpCenterPage() {
                 !bugIssueType ||
                 !bugDescription.trim() ||
                 (bugFeature === "Other" && !customFeature.trim()) ||
-                (bugIssueType === "Other" && !customIssueType.trim())
+                (bugIssueType === "Other" && !customIssueType.trim()) ||
+                submittingBug
               }
               className="w-full py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium disabled:opacity-50 transition"
             >
-              Submit Bug Report
+              {submittingBug ? "Submitting..." : "Submit Bug Report"}
             </button>
           </div>
         </div>
