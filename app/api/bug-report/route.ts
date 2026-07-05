@@ -31,12 +31,35 @@ export async function POST(req: any) {
       );
     }
 
+    // ------------------ Duplicate check ------------------
+    const existingOpen = await prisma.bugReport.findFirst({
+      where: {
+        userId: user.id,
+        feature,
+        issueType,
+        status: "Open",          // only unresolved tickets
+      },
+    });
+
+    if (existingOpen) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: "You already have an open ticket for this issue. We are working on it.",
+          existingTicket: existingOpen,    // optional: frontend can use it
+        },
+        { status: 409 }                   // Conflict
+      );
+    }
+
+    // ------------------ Create with default status ------------------
     await prisma.bugReport.create({
       data: {
         userId: user.id,
         feature,
         issueType,
         description,
+        status: "Open",          // new field
       },
     });
 
