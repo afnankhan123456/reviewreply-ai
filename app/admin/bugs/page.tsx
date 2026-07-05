@@ -11,26 +11,54 @@ export default function AdminBugsPage() {
   const router = useRouter();
   const [bugs, setBugs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [resolvingId, setResolvingId] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchBugs() {
-      try {
-        const res = await fetch("/api/admin/bugs");
-        const data = await res.json();
-        if (data.success) {
-          setBugs(data.bugs || []);
-        } else {
-          // If unauthorized or error, redirect to admin dashboard
-          if (res.status === 401) router.push("/admin");
-        }
-      } catch (err) {
-        console.error("Failed to fetch bug reports", err);
-      } finally {
-        setLoading(false);
-      }
-    }
     fetchBugs();
   }, [router]);
+
+  async function fetchBugs() {
+    try {
+      const res = await fetch("/api/admin/bugs");
+      const data = await res.json();
+      if (data.success) {
+        setBugs(data.bugs || []);
+      } else {
+        // If unauthorized or error, redirect to admin dashboard
+        if (res.status === 401) router.push("/admin");
+      }
+    } catch (err) {
+      console.error("Failed to fetch bug reports", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function handleResolve(id: string) {
+    setResolvingId(id);
+    try {
+      const res = await fetch("/api/admin/bugs", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        // Update the bug locally or refetch all
+        setBugs((prev) =>
+          prev.map((bug) =>
+            bug.id === id ? { ...bug, status: "Resolved" } : bug
+          )
+        );
+      } else {
+        alert(data.error || "Failed to resolve bug");
+      }
+    } catch (err) {
+      alert("Something went wrong");
+    } finally {
+      setResolvingId(null);
+    }
+  }
 
   return (
     <div className="p-6 lg:p-8">
@@ -68,17 +96,39 @@ export default function AdminBugsPage() {
               className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-5 transition-colors duration-300"
             >
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-3">
-                <div className="flex items-center gap-2">
+                <div className="flex items-center flex-wrap gap-2">
                   <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
                     {bug.feature}
                   </span>
                   <span className="px-2 py-1 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400">
                     {bug.issueType}
                   </span>
+                  {/* Status badge */}
+                  <span
+                    className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      bug.status === "Open"
+                        ? "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400"
+                        : "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400"
+                    }`}
+                  >
+                    {bug.status}
+                  </span>
                 </div>
-                <div className="text-sm text-zinc-500 dark:text-zinc-400">
-                  {bug.user?.email || "Unknown user"} ·{" "}
-                  {new Date(bug.createdAt).toLocaleString()}
+                <div className="flex items-center gap-3">
+                  <div className="text-sm text-zinc-500 dark:text-zinc-400">
+                    {bug.user?.email || "Unknown user"} ·{" "}
+                    {new Date(bug.createdAt).toLocaleString()}
+                  </div>
+                  {/* Resolve button – visible only for Open tickets */}
+                  {bug.status === "Open" && (
+                    <button
+                      onClick={() => handleResolve(bug.id)}
+                      disabled={resolvingId === bug.id}
+                      className="px-3 py-1 rounded-lg bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 text-xs font-medium hover:bg-green-200 dark:hover:bg-green-900/40 disabled:opacity-50 transition"
+                    >
+                      {resolvingId === bug.id ? "Resolving..." : "Resolve"}
+                    </button>
+                  )}
                 </div>
               </div>
               <p className="text-zinc-700 dark:text-zinc-300 text-sm whitespace-pre-wrap">
