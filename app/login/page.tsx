@@ -75,12 +75,12 @@ export default function LoginPage() {
             })}
           </div>
 
-          {/* 🚀 TILTED DASHBOARD OVERVIEW CARD (UPDATED: Wider & Shorter) */}
-          <div className="perspective-[1200px] max-w-[900px] mt-4"> {/* ✅ Width badha di (720px -> 900px) */}
-            <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-[0_20px_60px_-15px_rgba(108,99,255,0.25)] transition-transform duration-500 transform rotateX(3deg) rotateY(-1deg) hover:rotateX(0) hover:rotateY(0)"> {/* ✅ Padding kam kar di (p-6 -> p-4) */}
+          {/* 🚀 TILTED DASHBOARD OVERVIEW CARD (FIX: HOVER HATA DIYA, AB HAMESHA JHU KA RAHEGA) */}
+          <div className="perspective-[900px] max-w-[900px] mt-4">
+            <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-[0_20px_60px_-15px_rgba(108,99,255,0.25)] transition-transform duration-500 transform rotateX(10deg) rotateY(-1deg) [transform-origin:bottom] [transform-style:preserve-3d]">
               
               {/* Dashboard Header */}
-              <div className="flex items-center justify-between mb-3"> {/* ✅ Margin-bottom kam kar di (mb-4 -> mb-3) */}
+              <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <img src="/ai-logo.png" className="w-6 h-6" />
                   <span className="font-bold text-sm text-[#111827]">ReviewReply AI</span>
@@ -99,10 +99,10 @@ export default function LoginPage() {
                 </div>
               </div>
 
-              <h3 className="text-base font-bold text-[#111827] mb-3">Dashboard Overview</h3> {/* ✅ Margin-bottom kam kar di (mb-4 -> mb-3) */}
+              <h3 className="text-base font-bold text-[#111827] mb-3">Dashboard Overview</h3>
 
               {/* 4 Stats Cards */}
-              <div className="grid grid-cols-4 gap-2 mb-3"> {/* ✅ Gaps aur margin kam kar di (gap-3 mb-4 -> gap-2 mb-3) */}
+              <div className="grid grid-cols-4 gap-2 mb-3">
                 {[
                   { label: "Total Reviews", value: "1,248", change: "+12.5%", icon: MessageSquare, color: "text-purple-600 bg-purple-50" },
                   { label: "Average Rating", value: "⭐ 4.6", change: "+0.4", icon: Star, color: "text-yellow-500 bg-yellow-50" },
@@ -111,7 +111,7 @@ export default function LoginPage() {
                 ].map((card, i) => {
                   const Icon = card.icon;
                   return (
-                    <div key={i} className="bg-[#f8fafc] rounded-xl p-2 border border-[#f1f5f9] relative"> {/* ✅ Padding kam kar di (p-3 -> p-2) */}
+                    <div key={i} className="bg-[#f8fafc] rounded-xl p-2 border border-[#f1f5f9] relative">
                       <div className={`absolute top-2 right-2 p-1 rounded-full ${card.color}`}>
                          <Icon className="w-3 h-3" />
                       </div>
@@ -124,10 +124,10 @@ export default function LoginPage() {
               </div>
 
               {/* Charts Area (Line Chart + Donut Chart) */}
-              <div className="grid grid-cols-2 gap-3"> {/* ✅ Gap kam kar di (gap-4 -> gap-3) */}
+              <div className="grid grid-cols-2 gap-3">
                 
                 {/* Reviews Over Time (SVG Line Chart) */}
-                <div className="bg-[#f8fafc] rounded-xl p-2 border border-[#f1f5f9] h-32 flex flex-col"> {/* ✅ Height aur padding kam kar di (h-40 p-3 -> h-32 p-2) */}
+                <div className="bg-[#f8fafc] rounded-xl p-2 border border-[#f1f5f9] h-32 flex flex-col">
                   <h4 className="text-xs font-bold text-[#111827] mb-2">Reviews Over Time</h4>
                   <div className="flex-1 relative w-full">
                     <svg viewBox="0 0 100 50" className="w-full h-24 absolute bottom-0">
@@ -148,7 +148,7 @@ export default function LoginPage() {
                 </div>
 
                 {/* Sentiment Analysis (Donut Chart) */}
-                <div className="bg-[#f8fafc] rounded-xl p-2 border border-[#f1f5f9] h-32 flex flex-col"> {/* ✅ Height aur padding kam kar di (h-40 p-3 -> h-32 p-2) */}
+                <div className="bg-[#f8fafc] rounded-xl p-2 border border-[#f1f5f9] h-32 flex flex-col">
                   <h4 className="text-xs font-bold text-[#111827] mb-2">Sentiment Analysis</h4>
                   <div className="flex-1 flex items-center justify-between px-2">
                     {/* Donut */}
