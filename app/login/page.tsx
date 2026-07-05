@@ -21,11 +21,39 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen relative bg-[#f8faff]">
+      {/* 🌌 Soft Glowing Gradient Blobs (Purple & Blue) */}
+      <div className="absolute inset-0 -z-10">
+        <div className="absolute top-[-150px] left-[-100px] w-[600px] h-[600px] bg-[#7b6dff]/15 blur-[140px] rounded-full" />
+        <div className="absolute top-[10%] right-[-50px] w-[500px] h-[500px] bg-[#5b7cff]/10 blur-[120px] rounded-full" />
+        <div className="absolute bottom-[-100px] left-[30%] w-[700px] h-[400px] bg-[#8ea6ff]/10 blur-[150px] rounded-full" />
+        <div className="absolute bottom-[-50px] right-[10%] w-[550px] h-[550px] bg-[#bba8ff]/15 blur-[130px] rounded-full" />
+      </div>
+
+      {/* 🌊 Light blue wave at the bottom (replaced the white patch) */}
+      <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] z-0 pointer-events-none">
+        <svg
+          viewBox="0 0 1440 120"
+          className="relative block w-full h-[100px]"
+          preserveAspectRatio="none"
+        >
+          <path
+            fill="#93c5fd"
+            fillOpacity="0.25"
+            d="M0,64L48,74.7C96,85,192,107,288,112C384,117,480,107,576,90.7C672,75,768,53,864,48C960,43,1056,53,1152,69.3C1248,85,1344,107,1392,117.3L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+          />
+          <path
+            fill="#bfdbfe"
+            fillOpacity="0.2"
+            d="M0,96L48,85.3C96,75,192,53,288,48C384,43,480,53,576,69.3C672,85,768,107,864,112C960,117,1056,107,1152,90.7C1248,75,1344,53,1392,42.7L1440,32L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+          />
+        </svg>
+      </div>
+
       {/* Main Content */}
-      <div className="grid xl:grid-cols-2 min-h-screen">
-        {/* LEFT SIDE */}
-        <div className="flex flex-col justify-between px-6 lg:px-16 py-6">
+      <div className="relative z-10 grid xl:grid-cols-2 min-h-screen">
+        {/* LEFT SIDE – bottom padding added so stats don't get hidden behind the wave */}
+        <div className="flex flex-col justify-between px-6 lg:px-16 py-6 pb-24">
           {/* LOGO */}
           <div className="flex items-center gap-2 mb-2">
             <img
@@ -54,19 +82,19 @@ export default function LoginPage() {
             {[
               {
                 icon: Sparkles,
-                color: "text-[#7b6dff]",
+                color: "bg-purple-50 text-[#7b6dff]",
                 title: "AI-Powered Replies",
                 desc: "Human-like responses in seconds",
               },
               {
                 icon: BarChart3,
-                color: "text-[#5b7cff]",
+                color: "bg-blue-50 text-[#5b7cff]",
                 title: "Review Analytics",
                 desc: "Sentiment, ratings, insights",
               },
               {
                 icon: ShieldCheck,
-                color: "text-[#6c63ff]",
+                color: "bg-indigo-50 text-[#6c63ff]",
                 title: "Reputation Growth",
                 desc: "Improve ratings & trust",
               },
@@ -75,9 +103,11 @@ export default function LoginPage() {
               return (
                 <div
                   key={idx}
-                  className="flex items-start gap-3 p-2 rounded-xl border border-gray-200 shadow-sm"
+                  className="flex items-start gap-3 p-2 rounded-xl bg-white/40 backdrop-blur-sm border border-white/60 shadow-sm"
                 >
-                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${item.color}`}>
+                  <div
+                    className={`w-10 h-10 rounded-xl ${item.color} flex items-center justify-center`}
+                  >
                     <Icon className="w-5 h-5" />
                   </div>
                   <div>
@@ -91,7 +121,7 @@ export default function LoginPage() {
 
           {/* 🚀 TILTED DASHBOARD OVERVIEW CARD */}
           <div className="perspective-[900px] max-w-[900px] mt-4">
-            <div className="border border-gray-200 rounded-2xl p-4 shadow-md transition-transform duration-500 transform rotateX(10deg) rotateY(-1deg) [transform-origin:bottom] [transform-style:preserve-3d]">
+            <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-[0_20px_60px_-15px_rgba(108,99,255,0.25)] transition-transform duration-500 transform rotateX(10deg) rotateY(-1deg) [transform-origin:bottom] [transform-style:preserve-3d]">
               {/* Dashboard Header */}
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
@@ -99,7 +129,7 @@ export default function LoginPage() {
                   <span className="font-bold text-sm text-[#111827]">ReviewReply AI</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="border border-gray-200 px-3 py-1 rounded-lg text-xs font-medium text-[#6b7280] flex items-center gap-1 cursor-pointer">
+                  <div className="bg-[#f4f6fb] px-3 py-1 rounded-lg text-xs font-medium text-[#6b7280] flex items-center gap-1 cursor-pointer">
                     Last 6 Months <span className="text-gray-400">▼</span>
                   </div>
                   <div className="flex items-center gap-2">
@@ -124,35 +154,35 @@ export default function LoginPage() {
                     value: "1,248",
                     change: "+12.5%",
                     icon: MessageSquare,
-                    color: "text-purple-600",
+                    color: "text-purple-600 bg-purple-50",
                   },
                   {
                     label: "Average Rating",
                     value: "⭐ 4.6",
                     change: "+0.4",
                     icon: Star,
-                    color: "text-yellow-500",
+                    color: "text-yellow-500 bg-yellow-50",
                   },
                   {
                     label: "AI Replies",
                     value: "892",
                     change: "+18.2%",
                     icon: Zap,
-                    color: "text-blue-600",
+                    color: "text-blue-600 bg-blue-50",
                   },
                   {
                     label: "Response Rate",
                     value: "98%",
                     change: "+8.7%",
                     icon: CheckCircle,
-                    color: "text-green-600",
+                    color: "text-green-600 bg-green-50",
                   },
                 ].map((card, i) => {
                   const Icon = card.icon;
                   return (
                     <div
                       key={i}
-                      className="rounded-xl p-2 border border-gray-200 relative"
+                      className="bg-[#f8fafc] rounded-xl p-2 border border-[#f1f5f9] relative"
                     >
                       <div className={`absolute top-2 right-2 p-1 rounded-full ${card.color}`}>
                         <Icon className="w-3 h-3" />
@@ -169,7 +199,7 @@ export default function LoginPage() {
 
               {/* Charts Area */}
               <div className="grid grid-cols-2 gap-3">
-                <div className="rounded-xl p-2 border border-gray-200 h-32 flex flex-col">
+                <div className="bg-[#f8fafc] rounded-xl p-2 border border-[#f1f5f9] h-32 flex flex-col">
                   <h4 className="text-xs font-bold text-[#111827] mb-2">Reviews Over Time</h4>
                   <div className="flex-1 relative w-full">
                     <svg viewBox="0 0 100 50" className="w-full h-24 absolute bottom-0">
@@ -203,7 +233,7 @@ export default function LoginPage() {
                   </div>
                 </div>
 
-                <div className="rounded-xl p-2 border border-gray-200 h-32 flex flex-col">
+                <div className="bg-[#f8fafc] rounded-xl p-2 border border-[#f1f5f9] h-32 flex flex-col">
                   <h4 className="text-xs font-bold text-[#111827] mb-2">Sentiment Analysis</h4>
                   <div className="flex-1 flex items-center justify-between px-2">
                     <div
@@ -213,7 +243,7 @@ export default function LoginPage() {
                           "conic-gradient(#22c55e 0% 75%, #e5e7eb 75% 90%, #ef4444 90% 100%)",
                       }}
                     >
-                      <div className="absolute inset-0 m-2 bg-white rounded-full flex items-center justify-center flex-col border border-gray-200">
+                      <div className="absolute inset-0 m-2 bg-[#f8fafc] rounded-full flex items-center justify-center flex-col border border-white">
                         <span className="text-[8px] font-bold text-[#111827]">89%</span>
                         <span className="text-[6px] text-gray-400">Growth</span>
                       </div>
@@ -241,8 +271,8 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* BOTTOM STATS */}
-          <div className="grid grid-cols-3 gap-3 max-w-[720px] border border-gray-200 p-4 rounded-2xl shadow-sm">
+          {/* 🏁 BOTTOM STATS */}
+          <div className="grid grid-cols-3 gap-3 max-w-[720px] bg-[#eff1f8]/50 border border-white/60 p-4 rounded-2xl backdrop-blur-sm">
             {[
               { icon: Users, value: "10K+", label: "Businesses Trust Us" },
               { icon: Star, value: "500K+", label: "Reviews Managed" },
@@ -250,8 +280,8 @@ export default function LoginPage() {
             ].map((item, idx) => {
               const Icon = item.icon;
               return (
-                <div key={idx} className="flex items-center gap-3">
-                  <div className="p-2 rounded-xl text-[#6c63ff]">
+                <div key={idx} className="flex items-center gap-3 bg-transparent">
+                  <div className="p-2 rounded-xl bg-[#e5e7fb] text-[#6c63ff]">
                     <Icon className="w-5 h-5" />
                   </div>
                   <div>
@@ -266,7 +296,7 @@ export default function LoginPage() {
 
         {/* RIGHT SIDE - LOGIN CARD */}
         <div className="flex items-center justify-center px-6 py-6">
-          <div className="w-full max-w-md rounded-3xl p-8 border border-gray-200 shadow-lg">
+          <div className="w-full max-w-md bg-white rounded-3xl p-8 shadow-[0_20px_60px_-10px_rgba(0,0,0,0.08)] border border-gray-100">
             <div className="flex justify-center mb-6">
               <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#7b6dff] to-[#5b7cff] flex items-center justify-center shadow-lg">
                 <img
@@ -300,8 +330,8 @@ export default function LoginPage() {
               <div className="h-px bg-gray-200 flex-1"></div>
             </div>
 
-            <div className="rounded-xl p-4 border border-gray-200 flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full text-[#6c63ff] flex items-center justify-center shrink-0">
+            <div className="bg-[#f8fafc] rounded-xl p-4 border border-gray-100 flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-indigo-50 text-[#6c63ff] flex items-center justify-center shrink-0">
                 <ShieldCheck className="w-4 h-4" />
               </div>
               <p className="text-gray-500 text-xs leading-5">
@@ -317,8 +347,11 @@ export default function LoginPage() {
               ].map((item, idx) => {
                 const Icon = item.icon;
                 return (
-                  <div key={idx} className="text-center p-2 rounded-xl hover:bg-gray-50 transition-colors">
-                    <div className="w-12 h-12 rounded-2xl mx-auto flex items-center justify-center text-[#6c63ff]">
+                  <div
+                    key={idx}
+                    className="text-center p-2 rounded-xl hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-[#6c63ff] mx-auto flex items-center justify-center">
                       <Icon className="w-5 h-5" />
                     </div>
                     <h4 className="font-bold text-xs text-[#111827] mt-2">{item.title}</h4>
