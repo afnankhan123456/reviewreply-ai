@@ -10,7 +10,7 @@ import {
   Zap,
   MessageSquare,
   CheckCircle,
-  Users
+  Users,
 } from "lucide-react";
 
 export default function LoginPage() {
@@ -22,7 +22,6 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen relative bg-[#f8faff]">
-      
       {/* 🌌 Soft Glowing Gradient Blobs (Purple & Blue) */}
       <div className="absolute inset-0 -z-10">
         <div className="absolute top-[-150px] left-[-100px] w-[600px] h-[600px] bg-[#7b6dff]/15 blur-[140px] rounded-full" />
@@ -31,16 +30,19 @@ export default function LoginPage() {
         <div className="absolute bottom-[-50px] right-[10%] w-[550px] h-[550px] bg-[#bba8ff]/15 blur-[130px] rounded-full" />
       </div>
 
-      {/* Bottom fade overlay (replaces waves, no white line) */}
-      <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-[#eef1ff]/60 to-transparent z-0 pointer-events-none" />
+      {/* ❌ Bottom fade overlay removed – no more white band */}
 
       {/* Main Content */}
       <div className="relative z-10 grid xl:grid-cols-2 min-h-screen">
-        {/* LEFT SIDE */}
-        <div className="flex flex-col justify-center px-6 lg:px-16 py-6 space-y-6">
+        {/* LEFT SIDE – now uses justify-between to push stats to bottom */}
+        <div className="flex flex-col justify-between px-6 lg:px-16 py-6">
           {/* LOGO */}
           <div className="flex items-center gap-2 mb-2">
-            <img src="/ai-logo.png" alt="ReviewReply AI" className="w-10 h-10 object-contain" />
+            <img
+              src="/ai-logo.png"
+              alt="ReviewReply AI"
+              className="w-10 h-10 object-contain"
+            />
             <h1 className="text-2xl font-extrabold tracking-tight text-[#111827]">
               ReviewReply <span className="text-[#6c63ff]">AI</span>
             </h1>
@@ -52,22 +54,42 @@ export default function LoginPage() {
               Turn Every Review Into <span className="text-[#6c63ff]">Growth</span>
             </h2>
             <p className="text-gray-500 text-lg mt-3 max-w-lg">
-              AI-powered review management for modern businesses. Generate smart replies,
-              track sentiment and improve your online reputation — all in one place.
+              AI-powered review management for modern businesses. Generate smart replies, track
+              sentiment and improve your online reputation — all in one place.
             </p>
           </div>
 
           {/* FEATURES */}
           <div className="grid grid-cols-3 gap-3">
             {[
-              { icon: Sparkles, color: "bg-purple-50 text-[#7b6dff]", title: "AI-Powered Replies", desc: "Human-like responses in seconds" },
-              { icon: BarChart3, color: "bg-blue-50 text-[#5b7cff]", title: "Review Analytics", desc: "Sentiment, ratings, insights" },
-              { icon: ShieldCheck, color: "bg-indigo-50 text-[#6c63ff]", title: "Reputation Growth", desc: "Improve ratings & trust" },
+              {
+                icon: Sparkles,
+                color: "bg-purple-50 text-[#7b6dff]",
+                title: "AI-Powered Replies",
+                desc: "Human-like responses in seconds",
+              },
+              {
+                icon: BarChart3,
+                color: "bg-blue-50 text-[#5b7cff]",
+                title: "Review Analytics",
+                desc: "Sentiment, ratings, insights",
+              },
+              {
+                icon: ShieldCheck,
+                color: "bg-indigo-50 text-[#6c63ff]",
+                title: "Reputation Growth",
+                desc: "Improve ratings & trust",
+              },
             ].map((item, idx) => {
               const Icon = item.icon;
               return (
-                <div key={idx} className="flex items-start gap-3 p-2 rounded-xl bg-white/40 backdrop-blur-sm border border-white/60 shadow-sm">
-                  <div className={`w-10 h-10 rounded-xl ${item.color} flex items-center justify-center`}>
+                <div
+                  key={idx}
+                  className="flex items-start gap-3 p-2 rounded-xl bg-white/40 backdrop-blur-sm border border-white/60 shadow-sm"
+                >
+                  <div
+                    className={`w-10 h-10 rounded-xl ${item.color} flex items-center justify-center`}
+                  >
                     <Icon className="w-5 h-5" />
                   </div>
                   <div>
@@ -79,10 +101,9 @@ export default function LoginPage() {
             })}
           </div>
 
-          {/* 🚀 TILTED DASHBOARD OVERVIEW CARD (3D EFFECT PERFECTLY FIXED) */}
+          {/* 🚀 TILTED DASHBOARD OVERVIEW CARD */}
           <div className="perspective-[900px] max-w-[900px] mt-4">
             <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-[0_20px_60px_-15px_rgba(108,99,255,0.25)] transition-transform duration-500 transform rotateX(10deg) rotateY(-1deg) [transform-origin:bottom] [transform-style:preserve-3d]">
-              
               {/* Dashboard Header */}
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
@@ -94,7 +115,9 @@ export default function LoginPage() {
                     Last 6 Months <span className="text-gray-400">▼</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#7b6dff] to-[#5b7cff] flex items-center justify-center text-white text-xs font-bold">JD</div>
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#7b6dff] to-[#5b7cff] flex items-center justify-center text-white text-xs font-bold">
+                      JD
+                    </div>
                     <div className="hidden sm:block">
                       <p className="text-xs font-bold text-[#111827] leading-tight">John Doe</p>
                       <p className="text-[10px] text-[#7b8496]">Business Owner</p>
@@ -108,20 +131,49 @@ export default function LoginPage() {
               {/* 4 Stats Cards */}
               <div className="grid grid-cols-4 gap-2 mb-3">
                 {[
-                  { label: "Total Reviews", value: "1,248", change: "+12.5%", icon: MessageSquare, color: "text-purple-600 bg-purple-50" },
-                  { label: "Average Rating", value: "⭐ 4.6", change: "+0.4", icon: Star, color: "text-yellow-500 bg-yellow-50" },
-                  { label: "AI Replies", value: "892", change: "+18.2%", icon: Zap, color: "text-blue-600 bg-blue-50" },
-                  { label: "Response Rate", value: "98%", change: "+8.7%", icon: CheckCircle, color: "text-green-600 bg-green-50" },
+                  {
+                    label: "Total Reviews",
+                    value: "1,248",
+                    change: "+12.5%",
+                    icon: MessageSquare,
+                    color: "text-purple-600 bg-purple-50",
+                  },
+                  {
+                    label: "Average Rating",
+                    value: "⭐ 4.6",
+                    change: "+0.4",
+                    icon: Star,
+                    color: "text-yellow-500 bg-yellow-50",
+                  },
+                  {
+                    label: "AI Replies",
+                    value: "892",
+                    change: "+18.2%",
+                    icon: Zap,
+                    color: "text-blue-600 bg-blue-50",
+                  },
+                  {
+                    label: "Response Rate",
+                    value: "98%",
+                    change: "+8.7%",
+                    icon: CheckCircle,
+                    color: "text-green-600 bg-green-50",
+                  },
                 ].map((card, i) => {
                   const Icon = card.icon;
                   return (
-                    <div key={i} className="bg-[#f8fafc] rounded-xl p-2 border border-[#f1f5f9] relative">
+                    <div
+                      key={i}
+                      className="bg-[#f8fafc] rounded-xl p-2 border border-[#f1f5f9] relative"
+                    >
                       <div className={`absolute top-2 right-2 p-1 rounded-full ${card.color}`}>
-                         <Icon className="w-3 h-3" />
+                        <Icon className="w-3 h-3" />
                       </div>
                       <p className="text-[10px] text-[#8b95a7] font-medium">{card.label}</p>
                       <h4 className="text-lg font-extrabold text-[#111827] mt-1">{card.value}</h4>
-                      <p className="text-[10px] text-green-500 mt-1 font-semibold">{card.change} this month</p>
+                      <p className="text-[10px] text-green-500 mt-1 font-semibold">
+                        {card.change} this month
+                      </p>
                     </div>
                   );
                 })}
@@ -135,16 +187,30 @@ export default function LoginPage() {
                     <svg viewBox="0 0 100 50" className="w-full h-24 absolute bottom-0">
                       <defs>
                         <linearGradient id="lineGradient" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#6c63ff" stopOpacity="0.3"/>
-                          <stop offset="100%" stopColor="#6c63ff" stopOpacity="0"/>
+                          <stop offset="0%" stopColor="#6c63ff" stopOpacity="0.3" />
+                          <stop offset="100%" stopColor="#6c63ff" stopOpacity="0" />
                         </linearGradient>
                       </defs>
-                      <path d="M0,40 C20,40 30,20 50,25 C70,30 80,10 100,10" fill="none" stroke="#6c63ff" strokeWidth="2" strokeLinecap="round" />
-                      <path d="M0,40 C20,40 30,20 50,25 C70,30 80,10 100,10 V50 H0 Z" fill="url(#lineGradient)" />
+                      <path
+                        d="M0,40 C20,40 30,20 50,25 C70,30 80,10 100,10"
+                        fill="none"
+                        stroke="#6c63ff"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                      />
+                      <path
+                        d="M0,40 C20,40 30,20 50,25 C70,30 80,10 100,10 V50 H0 Z"
+                        fill="url(#lineGradient)"
+                      />
                       <circle cx="100" cy="10" r="2" fill="#6c63ff" />
                     </svg>
                     <div className="absolute bottom-0 w-full flex justify-between text-[8px] text-gray-400 px-1">
-                      <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span>
+                      <span>Jan</span>
+                      <span>Feb</span>
+                      <span>Mar</span>
+                      <span>Apr</span>
+                      <span>May</span>
+                      <span>Jun</span>
                     </div>
                   </div>
                 </div>
@@ -152,16 +218,34 @@ export default function LoginPage() {
                 <div className="bg-[#f8fafc] rounded-xl p-2 border border-[#f1f5f9] h-32 flex flex-col">
                   <h4 className="text-xs font-bold text-[#111827] mb-2">Sentiment Analysis</h4>
                   <div className="flex-1 flex items-center justify-between px-2">
-                    <div className="w-20 h-20 rounded-full relative" style={{ background: "conic-gradient(#22c55e 0% 75%, #e5e7eb 75% 90%, #ef4444 90% 100%)" }}>
+                    <div
+                      className="w-20 h-20 rounded-full relative"
+                      style={{
+                        background:
+                          "conic-gradient(#22c55e 0% 75%, #e5e7eb 75% 90%, #ef4444 90% 100%)",
+                      }}
+                    >
                       <div className="absolute inset-0 m-2 bg-[#f8fafc] rounded-full flex items-center justify-center flex-col border border-white">
                         <span className="text-[8px] font-bold text-[#111827]">89%</span>
                         <span className="text-[6px] text-gray-400">Growth</span>
                       </div>
                     </div>
                     <div className="flex flex-col gap-1 text-[9px]">
-                      <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-[#22c55e]"></div><span className="text-gray-600">Positive</span><span className="text-gray-900 font-bold ml-auto">75%</span></div>
-                      <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-[#e5e7eb]"></div><span className="text-gray-600">Neutral</span><span className="text-gray-900 font-bold ml-auto">15%</span></div>
-                      <div className="flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-[#ef4444]"></div><span className="text-gray-600">Negative</span><span className="text-gray-900 font-bold ml-auto">10%</span></div>
+                      <div className="flex items-center gap-1">
+                        <div className="w-2 h-2 rounded-full bg-[#22c55e]"></div>
+                        <span className="text-gray-600">Positive</span>
+                        <span className="text-gray-900 font-bold ml-auto">75%</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="w-2 h-2 rounded-full bg-[#e5e7eb]"></div>
+                        <span className="text-gray-600">Neutral</span>
+                        <span className="text-gray-900 font-bold ml-auto">15%</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <div className="w-2 h-2 rounded-full bg-[#ef4444]"></div>
+                        <span className="text-gray-600">Negative</span>
+                        <span className="text-gray-900 font-bold ml-auto">10%</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -169,8 +253,8 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Bottom Stats (original white card) */}
-          <div className="grid grid-cols-3 gap-3 max-w-[720px] bg-[#eff1f8]/50 border border-white/60 p-4 rounded-2xl backdrop-blur-sm mt-2">
+          {/* 🏁 BOTTOM STATS – now sits at the very bottom (mt-2 removed) */}
+          <div className="grid grid-cols-3 gap-3 max-w-[720px] bg-[#eff1f8]/50 border border-white/60 p-4 rounded-2xl backdrop-blur-sm">
             {[
               { icon: Users, value: "10K+", label: "Businesses Trust Us" },
               { icon: Star, value: "500K+", label: "Reviews Managed" },
@@ -197,18 +281,28 @@ export default function LoginPage() {
           <div className="w-full max-w-md bg-white rounded-3xl p-8 shadow-[0_20px_60px_-10px_rgba(0,0,0,0.08)] border border-gray-100">
             <div className="flex justify-center mb-6">
               <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#7b6dff] to-[#5b7cff] flex items-center justify-center shadow-lg">
-                <img src="/ai-logo.png" alt="logo" className="w-10 h-10 object-contain filter brightness-0 invert" />
+                <img
+                  src="/ai-logo.png"
+                  alt="logo"
+                  className="w-10 h-10 object-contain filter brightness-0 invert"
+                />
               </div>
             </div>
 
             <h2 className="text-3xl font-extrabold text-center text-[#111827]">Welcome Back</h2>
-            <p className="text-gray-500 text-center mt-2 text-sm">Sign in to continue to your dashboard</p>
+            <p className="text-gray-500 text-center mt-2 text-sm">
+              Sign in to continue to your dashboard
+            </p>
 
             <button
               onClick={handleLogin}
               className="w-full mt-6 bg-white hover:bg-gray-50 border border-gray-200 transition-all py-3 rounded-xl text-base font-semibold flex items-center justify-center gap-3 text-[#111827] shadow-sm"
             >
-              <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
+              <img
+                src="https://www.svgrepo.com/show/475656/google-color.svg"
+                alt="Google"
+                className="w-5 h-5"
+              />
               Continue with Google
             </button>
 
@@ -222,7 +316,9 @@ export default function LoginPage() {
               <div className="w-8 h-8 rounded-full bg-indigo-50 text-[#6c63ff] flex items-center justify-center shrink-0">
                 <ShieldCheck className="w-4 h-4" />
               </div>
-              <p className="text-gray-500 text-xs leading-5">We use Google secure OAuth to keep your account and data safe.</p>
+              <p className="text-gray-500 text-xs leading-5">
+                We use Google secure OAuth to keep your account and data safe.
+              </p>
             </div>
 
             <div className="grid grid-cols-3 gap-4 mt-6">
@@ -233,8 +329,11 @@ export default function LoginPage() {
               ].map((item, idx) => {
                 const Icon = item.icon;
                 return (
-                  <div key={idx} className="text-center p-2 rounded-xl hover:bg-gray-50 transition-colors">
-                    <div className={`w-12 h-12 rounded-2xl bg-indigo-50 text-[#6c63ff] mx-auto flex items-center justify-center`}>
+                  <div
+                    key={idx}
+                    className="text-center p-2 rounded-xl hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-[#6c63ff] mx-auto flex items-center justify-center">
                       <Icon className="w-5 h-5" />
                     </div>
                     <h4 className="font-bold text-xs text-[#111827] mt-2">{item.title}</h4>
@@ -246,12 +345,17 @@ export default function LoginPage() {
 
             <p className="text-gray-400 text-center text-[10px] mt-8 leading-relaxed">
               By continuing, you agree to our{" "}
-              <span className="text-[#6c63ff] font-semibold cursor-pointer hover:underline">Terms of Service</span> and{" "}
-              <span className="text-[#5b7cff] font-semibold cursor-pointer hover:underline">Privacy Policy</span>
+              <span className="text-[#6c63ff] font-semibold cursor-pointer hover:underline">
+                Terms of Service
+              </span>{" "}
+              and{" "}
+              <span className="text-[#5b7cff] font-semibold cursor-pointer hover:underline">
+                Privacy Policy
+              </span>
             </p>
           </div>
         </div>
       </div>
-    </div>   
+    </div>
   );
 }
