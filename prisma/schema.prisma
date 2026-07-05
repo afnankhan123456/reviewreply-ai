@@ -47,6 +47,7 @@ model User {
   templates           Template[]          // relation to templates
   reports             Report[]            // relation to reports
   exports             Export[]            // relation to exports
+  bugReports          BugReport[]         // relation to bug reports
 }
 
 model BusinessLocation {
@@ -123,4 +124,14 @@ model Export {
   type      String   // "csv" or "pdf"
   fileName  String
   createdAt DateTime @default(now())
+}
+
+model BugReport {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  feature     String
+  issueType   String
+  description String
+  createdAt   DateTime @default(now())
 }
