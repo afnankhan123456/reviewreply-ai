@@ -10,7 +10,7 @@ import {
   Zap,
   MessageSquare,
   CheckCircle,
-  Users // ✅ Added missing import
+  Users
 } from "lucide-react";
 
 export default function LoginPage() {
@@ -30,7 +30,7 @@ export default function LoginPage() {
         <div className="absolute bottom-[-50px] right-[10%] w-[550px] h-[550px] bg-[#bba8ff]/15 blur-[130px] rounded-full" />
       </div>
 
-      {/* 🌊 FIXED: Windows 11 Style Wavy Bottom Layers (Colors ab clearly dikhenge) */}
+      {/* 🌊 FIXED: 2 Inch Tall Waves + Progressive Light Blue Layers */}
       <style>{`
         @keyframes waveFlow {
           0% { transform: translateX(0px) translateY(0px); }
@@ -43,17 +43,18 @@ export default function LoginPage() {
         .animate-wave-delay-3 { animation: waveFlow 10s ease-in-out 4.5s infinite; }
       `}</style>
       
-      <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-none z-0 pointer-events-none">
-        <svg viewBox="0 0 1440 200" className="w-full h-auto block" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-          {/* 4 Layers of Waves with clear Light-Blue/Purple colors */}
-          <path className="animate-wave" fill="#c4b5fd" fillOpacity="0.4" d="M0,120 L48,130 C96,140,192,160,288,180 C384,200,480,210,576,190 C672,170,768,140,864,150 C960,160,1056,190,1152,200 C1248,210,1344,190,1392,170 L1440,150 L1440,320 L0,320 Z" />
-          <path className="animate-wave-delay" fill="#a5b4fc" fillOpacity="0.35" d="M0,140 L48,150 C96,160,192,180,288,200 C384,220,480,230,576,210 C672,190,768,160,864,170 C960,180,1056,210,1152,220 C1248,230,1344,210,1392,190 L1440,170 L1440,320 L0,320 Z" />
-          <path className="animate-wave-delay-2" fill="#bfdbfe" fillOpacity="0.3" d="M0,160 L48,170 C96,180,192,200,288,220 C384,240,480,250,576,230 C672,210,768,180,864,190 C960,200,1056,230,1152,240 C1248,250,1344,230,1392,210 L1440,190 L1440,320 L0,320 Z" />
-          <path className="animate-wave-delay-3" fill="#ddd6fe" fillOpacity="0.3" d="M0,180 L48,190 C96,200,192,220,288,240 C384,260,480,270,576,250 C672,230,768,200,864,210 C960,220,1056,250,1152,260 C1248,270,1344,250,1392,230 L1440,210 L1440,320 L0,320 Z" />
+      {/* ✅ Height badha kar h-56 (224px / ~2 inches) kar diya hai */}
+      <div className="absolute bottom-0 left-0 w-full h-56 overflow-hidden leading-none z-0 pointer-events-none">
+        <svg viewBox="0 0 1440 200" className="w-full h-full block" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          {/* 4 Layers of Waves. Colors: Halka dark blue -> usse halka -> usse halka -> sabse halka */}
+          <path className="animate-wave" fill="#7ca9f0" fillOpacity="0.35" d="M0,120 L48,130 C96,140,192,160,288,180 C384,200,480,210,576,190 C672,170,768,140,864,150 C960,160,1056,190,1152,200 C1248,210,1344,190,1392,170 L1440,150 L1440,320 L0,320 Z" />
+          <path className="animate-wave-delay" fill="#9ebdf5" fillOpacity="0.3" d="M0,140 L48,150 C96,160,192,180,288,200 C384,220,480,230,576,210 C672,190,768,160,864,170 C960,180,1056,210,1152,220 C1248,230,1344,210,1392,190 L1440,170 L1440,320 L0,320 Z" />
+          <path className="animate-wave-delay-2" fill="#c4d6fa" fillOpacity="0.25" d="M0,160 L48,170 C96,180,192,200,288,220 C384,240,480,250,576,230 C672,210,768,180,864,190 C960,200,1056,230,1152,240 C1248,250,1344,230,1392,210 L1440,190 L1440,320 L0,320 Z" />
+          <path className="animate-wave-delay-3" fill="#e6edfd" fillOpacity="0.25" d="M0,180 L48,190 C96,200,192,220,288,240 C384,260,480,270,576,250 C672,230,768,200,864,210 C960,220,1056,250,1152,260 C1248,270,1344,250,1392,230 L1440,210 L1440,320 L0,320 Z" />
         </svg>
       </div>
 
-      {/* Main Content */}
+      {/* Main Content (Baki Sab Bilkul Same Rakha Hai) */}
       <div className="relative z-10 grid xl:grid-cols-2 min-h-screen">
         {/* LEFT SIDE */}
         <div className="flex flex-col justify-center px-6 lg:px-16 py-6 space-y-6">
@@ -98,7 +99,7 @@ export default function LoginPage() {
             })}
           </div>
 
-          {/* 🚀 TILTED DASHBOARD OVERVIEW CARD (FIX: HOVER HATA DIYA, AB HAMESHA JHU KA RAHEGA) */}
+          {/* 🚀 TILTED DASHBOARD OVERVIEW CARD (Tilt 10deg exact same) */}
           <div className="perspective-[900px] max-w-[900px] mt-4">
             <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-[0_20px_60px_-15px_rgba(108,99,255,0.25)] transition-transform duration-500 transform rotateX(10deg) rotateY(-1deg) [transform-origin:bottom] [transform-style:preserve-3d]">
               
@@ -216,7 +217,7 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* RIGHT SIDE - LOGIN CARD (Solid White Clean Look) */}
+        {/* RIGHT SIDE - LOGIN CARD */}
         <div className="flex items-center justify-center px-6 py-6">
           <div className="w-full max-w-md bg-white rounded-3xl p-8 shadow-[0_20px_60px_-10px_rgba(0,0,0,0.08)] border border-gray-100">
             {/* Logo (Preserved) */}
