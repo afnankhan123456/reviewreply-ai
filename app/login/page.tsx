@@ -64,7 +64,7 @@ export default function LoginPage() {
               </h1>
             </div>
 
-            {/* HEADING */}
+            {/* HEADING – size reduced, margin bottom added */}
             <div className="mb-4">
               <h2 className="text-3xl lg:text-4xl font-extrabold leading-tight text-[#111827]">
                 Turn Every Review Into <span className="text-[#6c63ff]">Growth</span>
@@ -75,7 +75,7 @@ export default function LoginPage() {
               </p>
             </div>
 
-            {/* FEATURES – fully transparent, no white bg */}
+            {/* FEATURES – space added below */}
             <div className="grid grid-cols-3 gap-3 mb-4">
               {[
                 {
@@ -101,7 +101,7 @@ export default function LoginPage() {
                 return (
                   <div
                     key={idx}
-                    className="flex items-start gap-2 p-2 rounded-xl backdrop-blur-sm border border-white/60 shadow-sm"
+                    className="flex items-start gap-2 p-2 rounded-xl bg-white/40 backdrop-blur-sm border border-white/60 shadow-sm"
                   >
                     <div
                       className={`w-8 h-8 rounded-lg ${item.color} flex items-center justify-center shrink-0`}
@@ -117,9 +117,9 @@ export default function LoginPage() {
               })}
             </div>
 
-            {/* 🚀 TILTED DASHBOARD OVERVIEW CARD – fully transparent, no white bg */}
+            {/* 🚀 TILTED DASHBOARD OVERVIEW CARD – slightly compact */}
             <div className="perspective-[800px] max-w-[860px]">
-              <div className="rounded-2xl p-4 backdrop-blur-sm border border-white/60 shadow-[0_20px_60px_-15px_rgba(108,99,255,0.1)] transition-transform duration-500 transform rotateX(10deg) rotateY(-1deg) [transform-origin:bottom] [transform-style:preserve-3d]">
+              <div className="bg-white border border-gray-100 rounded-2xl p-4 shadow-[0_20px_60px_-15px_rgba(108,99,255,0.25)] transition-transform duration-500 transform rotateX(10deg) rotateY(-1deg) [transform-origin:bottom] [transform-style:preserve-3d]">
                 {/* Dashboard Header */}
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
