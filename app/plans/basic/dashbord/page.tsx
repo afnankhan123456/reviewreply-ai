@@ -8,44 +8,8 @@ import {
   RefreshCw,
   Star,
   TrendingUp,
-  AlertTriangle,
-  Reply,
 } from "lucide-react";
 import Topbar from "./components/Topbar";
-
-const featureCards = [
-  {
-    title: "Low Rating Alerts",
-    icon: AlertTriangle,
-    color: "bg-red-100 dark:bg-red-900/30 text-red-500 dark:text-red-400",
-  },
-  {
-    title: "Unanswered Tracking",
-    icon: MessageSquare,
-    color: "bg-pink-100 dark:bg-pink-900/30 text-pink-500 dark:text-pink-400",
-  },
-  {
-    title: "Reply Templates",
-    icon: Reply,
-    color: "bg-violet-100 dark:bg-violet-900/30 text-violet-500 dark:text-violet-400",
-  },
-  {
-    title: "Response Tracking",
-    icon: RefreshCw,
-    color: "bg-cyan-100 dark:bg-cyan-900/30 text-cyan-500 dark:text-cyan-400",
-  },
-  {
-    title: "Email Alerts",
-    icon: Mail,
-    color: "bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400",
-  },
-  {
-    title: "Business Location",
-    icon: MapPin,
-    color: "bg-teal-100 dark:bg-teal-900/30 text-teal-600 dark:text-teal-400",
-    span: true,
-  },
-];
 
 export default function DashboardPage() {
   const [locations, setLocations] = useState<any[]>([]);
@@ -321,28 +285,6 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* 6 SMALL CARDS (Business Location spans 2 columns) */}
-        <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-7 gap-4 mt-6">
-          {featureCards.map((item, index) => {
-            const Icon = item.icon;
-            return (
-              <div
-                key={index}
-                className={`bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-[18px] h-[80px] p-2 shadow-sm dark:shadow-gray-900/30 hover:shadow-md dark:hover:shadow-gray-800 transition-all flex flex-col items-center justify-center gap-1 overflow-hidden ${
-                  item.span ? "xl:col-span-2" : ""
-                }`}
-              >
-                <div className={`w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0 ${item.color}`}>
-                  <Icon className="w-4 h-4" />
-                </div>
-                <p className="text-[11px] font-semibold text-gray-900 dark:text-gray-100 leading-tight text-center px-1 line-clamp-2">
-                  {item.title}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-
         {/* 3 DETAILED CARDS — Rating Overview, Positive/Negative Detection, Unanswered Reviews */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7">
           {/* Rating Overview */}
@@ -529,7 +471,7 @@ export default function DashboardPage() {
 
         {/* CHARTS ROW: Review Analysis + Monthly History + Response Tracking */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7">
-          {/* Review Analysis – Bar Chart (FIXED with pixel heights) */}
+          {/* Review Analysis – Bar Chart */}
           <div className="bg-white dark:bg-gray-800 rounded-[24px] border border-gray-200 dark:border-gray-700 shadow-sm dark:shadow-gray-900/30 p-5 h-[205px] flex flex-col">
             <h3 className="text-[15px] font-semibold text-gray-900 dark:text-gray-100 mb-3">Review Analysis</h3>
             <div className="flex items-end justify-between gap-1 flex-1 px-2 overflow-hidden">
@@ -538,7 +480,7 @@ export default function DashboardPage() {
               ) : (
                 monthlyData.map((item, idx) => {
                   const maxVal = Math.max(...monthlyData.map((d: any) => d.count), 1);
-                  const barHeight = Math.round((item.count / maxVal) * 100); // max 100px
+                  const barHeight = Math.round((item.count / maxVal) * 100);
                   return (
                     <div key={idx} className="flex flex-col items-center gap-1 flex-1">
                       <div
@@ -555,7 +497,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Monthly History – Line Chart (real data) */}
+          {/* Monthly History – Line Chart */}
           <div className="bg-white dark:bg-gray-800 rounded-[24px] border border-gray-200 dark:border-gray-700 shadow-sm dark:shadow-gray-900/30 p-5 h-[205px] flex flex-col">
             <h3 className="text-[15px] font-semibold text-gray-900 dark:text-gray-100 mb-3">Monthly History</h3>
             <div className="flex-1 flex items-center justify-center relative">
