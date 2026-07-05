@@ -21,7 +21,6 @@ export default function LoginPage() {
   };
 
   return (
-    {/* ✅ overflow-hidden hata diya hai, taaki 3D tilt clear dikhe */}
     <div className="min-h-screen relative bg-[#f8faff]">
       
       {/* 🌌 Soft Glowing Gradient Blobs (Purple & Blue) */}
@@ -272,6 +271,6 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-    </div>
+    </div>   
   );
 }
