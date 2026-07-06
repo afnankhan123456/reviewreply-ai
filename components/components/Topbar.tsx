@@ -2,6 +2,7 @@
 
 import { Menu, User } from "lucide-react";
 
+// 🔥 IMPORTANT: Ye interface add kiya taaki onMenuClick prop accept ho sake
 interface TopbarProps {
   onMenuClick?: () => void;
 }
