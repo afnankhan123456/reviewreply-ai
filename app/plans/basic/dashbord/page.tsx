@@ -156,7 +156,7 @@ export default function DashboardPage() {
               </div>
               <button
                 onClick={() => {}}
-                className="bg-black dark:bg-white dark:text-black text-white px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap"
+                className="bg-black dark:bg-white dark:text-black text-white px-4 py-2 rounded-xl text-sm font-medium whitespace-normal md:whitespace-nowrap"
               >
                 Connect Google Business
               </button>
@@ -187,14 +187,14 @@ export default function DashboardPage() {
                   <h2 className="font-semibold text-gray-900 dark:text-gray-100 truncate">
                     {location.title || "Business Location"}
                   </h2>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 truncate break-words">
                     {location.storefrontAddress?.addressLines?.join(", ") || "No Address"}
                   </p>
                 </div>
                 <button
                   onClick={() => saveLocation(location)}
                   disabled={saving}
-                  className="bg-black dark:bg-white dark:text-black text-white px-4 py-2 rounded-xl text-sm font-medium disabled:opacity-50 whitespace-nowrap"
+                  className="bg-black dark:bg-white dark:text-black text-white px-4 py-2 rounded-xl text-sm font-medium disabled:opacity-50 whitespace-normal md:whitespace-nowrap"
                 >
                   {saving ? "Saving..." : "Select"}
                 </button>
