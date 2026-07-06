@@ -49,6 +49,18 @@ export default function DashboardPage() {
   const [monthlyData, setMonthlyData] = useState<any[]>([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Mobile sidebar state
 
+  // 🔥 iPhone/Phone scroll lock (Background scroll hone se rokega)
+  useEffect(() => {
+    if (isSidebarOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isSidebarOpen]);
+
   async function loadGoogleBusiness() {
     try {
       setLoading(true);
@@ -235,17 +247,10 @@ export default function DashboardPage() {
 
       {/* Main Dashboard Content */}
       <div className="p-3 sm:p-5 lg:p-7 relative z-10">
-        {/* Header with Hamburger */}
-        <div className="flex items-center gap-3 mb-2">
-          <button
-            onClick={() => setIsSidebarOpen(true)}
-            className="p-1.5 lg:hidden rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition"
-          >
-            <Menu className="w-5 h-5 text-gray-700 dark:text-gray-300" />
-          </button>
-          <div className="flex-1">
-            <Topbar />
-          </div>
+        
+        {/* 🟢 HEADER UPDATE: Button Topbar ke andar chala gaya, aur prop pass kiya hai */}
+        <div className="mb-2">
+          <Topbar onMenuClick={() => setIsSidebarOpen(true)} />
         </div>
 
         {/* Google Business Locations Card */}
