@@ -6,25 +6,29 @@
   color-scheme: dark;
 }
 
+.dark {
+  color-scheme: dark;
+}
+
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 html,
 body {
-  margin: 0;
-  padding: 0;
   width: 100%;
   min-height: 100%;
   overflow-x: hidden;
-  background: #000;
+  scroll-behavior: smooth;
+  background: #000000;
   color: white;
   font-family: Inter, Arial, Helvetica, sans-serif;
-  scroll-behavior: smooth;
 }
 
-.dark {
-  color-scheme: dark;
+body {
+  min-height: 100vh;
 }
 
 ::-webkit-scrollbar {
