@@ -8,15 +8,15 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen bg-white dark:bg-[#0F172A] transition-colors duration-300">
+    <div className="relative flex min-h-screen bg-white dark:bg-[#0F172A] transition-colors duration-300">
 
       {/* DESKTOP SIDEBAR ONLY */}
-      <div className="hidden lg:block">
+      <div className="hidden lg:block relative z-40">
         <Sidebar />
       </div>
 
       {/* MAIN CONTENT */}
-      <main className="flex-1 p-6 overflow-y-auto text-black dark:text-white transition-colors duration-300">
+      <main className="flex-1 p-6 overflow-y-auto text-black dark:text-white transition-colors duration-300 relative z-10">
         {children}
       </main>
 
