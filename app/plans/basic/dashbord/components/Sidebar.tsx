@@ -78,7 +78,7 @@ export default function Sidebar() {
   ];
 
   return (
-    <div className="w-[260px] bg-white dark:bg-[#111827] border-r border-zinc-200 dark:border-zinc-800 flex flex-col justify-between p-5 transition-colors duration-300">
+    <div className="hidden lg:flex w-[260px] bg-white dark:bg-[#111827] border-r border-zinc-200 dark:border-zinc-800 flex-col justify-between p-5 transition-colors duration-300">
 
       <div>
 
