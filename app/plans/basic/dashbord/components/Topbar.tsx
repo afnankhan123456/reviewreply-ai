@@ -2,10 +2,8 @@
 
 import { useState } from "react";
 import { useSession, signOut } from "next-auth/react";
-// 🔥 Menu icon import kar liya (User optional hai)
-import { Menu, User } from "lucide-react";
+import { Menu } from "lucide-react";
 
-// 🔥 Prop accept karne ke liye interface add kiya (Build error fix karne ke liye zaroori hai)
 interface TopbarProps {
   onMenuClick?: () => void;
 }
@@ -15,8 +13,9 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
   const [open, setOpen] = useState(false);
 
   return (
-    {/* 🔥 Wrap kiya taaki Left, Center, Right teeno adjust ho sake */}
     <div className="flex items-center justify-between w-full bg-white dark:bg-gray-800 rounded-t-2xl p-2 sm:p-0">
+      
+      {/* 🔥 Comment ab <div> ke ANDAR hai, isse build error fix ho jayega */}
 
       {/* 📱 LEFT: Mobile Hamburger Menu (Sirf phone par dikhega) */}
       <button
@@ -27,7 +26,7 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
         <Menu className="w-6 h-6 text-gray-700 dark:text-gray-200" />
       </button>
 
-      {/* 🟣 CENTER: Logo (Mobile/Laptop ke liye) */}
+      {/* 🟣 CENTER: Logo */}
       <div className="flex items-center justify-center gap-3 flex-1 py-2">
         <div className="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 font-bold">
           R
@@ -42,7 +41,7 @@ export default function Topbar({ onMenuClick }: TopbarProps) {
         </div>
       </div>
 
-      {/* 👤 RIGHT: User Profile (Aapka original code bilkul same) */}
+      {/* 👤 RIGHT: User Profile (Aapka original code) */}
       <div className="relative">
         <button
           onClick={() => setOpen(!open)}
