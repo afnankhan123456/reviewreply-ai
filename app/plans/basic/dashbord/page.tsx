@@ -45,7 +45,7 @@ export default function DashboardPage() {
   });
 
   const [monthlyData, setMonthlyData] = useState<any[]>([]);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Mobile sidebar state
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Mobile scroll lock
   useEffect(() => {
@@ -134,19 +134,19 @@ export default function DashboardPage() {
     loadDashboardStats();
   }, []);
 
-  // ✅ Menu Items array for mobile drawer
+  // ✅ Updated menuItems WITH href – used in mobile sidebar
   const menuItems = [
-    { icon: LayoutDashboard, label: "Dashboard" },
-    { icon: Star, label: "Reviews" },
-    { icon: Bell, label: "Alerts" },
-    { icon: MessageSquare, label: "Unanswered" },
-    { icon: BarChart, label: "Analytics" },
-    { icon: Blocks, label: "Integrations" },
-    { icon: FileText, label: "Template" },
-    { icon: FileBarChart, label: "Report" },
-    { icon: Download, label: "Export" },
-    { icon: Settings, label: "Settings" },
-    { icon: HelpCircle, label: "Help Center" },
+    { icon: LayoutDashboard, label: "Dashboard", href: "/plans/basic/dashbord" },
+    { icon: Star, label: "Reviews", href: "/plans/basic/dashbord/reviews" },
+    { icon: Bell, label: "Alerts", href: "/plans/basic/dashbord/alerts" },
+    { icon: MessageSquare, label: "Unanswered", href: "/plans/basic/dashbord/unanswered" },
+    { icon: BarChart, label: "Analytics", href: "/plans/basic/dashbord/analytics" },
+    { icon: Blocks, label: "Integrations", href: "/plans/basic/dashbord/integrations" },
+    { icon: FileText, label: "Template", href: "/plans/basic/dashbord/template" },
+    { icon: FileBarChart, label: "Report", href: "/plans/basic/dashbord/report" },
+    { icon: Download, label: "Export", href: "/plans/basic/dashbord/export" },
+    { icon: Settings, label: "Settings", href: "/plans/basic/dashbord/settings" },
+    { icon: HelpCircle, label: "Help Center", href: "/plans/basic/dashbord/help" },
   ];
 
   return (
@@ -211,12 +211,12 @@ export default function DashboardPage() {
           </button>
         </div>
 
-        {/* Mobile Menu Items */}
+        {/* Mobile Menu Items – NOW WITH PROPER href */}
         <nav className="flex-1 overflow-y-auto p-4 space-y-1">
           {menuItems.map((item, index) => (
             <a
               key={index}
-              href="#"
+              href={item.href}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition ${
                 index === 0
                   ? "bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400"
@@ -248,8 +248,7 @@ export default function DashboardPage() {
 
       {/* ================= MAIN DASHBOARD CONTENT (Laptop Bilkul Old layout) ================= */}
       <div className="p-3 sm:p-5 lg:p-7 relative z-10">
-        
-        {/* 🟢 HEADER: Sirf Topbar pass kiya, button uske andar hai */}
+        {/* HEADER: Topbar */}
         <div className="mb-2">
           <Topbar onMenuClick={() => setIsSidebarOpen(true)} />
         </div>
@@ -320,7 +319,6 @@ export default function DashboardPage() {
 
         {/* TOP 4 CARDS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5 mt-7">
-          {/* (Existing top 4 cards code - unchanged) */}
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-[20px] p-3 h-auto lg:h-[80px] shadow-sm dark:shadow-gray-900/30 flex flex-col sm:flex-row items-center gap-3 overflow-hidden">
             <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
               <MessageSquare className="w-5 h-5 text-blue-600 dark:text-blue-400" />
@@ -399,7 +397,6 @@ export default function DashboardPage() {
 
         {/* 3 DETAILED CARDS */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 mt-7">
-          {/* (Existing detailed cards code - unchanged) */}
           <div className="bg-white dark:bg-gray-800 rounded-[20px] border border-gray-200 dark:border-gray-700 p-4 sm:p-5 shadow-sm dark:shadow-gray-900/30 h-auto min-h-[205px] lg:h-[205px] overflow-hidden flex flex-col">
             <div className="flex items-center justify-between flex-shrink-0">
               <h3 className="text-sm sm:text-[15px] font-semibold text-gray-900 dark:text-gray-100">Rating Overview</h3>
@@ -506,7 +503,6 @@ export default function DashboardPage() {
 
         {/* RECENT REVIEWS + TOP KEYWORDS */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 mt-7">
-          {/* Recent Reviews */}
           <div className="xl:col-span-2 bg-white dark:bg-gray-800 rounded-[24px] border border-gray-200 dark:border-gray-700 shadow-sm dark:shadow-gray-900/30 p-4 sm:p-5 h-auto min-h-[205px] lg:h-[205px] flex flex-col">
             <div className="flex items-center justify-between flex-shrink-0">
               <h3 className="text-sm sm:text-[16px] font-semibold text-gray-900 dark:text-gray-100">Recent Reviews</h3>
@@ -551,7 +547,6 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Top Keywords */}
           <div className="bg-white dark:bg-gray-800 rounded-[24px] border border-gray-200 dark:border-gray-700 shadow-sm dark:shadow-gray-900/30 p-4 sm:p-5 h-auto min-h-[205px] lg:h-[205px] flex flex-col">
             <div className="flex items-center justify-between flex-shrink-0">
               <h3 className="text-sm sm:text-[15px] font-semibold text-gray-900 dark:text-gray-100">Top Keywords</h3>
