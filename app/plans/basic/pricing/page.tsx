@@ -9,7 +9,7 @@ export default function BasicPricingPage() {
 
   const handlePlanActivation = async (planType: string) => {
     try {
-      setActivatingPlan(planType); // sirf yahi plan active ho raha hai
+      setActivatingPlan(planType);
       const res = await fetch("/api/activate-plan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -31,132 +31,138 @@ export default function BasicPricingPage() {
   return (
     <div className="min-h-screen bg-black text-white p-4">
       <div className="max-w-7xl mx-auto">
-        {/* HEADING */}
+        {/* HEADING – responsive font size */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-3">BASIC PLAN</h1>
-          <p className="text-zinc-400 text-base">
+          <h1 className="text-2xl md:text-4xl font-bold mb-3">
+            BASIC PLAN
+          </h1>
+          <p className="text-zinc-400 text-sm md:text-base">
             Perfect for Small Businesses & Startups
           </p>
         </div>
 
-        {/* MAIN WRAPPER */}
-        <div className="flex rounded-3xl overflow-hidden border border-zinc-800 bg-zinc-900">
-          {/* LEFT TABLE */}
-          <div className="w-[72%]">
-            {/* HEADER */}
-            <div className="grid grid-cols-5 bg-[#0B2C74] text-white font-semibold text-center text-sm">
-              <div className="p-4 border-r border-blue-800">DURATION</div>
-              <div className="p-4 border-r border-blue-800">PRICE (USD)</div>
-              <div className="p-4 border-r border-blue-800">EFFECTIVE PRICE / MONTH</div>
-              <div className="p-4 border-r border-blue-800">YOU SAVE</div>
-              <div className="p-4">PAY</div>
-            </div>
+        {/* PRICING TABLE CONTAINER – responsive */}
+        <div className="rounded-3xl overflow-hidden border border-zinc-800 bg-zinc-900">
+          {/* SCROLLABLE WRAPPER for mobile */}
+          <div className="overflow-x-auto">
+            {/* TABLE – min width forces horizontal scroll on small screens */}
+            <div className="min-w-[600px]">
+              {/* HEADER ROW */}
+              <div className="grid grid-cols-5 bg-[#0B2C74] text-white font-semibold text-center text-xs md:text-sm">
+                <div className="p-3 md:p-4 border-r border-blue-800">
+                  DURATION
+                </div>
+                <div className="p-3 md:p-4 border-r border-blue-800">
+                  PRICE (USD)
+                </div>
+                <div className="p-3 md:p-4 border-r border-blue-800">
+                  EFFECTIVE PRICE / MONTH
+                </div>
+                <div className="p-3 md:p-4 border-r border-blue-800">
+                  YOU SAVE
+                </div>
+                <div className="p-3 md:p-4">PAY</div>
+              </div>
 
-            {/* ROW 1 - 1 Month */}
-            <div className="grid grid-cols-5 border-t border-zinc-800 min-h-[90px]">
-              <div className="flex items-center gap-2 p-4 border-r border-zinc-800 font-semibold text-lg">
-                📅 1 Month
+              {/* ROW 1 – 1 Month */}
+              <div className="grid grid-cols-5 border-t border-zinc-800">
+                <div className="flex items-center gap-1 md:gap-2 p-3 md:p-4 border-r border-zinc-800 font-semibold text-sm md:text-lg">
+                  📅 1 Month
+                </div>
+                <div className="flex items-center p-3 md:p-4 border-r border-zinc-800 text-2xl md:text-4xl font-bold">
+                  $0.01
+                </div>
+                <div className="flex items-center p-3 md:p-4 border-r border-zinc-800 text-xs md:text-base">
+                  $0.01 / month
+                </div>
+                <div className="flex items-center p-3 md:p-4 border-r border-zinc-800 text-xs md:text-base">
+                  —
+                </div>
+                <div className="flex items-center justify-center p-3 md:p-4">
+                  <button
+                    onClick={() => handlePlanActivation("1m")}
+                    disabled={activatingPlan !== null}
+                    className="text-blue-400 font-bold text-base md:text-lg hover:text-blue-300 transition-all disabled:opacity-50"
+                  >
+                    {activatingPlan === "1m" ? "Activating..." : "Pay"}
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center p-4 border-r border-zinc-800 text-4xl font-bold">$0.01</div>
-              <div className="flex items-center p-4 border-r border-zinc-800 text-base">$0.01 / month</div>
-              <div className="flex items-center p-4 border-r border-zinc-800 text-base">—</div>
-              <div className="flex items-center justify-center p-4">
-                <button
-                  onClick={() => handlePlanActivation("1m")}
-                  disabled={activatingPlan !== null}
-                  className="text-blue-400 font-bold text-lg hover:text-blue-300 transition-all disabled:opacity-50"
-                >
-                  {activatingPlan === "1m" ? "Activating..." : "Pay"}
-                </button>
-              </div>
-            </div>
 
-            {/* ROW 2 - 3 Months */}
-            <div className="grid grid-cols-5 border-t border-zinc-800 min-h-[90px]">
-              <div className="flex items-center gap-2 p-4 border-r border-zinc-800 font-semibold text-lg">
-                📅 3 Months
+              {/* ROW 2 – 3 Months */}
+              <div className="grid grid-cols-5 border-t border-zinc-800">
+                <div className="flex items-center gap-1 md:gap-2 p-3 md:p-4 border-r border-zinc-800 font-semibold text-sm md:text-lg">
+                  📅 3 Months
+                </div>
+                <div className="flex items-center p-3 md:p-4 border-r border-zinc-800 text-2xl md:text-4xl font-bold">
+                  $24
+                </div>
+                <div className="flex items-center p-3 md:p-4 border-r border-zinc-800 text-xs md:text-base">
+                  $8 / month
+                </div>
+                <div className="flex items-center p-3 md:p-4 border-r border-zinc-800 text-green-500 font-bold text-xs md:text-base">
+                  Save 11%
+                </div>
+                <div className="flex items-center justify-center p-3 md:p-4">
+                  <button
+                    onClick={() => handlePlanActivation("3m")}
+                    disabled={activatingPlan !== null}
+                    className="text-blue-400 font-bold text-base md:text-lg hover:text-blue-300 transition-all disabled:opacity-50"
+                  >
+                    {activatingPlan === "3m" ? "Activating..." : "Pay"}
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center p-4 border-r border-zinc-800 text-4xl font-bold">$24</div>
-              <div className="flex items-center p-4 border-r border-zinc-800 text-base">$8 / month</div>
-              <div className="flex items-center p-4 border-r border-zinc-800 text-green-500 font-bold text-base">
-                Save 11%
-              </div>
-              <div className="flex items-center justify-center p-4">
-                <button
-                  onClick={() => handlePlanActivation("3m")}
-                  disabled={activatingPlan !== null}
-                  className="text-blue-400 font-bold text-lg hover:text-blue-300 transition-all disabled:opacity-50"
-                >
-                  {activatingPlan === "3m" ? "Activating..." : "Pay"}
-                </button>
-              </div>
-            </div>
 
-            {/* ROW 3 - 6 Months */}
-            <div className="grid grid-cols-5 border-t border-zinc-800 min-h-[90px]">
-              <div className="flex items-center gap-2 p-4 border-r border-zinc-800 font-semibold text-lg">
-                📅 6 Months
+              {/* ROW 3 – 6 Months */}
+              <div className="grid grid-cols-5 border-t border-zinc-800">
+                <div className="flex items-center gap-1 md:gap-2 p-3 md:p-4 border-r border-zinc-800 font-semibold text-sm md:text-lg">
+                  📅 6 Months
+                </div>
+                <div className="flex items-center p-3 md:p-4 border-r border-zinc-800 text-2xl md:text-4xl font-bold">
+                  $45
+                </div>
+                <div className="flex items-center p-3 md:p-4 border-r border-zinc-800 text-xs md:text-base">
+                  $7.50 / month
+                </div>
+                <div className="flex items-center p-3 md:p-4 border-r border-zinc-800 text-green-500 font-bold text-xs md:text-base">
+                  Save 17%
+                </div>
+                <div className="flex items-center justify-center p-3 md:p-4">
+                  <button
+                    onClick={() => handlePlanActivation("6m")}
+                    disabled={activatingPlan !== null}
+                    className="text-blue-400 font-bold text-base md:text-lg hover:text-blue-300 transition-all disabled:opacity-50"
+                  >
+                    {activatingPlan === "6m" ? "Activating..." : "Pay"}
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center p-4 border-r border-zinc-800 text-4xl font-bold">$45</div>
-              <div className="flex items-center p-4 border-r border-zinc-800 text-base">$7.50 / month</div>
-              <div className="flex items-center p-4 border-r border-zinc-800 text-green-500 font-bold text-base">
-                Save 17%
-              </div>
-              <div className="flex items-center justify-center p-4">
-                <button
-                  onClick={() => handlePlanActivation("6m")}
-                  disabled={activatingPlan !== null}
-                  className="text-blue-400 font-bold text-lg hover:text-blue-300 transition-all disabled:opacity-50"
-                >
-                  {activatingPlan === "6m" ? "Activating..." : "Pay"}
-                </button>
-              </div>
-            </div>
 
-            {/* ROW 4 - 12 Months */}
-            <div className="grid grid-cols-5 border-t border-zinc-800 min-h-[90px]">
-              <div className="flex items-center gap-2 p-4 border-r border-zinc-800 font-semibold text-lg">
-                📅 12 Months
+              {/* ROW 4 – 12 Months */}
+              <div className="grid grid-cols-5 border-t border-zinc-800">
+                <div className="flex items-center gap-1 md:gap-2 p-3 md:p-4 border-r border-zinc-800 font-semibold text-sm md:text-lg">
+                  📅 12 Months
+                </div>
+                <div className="flex items-center p-3 md:p-4 border-r border-zinc-800 text-2xl md:text-4xl font-bold">
+                  $88
+                </div>
+                <div className="flex items-center p-3 md:p-4 border-r border-zinc-800 text-xs md:text-base">
+                  $7.33 / month
+                </div>
+                <div className="flex items-center p-3 md:p-4 border-r border-zinc-800 text-green-500 font-bold text-xs md:text-base">
+                  Save 20%
+                </div>
+                <div className="flex items-center justify-center p-3 md:p-4">
+                  <button
+                    onClick={() => handlePlanActivation("12m")}
+                    disabled={activatingPlan !== null}
+                    className="text-blue-400 font-bold text-base md:text-lg hover:text-blue-300 transition-all disabled:opacity-50"
+                  >
+                    {activatingPlan === "12m" ? "Activating..." : "Pay"}
+                  </button>
+                </div>
               </div>
-              <div className="flex items-center p-4 border-r border-zinc-800 text-4xl font-bold">$88</div>
-              <div className="flex items-center p-4 border-r border-zinc-800 text-base">$7.33 / month</div>
-              <div className="flex items-center p-4 border-r border-zinc-800 text-green-500 font-bold text-base">
-                Save 20%
-              </div>
-              <div className="flex items-center justify-center p-4">
-                <button
-                  onClick={() => handlePlanActivation("12m")}
-                  disabled={activatingPlan !== null}
-                  className="text-blue-400 font-bold text-lg hover:text-blue-300 transition-all disabled:opacity-50"
-                >
-                  {activatingPlan === "12m" ? "Activating..." : "Pay"}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* RIGHT FEATURE BOX */}
-          <div className="w-[28%] border-l border-zinc-800">
-            <div className="bg-[#0B2C74] text-white font-semibold text-center text-sm p-4">
-              FEATURES INCLUDED
-            </div>
-            <div className="p-4 grid grid-cols-2 gap-x-3 gap-y-3 text-[14px] leading-tight text-zinc-300">
-              <div>✓ 1 Business Location</div>
-              <div>✓ Low Rating Alerts</div>
-              <div>✓ 100 Review Sync</div>
-              <div>✓ Monthly PDF Reports</div>
-              <div>✓ Google Review Sync</div>
-              <div>✓ Reply Templates</div>
-              <div>✓ Review Dashboard</div>
-              <div>✓ Response Tracking</div>
-              <div>✓ Email Alerts</div>
-              <div>✓ Top 5 Keywords</div>
-              <div>✓ Unanswered Tracking</div>
-              <div>✓ Search & Filter</div>
-              <div>✓ Rating Overview</div>
-              <div>✓ 30 Day History</div>
-              <div>✓ Review Analytics</div>
-              <div>✓ Export CSV/PDF</div>
             </div>
           </div>
         </div>
