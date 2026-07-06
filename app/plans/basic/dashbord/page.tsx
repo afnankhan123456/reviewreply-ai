@@ -136,11 +136,11 @@ export default function DashboardPage() {
         }
       `}</style>
 
-      <div className="p-5 lg:p-7">
+      <div className="p-4 sm:p-5 lg:p-7">
         <Topbar />
 
         {/* Google Business Locations Card */}
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-6 mt-7">
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 sm:p-6 mt-7">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
             <div>
               <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
@@ -203,10 +203,10 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* TOP 4 CARDS — height 80px */}
+        {/* TOP 4 CARDS — height auto on mobile, 80px on lg+ */}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mt-7">
           {/* CARD 1 */}
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-[20px] p-3 h-[80px] shadow-sm dark:shadow-gray-900/30 flex items-center gap-3 overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-[20px] p-3 h-auto lg:h-[80px] shadow-sm dark:shadow-gray-900/30 flex items-center gap-3 overflow-hidden">
             <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
               <MessageSquare className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             </div>
@@ -221,7 +221,7 @@ export default function DashboardPage() {
           </div>
 
           {/* CARD 2 */}
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-[20px] p-3 h-[80px] shadow-sm dark:shadow-gray-900/30 flex items-center gap-3 overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-[20px] p-3 h-auto lg:h-[80px] shadow-sm dark:shadow-gray-900/30 flex items-center gap-3 overflow-hidden">
             <div className="w-10 h-10 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center flex-shrink-0">
               <RefreshCw className="w-5 h-5 text-green-600 dark:text-green-400" />
             </div>
@@ -237,7 +237,7 @@ export default function DashboardPage() {
           </div>
 
           {/* CARD 3 */}
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-[20px] p-3 h-[80px] shadow-sm dark:shadow-gray-900/30 flex items-center gap-3 overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-[20px] p-3 h-auto lg:h-[80px] shadow-sm dark:shadow-gray-900/30 flex items-center gap-3 overflow-hidden">
             <div className="w-10 h-10 rounded-xl bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center flex-shrink-0">
               <Star className="w-5 h-5 fill-yellow-500 dark:fill-yellow-400 text-yellow-500 dark:text-yellow-400" />
             </div>
@@ -269,7 +269,7 @@ export default function DashboardPage() {
           </div>
 
           {/* CARD 4 */}
-          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-[20px] p-3 h-[80px] shadow-sm dark:shadow-gray-900/30 flex items-center gap-3 overflow-hidden">
+          <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-[20px] p-3 h-auto lg:h-[80px] shadow-sm dark:shadow-gray-900/30 flex items-center gap-3 overflow-hidden">
             <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center flex-shrink-0">
               <TrendingUp className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             </div>
@@ -288,7 +288,7 @@ export default function DashboardPage() {
         {/* 3 DETAILED CARDS — Rating Overview, Positive/Negative Detection, Unanswered Reviews */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7">
           {/* Rating Overview */}
-          <div className="bg-white dark:bg-gray-800 rounded-[20px] border border-gray-200 dark:border-gray-700 p-5 shadow-sm dark:shadow-gray-900/30 h-[205px] overflow-hidden flex flex-col">
+          <div className="bg-white dark:bg-gray-800 rounded-[20px] border border-gray-200 dark:border-gray-700 p-4 sm:p-5 shadow-sm dark:shadow-gray-900/30 h-auto min-h-[205px] lg:h-[205px] overflow-hidden flex flex-col">
             <div className="flex items-center justify-between flex-shrink-0">
               <h3 className="text-[15px] font-semibold text-gray-900 dark:text-gray-100">Rating Overview</h3>
             </div>
@@ -317,7 +317,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Positive & Negative Review Detection */}
-          <div className="bg-white dark:bg-gray-800 rounded-[20px] border border-gray-200 dark:border-gray-700 p-5 shadow-sm dark:shadow-gray-900/30 h-[205px] flex flex-col">
+          <div className="bg-white dark:bg-gray-800 rounded-[20px] border border-gray-200 dark:border-gray-700 p-4 sm:p-5 shadow-sm dark:shadow-gray-900/30 h-auto min-h-[205px] lg:h-[205px] flex flex-col">
             <div className="flex items-center justify-between flex-shrink-0">
               <h3 className="text-[15px] font-semibold text-gray-900 dark:text-gray-100">Review Sentiment</h3>
             </div>
@@ -353,7 +353,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Unanswered Reviews */}
-          <div className="bg-white dark:bg-gray-800 rounded-[20px] border border-gray-200 dark:border-gray-700 p-5 shadow-sm dark:shadow-gray-900/30 h-[205px] flex flex-col">
+          <div className="bg-white dark:bg-gray-800 rounded-[20px] border border-gray-200 dark:border-gray-700 p-4 sm:p-5 shadow-sm dark:shadow-gray-900/30 h-auto min-h-[205px] lg:h-[205px] flex flex-col">
             <div className="flex items-center justify-between flex-shrink-0">
               <h3 className="text-[15px] font-semibold text-gray-900 dark:text-gray-100">Unanswered Reviews</h3>
             </div>
@@ -397,7 +397,7 @@ export default function DashboardPage() {
         {/* RECENT REVIEWS + RIGHT COLUMN (Top Keywords) */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7">
           {/* Recent Reviews */}
-          <div className="xl:col-span-2 bg-white dark:bg-gray-800 rounded-[24px] border border-gray-200 dark:border-gray-700 shadow-sm dark:shadow-gray-900/30 p-5 h-[205px] flex flex-col">
+          <div className="xl:col-span-2 bg-white dark:bg-gray-800 rounded-[24px] border border-gray-200 dark:border-gray-700 shadow-sm dark:shadow-gray-900/30 p-4 sm:p-5 h-auto min-h-[205px] lg:h-[205px] flex flex-col">
             <div className="flex items-center justify-between flex-shrink-0">
               <h3 className="text-[16px] font-semibold text-gray-900 dark:text-gray-100">Recent Reviews</h3>
             </div>
@@ -442,7 +442,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Top Keywords */}
-          <div className="bg-white dark:bg-gray-800 rounded-[24px] border border-gray-200 dark:border-gray-700 shadow-sm dark:shadow-gray-900/30 p-5 h-[205px] flex flex-col">
+          <div className="bg-white dark:bg-gray-800 rounded-[24px] border border-gray-200 dark:border-gray-700 shadow-sm dark:shadow-gray-900/30 p-4 sm:p-5 h-auto min-h-[205px] lg:h-[205px] flex flex-col">
             <div className="flex items-center justify-between flex-shrink-0">
               <h3 className="text-[15px] font-semibold text-gray-900 dark:text-gray-100">Top Keywords</h3>
             </div>
@@ -472,7 +472,7 @@ export default function DashboardPage() {
         {/* CHARTS ROW: Review Analysis + Monthly History + Response Tracking */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-7">
           {/* Review Analysis – Bar Chart */}
-          <div className="bg-white dark:bg-gray-800 rounded-[24px] border border-gray-200 dark:border-gray-700 shadow-sm dark:shadow-gray-900/30 p-5 h-[205px] flex flex-col">
+          <div className="bg-white dark:bg-gray-800 rounded-[24px] border border-gray-200 dark:border-gray-700 shadow-sm dark:shadow-gray-900/30 p-4 sm:p-5 h-auto min-h-[205px] lg:h-[205px] flex flex-col">
             <h3 className="text-[15px] font-semibold text-gray-900 dark:text-gray-100 mb-3">Review Analysis</h3>
             <div className="flex items-end justify-between gap-1 flex-1 px-2 overflow-hidden">
               {monthlyData.length === 0 ? (
@@ -498,7 +498,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Monthly History – Line Chart */}
-          <div className="bg-white dark:bg-gray-800 rounded-[24px] border border-gray-200 dark:border-gray-700 shadow-sm dark:shadow-gray-900/30 p-5 h-[205px] flex flex-col">
+          <div className="bg-white dark:bg-gray-800 rounded-[24px] border border-gray-200 dark:border-gray-700 shadow-sm dark:shadow-gray-900/30 p-4 sm:p-5 h-auto min-h-[205px] lg:h-[205px] flex flex-col">
             <h3 className="text-[15px] font-semibold text-gray-900 dark:text-gray-100 mb-3">Monthly History</h3>
             <div className="flex-1 flex items-center justify-center relative">
               {monthlyData.length === 0 ? (
@@ -552,7 +552,7 @@ export default function DashboardPage() {
           </div>
 
           {/* Response Tracking */}
-          <div className="bg-white dark:bg-gray-800 rounded-[24px] border border-gray-200 dark:border-gray-700 shadow-sm dark:shadow-gray-900/30 p-5 h-[205px] flex flex-col">
+          <div className="bg-white dark:bg-gray-800 rounded-[24px] border border-gray-200 dark:border-gray-700 shadow-sm dark:shadow-gray-900/30 p-4 sm:p-5 h-auto min-h-[205px] lg:h-[205px] flex flex-col">
             <div className="flex items-center justify-between flex-shrink-0">
               <h3 className="text-[16px] font-semibold text-gray-900 dark:text-gray-100">Response Tracking</h3>
             </div>
