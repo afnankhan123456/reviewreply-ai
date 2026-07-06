@@ -64,8 +64,8 @@ export default function LoginPage() {
               </h1>
             </div>
 
-            {/* HEADING – ab chhota */}
-            <div className="mb-4">
+            {/* HEADING – ab chhota, with added top margin for gap */}
+            <div className="mt-6 mb-4">
               <h2 className="text-lg font-extrabold leading-tight text-[#111827]">
                 Turn Every Review Into <span className="text-[#6c63ff]">Growth</span>
               </h2>
@@ -232,10 +232,9 @@ export default function LoginPage() {
           {/* RIGHT SIDE - LOGIN CARD – mobile mein upar aayega */}
           <div className="flex items-center justify-center px-6 py-4 order-first xl:order-none">
             <div className="w-full max-w-md bg-white rounded-3xl p-6 shadow-[0_20px_60px_-10px_rgba(0,0,0,0.08)] border border-gray-100">
+              {/* Logo – same style as left side, no colored box */}
               <div className="flex justify-center mb-4">
-                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#7b6dff] to-[#5b7cff] flex items-center justify-center shadow-lg">
-                  <img src="/ai-logo.png" alt="logo" className="w-8 h-8 object-contain filter brightness-0 invert" />
-                </div>
+                <img src="/ai-logo.png" alt="logo" className="w-10 h-10 object-contain" />
               </div>
 
               <h2 className="text-2xl font-extrabold text-center text-[#111827]">Welcome Back</h2>
@@ -280,12 +279,6 @@ export default function LoginPage() {
                   );
                 })}
               </div>
-
-              <p className="text-gray-400 text-center text-[10px] mt-4 leading-relaxed">
-                By continuing, you agree to our{" "}
-                <span className="text-[#6c63ff] font-semibold cursor-pointer hover:underline">Terms of Service</span> and{" "}
-                <span className="text-[#5b7cff] font-semibold cursor-pointer hover:underline">Privacy Policy</span>
-              </p>
             </div>
           </div>
         </div>
