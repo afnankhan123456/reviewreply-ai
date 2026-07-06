@@ -6,6 +6,12 @@ export const metadata = {
   description: "AI Review Dashboard",
 };
 
+// 🔥 YEH 3 LINES ADD KARO 🔥
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1.0,
+};
+
 export default function RootLayout({
   children,
 }: {
