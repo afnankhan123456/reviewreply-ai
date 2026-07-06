@@ -8,6 +8,18 @@ import {
   RefreshCw,
   Star,
   TrendingUp,
+  Menu,
+  X,
+  LayoutDashboard,
+  Bell,
+  BarChart,
+  Blocks,
+  FileText,
+  FileBarChart,
+  Download,
+  Settings,
+  HelpCircle,
+  Crown,
 } from "lucide-react";
 import Topbar from "./components/Topbar";
 
@@ -35,6 +47,7 @@ export default function DashboardPage() {
   });
 
   const [monthlyData, setMonthlyData] = useState<any[]>([]);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Mobile sidebar state
 
   async function loadGoogleBusiness() {
     try {
@@ -112,7 +125,7 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950">
+    <div className="min-h-screen bg-white dark:bg-gray-950 relative overflow-x-hidden">
       <style jsx>{`
         .scrollbar-thin::-webkit-scrollbar {
           width: 4px;
@@ -136,11 +149,107 @@ export default function DashboardPage() {
         }
       `}</style>
 
-      <div className="p-3 sm:p-5 lg:p-7">
-        <Topbar />
+      {/* Mobile Overlay (Backdrop) */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      {/* Mobile Sidebar (Slide from Left, Overlay on Top) */}
+      <div
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-gray-900 shadow-2xl transform transition-transform duration-300 ease-in-out ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } lg:hidden flex flex-col`}
+      >
+        {/* Header */}
+        <div className="p-4 flex items-center justify-between border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center text-purple-600 dark:text-purple-400 font-bold">
+              R
+            </div>
+            <div>
+              <h2 className="font-bold text-gray-900 dark:text-white text-sm leading-tight">
+                ReviewReply AI
+              </h2>
+              <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-tight">
+                AI Powered Review Management
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setIsSidebarOpen(false)}
+            className="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+          >
+            <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+          </button>
+        </div>
+
+        {/* Menu Items */}
+        <nav className="flex-1 overflow-y-auto p-4 space-y-1">
+          {[
+            { icon: LayoutDashboard, label: "Dashboard" },
+            { icon: Star, label: "Reviews" },
+            { icon: Bell, label: "Alerts" },
+            { icon: MessageSquare, label: "Unanswered" },
+            { icon: BarChart, label: "Analytics" },
+            { icon: Blocks, label: "Integrations" },
+            { icon: FileText, label: "Template" },
+            { icon: FileBarChart, label: "Report" },
+            { icon: Download, label: "Export" },
+            { icon: Settings, label: "Settings" },
+            { icon: HelpCircle, label: "Help Center" },
+          ].map((item, index) => (
+            <a
+              key={index}
+              href="#"
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition ${
+                index === 0
+                  ? "bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400"
+                  : "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+              }`}
+            >
+              <item.icon className="w-4 h-4" />
+              {item.label}
+            </a>
+          ))}
+        </nav>
+
+        {/* Bottom Section - Upgrade Plan */}
+        <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+          <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-xl flex items-center justify-between mb-3">
+            <div>
+              <p className="text-sm font-medium text-gray-900 dark:text-white">
+                Business Owner
+              </p>
+              <p className="text-xs text-gray-500">Basic Plan</p>
+            </div>
+            <Crown className="w-4 h-4 text-yellow-500" />
+          </div>
+          <button className="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-xl text-sm font-medium flex items-center justify-center gap-2">
+            Upgrade Plan
+          </button>
+        </div>
+      </div>
+
+      {/* Main Dashboard Content */}
+      <div className="p-3 sm:p-5 lg:p-7 relative z-10">
+        {/* Header with Hamburger */}
+        <div className="flex items-center gap-3 mb-2">
+          <button
+            onClick={() => setIsSidebarOpen(true)}
+            className="p-1.5 lg:hidden rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+          >
+            <Menu className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+          </button>
+          <div className="flex-1">
+            <Topbar />
+          </div>
+        </div>
 
         {/* Google Business Locations Card */}
-        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 sm:p-6 mt-7">
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 sm:p-6 mt-5">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
             <div>
               <h1 className="text-lg sm:text-xl font-semibold text-gray-900 dark:text-gray-100">
@@ -203,9 +312,9 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* TOP 4 CARDS — now flexible */}
+        {/* TOP 4 CARDS */}
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5 mt-7">
-          {/* CARD 1 */}
+          {/* (Existing top 4 cards code - unchanged) */}
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-[20px] p-3 h-auto lg:h-[80px] shadow-sm dark:shadow-gray-900/30 flex flex-col sm:flex-row items-center gap-3 overflow-hidden">
             <div className="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
               <MessageSquare className="w-5 h-5 text-blue-600 dark:text-blue-400" />
@@ -220,7 +329,6 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* CARD 2 */}
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-[20px] p-3 h-auto lg:h-[80px] shadow-sm dark:shadow-gray-900/30 flex flex-col sm:flex-row items-center gap-3 overflow-hidden">
             <div className="w-10 h-10 rounded-xl bg-green-100 dark:bg-green-900/30 flex items-center justify-center flex-shrink-0">
               <RefreshCw className="w-5 h-5 text-green-600 dark:text-green-400" />
@@ -236,7 +344,6 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* CARD 3 */}
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-[20px] p-3 h-auto lg:h-[80px] shadow-sm dark:shadow-gray-900/30 flex flex-col sm:flex-row items-center gap-3 overflow-hidden">
             <div className="w-10 h-10 rounded-xl bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center flex-shrink-0">
               <Star className="w-5 h-5 fill-yellow-500 dark:fill-yellow-400 text-yellow-500 dark:text-yellow-400" />
@@ -268,7 +375,6 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* CARD 4 */}
           <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-[20px] p-3 h-auto lg:h-[80px] shadow-sm dark:shadow-gray-900/30 flex flex-col sm:flex-row items-center gap-3 overflow-hidden">
             <div className="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center flex-shrink-0">
               <TrendingUp className="w-5 h-5 text-purple-600 dark:text-purple-400" />
@@ -287,7 +393,7 @@ export default function DashboardPage() {
 
         {/* 3 DETAILED CARDS */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 mt-7">
-          {/* Rating Overview */}
+          {/* (Existing detailed cards code - unchanged) */}
           <div className="bg-white dark:bg-gray-800 rounded-[20px] border border-gray-200 dark:border-gray-700 p-4 sm:p-5 shadow-sm dark:shadow-gray-900/30 h-auto min-h-[205px] lg:h-[205px] overflow-hidden flex flex-col">
             <div className="flex items-center justify-between flex-shrink-0">
               <h3 className="text-sm sm:text-[15px] font-semibold text-gray-900 dark:text-gray-100">Rating Overview</h3>
@@ -316,7 +422,6 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Review Sentiment */}
           <div className="bg-white dark:bg-gray-800 rounded-[20px] border border-gray-200 dark:border-gray-700 p-4 sm:p-5 shadow-sm dark:shadow-gray-900/30 h-auto min-h-[205px] lg:h-[205px] flex flex-col">
             <div className="flex items-center justify-between flex-shrink-0">
               <h3 className="text-sm sm:text-[15px] font-semibold text-gray-900 dark:text-gray-100">Review Sentiment</h3>
@@ -352,7 +457,6 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Unanswered Reviews */}
           <div className="bg-white dark:bg-gray-800 rounded-[20px] border border-gray-200 dark:border-gray-700 p-4 sm:p-5 shadow-sm dark:shadow-gray-900/30 h-auto min-h-[205px] lg:h-[205px] flex flex-col">
             <div className="flex items-center justify-between flex-shrink-0">
               <h3 className="text-sm sm:text-[15px] font-semibold text-gray-900 dark:text-gray-100">Unanswered Reviews</h3>
@@ -471,7 +575,6 @@ export default function DashboardPage() {
 
         {/* CHARTS ROW */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 mt-7">
-          {/* Review Analysis */}
           <div className="bg-white dark:bg-gray-800 rounded-[24px] border border-gray-200 dark:border-gray-700 shadow-sm dark:shadow-gray-900/30 p-4 sm:p-5 h-auto min-h-[205px] lg:h-[205px] flex flex-col">
             <h3 className="text-sm sm:text-[15px] font-semibold text-gray-900 dark:text-gray-100 mb-3">Review Analysis</h3>
             <div className="flex items-end justify-between gap-1 flex-1 px-1 sm:px-2 overflow-hidden">
@@ -497,7 +600,6 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Monthly History */}
           <div className="bg-white dark:bg-gray-800 rounded-[24px] border border-gray-200 dark:border-gray-700 shadow-sm dark:shadow-gray-900/30 p-4 sm:p-5 h-auto min-h-[205px] lg:h-[205px] flex flex-col">
             <h3 className="text-sm sm:text-[15px] font-semibold text-gray-900 dark:text-gray-100 mb-3">Monthly History</h3>
             <div className="flex-1 flex items-center justify-center relative">
@@ -545,7 +647,6 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Response Tracking */}
           <div className="bg-white dark:bg-gray-800 rounded-[24px] border border-gray-200 dark:border-gray-700 shadow-sm dark:shadow-gray-900/30 p-4 sm:p-5 h-auto min-h-[205px] lg:h-[205px] flex flex-col">
             <div className="flex items-center justify-between flex-shrink-0">
               <h3 className="text-sm sm:text-[16px] font-semibold text-gray-900 dark:text-gray-100">Response Tracking</h3>
