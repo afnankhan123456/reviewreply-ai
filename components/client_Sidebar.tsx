@@ -40,7 +40,7 @@ export default function ClientSidebar() {
   ];
 
   return (
-    <aside className="w-[260px] hidden lg:flex flex-col justify-between border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#060b1f] p-5">
+    <aside className="fixed top-0 left-0 z-[9999] h-screen w-[260px] lg:w-[260px] flex flex-col justify-between border-r border-zinc-200 dark:border-zinc-800 bg-white dark:bg-[#060b1f] p-5 lg:relative">
 
       <div>
 
@@ -51,7 +51,7 @@ export default function ClientSidebar() {
             <Link
               key={item.name}
               href={item.href}
-              className={`block rounded-2xl px-4 py-3 transition-all cursor-pointer ${
+              className={`block rounded-2xl px-4 py-3 transition-all cursor-pointer relative z-[10000] ${
                 pathname === item.href
                   ? "bg-violet-600/20 border border-violet-500/30 text-black dark:text-white"
                   : "text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-white/5"
