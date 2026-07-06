@@ -50,8 +50,8 @@ export default function LoginPage() {
 
         {/* Main Content – now scrollable naturally */}
         <div className="relative z-10 grid xl:grid-cols-2 min-h-screen">
-          {/* LEFT SIDE */}
-          <div className="flex flex-col justify-between px-6 lg:px-16 py-4 h-full">
+          {/* LEFT SIDE – mobile mein niche aayega */}
+          <div className="flex flex-col justify-between px-6 lg:px-16 py-4 h-full order-last xl:order-none">
             {/* LOGO */}
             <div className="flex items-center gap-2">
               <img
@@ -229,8 +229,8 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* RIGHT SIDE - LOGIN CARD – centered vertically */}
-          <div className="flex items-center justify-center px-6 py-4">
+          {/* RIGHT SIDE - LOGIN CARD – mobile mein upar aayega */}
+          <div className="flex items-center justify-center px-6 py-4 order-first xl:order-none">
             <div className="w-full max-w-md bg-white rounded-3xl p-6 shadow-[0_20px_60px_-10px_rgba(0,0,0,0.08)] border border-gray-100">
               <div className="flex justify-center mb-4">
                 <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#7b6dff] to-[#5b7cff] flex items-center justify-center shadow-lg">
