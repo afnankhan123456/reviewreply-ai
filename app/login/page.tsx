@@ -52,21 +52,21 @@ export default function LoginPage() {
         <div className="relative z-10 grid xl:grid-cols-2 min-h-screen">
           {/* LEFT SIDE – mobile mein niche aayega */}
           <div className="flex flex-col justify-between px-6 lg:px-16 py-4 h-full order-last xl:order-none">
-            {/* LOGO – sizes reduced */}
+            {/* LOGO – text ab heading jitna bada, logo bada */}
             <div className="flex items-center gap-2">
               <img
                 src="/ai-logo.png"
                 alt="ReviewReply AI"
-                className="w-7 h-7 object-contain"
+                className="w-10 h-10 object-contain"
               />
-              <h1 className="text-lg font-extrabold tracking-tight text-[#111827]">
+              <h1 className="text-2xl lg:text-3xl font-extrabold tracking-tight text-[#111827]">
                 ReviewReply <span className="text-[#6c63ff]">AI</span>
               </h1>
             </div>
 
-            {/* HEADING – size reduced */}
+            {/* HEADING – ab chhota */}
             <div className="mb-4">
-              <h2 className="text-2xl lg:text-3xl font-extrabold leading-tight text-[#111827]">
+              <h2 className="text-lg font-extrabold leading-tight text-[#111827]">
                 Turn Every Review Into <span className="text-[#6c63ff]">Growth</span>
               </h2>
               <p className="text-gray-500 text-base mt-2 max-w-lg">
