@@ -7,7 +7,8 @@ import {
   Users, 
   Bug, 
   Copy, 
-  Calendar 
+  Calendar,
+  Wallet
 } from "lucide-react";
 
 export default function ReferEarnPage() {
@@ -33,90 +34,91 @@ export default function ReferEarnPage() {
         </Link>
       </div>
 
-      {/* MAIN GRID CONTAINER (Rows ke hisaab se tod diya height fix ke liye) */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-[auto_auto_auto] gap-6">
+      {/* MAIN GRID CONTAINER (Ab rows auto-arrange hongi) */}
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        {/* ROW 1: Referral Link Card (Left) & Sidebar Cards (Right) */}
-        <>
-          {/* 1. REFERRAL LINK CARD (GRADIENT BLUE) */}
-          <div className="lg:col-span-2 lg:row-span-1">
-            <div className="bg-gradient-to-br from-[#6f8dfc] via-[#708bfd] to-[#a48aff] rounded-2xl p-8 text-white relative overflow-hidden shadow-md">
-              <h2 className="text-3xl font-semibold mb-2">Referral Link</h2>
-              <p className="text-blue-100 text-sm mb-8">Share your link and earn rewards</p>
+        {/* ================= ROW 1 START ================= */}
+        
+        {/* 1. LEFT: REFERRAL LINK CARD (GRADIENT BLUE) - Spans 2 columns */}
+        <div className="lg:col-span-2">
+          <div className="bg-gradient-to-br from-[#6f8dfc] via-[#708bfd] to-[#a48aff] rounded-2xl p-8 text-white relative overflow-hidden shadow-md">
+            <h2 className="text-3xl font-semibold mb-2">Referral Link</h2>
+            <p className="text-blue-100 text-sm mb-8">Share your link and earn rewards</p>
 
-              <div className="flex flex-col md:flex-row gap-0 bg-white rounded-lg p-1.5 mb-8 shadow-md max-w-lg">
-                <input
-                  type="text"
-                  defaultValue="https://refersync.app/r/RAHUL123"
-                  readOnly
-                  className="flex-1 bg-transparent text-gray-800 px-4 py-3 outline-none text-sm font-medium"
-                />
-                <button className="bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white px-5 py-3 rounded-md flex items-center justify-center gap-2 text-sm font-medium transition">
-                  <Copy className="w-4 h-4" /> Copy Link
-                </button>
-              </div>
-
-              <div className="flex items-center gap-4">
-                <span className="text-blue-100 text-xs font-medium mr-2">Share via</span>
-                {/* Social Icons */}
-                <div className="w-10 h-10 bg-[#25d366] rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">W</div>
-                <div className="w-10 h-10 bg-[#0088cc] rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">T</div>
-                <div className="w-10 h-10 bg-[#1877f2] rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">f</div>
-                <div className="w-10 h-10 bg-[#1da1f2] rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">Tw</div>
-                <div className="w-10 h-10 bg-white text-gray-700 rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">✉</div>
-              </div>
-            </div>
-          </div>
-
-          {/* RIGHT COLUMN CARDS (1/3 Width) - Exact height match ke liye `h-full` lagaya */}
-          <div className="lg:col-span-1 lg:row-span-1 flex flex-col gap-6 h-full">
-            
-            {/* 1. WITHDRAW YOUR EARNINGS */}
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex-grow flex flex-col justify-between">
-              <div>
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="bg-purple-50 p-2 rounded-lg">
-                    <div className="w-5 h-5 border-2 border-purple-600 rounded-md bg-white"></div>
-                  </div>
-                  <h3 className="font-semibold text-lg text-gray-800">Withdraw Your Earnings</h3>
-                </div>
-                <p className="text-sm text-gray-500 leading-relaxed mb-6">
-                  Fill out the Google Form below when you want to withdraw your earnings.
-                </p>
-              </div>
-              <div>
-                <button className="w-full bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white py-3 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition">
-                  Open Google Form <span className="text-sm">↗</span>
-                </button>
-                <p className="text-xs text-gray-400 mt-4">
-                  We will verify and process your withdrawal request.
-                </p>
-              </div>
-            </div>
-
-            {/* 2. FOUND A BUG? */}
-            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex-grow flex flex-col justify-between">
-              <div>
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="bg-purple-50 p-2 rounded-lg">
-                    <Bug className="w-5 h-5 text-purple-600" />
-                  </div>
-                  <h3 className="font-semibold text-lg text-gray-800">Found a Bug?</h3>
-                </div>
-                <p className="text-sm text-gray-500 leading-relaxed mb-6">
-                  Help us improve by reporting any issues you face on the platform.
-                </p>
-              </div>
-              <button className="w-full bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white py-3 rounded-lg font-medium text-sm flex items-center justify-between px-6 transition">
-                Report Bug <span className="text-lg">›</span>
+            <div className="flex flex-col md:flex-row gap-0 bg-white rounded-lg p-1.5 mb-8 shadow-md max-w-lg">
+              <input
+                type="text"
+                defaultValue="https://refersync.app/r/RAHUL123"
+                readOnly
+                className="flex-1 bg-transparent text-gray-800 px-4 py-3 outline-none text-sm font-medium"
+              />
+              <button className="bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white px-5 py-3 rounded-md flex items-center justify-center gap-2 text-sm font-medium transition">
+                <Copy className="w-4 h-4" /> Copy Link
               </button>
             </div>
 
+            <div className="flex items-center gap-4">
+              <span className="text-blue-100 text-xs font-medium mr-2">Share via</span>
+              {/* Social Icons */}
+              <div className="w-10 h-10 bg-[#25d366] rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">W</div>
+              <div className="w-10 h-10 bg-[#0088cc] rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">T</div>
+              <div className="w-10 h-10 bg-[#1877f2] rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">f</div>
+              <div className="w-10 h-10 bg-[#1da1f2] rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">Tw</div>
+              <div className="w-10 h-10 bg-white text-gray-700 rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">✉</div>
+            </div>
           </div>
-        </>
+        </div>
 
-        {/* ROW 2: Middle Stats Row (3 CARDS) */}
-        <div className="lg:col-span-2 lg:row-span-1 grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* 2. RIGHT: SIDEBAR CARDS (Spans 1 column, stretches to exact height) */}
+        <div className="lg:col-span-1 flex flex-col gap-6 h-full">
+          
+          {/* Card 1: WITHDRAW YOUR EARNINGS */}
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex-1 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="bg-purple-50 p-2 rounded-lg">
+                  <Wallet className="w-5 h-5 text-purple-600" />
+                </div>
+                <h3 className="font-semibold text-lg text-gray-800">Withdraw Your Earnings</h3>
+              </div>
+              <p className="text-sm text-gray-500 leading-relaxed mb-6">
+                Fill out the Google Form below when you want to withdraw your earnings.
+              </p>
+            </div>
+            <div>
+              <button className="w-full bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white py-3 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition">
+                Open Google Form <span className="text-sm">↗</span>
+              </button>
+              <p className="text-xs text-gray-400 mt-4">
+                We will verify and process your withdrawal request.
+              </p>
+            </div>
+          </div>
+
+          {/* Card 2: FOUND A BUG? */}
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex-1 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-3 mb-3">
+                <div className="bg-purple-50 p-2 rounded-lg">
+                  <Bug className="w-5 h-5 text-purple-600" />
+                </div>
+                <h3 className="font-semibold text-lg text-gray-800">Found a Bug?</h3>
+              </div>
+              <p className="text-sm text-gray-500 leading-relaxed mb-6">
+                Help us improve by reporting any issues you face on the platform.
+              </p>
+            </div>
+            <button className="w-full bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white py-3 rounded-lg font-medium text-sm flex items-center justify-between px-6 transition">
+              Report Bug <span className="text-lg">›</span>
+            </button>
+          </div>
+
+        </div>
+        {/* ================= ROW 1 END ================= */}
+
+
+        {/* ================= ROW 2 START (Middle Stats) ================= */}
+        <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
           
           {/* Card 1: Impression */}
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
@@ -167,9 +169,11 @@ export default function ReferEarnPage() {
           </div>
 
         </div>
+        {/* ================= ROW 2 END ================= */}
 
-        {/* ROW 3: PERFORMANCE OVERVIEW TABLE */}
-        <div className="lg:col-span-2 lg:row-span-1 bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+
+        {/* ================= ROW 3 START (Performance Table) ================= */}
+        <div className="lg:col-span-2 bg-white rounded-xl border border-gray-100 shadow-sm p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <div className="text-gray-800">📊</div>
@@ -213,6 +217,7 @@ export default function ReferEarnPage() {
             </table>
           </div>
         </div>
+        {/* ================= ROW 3 END ================= */}
 
       </div>
     </div>
