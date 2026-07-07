@@ -35,31 +35,39 @@ export default function ReferEarnPage() {
 
         {/* ================= ROW 1 ================= */}
         
-        {/* LEFT CARD */}
+        {/* LEFT CARD (UPDATED: Professional Glow Effect) */}
         <div className="lg:col-span-2 pr-[2px]">
-          <div className="bg-gradient-to-br from-[#6f8dfc] via-[#708bfd] to-[#a48aff] rounded-2xl p-8 text-white relative overflow-hidden shadow-md h-[350px]">
-            <h2 className="text-3xl font-semibold mb-2">Referral Link</h2>
-            <p className="text-blue-100 text-sm mb-6">Share your link and earn rewards</p>
+          <div className="relative bg-gradient-to-br from-[#4f46e5] via-[#6f8dfc] to-[#a48aff] rounded-2xl p-8 text-white overflow-hidden shadow-md h-[350px]">
+            
+            {/* Glow Effect Layers */}
+            <div className="absolute top-[-50px] right-[-50px] w-[200px] h-[200px] bg-[#c084fc] rounded-full blur-[60px] opacity-30 pointer-events-none"></div>
+            <div className="absolute bottom-[-50px] left-[-50px] w-[150px] h-[150px] bg-[#818cf8] rounded-full blur-[50px] opacity-40 pointer-events-none"></div>
+            
+            {/* Content */}
+            <div className="relative z-10">
+              <h2 className="text-3xl font-semibold mb-2">Referral Link</h2>
+              <p className="text-blue-100 text-sm mb-6">Share your link and earn rewards</p>
 
-            <div className="flex flex-col md:flex-row gap-0 bg-white rounded-lg p-1.5 mb-6 shadow-md max-w-lg">
-              <input
-                type="text"
-                defaultValue="https://refersync.app/r/RAHUL123"
-                readOnly
-                className="flex-1 bg-transparent text-gray-800 px-4 py-3 outline-none text-sm font-medium"
-              />
-              <button className="bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white px-5 py-3 rounded-md flex items-center justify-center gap-2 text-sm font-medium transition">
-                <Copy className="w-4 h-4" /> Copy Link
-              </button>
-            </div>
+              <div className="flex flex-col md:flex-row gap-0 bg-white rounded-lg p-1.5 mb-6 shadow-md max-w-lg">
+                <input
+                  type="text"
+                  defaultValue="https://refersync.app/r/RAHUL123"
+                  readOnly
+                  className="flex-1 bg-transparent text-gray-800 px-4 py-3 outline-none text-sm font-medium"
+                />
+                <button className="bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white px-5 py-3 rounded-md flex items-center justify-center gap-2 text-sm font-medium transition">
+                  <Copy className="w-4 h-4" /> Copy Link
+                </button>
+              </div>
 
-            <div className="flex items-center gap-4">
-              <span className="text-blue-100 text-xs font-medium mr-2">Share via</span>
-              <div className="w-10 h-10 bg-[#25d366] rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">W</div>
-              <div className="w-10 h-10 bg-[#0088cc] rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">T</div>
-              <div className="w-10 h-10 bg-[#1877f2] rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">f</div>
-              <div className="w-10 h-10 bg-[#1da1f2] rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">Tw</div>
-              <div className="w-10 h-10 bg-white text-gray-700 rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">✉</div>
+              <div className="flex items-center gap-4">
+                <span className="text-blue-100 text-xs font-medium mr-2">Share via</span>
+                <div className="w-10 h-10 bg-[#25d366] rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">W</div>
+                <div className="w-10 h-10 bg-[#0088cc] rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">T</div>
+                <div className="w-10 h-10 bg-[#1877f2] rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">f</div>
+                <div className="w-10 h-10 bg-[#1da1f2] rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">Tw</div>
+                <div className="w-10 h-10 bg-white text-gray-700 rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">✉</div>
+              </div>
             </div>
           </div>
         </div>
