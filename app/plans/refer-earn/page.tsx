@@ -17,15 +17,11 @@ export default function ReferEarnPage() {
 
       {/* TOP HEADER */}
       <div className="max-w-7xl mx-auto flex items-center justify-between mb-8">
-        
-        {/* LEFT LOGO */}
         <img 
           src="https://raw.githubusercontent.com/afnankhan123456/reviewreply-ai/main/public/ai-logo.png" 
           alt="ReviewReply AI" 
           className="h-10 w-auto object-contain" 
         />
-
-        {/* RIGHT BACK BUTTON */}
         <Link
           href="/plans"
           className="bg-white border border-gray-200 hover:border-indigo-400 px-5 py-2.5 rounded-2xl shadow-sm transition font-medium text-gray-700 w-fit"
@@ -34,14 +30,14 @@ export default function ReferEarnPage() {
         </Link>
       </div>
 
-      {/* MAIN GRID CONTAINER (Ab rows auto-arrange hongi) */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* MAIN GRID */}
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-[auto_auto_auto] gap-6">
 
-        {/* ================= ROW 1 START ================= */}
+        {/* ================= ROW 1 ================= */}
         
-        {/* 1. LEFT: REFERRAL LINK CARD (GRADIENT BLUE) - Spans 2 columns */}
-        <div className="lg:col-span-2">
-          <div className="bg-gradient-to-br from-[#6f8dfc] via-[#708bfd] to-[#a48aff] rounded-2xl p-8 text-white relative overflow-hidden shadow-md">
+        {/* 1. LEFT CARD WRAPPER - FIX: yahan 'h-full' add kiya hai taaki right card ke barabar stretch ho */}
+        <div className="lg:col-span-2 h-full">
+          <div className="bg-gradient-to-br from-[#6f8dfc] via-[#708bfd] to-[#a48aff] rounded-2xl p-8 text-white relative overflow-hidden shadow-md h-full">
             <h2 className="text-3xl font-semibold mb-2">Referral Link</h2>
             <p className="text-blue-100 text-sm mb-8">Share your link and earn rewards</p>
 
@@ -59,7 +55,6 @@ export default function ReferEarnPage() {
 
             <div className="flex items-center gap-4">
               <span className="text-blue-100 text-xs font-medium mr-2">Share via</span>
-              {/* Social Icons */}
               <div className="w-10 h-10 bg-[#25d366] rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">W</div>
               <div className="w-10 h-10 bg-[#0088cc] rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">T</div>
               <div className="w-10 h-10 bg-[#1877f2] rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">f</div>
@@ -69,10 +64,9 @@ export default function ReferEarnPage() {
           </div>
         </div>
 
-        {/* 2. RIGHT: SIDEBAR CARDS (Spans 1 column, stretches to exact height) */}
+        {/* 2. RIGHT SIDEBAR */}
         <div className="lg:col-span-1 flex flex-col gap-6 h-full">
           
-          {/* Card 1: WITHDRAW YOUR EARNINGS */}
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex-1 flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-3 mb-3">
@@ -95,7 +89,6 @@ export default function ReferEarnPage() {
             </div>
           </div>
 
-          {/* Card 2: FOUND A BUG? */}
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex-1 flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-3 mb-3">
@@ -117,10 +110,8 @@ export default function ReferEarnPage() {
         {/* ================= ROW 1 END ================= */}
 
 
-        {/* ================= ROW 2 START (Middle Stats) ================= */}
+        {/* ================= ROW 2 ================= */}
         <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
-          
-          {/* Card 1: Impression */}
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
             <div className="flex items-center gap-3 mb-2">
               <div className="bg-blue-50 p-2 rounded-lg">
@@ -135,8 +126,6 @@ export default function ReferEarnPage() {
               </svg>
             </div>
           </div>
-
-          {/* Card 2: Click Rate */}
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
             <div className="flex items-center gap-3 mb-2">
               <div className="bg-orange-50 p-2 rounded-lg">
@@ -151,8 +140,6 @@ export default function ReferEarnPage() {
               </svg>
             </div>
           </div>
-
-          {/* Card 3: Total Subscription */}
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
             <div className="flex items-center gap-3 mb-2">
               <div className="bg-green-50 p-2 rounded-lg">
@@ -167,12 +154,11 @@ export default function ReferEarnPage() {
               </svg>
             </div>
           </div>
-
         </div>
         {/* ================= ROW 2 END ================= */}
 
 
-        {/* ================= ROW 3 START (Performance Table) ================= */}
+        {/* ================= ROW 3 ================= */}
         <div className="lg:col-span-2 bg-white rounded-xl border border-gray-100 shadow-sm p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
@@ -183,7 +169,6 @@ export default function ReferEarnPage() {
               <Calendar className="w-4 h-4" /> This Month <span className="text-gray-400 text-xs">▼</span>
             </button>
           </div>
-
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
