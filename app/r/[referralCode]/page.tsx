@@ -27,7 +27,7 @@ export default async function ReferralPage({ params }: PageProps) {
 
     if (!user) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
           <div className="text-center p-8 bg-white rounded-2xl shadow-lg max-w-md border border-gray-200">
             <h1 className="text-2xl font-bold text-red-600 mb-4">Invalid Referral Link</h1>
             <p className="text-gray-600">
@@ -38,26 +38,15 @@ export default async function ReferralPage({ params }: PageProps) {
       );
     }
 
-    // Success - Show referral landing page
+    // Success - Clean Professional Background
     return (
-      <div className="min-h-screen flex items-center justify-center bg-white relative overflow-hidden">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 relative overflow-hidden">
         
-        {/* Background Design Elements (Subtle geometric shapes) */}
-        <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-purple-50 rounded-full blur-[100px] opacity-70 pointer-events-none"></div>
-        <div className="absolute bottom-[-20%] right-[-10%] w-[400px] h-[400px] bg-blue-50 rounded-full blur-[100px] opacity-70 pointer-events-none"></div>
-        <div className="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-indigo-50 rounded-full blur-[120px] opacity-50 pointer-events-none"></div>
+        {/* Subtle professional background glow */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-50/50 via-transparent to-transparent pointer-events-none"></div>
 
-        {/* Subtle grid pattern overlay */}
-        <div 
-          className="absolute inset-0 opacity-[0.04] pointer-events-none"
-          style={{
-            backgroundImage: `linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)`,
-            backgroundSize: '40px 40px'
-          }}
-        ></div>
-
-        {/* Main White Card */}
-        <div className="relative z-10 text-center p-10 bg-white/80 backdrop-blur-xl rounded-3xl shadow-[0_20px_50px_-12px_rgba(0,0,0,0.1)] max-w-lg border border-white/50">
+        {/* White Card (Exactly as you wanted) */}
+        <div className="relative z-10 text-center p-10 bg-white rounded-2xl shadow-xl border border-gray-100 max-w-lg">
           <div className="mb-2">
             <h1 className="text-4xl font-bold text-gray-900 mb-1">
               Welcome to ReviewReply AI 🚀
