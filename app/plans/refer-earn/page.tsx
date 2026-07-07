@@ -112,8 +112,8 @@ export default function ReferEarnPage() {
         {/* ================= ROW 1 END ================= */}
 
 
-        {/* ================= ROW 2 (UPDATED) ================= */}
-        <div className="lg:col-span-2 pr-[2px] grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* ================= ROW 2 (UPDATED: lg:col-span-2 -> lg:col-span-3) ================= */}
+        <div className="lg:col-span-3 pr-[2px] grid grid-cols-1 md:grid-cols-3 gap-6">
           
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
             <div className="flex items-center gap-3 mb-2">
