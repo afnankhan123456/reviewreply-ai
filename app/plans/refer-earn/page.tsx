@@ -67,7 +67,7 @@ export default function ReferEarnPage() {
         {/* RIGHT SIDEBAR */}
         <div className="lg:col-span-1 -ml-[2px] flex flex-col gap-6 h-full">
           
-          {/* CARD 1: Withdraw - FIXED (Only text optimized) */}
+          {/* CARD 1: Withdraw */}
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 h-[163.5px] flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-3 mb-1">
@@ -76,7 +76,7 @@ export default function ReferEarnPage() {
                 </div>
                 <h3 className="font-semibold text-lg text-gray-800">Withdraw Your Earnings</h3>
               </div>
-              <p className="text-xs text-gray-500 leading-relaxed mb-1"> {/* text-sm -> text-xs */}
+              <p className="text-xs text-gray-500 leading-relaxed mb-1">
                 Fill out the Google Form below to withdraw your earnings.
               </p>
             </div>
@@ -90,7 +90,7 @@ export default function ReferEarnPage() {
             </div>
           </div>
 
-          {/* CARD 2: Found a Bug - FIXED (Only text optimized) */}
+          {/* CARD 2: Found a Bug */}
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 h-[162.5px] flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-3 mb-1">
@@ -99,7 +99,7 @@ export default function ReferEarnPage() {
                 </div>
                 <h3 className="font-semibold text-lg text-gray-800">Found a Bug?</h3>
               </div>
-              <p className="text-xs text-gray-500 leading-relaxed mb-1"> {/* text-sm -> text-xs */}
+              <p className="text-xs text-gray-500 leading-relaxed mb-1">
                 Report any issues you face on the platform.
               </p>
             </div>
@@ -112,8 +112,9 @@ export default function ReferEarnPage() {
         {/* ================= ROW 1 END ================= */}
 
 
-        {/* ================= ROW 2 ================= */}
-        <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* ================= ROW 2 (UPDATED: pr-[2px] add kiya alignment ke liye) ================= */}
+        <div className="lg:col-span-2 pr-[2px] grid grid-cols-1 md:grid-cols-3 gap-6">
+          
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
             <div className="flex items-center gap-3 mb-2">
               <div className="bg-blue-50 p-2 rounded-lg">
@@ -128,6 +129,7 @@ export default function ReferEarnPage() {
               </svg>
             </div>
           </div>
+
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
             <div className="flex items-center gap-3 mb-2">
               <div className="bg-orange-50 p-2 rounded-lg">
@@ -142,6 +144,7 @@ export default function ReferEarnPage() {
               </svg>
             </div>
           </div>
+
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
             <div className="flex items-center gap-3 mb-2">
               <div className="bg-green-50 p-2 rounded-lg">
@@ -156,11 +159,12 @@ export default function ReferEarnPage() {
               </svg>
             </div>
           </div>
+
         </div>
         {/* ================= ROW 2 END ================= */}
 
 
-        {/* ================= ROW 3 ================= */}
+        {/* ================= ROW 3 (Baki sab same) ================= */}
         <div className="lg:col-span-2 bg-white rounded-xl border border-gray-100 shadow-sm p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
