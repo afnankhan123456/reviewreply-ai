@@ -42,6 +42,9 @@ model User {
   createdAt           DateTime            @default(now())
   lastLogin           DateTime            @default(now())
 
+  // 👇 NEW FIELD ADDED (Kuch remove nahi kiya)
+  referralCode        String              @unique
+
   businessLocations   BusinessLocation[]
   reviews             Review[]
   templates           Template[]          // relation to templates
