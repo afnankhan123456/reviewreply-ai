@@ -35,9 +35,8 @@ export default function ReferEarnPage() {
 
         {/* ================= ROW 1 ================= */}
         
-        {/* 1. LEFT CARD WRAPPER */}
+        {/* LEFT CARD */}
         <div className="lg:col-span-2">
-          {/* UPDATED: Height fixed to 350px */}
           <div className="bg-gradient-to-br from-[#6f8dfc] via-[#708bfd] to-[#a48aff] rounded-2xl p-8 text-white relative overflow-hidden shadow-md h-[350px]">
             <h2 className="text-3xl font-semibold mb-2">Referral Link</h2>
             <p className="text-blue-100 text-sm mb-6">Share your link and earn rewards</p>
@@ -65,10 +64,11 @@ export default function ReferEarnPage() {
           </div>
         </div>
 
-        {/* 2. RIGHT SIDEBAR */}
+        {/* RIGHT SIDEBAR - Exact heights fixed as per your math */}
         <div className="lg:col-span-1 flex flex-col gap-6 h-full">
           
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex-1 flex flex-col justify-between">
+          {/* CARD 1 (163.5px) */}
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 h-[163.5px] flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-3 mb-3">
                 <div className="bg-purple-50 p-2 rounded-lg">
@@ -90,7 +90,8 @@ export default function ReferEarnPage() {
             </div>
           </div>
 
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 flex-1 flex flex-col justify-between">
+          {/* CARD 2 (162.5px) */}
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 h-[162.5px] flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-3 mb-3">
                 <div className="bg-purple-50 p-2 rounded-lg">
