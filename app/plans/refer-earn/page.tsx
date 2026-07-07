@@ -112,7 +112,7 @@ export default function ReferEarnPage() {
         {/* ================= ROW 1 END ================= */}
 
 
-        {/* ================= ROW 2 (3 Cards - 1000px width) ================= */}
+        {/* ================= ROW 2 (3 Cards - DATA REMOVED) ================= */}
         <div className="lg:col-span-3 pr-[2px] grid grid-cols-1 md:grid-cols-3 gap-6">
           
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
@@ -123,7 +123,7 @@ export default function ReferEarnPage() {
               <span className="text-sm text-gray-500">Impression</span>
             </div>
             <div className="flex items-end justify-between">
-              <span className="text-2xl font-bold">12,450</span>
+              <span className="text-2xl font-bold"></span>
               <svg viewBox="0 0 100 30" className="w-20 h-8">
                 <path d="M0,25 C20,20 30,25 50,22 C70,18 80,15 100,5" fill="none" stroke="#3b82f6" strokeWidth="2" />
               </svg>
@@ -138,7 +138,7 @@ export default function ReferEarnPage() {
               <span className="text-sm text-gray-500">Click Rate</span>
             </div>
             <div className="flex items-end justify-between">
-              <span className="text-2xl font-bold">8.45%</span>
+              <span className="text-2xl font-bold"></span>
               <svg viewBox="0 0 100 30" className="w-20 h-8">
                 <path d="M0,25 C20,25 30,15 50,18 C70,20 80,10 100,12" fill="none" stroke="#f97316" strokeWidth="2" />
               </svg>
@@ -153,7 +153,7 @@ export default function ReferEarnPage() {
               <span className="text-sm text-gray-500">Total Subscription</span>
             </div>
             <div className="flex items-end justify-between">
-              <span className="text-2xl font-bold">245</span>
+              <span className="text-2xl font-bold"></span>
               <svg viewBox="0 0 100 30" className="w-20 h-8">
                 <path d="M0,20 C20,22 30,18 50,20 C70,25 80,15 100,5" fill="none" stroke="#22c55e" strokeWidth="2" />
               </svg>
@@ -164,7 +164,7 @@ export default function ReferEarnPage() {
         {/* ================= ROW 2 END ================= */}
 
 
-        {/* ================= ROW 3 (Table - UPDATED to col-span-3 to match 3 cards) ================= */}
+        {/* ================= ROW 3 (Table - DATA REMOVED) ================= */}
         <div className="lg:col-span-3 bg-white rounded-xl border border-gray-100 shadow-sm p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
@@ -191,17 +191,11 @@ export default function ReferEarnPage() {
                 </tr>
               </thead>
               <tbody className="bg-white">
-                {[
-                  [12450, "8.45%", 245],
-                  [9870, "7.32%", 187],
-                  [7650, "6.91%", 154],
-                  [6320, "5.48%", 123],
-                  [5210, "4.99%", 98],
-                ].map((row, idx) => (
+                {[1, 2, 3, 4, 5].map((_, idx) => (
                   <tr key={idx} className={idx !== 4 ? "border-b border-gray-100" : ""}>
-                    <td className="p-4 text-sm text-gray-600">{row[0].toLocaleString()}</td>
-                    <td className="p-4 text-sm text-gray-600">{row[1]}</td>
-                    <td className="p-4 text-sm text-gray-600">{row[2]}</td>
+                    <td className="p-4 text-sm text-gray-600"></td>
+                    <td className="p-4 text-sm text-gray-600"></td>
+                    <td className="p-4 text-sm text-gray-600"></td>
                   </tr>
                 ))}
               </tbody>
