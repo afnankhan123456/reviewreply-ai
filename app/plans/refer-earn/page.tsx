@@ -112,7 +112,7 @@ export default function ReferEarnPage() {
         {/* ================= ROW 1 END ================= */}
 
 
-        {/* ================= ROW 2 (UPDATED: pr-[2px] add kiya alignment ke liye) ================= */}
+        {/* ================= ROW 2 (UPDATED) ================= */}
         <div className="lg:col-span-2 pr-[2px] grid grid-cols-1 md:grid-cols-3 gap-6">
           
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
