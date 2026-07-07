@@ -66,13 +66,21 @@ const handler = NextAuth({
               googleConnected: false,
               createdAt: new Date(),
               lastLogin: new Date(),
-              referralCode: referralCode, // 👈 ADDED THIS
+              referralCode: referralCode,
             },
           });
         } else {
+          // 👇 FIX: EXISTING USER - Check if referralCode is missing, if yes, generate it
+          const updateData: any = { lastLogin: new Date() };
+          
+          if (!existingUser.referralCode) {
+            const newReferralCode = generateReferralCode();
+            updateData.referralCode = newReferralCode;
+          }
+
           await prisma.user.update({
             where: { email: user.email },
-            data: { lastLogin: new Date() },
+            data: updateData,
           });
         }
 
@@ -99,7 +107,7 @@ const handler = NextAuth({
         (token as any).isAdmin = user.email === adminEmail;
       }
 
-      // 👇 Fetch and store referralCode from DB into JWT
+      // Fetch and store referralCode from DB into JWT
       if (user?.email) {
         try {
           const dbUser = await prisma.user.findUnique({
@@ -120,7 +128,7 @@ const handler = NextAuth({
     async session({ session, token }) {
       (session as any).accessToken = (token as any).accessToken;
       (session as any).isAdmin = (token as any).isAdmin;
-      (session as any).referralCode = (token as any).referralCode; // 👈 ADDED THIS
+      (session as any).referralCode = (token as any).referralCode;
       
       return session;
     },
