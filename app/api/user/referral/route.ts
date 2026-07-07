@@ -6,7 +6,7 @@ import { GET as authHandler } from "../../auth/[...nextauth]/route";
 export async function GET() {
   try {
     // 1. Get current logged-in user session
-    const session = await getServerSession(authHandler);
+    const session = await getServerSession(authHandler) as any;
     
     // 2. If not logged in, return error
     if (!session || !session.user?.email) {
