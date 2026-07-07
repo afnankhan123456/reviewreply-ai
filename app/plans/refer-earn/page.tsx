@@ -112,7 +112,7 @@ export default function ReferEarnPage() {
         {/* ================= ROW 1 END ================= */}
 
 
-        {/* ================= ROW 2 (UPDATED: lg:col-span-2 -> lg:col-span-3) ================= */}
+        {/* ================= ROW 2 (3 Cards - 1000px width) ================= */}
         <div className="lg:col-span-3 pr-[2px] grid grid-cols-1 md:grid-cols-3 gap-6">
           
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
@@ -164,8 +164,8 @@ export default function ReferEarnPage() {
         {/* ================= ROW 2 END ================= */}
 
 
-        {/* ================= ROW 3 (Baki sab same) ================= */}
-        <div className="lg:col-span-2 bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+        {/* ================= ROW 3 (Table - UPDATED to col-span-3 to match 3 cards) ================= */}
+        <div className="lg:col-span-3 bg-white rounded-xl border border-gray-100 shadow-sm p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <div className="text-gray-800">📊</div>
