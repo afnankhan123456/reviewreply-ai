@@ -35,8 +35,8 @@ export default function ReferEarnPage() {
 
         {/* ================= ROW 1 ================= */}
         
-        {/* LEFT CARD (Updated: pr-[1px] add kiya taaki horizontal thoda chhota ho) */}
-        <div className="lg:col-span-2 pr-[1px]">
+        {/* LEFT CARD (Updated: pr-[1px] -> pr-[2px]) */}
+        <div className="lg:col-span-2 pr-[2px]">
           <div className="bg-gradient-to-br from-[#6f8dfc] via-[#708bfd] to-[#a48aff] rounded-2xl p-8 text-white relative overflow-hidden shadow-md h-[350px]">
             <h2 className="text-3xl font-semibold mb-2">Referral Link</h2>
             <p className="text-blue-100 text-sm mb-6">Share your link and earn rewards</p>
@@ -64,8 +64,8 @@ export default function ReferEarnPage() {
           </div>
         </div>
 
-        {/* RIGHT SIDEBAR (Updated: -ml-[1px] add kiya taaki horizontal thoda bada ho) */}
-        <div className="lg:col-span-1 -ml-[1px] flex flex-col gap-6 h-full">
+        {/* RIGHT SIDEBAR (Updated: -ml-[1px] -> -ml-[2px]) */}
+        <div className="lg:col-span-1 -ml-[2px] flex flex-col gap-6 h-full">
           
           {/* CARD 1: Withdraw - 163.5px */}
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 h-[163.5px] flex flex-col justify-between">
