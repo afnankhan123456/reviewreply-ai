@@ -59,8 +59,9 @@ export default async function ReferralPage({ params }: PageProps) {
             </p>
           </div>
           
+          {/* 👇 UPDATED: href="/plans" to href="/login" */}
           <a
-            href="/plans"
+            href="/login"
             className="inline-block bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white px-8 py-3 rounded-xl font-medium transition shadow-md mt-4"
           >
             Get Started Now
