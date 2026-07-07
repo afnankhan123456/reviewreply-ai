@@ -35,8 +35,8 @@ export default function ReferEarnPage() {
 
         {/* ================= ROW 1 ================= */}
         
-        {/* LEFT CARD (350px) */}
-        <div className="lg:col-span-2">
+        {/* LEFT CARD (Updated: pr-[1px] add kiya taaki horizontal thoda chhota ho) */}
+        <div className="lg:col-span-2 pr-[1px]">
           <div className="bg-gradient-to-br from-[#6f8dfc] via-[#708bfd] to-[#a48aff] rounded-2xl p-8 text-white relative overflow-hidden shadow-md h-[350px]">
             <h2 className="text-3xl font-semibold mb-2">Referral Link</h2>
             <p className="text-blue-100 text-sm mb-6">Share your link and earn rewards</p>
@@ -64,19 +64,19 @@ export default function ReferEarnPage() {
           </div>
         </div>
 
-        {/* RIGHT SIDEBAR (Exact heights 163.5 & 162.5) */}
-        <div className="lg:col-span-1 flex flex-col gap-6 h-full">
+        {/* RIGHT SIDEBAR (Updated: -ml-[1px] add kiya taaki horizontal thoda bada ho) */}
+        <div className="lg:col-span-1 -ml-[1px] flex flex-col gap-6 h-full">
           
-          {/* CARD 1: Withdraw - 163.5px (Margins kam kiye taaki button andar aa jaye) */}
+          {/* CARD 1: Withdraw - 163.5px */}
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 h-[163.5px] flex flex-col justify-between">
             <div>
-              <div className="flex items-center gap-3 mb-1"> {/* mb-3 se kam kiya */}
+              <div className="flex items-center gap-3 mb-1">
                 <div className="bg-purple-50 p-2 rounded-lg">
                   <Wallet className="w-5 h-5 text-purple-600" />
                 </div>
                 <h3 className="font-semibold text-lg text-gray-800">Withdraw Your Earnings</h3>
               </div>
-              <p className="text-sm text-gray-500 leading-relaxed mb-1"> {/* mb-6 se kam kiya */}
+              <p className="text-sm text-gray-500 leading-relaxed mb-1">
                 Fill out the Google Form below when you want to withdraw your earnings.
               </p>
             </div>
@@ -84,22 +84,22 @@ export default function ReferEarnPage() {
               <button className="w-full bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white py-3 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition">
                 Open Google Form <span className="text-sm">↗</span>
               </button>
-              <p className="text-xs text-gray-400 mt-0"> {/* mt-4 hata diya */}
+              <p className="text-xs text-gray-400 mt-0">
                 We will verify and process your withdrawal request.
               </p>
             </div>
           </div>
 
-          {/* CARD 2: Found a Bug - 162.5px (Margins kam kiye) */}
+          {/* CARD 2: Found a Bug - 162.5px */}
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6 h-[162.5px] flex flex-col justify-between">
             <div>
-              <div className="flex items-center gap-3 mb-1"> {/* mb-3 se kam kiya */}
+              <div className="flex items-center gap-3 mb-1">
                 <div className="bg-purple-50 p-2 rounded-lg">
                   <Bug className="w-5 h-5 text-purple-600" />
                 </div>
                 <h3 className="font-semibold text-lg text-gray-800">Found a Bug?</h3>
               </div>
-              <p className="text-sm text-gray-500 leading-relaxed mb-1"> {/* mb-6 se kam kiya */}
+              <p className="text-sm text-gray-500 leading-relaxed mb-1">
                 Help us improve by reporting any issues you face on the platform.
               </p>
             </div>
