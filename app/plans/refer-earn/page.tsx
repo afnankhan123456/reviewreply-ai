@@ -40,7 +40,7 @@ export default function ReferEarnPage() {
   }, []);
 
   // Construct the full referral link
-  const referralLink = referralCode ? `https://refersync.app/r/${referralCode}` : "";
+  const referralLink = referralCode ? `https://reviewreply-ai-pi.vercel.app/r/${referralCode}` : "";
 
   // Copy link function
   const handleCopy = () => {
