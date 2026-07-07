@@ -54,11 +54,17 @@ export default function ReferEarnPage() {
 
       {/* TOP HEADER */}
       <div className="max-w-7xl mx-auto flex items-center justify-between mb-8">
-        <img 
-          src="https://raw.githubusercontent.com/afnankhan123456/reviewreply-ai/main/public/ai-logo.png" 
-          alt="ReviewReply AI" 
-          className="h-10 w-auto object-contain" 
-        />
+        <div className="flex items-center gap-3">
+          <img 
+            src="https://raw.githubusercontent.com/afnankhan123456/reviewreply-ai/main/public/ai-logo.png" 
+            alt="ReviewReply AI" 
+            className="h-10 w-auto object-contain" 
+          />
+          <div className="flex flex-col">
+            <span className="text-xl font-bold tracking-tight">ReviewReply AI</span>
+            <span className="text-[10px] text-gray-500 -mt-0.5">AI Powered Review Management</span>
+          </div>
+        </div>
         <Link
           href="/plans"
           className="bg-white border border-gray-200 hover:border-indigo-400 px-5 py-2.5 rounded-2xl shadow-sm transition font-medium text-gray-700 w-fit"
