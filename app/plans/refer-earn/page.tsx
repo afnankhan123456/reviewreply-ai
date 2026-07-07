@@ -1,251 +1,216 @@
 "use client";
 
-import Link from "next/link";
+import { 
+  Eye, 
+  MousePointer2, 
+  Users, 
+  Bug, 
+  Copy, 
+  Bell, 
+  UserCircle2, 
+  Calendar 
+} from "lucide-react";
 
 export default function ReferEarnPage() {
   return (
-    <div className="min-h-screen bg-[#f5f7fb] text-black px-6 py-10">
+    <div className="min-h-screen bg-[#fbfbfb] text-black px-6 py-6 font-sans">
 
-      {/* HEADER */}
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-6 mb-10">
-
-        <div>
-          <h1 className="text-4xl font-bold tracking-tight">
-            Refer & Earn
-          </h1>
-
-          <p className="text-gray-500 mt-2 text-lg">
-            Invite friends and earn rewards from every successful signup
-          </p>
+      {/* TOP HEADER */}
+      <div className="max-w-7xl mx-auto flex items-center justify-between mb-8">
+        <div className="flex items-center gap-2">
+          <div className="bg-red-500 text-white p-1.5 rounded-lg font-bold text-xl">R</div>
+          <span className="text-2xl font-bold tracking-tight">ReferSync</span>
         </div>
-
-        <Link
-          href="/plans"
-          className="bg-white border border-gray-200 hover:border-indigo-400 px-5 py-3 rounded-2xl shadow-sm transition font-medium w-fit"
-        >
-          Back
-        </Link>
-
+        <div className="flex items-center gap-6">
+          <div className="relative">
+            <Bell className="w-6 h-6 text-gray-700" />
+            <span className="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-[#fbfbfb]"></span>
+          </div>
+          <div className="w-9 h-9 bg-red-400 rounded-full flex items-center justify-center text-white font-bold">
+            R
+          </div>
+        </div>
       </div>
 
-      {/* MAIN CONTAINER */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 xl:grid-cols-3 gap-8">
+      {/* MAIN GRID CONTAINER */}
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        {/* LEFT SECTION */}
-        <div className="xl:col-span-2 bg-white rounded-3xl border border-gray-200 shadow-sm p-8">
+        {/* LEFT COLUMN (2/3 Width) */}
+        <div className="lg:col-span-2 flex flex-col gap-6">
 
-          {/* TOP */}
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-8">
+          {/* 1. REFERRAL LINK CARD (GRADIENT BLUE) */}
+          <div className="bg-gradient-to-br from-[#6f8dfc] via-[#708bfd] to-[#a48aff] rounded-2xl p-8 text-white relative overflow-hidden shadow-md">
+            <h2 className="text-3xl font-semibold mb-2">Referral Link</h2>
+            <p className="text-blue-100 text-sm mb-8">Share your link and earn rewards</p>
 
-            <div>
-
-              <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-white text-4xl font-bold shadow-lg">
-                ₹
-              </div>
-
-              <h2 className="text-3xl font-bold mt-6">
-                Earn ₹100 Per Referral
-              </h2>
-
-              <p className="text-gray-500 mt-3 max-w-xl leading-7">
-                Share your referral link with friends and earn rewards every time someone joins ReviewReply AI using your link.
-              </p>
-
-            </div>
-
-            {/* MINI STATS */}
-            <div className="grid grid-cols-2 gap-4 w-full md:w-[320px]">
-
-              <div className="bg-[#f7f8fc] border border-gray-200 rounded-2xl p-5">
-
-                <p className="text-gray-500 text-sm">
-                  Referrals
-                </p>
-
-                <h3 className="text-3xl font-bold mt-2">
-                  0
-                </h3>
-
-              </div>
-
-              <div className="bg-[#f7f8fc] border border-gray-200 rounded-2xl p-5">
-
-                <p className="text-gray-500 text-sm">
-                  Earnings
-                </p>
-
-                <h3 className="text-3xl font-bold text-green-600 mt-2">
-                  ₹0
-                </h3>
-
-              </div>
-
-              <div className="bg-[#f7f8fc] border border-gray-200 rounded-2xl p-5">
-
-                <p className="text-gray-500 text-sm">
-                  Active Users
-                </p>
-
-                <h3 className="text-3xl font-bold text-indigo-600 mt-2">
-                  0
-                </h3>
-
-              </div>
-
-              <div className="bg-gradient-to-br from-indigo-500 to-violet-500 rounded-2xl p-5 text-white">
-
-                <p className="text-sm opacity-80">
-                  Reward Rate
-                </p>
-
-                <h3 className="text-3xl font-bold mt-2">
-                  ₹100
-                </h3>
-
-              </div>
-
-            </div>
-
-          </div>
-
-          {/* REFERRAL BOX */}
-          <div className="mt-10">
-
-            <label className="text-sm text-gray-500 mb-3 block font-medium">
-              Your Referral Link
-            </label>
-
-            <div className="flex flex-col md:flex-row gap-4">
-
+            <div className="flex flex-col md:flex-row gap-0 bg-white rounded-lg p-1.5 mb-8 shadow-md max-w-lg">
               <input
                 type="text"
-                value="https://reviewreply-ai.vercel.app/ref/afnan"
+                defaultValue="https://refersync.app/r/RAHUL123"
                 readOnly
-                className="flex-1 bg-[#f7f8fc] border border-gray-200 rounded-2xl px-5 py-4 text-gray-700 outline-none"
+                className="flex-1 bg-transparent text-gray-800 px-4 py-3 outline-none text-sm font-medium"
               />
-
-              <button className="bg-gradient-to-r from-indigo-500 to-violet-500 hover:opacity-90 px-8 py-4 rounded-2xl font-semibold text-white transition shadow-lg">
-                Copy Link
+              <button className="bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white px-5 py-3 rounded-md flex items-center justify-center gap-2 text-sm font-medium transition">
+                <Copy className="w-4 h-4" /> Copy Link
               </button>
+            </div>
 
+            <div className="flex items-center gap-4">
+              <span className="text-blue-100 text-xs font-medium mr-2">Share via</span>
+              {/* Social Icons */}
+              <div className="w-10 h-10 bg-[#25d366] rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">W</div>
+              <div className="w-10 h-10 bg-[#0088cc] rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">T</div>
+              <div className="w-10 h-10 bg-[#1877f2] rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">f</div>
+              <div className="w-10 h-10 bg-[#1da1f2] rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">Tw</div>
+              <div className="w-10 h-10 bg-white text-gray-700 rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">✉</div>
+            </div>
+          </div>
+
+          {/* 2. MIDDLE STATS ROW (3 CARDS) */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            
+            {/* Card 1: Impression */}
+            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="bg-blue-50 p-2 rounded-lg">
+                  <Eye className="w-5 h-5 text-blue-600" />
+                </div>
+                <span className="text-sm text-gray-500">Impression</span>
+              </div>
+              <div className="flex items-end justify-between">
+                <span className="text-2xl font-bold">12,450</span>
+                {/* Blue Sparkline */}
+                <svg viewBox="0 0 100 30" className="w-20 h-8">
+                  <path d="M0,25 C20,20 30,25 50,22 C70,18 80,15 100,5" fill="none" stroke="#3b82f6" strokeWidth="2" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Card 2: Click Rate */}
+            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="bg-orange-50 p-2 rounded-lg">
+                  <MousePointer2 className="w-5 h-5 text-orange-500" />
+                </div>
+                <span className="text-sm text-gray-500">Click Rate</span>
+              </div>
+              <div className="flex items-end justify-between">
+                <span className="text-2xl font-bold">8.45%</span>
+                {/* Orange Sparkline */}
+                <svg viewBox="0 0 100 30" className="w-20 h-8">
+                  <path d="M0,25 C20,25 30,15 50,18 C70,20 80,10 100,12" fill="none" stroke="#f97316" strokeWidth="2" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Card 3: Total Subscription */}
+            <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="bg-green-50 p-2 rounded-lg">
+                  <Users className="w-5 h-5 text-green-600" />
+                </div>
+                <span className="text-sm text-gray-500">Total Subscription</span>
+              </div>
+              <div className="flex items-end justify-between">
+                <span className="text-2xl font-bold">245</span>
+                {/* Green Sparkline */}
+                <svg viewBox="0 0 100 30" className="w-20 h-8">
+                  <path d="M0,20 C20,22 30,18 50,20 C70,25 80,15 100,5" fill="none" stroke="#22c55e" strokeWidth="2" />
+                </svg>
+              </div>
             </div>
 
           </div>
 
-          {/* TABLE */}
-          <div className="mt-12">
-
-            <div className="flex items-center justify-between mb-5">
-
-              <h3 className="text-2xl font-bold">
-                Referral Performance
-              </h3>
-
-              <button className="text-indigo-600 font-medium">
-                View All
+          {/* 3. PERFORMANCE OVERVIEW TABLE */}
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <div className="text-gray-800">📊</div> {/* Or use a chart icon */}
+                <h3 className="text-lg font-bold text-gray-800">Performance Overview</h3>
+              </div>
+              <button className="border border-gray-200 bg-white rounded-lg px-4 py-2 text-sm font-medium text-gray-600 flex items-center gap-2">
+                <Calendar className="w-4 h-4" /> This Month <span className="text-gray-400 text-xs">▼</span>
               </button>
-
             </div>
 
-            <div className="overflow-x-auto border border-gray-200 rounded-3xl">
-
+            <div className="overflow-x-auto">
               <table className="w-full">
-
-                <thead className="bg-[#f7f8fc]">
-
-                  <tr className="text-left">
-
-                    <th className="px-6 py-4 text-sm font-semibold text-gray-500">
-                      User
+                <thead>
+                  <tr>
+                    <th className="bg-blue-50/80 text-blue-600 text-left p-3 text-sm font-medium rounded-tl-lg border-b border-gray-100">
+                      <div className="flex items-center gap-2"><Eye className="w-4 h-4" /> Impression</div>
                     </th>
-
-                    <th className="px-6 py-4 text-sm font-semibold text-gray-500">
-                      Status
+                    <th className="bg-orange-50/80 text-orange-600 text-left p-3 text-sm font-medium border-b border-gray-100">
+                      <div className="flex items-center gap-2"><MousePointer2 className="w-4 h-4" /> Click Rate</div>
                     </th>
-
-                    <th className="px-6 py-4 text-sm font-semibold text-gray-500">
-                      Earnings
+                    <th className="bg-green-50/80 text-green-600 text-left p-3 text-sm font-medium rounded-tr-lg border-b border-gray-100">
+                      <div className="flex items-center gap-2"><Users className="w-4 h-4" /> Total Subscription</div>
                     </th>
-
-                    <th className="px-6 py-4 text-sm font-semibold text-gray-500">
-                      Joined
-                    </th>
-
                   </tr>
-
                 </thead>
-
-                <tbody>
-
-                  <tr className="border-t border-gray-100">
-
-                    <td className="px-6 py-5">
-                      No referrals yet
-                    </td>
-
-                    <td className="px-6 py-5 text-gray-400">
-                      —
-                    </td>
-
-                    <td className="px-6 py-5 text-gray-400">
-                      —
-                    </td>
-
-                    <td className="px-6 py-5 text-gray-400">
-                      —
-                    </td>
-
-                  </tr>
-
+                <tbody className="bg-white">
+                  {[
+                    [12450, "8.45%", 245],
+                    [9870, "7.32%", 187],
+                    [7650, "6.91%", 154],
+                    [6320, "5.48%", 123],
+                    [5210, "4.99%", 98],
+                  ].map((row, idx) => (
+                    <tr key={idx} className={idx !== 4 ? "border-b border-gray-100" : ""}>
+                      <td className="p-4 text-sm text-gray-600">{row[0].toLocaleString()}</td>
+                      <td className="p-4 text-sm text-gray-600">{row[1]}</td>
+                      <td className="p-4 text-sm text-gray-600">{row[2]}</td>
+                    </tr>
+                  ))}
                 </tbody>
-
               </table>
-
             </div>
-
           </div>
 
         </div>
 
-        {/* RIGHT SIDEBAR */}
-        <div className="space-y-6">
+        {/* RIGHT COLUMN (1/3 Width) */}
+        <div className="lg:col-span-1 flex flex-col gap-6">
 
-          <div className="bg-white border border-gray-200 rounded-3xl p-7 shadow-sm">
-
-            <h3 className="text-2xl font-bold">
-              Withdraw Earnings
-            </h3>
-
-            <p className="text-gray-500 mt-3 leading-7">
-              Withdraw your referral rewards directly to your account once you reach minimum payout.
+          {/* 1. WITHDRAW YOUR EARNINGS */}
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="bg-purple-50 p-2 rounded-lg">
+                <div className="w-5 h-5 border-2 border-purple-600 rounded-md bg-white"></div> {/* Simple box svg style */}
+              </div>
+              <h3 className="font-semibold text-lg text-gray-800">Withdraw Your Earnings</h3>
+            </div>
+            <p className="text-sm text-gray-500 leading-relaxed mb-6">
+              Fill out the Google Form below when you want to withdraw your earnings.
             </p>
-
-            <button className="w-full mt-6 bg-black text-white py-4 rounded-2xl font-semibold hover:opacity-90 transition">
-              Withdraw Now
+            <button className="w-full bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white py-3 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition">
+              Open Google Form <span className="text-sm">↗</span>
             </button>
-
+            <p className="text-xs text-gray-400 mt-4">
+              We will verify and process your withdrawal request.
+            </p>
           </div>
 
-          <div className="bg-gradient-to-br from-indigo-500 to-violet-500 rounded-3xl p-7 text-white shadow-lg">
-
-            <p className="opacity-80">
-              Bonus Program
+          {/* 2. FOUND A BUG? */}
+          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-6">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="bg-purple-50 p-2 rounded-lg">
+                <Bug className="w-5 h-5 text-purple-600" />
+              </div>
+              <h3 className="font-semibold text-lg text-gray-800">Found a Bug?</h3>
+            </div>
+            <p className="text-sm text-gray-500 leading-relaxed mb-6">
+              Help us improve by reporting any issues you face on the platform.
             </p>
-
-            <h3 className="text-3xl font-bold mt-3 leading-tight">
-              Invite 10 friends and unlock bonus rewards
-            </h3>
-
-            <button className="mt-6 bg-white text-black px-6 py-3 rounded-2xl font-semibold">
-              Learn More
+            <button className="w-full bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white py-3 rounded-lg font-medium text-sm flex items-center justify-between px-6 transition">
+              Report Bug <span className="text-lg">›</span>
             </button>
-
           </div>
 
         </div>
 
       </div>
-
     </div>
   );
 }
