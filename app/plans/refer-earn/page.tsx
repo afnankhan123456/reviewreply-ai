@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { 
   Eye, 
@@ -12,6 +13,42 @@ import {
 } from "lucide-react";
 
 export default function ReferEarnPage() {
+  const [referralCode, setReferralCode] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch referral code from API on page load
+  useEffect(() => {
+    async function fetchReferralCode() {
+      try {
+        const res = await fetch("/api/user/referral");
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          setReferralCode(data.referralCode);
+        } else {
+          setError(data.error || "Failed to load referral code");
+        }
+      } catch (err) {
+        setError("Network error");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchReferralCode();
+  }, []);
+
+  // Construct the full referral link
+  const referralLink = referralCode ? `https://refersync.app/r/${referralCode}` : "";
+
+  // Copy link function
+  const handleCopy = () => {
+    if (referralLink) {
+      navigator.clipboard.writeText(referralLink);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#fbfbfb] text-black px-6 py-6 font-sans">
 
@@ -51,11 +88,15 @@ export default function ReferEarnPage() {
               <div className="flex flex-col md:flex-row gap-0 bg-white rounded-lg p-1.5 mb-6 shadow-md max-w-lg">
                 <input
                   type="text"
-                  defaultValue="https://refersync.app/r/RAHUL123"
+                  value={referralLink}
                   readOnly
                   className="flex-1 bg-transparent text-gray-800 px-4 py-3 outline-none text-sm font-medium"
+                  placeholder={loading ? "Loading..." : "No referral link available"}
                 />
-                <button className="bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white px-5 py-3 rounded-md flex items-center justify-center gap-2 text-sm font-medium transition">
+                <button 
+                  onClick={handleCopy}
+                  className="bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white px-5 py-3 rounded-md flex items-center justify-center gap-2 text-sm font-medium transition"
+                >
                   <Copy className="w-4 h-4" /> Copy Link
                 </button>
               </div>
