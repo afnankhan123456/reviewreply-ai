@@ -167,7 +167,7 @@ export default function ReferEarnPage() {
         {/* ================= ROW 1 END ================= */}
 
 
-        {/* ================= ROW 2 (3 Cards - DATA REMOVED) ================= */}
+        {/* ================= ROW 2 (3 Cards - DATA REMOVED + GRAPHS REMOVED) ================= */}
         <div className="lg:col-span-3 pr-[2px] grid grid-cols-1 md:grid-cols-3 gap-6">
           
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
@@ -179,9 +179,6 @@ export default function ReferEarnPage() {
             </div>
             <div className="flex items-end justify-between">
               <span className="text-2xl font-bold"></span>
-              <svg viewBox="0 0 100 30" className="w-20 h-8">
-                <path d="M0,25 C20,20 30,25 50,22 C70,18 80,15 100,5" fill="none" stroke="#3b82f6" strokeWidth="2" />
-              </svg>
             </div>
           </div>
 
@@ -194,9 +191,6 @@ export default function ReferEarnPage() {
             </div>
             <div className="flex items-end justify-between">
               <span className="text-2xl font-bold"></span>
-              <svg viewBox="0 0 100 30" className="w-20 h-8">
-                <path d="M0,25 C20,25 30,15 50,18 C70,20 80,10 100,12" fill="none" stroke="#f97316" strokeWidth="2" />
-              </svg>
             </div>
           </div>
 
@@ -209,9 +203,6 @@ export default function ReferEarnPage() {
             </div>
             <div className="flex items-end justify-between">
               <span className="text-2xl font-bold"></span>
-              <svg viewBox="0 0 100 30" className="w-20 h-8">
-                <path d="M0,20 C20,22 30,18 50,20 C70,25 80,15 100,5" fill="none" stroke="#22c55e" strokeWidth="2" />
-              </svg>
             </div>
           </div>
 
