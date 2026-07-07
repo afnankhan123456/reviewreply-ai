@@ -35,13 +35,14 @@ export default function ReferEarnPage() {
 
         {/* ================= ROW 1 ================= */}
         
-        {/* 1. LEFT CARD WRAPPER - FIX: yahan 'h-full' add kiya hai taaki right card ke barabar stretch ho */}
-        <div className="lg:col-span-2 h-full">
-          <div className="bg-gradient-to-br from-[#6f8dfc] via-[#708bfd] to-[#a48aff] rounded-2xl p-8 text-white relative overflow-hidden shadow-md h-full">
+        {/* 1. LEFT CARD WRAPPER */}
+        <div className="lg:col-span-2">
+          {/* UPDATED: Height fixed to 350px */}
+          <div className="bg-gradient-to-br from-[#6f8dfc] via-[#708bfd] to-[#a48aff] rounded-2xl p-8 text-white relative overflow-hidden shadow-md h-[350px]">
             <h2 className="text-3xl font-semibold mb-2">Referral Link</h2>
-            <p className="text-blue-100 text-sm mb-8">Share your link and earn rewards</p>
+            <p className="text-blue-100 text-sm mb-6">Share your link and earn rewards</p>
 
-            <div className="flex flex-col md:flex-row gap-0 bg-white rounded-lg p-1.5 mb-8 shadow-md max-w-lg">
+            <div className="flex flex-col md:flex-row gap-0 bg-white rounded-lg p-1.5 mb-6 shadow-md max-w-lg">
               <input
                 type="text"
                 defaultValue="https://refersync.app/r/RAHUL123"
