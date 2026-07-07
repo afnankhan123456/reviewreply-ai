@@ -74,11 +74,11 @@ export default function ReferEarnPage() {
       </div>
 
       {/* MAIN GRID */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-[auto_auto_auto] gap-6">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-[auto_auto] gap-6">
 
         {/* ================= ROW 1 ================= */}
         
-        {/* LEFT CARD (UPDATED: Professional Glow Effect) */}
+        {/* LEFT CARD */}
         <div className="lg:col-span-2 pr-[2px]">
           <div className="relative bg-gradient-to-br from-[#4f46e5] via-[#6f8dfc] to-[#a48aff] rounded-2xl p-8 text-white overflow-hidden shadow-md h-[350px]">
             
@@ -105,15 +105,6 @@ export default function ReferEarnPage() {
                 >
                   <Copy className="w-4 h-4" /> Copy Link
                 </button>
-              </div>
-
-              <div className="flex items-center gap-4">
-                <span className="text-blue-100 text-xs font-medium mr-2">Share via</span>
-                <div className="w-10 h-10 bg-[#25d366] rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">W</div>
-                <div className="w-10 h-10 bg-[#0088cc] rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">T</div>
-                <div className="w-10 h-10 bg-[#1877f2] rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">f</div>
-                <div className="w-10 h-10 bg-[#1da1f2] rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">Tw</div>
-                <div className="w-10 h-10 bg-white text-gray-700 rounded-full flex items-center justify-center cursor-pointer hover:scale-105 transition">✉</div>
               </div>
             </div>
           </div>
@@ -167,50 +158,7 @@ export default function ReferEarnPage() {
         {/* ================= ROW 1 END ================= */}
 
 
-        {/* ================= ROW 2 (3 Cards - DATA REMOVED + GRAPHS REMOVED) ================= */}
-        <div className="lg:col-span-3 pr-[2px] grid grid-cols-1 md:grid-cols-3 gap-6">
-          
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="bg-blue-50 p-2 rounded-lg">
-                <Eye className="w-5 h-5 text-blue-600" />
-              </div>
-              <span className="text-sm text-gray-500">Impression</span>
-            </div>
-            <div className="flex items-end justify-between">
-              <span className="text-2xl font-bold"></span>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="bg-orange-50 p-2 rounded-lg">
-                <MousePointer2 className="w-5 h-5 text-orange-500" />
-              </div>
-              <span className="text-sm text-gray-500">Click Rate</span>
-            </div>
-            <div className="flex items-end justify-between">
-              <span className="text-2xl font-bold"></span>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="bg-green-50 p-2 rounded-lg">
-                <Users className="w-5 h-5 text-green-600" />
-              </div>
-              <span className="text-sm text-gray-500">Total Subscription</span>
-            </div>
-            <div className="flex items-end justify-between">
-              <span className="text-2xl font-bold"></span>
-            </div>
-          </div>
-
-        </div>
-        {/* ================= ROW 2 END ================= */}
-
-
-        {/* ================= ROW 3 (Table - DATA REMOVED) ================= */}
+        {/* ================= ROW 2 (TABLE ONLY) ================= */}
         <div className="lg:col-span-3 bg-white rounded-xl border border-gray-100 shadow-sm p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
@@ -248,7 +196,7 @@ export default function ReferEarnPage() {
             </table>
           </div>
         </div>
-        {/* ================= ROW 3 END ================= */}
+        {/* ================= ROW 2 END ================= */}
 
       </div>
     </div>
