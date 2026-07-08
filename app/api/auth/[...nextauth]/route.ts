@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { prisma } from "../../../../lib/prisma";
+import { cookies } from "next/headers";
 
 export const runtime = "nodejs";
 
@@ -29,9 +30,9 @@ const handler = NextAuth({
         if (!user.email) return false;
         const existingUser = await prisma.user.findUnique({ where: { email: user.email } });
 
-        // ✅ Safe cookie read using headers()
-        const cookieHeader = (await import('next/headers')).headers().get('cookie') || '';
-        const referralCodeFromCookie = cookieHeader.match(/referralCode=([^;]+)/)?.[1] || null;
+        // ✅ Correct way to read cookie in NextAuth callback
+        const cookieStore = await cookies();
+        const referralCodeFromCookie = cookieStore.get("referralCode")?.value || null;
 
         if (!existingUser) {
           const referralCode = generateReferralCode();
