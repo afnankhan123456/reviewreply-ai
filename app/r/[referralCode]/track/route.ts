@@ -42,8 +42,10 @@ export async function GET(
       },
     });
 
-    // 4. ✅ FIX: Redirect to the actual referral landing page correctly
-    return NextResponse.redirect(`/r/${referralCode}`);
+    // 4. ✅ FIXED: Use absolute URL for redirect
+    return NextResponse.redirect(
+      new URL(`/r/${referralCode}`, request.url).toString()
+    );
 
   } catch (error) {
     console.error("Error tracking referral click:", error);
