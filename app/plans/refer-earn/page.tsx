@@ -16,6 +16,14 @@ export default function ReferEarnPage() {
   const [referralCode, setReferralCode] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // New state for stats
+  const [stats, setStats] = useState({
+    impressions: 0,
+    clicks: 0,
+    subscriptions: 0
+  });
+  const [statsLoading, setStatsLoading] = useState(true);
 
   // Fetch referral code from API on page load
   useEffect(() => {
@@ -37,6 +45,30 @@ export default function ReferEarnPage() {
     }
 
     fetchReferralCode();
+  }, []);
+
+  // Fetch stats from API
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const res = await fetch("/api/user/stats/monthly");
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          setStats({
+            impressions: data.impressions || 0,
+            clicks: data.clicks || 0,
+            subscriptions: data.subscriptions || 0
+          });
+        }
+      } catch (err) {
+        console.error("Error fetching stats:", err);
+      } finally {
+        setStatsLoading(false);
+      }
+    }
+
+    fetchStats();
   }, []);
 
   // Construct the full referral link
@@ -185,11 +217,13 @@ export default function ReferEarnPage() {
                 </tr>
               </thead>
               <tbody className="bg-white">
-                {[1, 2, 3, 4, 5].map((_, idx) => (
-                  <tr key={idx} className={idx !== 4 ? "border-b border-gray-100" : ""}>
-                    <td className="p-4 text-sm text-gray-600"></td>
-                    <td className="p-4 text-sm text-gray-600"></td>
-                    <td className="p-4 text-sm text-gray-600"></td>
+                {[
+                  [stats.impressions, stats.clicks, stats.subscriptions]
+                ].map((row, idx) => (
+                  <tr key={idx}>
+                    <td className="p-4 text-sm text-gray-600">{statsLoading ? "Loading..." : row[0].toLocaleString()}</td>
+                    <td className="p-4 text-sm text-gray-600">{statsLoading ? "Loading..." : row[1].toLocaleString()}</td>
+                    <td className="p-4 text-sm text-gray-600">{statsLoading ? "Loading..." : row[2].toLocaleString()}</td>
                   </tr>
                 ))}
               </tbody>
