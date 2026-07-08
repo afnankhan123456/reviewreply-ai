@@ -139,3 +139,27 @@ model BugReport {
   status      String   @default("Open")   // new field: "Open" or "Resolved"
   createdAt   DateTime @default(now())
 }
+
+// ============================================================
+// 👇 NEW MODELS ADDED (Kuch remove nahi kiya, sirf ye add kiye)
+// ============================================================
+
+model ReferralClick {
+  id             String   @id @default(cuid())
+  referrerEmail  String   // Jis user ka link tha
+  clickerEmail   String?  // Kisne click kiya (optional, agar login hai toh)
+  clickedAt      DateTime @default(now())
+
+  // Relation to User (optional, just for reference)
+  user           User?    @relation(fields: [referrerEmail], references: [email])
+}
+
+model ReferralSignup {
+  id             String   @id @default(cuid())
+  referrerEmail  String   // Jis user ka link tha
+  signupEmail    String   // Kisne signup kiya
+  signupDate     DateTime @default(now())
+
+  // Relation to User (optional, just for reference)
+  user           User?    @relation(fields: [referrerEmail], references: [email])
+}
