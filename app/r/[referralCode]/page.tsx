@@ -39,6 +39,9 @@ export default async function ReferralPage({ params }: PageProps) {
       );
     }
 
+    // ✅ TrackingWrapper ko return ke bahar rakho
+    <TrackingWrapper referralCode={referralCode} />
+
     // Success - Clean Professional Background
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 relative overflow-hidden">
@@ -71,9 +74,6 @@ export default async function ReferralPage({ params }: PageProps) {
             Made by Afnan Khan
           </p>
         </div>
-
-        {/* ✅ TrackingWrapper handles tracking + cookie setting */}
-        <TrackingWrapper referralCode={referralCode} />
       </div>
     );
   } catch (error) {
