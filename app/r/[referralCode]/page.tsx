@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import { prisma } from "../../../lib/prisma";
-import { useEffect } from "react"; // ✅ Import added
+import TrackingWrapper from "./TrackingWrapper"; // ✅ Import client component
 
 interface PageProps {
   params: Promise<{
@@ -11,13 +11,6 @@ interface PageProps {
 export default async function ReferralPage({ params }: PageProps) {
   // Await params since Next.js 15 with async dynamic routes
   const { referralCode } = await params;
-
-  // ✅ TRACKING FETCH (Client side call)
-  useEffect(() => {
-    if (referralCode) {
-      fetch(`/r/${referralCode}/track`);
-    }
-  }, [referralCode]);
 
   if (!referralCode) {
     notFound();
@@ -78,6 +71,9 @@ export default async function ReferralPage({ params }: PageProps) {
             Made by Afnan Khan
           </p>
         </div>
+
+        {/* ✅ TrackingWrapper tracks the click without breaking the server component */}
+        <TrackingWrapper referralCode={referralCode} />
       </div>
     );
   } catch (error) {
