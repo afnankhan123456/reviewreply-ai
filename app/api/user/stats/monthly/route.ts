@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { prisma } from "../../../lib/prisma"; // 👈 FIXED PATH (4 levels -> 3 levels)
+import { prisma } from "../../../../lib/prisma"; // 👈 EXACT 4 LEVELS
 import { GET as authHandler } from "../../../auth/[...nextauth]/route";
 
 export async function GET() {
@@ -28,7 +28,6 @@ export async function GET() {
     });
 
     // 4. Calculate Click Rate
-    // (impressions / total signed up users) * 100
     const clickRate = impressions > 0 
       ? ((subscriptions / impressions) * 100).toFixed(2) 
       : 0;
@@ -36,7 +35,7 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       impressions: impressions,
-      clicks: impressions, // same as impressions for now
+      clicks: impressions,
       subscriptions: subscriptions,
       clickRate: parseFloat(clickRate as string),
     });
