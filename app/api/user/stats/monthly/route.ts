@@ -35,7 +35,7 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       impressions: impressions,
-      clicks: impressions,
+      clicks: subscriptions, // ✅ FIXED: Clicks should equal signups, not impressions
       subscriptions: subscriptions,
       clickRate: parseFloat(clickRate as string),
     });
