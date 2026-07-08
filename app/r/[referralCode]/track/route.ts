@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "../../../../lib/prisma";
+import { prisma } from "@/lib/prisma"; // ✅ Using @ alias
 import { getServerSession } from "next-auth";
 import { GET as authHandler } from "../../../api/auth/[...nextauth]/route";
 
