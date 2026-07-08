@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { prisma } from "../../../../lib/prisma";
+import { cookies } from "next/headers"; // ✅ Cookie import
 
 export const runtime = "nodejs";
 
@@ -48,6 +49,10 @@ const handler = NextAuth({
           where: { email: user.email },
         });
 
+        // ✅ Read referralCode from cookie (set by landing page)
+        const cookieStore = await cookies();
+        const referralCodeFromCookie = cookieStore.get("referral_code")?.value;
+
         if (!existingUser) {
           // NEW USER: Generate unique referral code
           const referralCode = generateReferralCode();
@@ -70,16 +75,15 @@ const handler = NextAuth({
             },
           });
 
-          // ✅ FIXED: Set referrerEmail to null instead of user.email
-          // (Actual referrer email will be added when referral tracking is implemented)
+          // ✅ ReferralSignup entry with correct referrerEmail from cookie
           await prisma.referralSignup.create({
             data: {
               signupEmail: user.email,
-              referrerEmail: null, // Temporarily null to avoid wrong count
+              referrerEmail: referralCodeFromCookie || null,
             },
           });
         } else {
-          // 👇 FIX: EXISTING USER - Check if referralCode is missing, if yes, generate it
+          // EXISTING USER: Update lastLogin and generate code if missing
           const updateData: any = { lastLogin: new Date() };
           
           if (!existingUser.referralCode) {
@@ -91,6 +95,16 @@ const handler = NextAuth({
             where: { email: user.email },
             data: updateData,
           });
+
+          // ✅ Existing user login: also track in ReferralSignup if cookie exists
+          if (referralCodeFromCookie) {
+            await prisma.referralSignup.create({
+              data: {
+                signupEmail: user.email,
+                referrerEmail: referralCodeFromCookie,
+              },
+            });
+          }
         }
 
         return true;
