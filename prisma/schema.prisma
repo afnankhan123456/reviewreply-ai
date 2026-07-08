@@ -42,7 +42,6 @@ model User {
   createdAt           DateTime            @default(now())
   lastLogin           DateTime            @default(now())
 
-  // 👇 NEW FIELD ADDED (Kuch remove nahi kiya)
   referralCode        String              @unique
 
   businessLocations   BusinessLocation[]
@@ -51,6 +50,10 @@ model User {
   reports             Report[]            // relation to reports
   exports             Export[]            // relation to exports
   bugReports          BugReport[]         // relation to bug reports
+
+  // 👇 ADDED THESE 2 LINES (Relation fix for ReferralClick & ReferralSignup)
+  referralClicks      ReferralClick[]
+  referralSignups     ReferralSignup[]
 }
 
 model BusinessLocation {
@@ -141,25 +144,23 @@ model BugReport {
 }
 
 // ============================================================
-// 👇 NEW MODELS ADDED (Kuch remove nahi kiya, sirf ye add kiye)
+// 👇 NEW MODELS ADDED
 // ============================================================
 
 model ReferralClick {
   id             String   @id @default(cuid())
-  referrerEmail  String   // Jis user ka link tha
-  clickerEmail   String?  // Kisne click kiya (optional, agar login hai toh)
+  referrerEmail  String
+  clickerEmail   String?
   clickedAt      DateTime @default(now())
 
-  // Relation to User (optional, just for reference)
   user           User?    @relation(fields: [referrerEmail], references: [email])
 }
 
 model ReferralSignup {
   id             String   @id @default(cuid())
-  referrerEmail  String   // Jis user ka link tha
-  signupEmail    String   // Kisne signup kiya
+  referrerEmail  String
+  signupEmail    String
   signupDate     DateTime @default(now())
 
-  // Relation to User (optional, just for reference)
   user           User?    @relation(fields: [referrerEmail], references: [email])
 }
