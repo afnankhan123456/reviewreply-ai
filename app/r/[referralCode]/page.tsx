@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import { prisma } from "../../../lib/prisma";
-import { cookies } from "next/headers"; // ✅ Cookie access
 import TrackingWrapper from "./TrackingWrapper";
 
 interface PageProps {
@@ -16,13 +15,6 @@ export default async function ReferralPage({ params }: PageProps) {
   if (!referralCode) {
     notFound();
   }
-
-  // ✅ Set cookie so NextAuth can read it during signIn
-  const cookieStore = await cookies();
-  cookieStore.set("referral_code", referralCode, {
-    path: "/",
-    maxAge: 60 * 60 * 24, // 1 day
-  });
 
   try {
     // Find the user who owns this referral code
@@ -80,7 +72,7 @@ export default async function ReferralPage({ params }: PageProps) {
           </p>
         </div>
 
-        {/* ✅ TrackingWrapper tracks the click without breaking the server component */}
+        {/* ✅ TrackingWrapper handles tracking + cookie setting */}
         <TrackingWrapper referralCode={referralCode} />
       </div>
     );
