@@ -7,6 +7,10 @@
     {
       "path": "/api/reset-monthly-limit",
       "schedule": "0 0 1 * *"
+    },
+    {
+      "path": "/api/keep-alive",
+      "schedule": "*/5 * * * *"
     }
   ]
 }
