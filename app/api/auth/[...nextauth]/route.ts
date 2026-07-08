@@ -1,7 +1,6 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { prisma } from "../../../../lib/prisma";
-import { cookies } from "next/headers"; // ✅ Cookie import
 
 export const runtime = "nodejs";
 
@@ -39,7 +38,7 @@ const handler = NextAuth({
   },
 
   callbacks: {
-    async signIn({ user }) {
+    async signIn({ user, req }) {
       try {
         if (!user.email) {
           return false;
@@ -49,9 +48,8 @@ const handler = NextAuth({
           where: { email: user.email },
         });
 
-        // ✅ Read referralCode from cookie (set by landing page)
-        const cookieStore = await cookies();
-        const referralCodeFromCookie = cookieStore.get("referral_code")?.value;
+        // ✅ Read referralCode from request cookies (bypasses NextAuth callback restriction)
+        const referralCodeFromCookie = req?.cookies?.get("referral_code")?.value || null;
 
         if (!existingUser) {
           // NEW USER: Generate unique referral code
@@ -79,7 +77,7 @@ const handler = NextAuth({
           await prisma.referralSignup.create({
             data: {
               signupEmail: user.email,
-              referrerEmail: referralCodeFromCookie || null,
+              referrerEmail: referralCodeFromCookie,
             },
           });
         } else {
