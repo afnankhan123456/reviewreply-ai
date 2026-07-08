@@ -69,6 +69,14 @@ const handler = NextAuth({
               referralCode: referralCode,
             },
           });
+
+          // ✅ NEW: Record this signup in ReferralSignup table
+          await prisma.referralSignup.create({
+            data: {
+              signupEmail: user.email,
+              referrerEmail: user.email, // Placeholder - will be updated when referral logic is fully integrated
+            },
+          });
         } else {
           // 👇 FIX: EXISTING USER - Check if referralCode is missing, if yes, generate it
           const updateData: any = { lastLogin: new Date() };
