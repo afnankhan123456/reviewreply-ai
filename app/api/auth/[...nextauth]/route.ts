@@ -1,7 +1,6 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { prisma } from "../../../../lib/prisma";
-import { cookies } from "next/headers";
 
 export const runtime = "nodejs";
 
@@ -39,7 +38,7 @@ const handler = NextAuth({
   },
 
   callbacks: {
-    async signIn({ user }) {
+    async signIn({ user, req }) {
       try {
         if (!user.email) {
           return false;
@@ -49,9 +48,8 @@ const handler = NextAuth({
           where: { email: user.email },
         });
 
-        // ✅ Server-safe cookie read
-        const cookieStore = await cookies();
-        const referralCodeFromCookie = cookieStore.get("referral_code")?.value || null;
+        // ✅ Read referral_code from req.cookies (No TypeScript error, No crash)
+        const referralCodeFromCookie = req?.cookies?.referral_code || null;
 
         if (!existingUser) {
           // NEW USER: Generate unique referral code
@@ -75,7 +73,7 @@ const handler = NextAuth({
             },
           });
 
-          // ✅ ReferralSignup with correct referrerEmail
+          // ✅ ReferralSignup entry with correct referrerEmail
           await prisma.referralSignup.create({
             data: {
               signupEmail: user.email,
@@ -96,7 +94,7 @@ const handler = NextAuth({
             data: updateData,
           });
 
-          // ✅ Existing user: also track if cookie exists
+          // ✅ Existing user login: also track in ReferralSignup if cookie exists
           if (referralCodeFromCookie) {
             await prisma.referralSignup.create({
               data: {
@@ -115,18 +113,22 @@ const handler = NextAuth({
     },
 
     async jwt({ token, account, user }) {
+      // Store access token if available
       if (account?.access_token) {
         (token as any).accessToken = account.access_token;
       }
 
+      // Store the provider in JWT
       if (account?.provider) {
         (token as any).provider = account.provider;
       }
 
+      // Mark admin if email matches
       if (user?.email) {
         (token as any).isAdmin = user.email === adminEmail;
       }
 
+      // Fetch and store referralCode from DB into JWT
       if (user?.email) {
         try {
           const dbUser = await prisma.user.findUnique({
