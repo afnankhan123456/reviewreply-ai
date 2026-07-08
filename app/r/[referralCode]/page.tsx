@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { prisma } from "../../../lib/prisma";
+import { useEffect } from "react"; // ✅ Import added
 
 interface PageProps {
   params: Promise<{
@@ -10,6 +11,13 @@ interface PageProps {
 export default async function ReferralPage({ params }: PageProps) {
   // Await params since Next.js 15 with async dynamic routes
   const { referralCode } = await params;
+
+  // ✅ TRACKING FETCH (Client side call)
+  useEffect(() => {
+    if (referralCode) {
+      fetch(`/r/${referralCode}/track`);
+    }
+  }, [referralCode]);
 
   if (!referralCode) {
     notFound();
@@ -59,7 +67,6 @@ export default async function ReferralPage({ params }: PageProps) {
             </p>
           </div>
           
-          {/* 👇 UPDATED: href="/plans" to href="/login" */}
           <a
             href="/login"
             className="inline-block bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white px-8 py-3 rounded-xl font-medium transition shadow-md mt-4"
