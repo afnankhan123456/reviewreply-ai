@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { prisma } from "../../../../lib/prisma"; // 👈 EXACT 4 LEVELS
+import { prisma } from "@/lib/prisma"; // ✅ Using @ alias
 import { GET as authHandler } from "../../../auth/[...nextauth]/route";
 
 export async function GET() {
