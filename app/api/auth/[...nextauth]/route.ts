@@ -70,11 +70,12 @@ const handler = NextAuth({
             },
           });
 
-          // ✅ NEW: Record this signup in ReferralSignup table
+          // ✅ FIXED: Set referrerEmail to null instead of user.email
+          // (Actual referrer email will be added when referral tracking is implemented)
           await prisma.referralSignup.create({
             data: {
               signupEmail: user.email,
-              referrerEmail: user.email, // Placeholder - will be updated when referral logic is fully integrated
+              referrerEmail: null, // Temporarily null to avoid wrong count
             },
           });
         } else {
