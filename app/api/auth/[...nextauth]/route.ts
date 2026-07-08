@@ -6,7 +6,6 @@ export const runtime = "nodejs";
 
 const adminEmail = process.env.ADMIN_EMAIL;
 
-// Helper function to generate unique referral code
 function generateReferralCode() {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   let code = "REF-";
@@ -21,40 +20,21 @@ const handler = NextAuth({
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
-      authorization: {
-        params: {
-          scope:
-            "openid email profile https://www.googleapis.com/auth/business.manage",
-          access_type: "offline",
-          prompt: "consent",
-          response_type: "code",
-        },
-      },
     }),
   ],
-
-  session: {
-    strategy: "jwt",
-  },
-
+  session: { strategy: "jwt" },
   callbacks: {
-    async signIn({ user, req }) {
+    async signIn({ user }) {
       try {
-        if (!user.email) {
-          return false;
-        }
+        if (!user.email) return false;
+        const existingUser = await prisma.user.findUnique({ where: { email: user.email } });
 
-        const existingUser = await prisma.user.findUnique({
-          where: { email: user.email },
-        });
-
-        // ✅ Read referral_code from req.cookies (No TypeScript error, No crash)
-        const referralCodeFromCookie = req?.cookies?.referral_code || null;
+        // ✅ Safe cookie read using headers()
+        const cookieHeader = (await import('next/headers')).headers().get('cookie') || '';
+        const referralCodeFromCookie = cookieHeader.match(/referralCode=([^;]+)/)?.[1] || null;
 
         if (!existingUser) {
-          // NEW USER: Generate unique referral code
           const referralCode = generateReferralCode();
-          
           await prisma.user.create({
             data: {
               name: user.name || "",
@@ -69,11 +49,9 @@ const handler = NextAuth({
               googleConnected: false,
               createdAt: new Date(),
               lastLogin: new Date(),
-              referralCode: referralCode,
+              referralCode,
             },
           });
-
-          // ✅ ReferralSignup entry with correct referrerEmail
           await prisma.referralSignup.create({
             data: {
               signupEmail: user.email,
@@ -81,20 +59,11 @@ const handler = NextAuth({
             },
           });
         } else {
-          // EXISTING USER: Update lastLogin and generate code if missing
           const updateData: any = { lastLogin: new Date() };
-          
           if (!existingUser.referralCode) {
-            const newReferralCode = generateReferralCode();
-            updateData.referralCode = newReferralCode;
+            updateData.referralCode = generateReferralCode();
           }
-
-          await prisma.user.update({
-            where: { email: user.email },
-            data: updateData,
-          });
-
-          // ✅ Existing user login: also track in ReferralSignup if cookie exists
+          await prisma.user.update({ where: { email: user.email }, data: updateData });
           if (referralCodeFromCookie) {
             await prisma.referralSignup.create({
               data: {
@@ -104,68 +73,41 @@ const handler = NextAuth({
             });
           }
         }
-
         return true;
       } catch (error) {
         console.log("SIGN IN ERROR:", error);
         return true;
       }
     },
-
     async jwt({ token, account, user }) {
-      // Store access token if available
-      if (account?.access_token) {
-        (token as any).accessToken = account.access_token;
-      }
-
-      // Store the provider in JWT
-      if (account?.provider) {
-        (token as any).provider = account.provider;
-      }
-
-      // Mark admin if email matches
-      if (user?.email) {
-        (token as any).isAdmin = user.email === adminEmail;
-      }
-
-      // Fetch and store referralCode from DB into JWT
+      if (account?.access_token) (token as any).accessToken = account.access_token;
+      if (account?.provider) (token as any).provider = account.provider;
+      if (user?.email) (token as any).isAdmin = user.email === adminEmail;
       if (user?.email) {
         try {
           const dbUser = await prisma.user.findUnique({
             where: { email: user.email },
             select: { referralCode: true },
           });
-          if (dbUser) {
-            (token as any).referralCode = dbUser.referralCode;
-          }
+          if (dbUser) (token as any).referralCode = dbUser.referralCode;
         } catch (err) {
           console.log("Error fetching referral code for JWT:", err);
         }
       }
-
       return token;
     },
-
     async session({ session, token }) {
       (session as any).accessToken = (token as any).accessToken;
       (session as any).isAdmin = (token as any).isAdmin;
       (session as any).referralCode = (token as any).referralCode;
-      
       return session;
     },
-
     async redirect({ baseUrl, url }) {
-      if (url.includes("admin=true")) {
-        return `${baseUrl}/admin`;
-      }
+      if (url.includes("admin=true")) return `${baseUrl}/admin`;
       return `${baseUrl}/plans`;
     },
   },
-
-  pages: {
-    signIn: "/login",
-  },
-
+  pages: { signIn: "/login" },
   secret: process.env.NEXTAUTH_SECRET,
 });
 
