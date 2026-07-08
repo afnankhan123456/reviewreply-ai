@@ -30,9 +30,9 @@ const handler = NextAuth({
         if (!user.email) return false;
         const existingUser = await prisma.user.findUnique({ where: { email: user.email } });
 
-        // ✅ Correct way to read cookie in NextAuth callback
+        // ✅ FIXED: Read cookie with correct name 'referrerEmail'
         const cookieStore = await cookies();
-        const referralCodeFromCookie = cookieStore.get("referralCode")?.value || null;
+        const referrerEmailFromCookie = cookieStore.get("referrerEmail")?.value || null;
 
         if (!existingUser) {
           const referralCode = generateReferralCode();
@@ -56,7 +56,7 @@ const handler = NextAuth({
           await prisma.referralSignup.create({
             data: {
               signupEmail: user.email,
-              referrerEmail: referralCodeFromCookie,
+              referrerEmail: referrerEmailFromCookie, // ✅ Fixed
             },
           });
         } else {
@@ -65,11 +65,11 @@ const handler = NextAuth({
             updateData.referralCode = generateReferralCode();
           }
           await prisma.user.update({ where: { email: user.email }, data: updateData });
-          if (referralCodeFromCookie) {
+          if (referrerEmailFromCookie) {
             await prisma.referralSignup.create({
               data: {
                 signupEmail: user.email,
-                referrerEmail: referralCodeFromCookie,
+                referrerEmail: referrerEmailFromCookie, // ✅ Fixed
               },
             });
           }
