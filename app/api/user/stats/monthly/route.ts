@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
-import { prisma } from "../../../../lib/prisma";
+import { prisma } from "../../../lib/prisma"; // 👈 FIXED PATH (4 levels -> 3 levels)
 import { GET as authHandler } from "../../../auth/[...nextauth]/route";
 
 export async function GET() {
