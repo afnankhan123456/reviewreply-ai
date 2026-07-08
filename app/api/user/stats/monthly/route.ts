@@ -35,7 +35,7 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       impressions: impressions,
-      clicks: impressions, // ✅ FIXED: Clicks should track impressions (link clicks)
+      clicks: subscriptions, // ✅ FIXED: Clicks should track signups (subscriptions), not impressions
       subscriptions: subscriptions,
       clickRate: parseFloat(clickRate as string),
     });
