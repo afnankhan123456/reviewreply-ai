@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CheckCircle, IndianRupee } from "lucide-react";
+import { CheckCircle, IndianRupee, RefreshCw, Filter } from "lucide-react";
 
 interface Referral {
   id: string;
@@ -21,6 +21,12 @@ interface Referral {
 export default function AdminReferralsPage() {
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [loading, setLoading] = useState(true);
+  
+  // 👇 New states
+  const [filter, setFilter] = useState<"all" | "subscribed" | "not-subscribed">("all");
+  const [resetEmail, setResetEmail] = useState("");
+  const [showResetModal, setShowResetModal] = useState(false);
+  const [resetting, setResetting] = useState(false);
 
   useEffect(() => {
     fetchReferrals();
@@ -40,23 +46,44 @@ export default function AdminReferralsPage() {
     }
   };
 
-  const handleMarkPaid = async (referrerId: string) => {
-    if (!confirm("Mark as paid and reset earnings to ₹0?")) return;
+  // 👇 Filter logic
+  const filteredReferrals = referrals.filter((r) => {
+    if (filter === "subscribed") return r.hasSubscription;
+    if (filter === "not-subscribed") return !r.hasSubscription;
+    return true; // "all"
+  });
 
+  // 👇 Reset earnings function
+  const handleResetEarnings = async () => {
+    if (!resetEmail.trim()) {
+      alert("Please enter referrer email");
+      return;
+    }
+
+    if (!confirm(`Reset earnings for ${resetEmail}?`)) return;
+
+    setResetting(true);
     try {
-      const res = await fetch("/api/admin/mark-paid", {
+      const res = await fetch("/api/admin/reset-earnings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ referrerId }),
+        body: JSON.stringify({ email: resetEmail.trim() }),
       });
       const data = await res.json();
 
       if (data.success) {
-        alert("✅ Payment marked as paid!");
-        fetchReferrals(); // Refresh table
+        alert(`✅ Earnings reset for ${resetEmail}!`);
+        setResetEmail("");
+        setShowResetModal(false);
+        fetchReferrals();
+      } else {
+        alert(data.error || "Failed to reset earnings");
       }
     } catch (error) {
-      console.error("Error marking as paid:", error);
+      console.error("Error resetting earnings:", error);
+      alert("Error resetting earnings");
+    } finally {
+      setResetting(false);
     }
   };
 
@@ -71,6 +98,31 @@ export default function AdminReferralsPage() {
         <h1 className="text-2xl font-bold text-gray-800 mb-6">
           🔗 Referral Tracking
         </h1>
+
+        {/* 👇 Filter & Reset Buttons */}
+        <div className="flex items-center justify-between mb-4 gap-4 flex-wrap">
+          {/* Filter */}
+          <div className="flex items-center gap-2 bg-white rounded-lg border border-gray-200 px-3 py-2">
+            <Filter className="w-4 h-4 text-gray-500" />
+            <select
+              value={filter}
+              onChange={(e) => setFilter(e.target.value as any)}
+              className="text-sm font-medium text-gray-700 bg-transparent outline-none"
+            >
+              <option value="all">All Referrals</option>
+              <option value="subscribed">✅ Subscribed</option>
+              <option value="not-subscribed">❌ Not Subscribed</option>
+            </select>
+          </div>
+
+          {/* Reset Earnings Button */}
+          <button
+            onClick={() => setShowResetModal(true)}
+            className="bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition"
+          >
+            <RefreshCw className="w-4 h-4" /> Reset User Earnings
+          </button>
+        </div>
 
         {/* Pending Commissions Alert */}
         {pendingReferrals.length > 0 && (
@@ -107,24 +159,23 @@ export default function AdminReferralsPage() {
                   <th className="text-left p-4 text-sm font-medium text-gray-600">Plan</th>
                   <th className="text-left p-4 text-sm font-medium text-gray-600">Commission</th>
                   <th className="text-left p-4 text-sm font-medium text-gray-600">Total Earnings</th>
-                  <th className="text-left p-4 text-sm font-medium text-gray-600">Action</th>
                 </tr>
               </thead>
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan={11} className="text-center p-8 text-gray-500">
+                    <td colSpan={10} className="text-center p-8 text-gray-500">
                       Loading...
                     </td>
                   </tr>
-                ) : referrals.length === 0 ? (
+                ) : filteredReferrals.length === 0 ? (
                   <tr>
-                    <td colSpan={11} className="text-center p-8 text-gray-500">
-                      No referrals yet
+                    <td colSpan={10} className="text-center p-8 text-gray-500">
+                      No referrals found
                     </td>
                   </tr>
                 ) : (
-                  referrals.map((ref, idx) => (
+                  filteredReferrals.map((ref, idx) => (
                     <tr key={ref.id} className="border-b hover:bg-gray-50">
                       <td className="p-4 text-sm text-gray-600">{idx + 1}</td>
                       <td className="p-4 text-sm font-medium text-gray-800">
@@ -162,18 +213,6 @@ export default function AdminReferralsPage() {
                           {ref.totalEarnings.toLocaleString()}
                         </span>
                       </td>
-                      <td className="p-4">
-                        {ref.paidSubscriptions > 0 ? (
-                          <button
-                            onClick={() => handleMarkPaid(ref.referrerEmail)}
-                            className="bg-green-500 hover:bg-green-600 text-white px-3 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1"
-                          >
-                            <CheckCircle className="w-3 h-3" /> Mark Paid
-                          </button>
-                        ) : (
-                          <span className="text-xs text-gray-400">—</span>
-                        )}
-                      </td>
                     </tr>
                   ))
                 )}
@@ -182,6 +221,46 @@ export default function AdminReferralsPage() {
           </div>
         </div>
       </div>
+
+      {/* 👇 Reset Earnings Modal */}
+      {showResetModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
+            <h2 className="text-lg font-bold text-gray-800 mb-2">Reset User Earnings</h2>
+            <p className="text-sm text-gray-500 mb-4">
+              Enter referrer email to reset their earnings to ₹0
+            </p>
+            
+            <input
+              type="email"
+              value={resetEmail}
+              onChange={(e) => setResetEmail(e.target.value)}
+              placeholder="Enter referrer email"
+              className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm mb-4 outline-none focus:border-blue-500"
+            />
+
+            <div className="flex gap-3 justify-end">
+              <button
+                onClick={() => {
+                  setShowResetModal(false);
+                  setResetEmail("");
+                }}
+                className="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-lg transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleResetEarnings}
+                disabled={resetting}
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 transition disabled:opacity-50"
+              >
+                <RefreshCw className="w-4 h-4" />
+                {resetting ? "Resetting..." : "Reset Earnings"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
