@@ -6,6 +6,7 @@ import {
   Eye, 
   MousePointer2, 
   Users, 
+  UserPlus,
   Bug, 
   Copy, 
   Calendar,
@@ -17,11 +18,12 @@ export default function ReferEarnPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  // New state for stats
+  // Updated state for stats
   const [stats, setStats] = useState({
-    impressions: 0,
-    clicks: 0,
-    subscriptions: 0
+    referralClicks: 0,
+    googleSignups: 0,
+    paidSubscriptions: 0,
+    conversionRate: 0,
   });
   const [statsLoading, setStatsLoading] = useState(true);
 
@@ -56,9 +58,10 @@ export default function ReferEarnPage() {
 
         if (res.ok && data.success) {
           setStats({
-            impressions: data.impressions || 0,
-            clicks: data.clicks || 0,
-            subscriptions: data.subscriptions || 0
+            referralClicks: data.referralClicks || 0,
+            googleSignups: data.googleSignups || 0,
+            paidSubscriptions: data.paidSubscriptions || 0,
+            conversionRate: data.conversionRate || 0,
           });
         }
       } catch (err) {
@@ -206,24 +209,40 @@ export default function ReferEarnPage() {
               <thead>
                 <tr>
                   <th className="bg-blue-50/80 text-blue-600 text-left p-3 text-sm font-medium rounded-tl-lg border-b border-gray-100">
-                    <div className="flex items-center gap-2"><Eye className="w-4 h-4" /> Impression</div>
+                    <div className="flex items-center gap-2">
+                      <MousePointer2 className="w-4 h-4" />
+                      Referral Clicks
+                    </div>
                   </th>
                   <th className="bg-orange-50/80 text-orange-600 text-left p-3 text-sm font-medium border-b border-gray-100">
-                    <div className="flex items-center gap-2"><MousePointer2 className="w-4 h-4" /> Click Rate</div>
+                    <div className="flex items-center gap-2">
+                      <UserPlus className="w-4 h-4" />
+                      Google Signups
+                    </div>
                   </th>
-                  <th className="bg-green-50/80 text-green-600 text-left p-3 text-sm font-medium rounded-tr-lg border-b border-gray-100">
-                    <div className="flex items-center gap-2"><Users className="w-4 h-4" /> Total Subscription</div>
+                  <th className="bg-green-50/80 text-green-600 text-left p-3 text-sm font-medium border-b border-gray-100">
+                    <div className="flex items-center gap-2">
+                      <Users className="w-4 h-4" />
+                      Paid Subscriptions
+                    </div>
+                  </th>
+                  <th className="bg-purple-50/80 text-purple-600 text-left p-3 text-sm font-medium rounded-tr-lg border-b border-gray-100">
+                    <div className="flex items-center gap-2">
+                      <Eye className="w-4 h-4" />
+                      Conversion Rate
+                    </div>
                   </th>
                 </tr>
               </thead>
               <tbody className="bg-white">
                 {[
-                  [stats.impressions, stats.clicks, stats.subscriptions]
+                  [stats.referralClicks, stats.googleSignups, stats.paidSubscriptions, `${stats.conversionRate}%`]
                 ].map((row, idx) => (
                   <tr key={idx}>
                     <td className="p-4 text-sm text-gray-600">{statsLoading ? "Loading..." : row[0].toLocaleString()}</td>
                     <td className="p-4 text-sm text-gray-600">{statsLoading ? "Loading..." : row[1].toLocaleString()}</td>
                     <td className="p-4 text-sm text-gray-600">{statsLoading ? "Loading..." : row[2].toLocaleString()}</td>
+                    <td className="p-4 text-sm text-gray-600">{statsLoading ? "Loading..." : row[3]}</td>
                   </tr>
                 ))}
               </tbody>
@@ -236,6 +255,3 @@ export default function ReferEarnPage() {
     </div>
   );
 }
-
-
-
