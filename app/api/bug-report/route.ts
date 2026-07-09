@@ -31,7 +31,7 @@ export async function POST(req: any) {
       );
     }
 
-    // ------------------ Duplicate check ------------------
+    // Duplicate check
     const existingOpen = await prisma.bugReport.findFirst({
       where: {
         userId: user.id,
@@ -45,14 +45,12 @@ export async function POST(req: any) {
       return NextResponse.json(
         {
           success: false,
-          error: `You already have an open ticket for "${feature}" - "${issueType}". We are working on it. Please check other issues or select a different type.`,
-          existingTicket: existingOpen,
+          error: `You already have an open ticket for "${feature}" - "${issueType}". We are working on it.`,
         },
         { status: 409 }
       );
     }
 
-    // ------------------ Create with default status ------------------
     await prisma.bugReport.create({
       data: {
         userId: user.id,
