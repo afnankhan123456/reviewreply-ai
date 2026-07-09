@@ -8,6 +8,42 @@ interface PageProps {
   }>;
 }
 
+// 👇 New: Track referral click in database
+async function trackReferralClick(referralCode: string, referrerEmail: string, referrerId: string) {
+  try {
+    // Check if referral_stats entry exists
+    const existingStats = await prisma.referralStats.findFirst({
+      where: { userId: referrerId },
+    });
+
+    if (existingStats) {
+      // Update: referralClicks +1
+      await prisma.referralStats.update({
+        where: { id: existingStats.id },
+        data: {
+          referralClicks: { increment: 1 },
+          updatedAt: new Date(),
+        },
+      });
+    } else {
+      // Create new stats entry
+      await prisma.referralStats.create({
+        data: {
+          userId: referrerId,
+          referralCode: referralCode,
+          referralClicks: 1,
+          googleSignups: 0,
+          paidSubscriptions: 0,
+        },
+      });
+    }
+
+    console.log(`✅ Referral click tracked for: ${referrerEmail}`);
+  } catch (error) {
+    console.error("Error tracking referral click:", error);
+  }
+}
+
 export default async function ReferralPage({ params }: PageProps) {
   // Await params since Next.js 15 with async dynamic routes
   const { referralCode } = await params;
@@ -21,6 +57,7 @@ export default async function ReferralPage({ params }: PageProps) {
     const user = await prisma.user.findUnique({
       where: { referralCode: referralCode },
       select: {
+        id: true,
         name: true,
         email: true,
       },
@@ -39,17 +76,20 @@ export default async function ReferralPage({ params }: PageProps) {
       );
     }
 
-    // ✅ TrackingWrapper ko return ke bahar rakho
-    <TrackingWrapper referralCode={referralCode} />
+    // 👇 Track the referral click
+    await trackReferralClick(referralCode, user.email, user.id);
 
     // Success - Clean Professional Background
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 relative overflow-hidden">
         
+        {/* TrackingWrapper for cookie */}
+        <TrackingWrapper referralCode={referralCode} />
+        
         {/* Subtle professional background glow */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-50/50 via-transparent to-transparent pointer-events-none"></div>
 
-        {/* White Card (Exactly as you wanted) */}
+        {/* White Card */}
         <div className="relative z-10 text-center p-10 bg-white rounded-2xl shadow-xl border border-gray-100 max-w-lg">
           <div className="mb-2">
             <h1 className="text-4xl font-bold text-gray-900 mb-1">
