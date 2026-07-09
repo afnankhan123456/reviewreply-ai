@@ -32,6 +32,8 @@ export default function ReferEarnPage() {
   const [showBugModal, setShowBugModal] = useState(false);
   const [bugFeature, setBugFeature] = useState("");
   const [bugIssueType, setBugIssueType] = useState("");
+  const [bugOtherFeature, setBugOtherFeature] = useState("");
+  const [bugOtherType, setBugOtherType] = useState("");
   const [bugDescription, setBugDescription] = useState("");
   const [bugSubmitting, setBugSubmitting] = useState(false);
 
@@ -78,18 +80,30 @@ export default function ReferEarnPage() {
   }, []);
 
   const handleBugSubmit = async () => {
+    const finalFeature = bugFeature === "Other" ? bugOtherFeature : bugFeature;
+    const finalIssueType = bugIssueType === "Other" ? bugOtherType : bugIssueType;
+
     if (!bugFeature || !bugIssueType || !bugDescription.trim()) {
-      alert("Please fill all fields");
+      alert("Please fill all required fields");
       return;
     }
+    if (bugFeature === "Other" && !bugOtherFeature.trim()) {
+      alert("Please specify the feature");
+      return;
+    }
+    if (bugIssueType === "Other" && !bugOtherType.trim()) {
+      alert("Please specify the issue type");
+      return;
+    }
+
     setBugSubmitting(true);
     try {
       const res = await fetch("/api/bugs/report", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
-          feature: bugFeature,
-          issueType: bugIssueType,
+          feature: finalFeature,
+          issueType: finalIssueType,
           description: bugDescription 
         }),
       });
@@ -99,7 +113,11 @@ export default function ReferEarnPage() {
         setShowBugModal(false);
         setBugFeature("");
         setBugIssueType("");
+        setBugOtherFeature("");
+        setBugOtherType("");
         setBugDescription("");
+      } else {
+        alert(data.error);
       }
     } catch (err) {
       alert("Error submitting bug report");
@@ -225,7 +243,7 @@ export default function ReferEarnPage() {
 
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">Which feature has the issue? *</label>
-              <select value={bugFeature} onChange={(e) => setBugFeature(e.target.value)} className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-purple-500">
+              <select value={bugFeature} onChange={(e) => { setBugFeature(e.target.value); if(e.target.value !== "Other") setBugOtherFeature(""); }} className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-purple-500">
                 <option value="">-- Select feature --</option>
                 <option value="Referral System">Referral System</option>
                 <option value="Dashboard">Dashboard</option>
@@ -234,11 +252,14 @@ export default function ReferEarnPage() {
                 <option value="Payment">Payment</option>
                 <option value="Other">Other</option>
               </select>
+              {bugFeature === "Other" && (
+                <input type="text" value={bugOtherFeature} onChange={(e) => setBugOtherFeature(e.target.value)} placeholder="Please specify the feature" className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-purple-500 mt-2" />
+              )}
             </div>
 
             <div className="mb-4">
               <label className="block text-sm font-medium text-gray-700 mb-1">What type of problem is it? *</label>
-              <select value={bugIssueType} onChange={(e) => setBugIssueType(e.target.value)} className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-purple-500">
+              <select value={bugIssueType} onChange={(e) => { setBugIssueType(e.target.value); if(e.target.value !== "Other") setBugOtherType(""); }} className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-purple-500">
                 <option value="">-- Select issue type --</option>
                 <option value="Bug">Bug</option>
                 <option value="UI/UX Issue">UI/UX Issue</option>
@@ -246,6 +267,9 @@ export default function ReferEarnPage() {
                 <option value="Feature Request">Feature Request</option>
                 <option value="Other">Other</option>
               </select>
+              {bugIssueType === "Other" && (
+                <input type="text" value={bugOtherType} onChange={(e) => setBugOtherType(e.target.value)} placeholder="Please specify the issue type" className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-purple-500 mt-2" />
+              )}
             </div>
 
             <div className="mb-4">
