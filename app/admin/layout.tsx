@@ -6,7 +6,8 @@ import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Bug,
-  Settings,   // ← import Settings icon
+  Settings,
+  Users, // 👈 Naya icon
 } from "lucide-react";
 
 export default function AdminLayout({
@@ -28,7 +29,12 @@ export default function AdminLayout({
       icon: Bug,
     },
     {
-      name: "Settings",           // ← add Settings item
+      name: "Referral Users Info", // 👈 Naya link
+      href: "/admin/referrals",
+      icon: Users,
+    },
+    {
+      name: "Settings",
       href: "/admin/settings",
       icon: Settings,
     },
