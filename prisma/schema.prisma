@@ -31,13 +31,13 @@ model User {
   lastReviewSync      DateTime?
   syncEnabled         Boolean             @default(true)
 
-  monthlyResetDate    DateTime?           // 30‑day sync window start
+  monthlyResetDate    DateTime?
 
   // Gmail alert fields
-  gmailConnected      Boolean             @default(false)   // whether Gmail is connected for alerts
-  alertEmailsSent     Int                 @default(0)       // count of alert emails sent this month
-  alertEmailsLimit    Int                 @default(100)     // 100 emails/month limit
-  alertMonthlyReset   DateTime?           // 30‑day reset date for alert counter
+  gmailConnected      Boolean             @default(false)
+  alertEmailsSent     Int                 @default(0)
+  alertEmailsLimit    Int                 @default(100)
+  alertMonthlyReset   DateTime?
 
   createdAt           DateTime            @default(now())
   lastLogin           DateTime            @default(now())
@@ -46,56 +46,41 @@ model User {
 
   businessLocations   BusinessLocation[]
   reviews             Review[]
-  templates           Template[]          // relation to templates
-  reports             Report[]            // relation to reports
-  exports             Export[]            // relation to exports
-  bugReports          BugReport[]         // relation to bug reports
-
-  // 👇 ADDED THESE 2 LINES (Relation fix for ReferralClick & ReferralSignup)
+  templates           Template[]
+  reports             Report[]
+  exports             Export[]
+  bugReports          BugReport[]
   referralClicks      ReferralClick[]
   referralSignups     ReferralSignup[]
+  referralStats       ReferralStats[]      // 👈 New relation
 }
 
 model BusinessLocation {
   id               String   @id @default(cuid())
-
   userId           String
   user             User     @relation(fields: [userId], references: [id])
-
   googleLocationId String   @unique
   businessName     String
   address          String?
-
   createdAt        DateTime @default(now())
-
   reviews          Review[]
 }
 
 model Review {
   id               String   @id @default(cuid())
-
   userId           String
   user             User     @relation(fields: [userId], references: [id])
-
   businessLocationId String
   businessLocation   BusinessLocation @relation(fields: [businessLocationId], references: [id])
-
   googleReviewId   String   @unique
-
   reviewerName     String
   reviewerPhoto    String?
-
   rating           Int
-
   comment          String?
-
   reviewReply      String?
-
   replied          Boolean  @default(false)
-
   reviewDate       DateTime
   syncedAt         DateTime @default(now())
-
   createdAt        DateTime @default(now())
 }
 
@@ -105,7 +90,7 @@ model Template {
   user      User     @relation(fields: [userId], references: [id])
   title     String
   content   String
-  category  String   @default("general")   // e.g., "positive", "negative", "general"
+  category  String   @default("general")
   active    Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -116,10 +101,10 @@ model Report {
   userId         String
   user           User     @relation(fields: [userId], references: [id])
   title          String
-  type           String   @default("monthly")   // "monthly", "custom"
+  type           String   @default("monthly")
   averageRating  Float?
   totalReviews   Int?
-  fileUrl        String?                       // URL to download the report (if generated)
+  fileUrl        String?
   createdAt      DateTime @default(now())
 }
 
@@ -127,7 +112,7 @@ model Export {
   id        String   @id @default(cuid())
   userId    String
   user      User     @relation(fields: [userId], references: [id])
-  type      String   // "csv" or "pdf"
+  type      String
   fileName  String
   createdAt DateTime @default(now())
 }
@@ -139,20 +124,15 @@ model BugReport {
   feature     String
   issueType   String
   description String
-  status      String   @default("Open")   // new field: "Open" or "Resolved"
+  status      String   @default("Open")
   createdAt   DateTime @default(now())
 }
-
-// ============================================================
-// 👇 NEW MODELS ADDED
-// ============================================================
 
 model ReferralClick {
   id             String   @id @default(cuid())
   referrerEmail  String
   clickerEmail   String?
   clickedAt      DateTime @default(now())
-
   user           User?    @relation(fields: [referrerEmail], references: [email])
 }
 
@@ -161,6 +141,21 @@ model ReferralSignup {
   referrerEmail  String
   signupEmail    String
   signupDate     DateTime @default(now())
-
   user           User?    @relation(fields: [referrerEmail], references: [email])
+}
+
+// 👇 NEW MODEL: Referral Stats
+model ReferralStats {
+  id                Int      @id @default(autoincrement())
+  userId            String   @map("user_id")
+  referralCode      String   @map("referral_code")
+  referralClicks    Int      @default(0) @map("referral_clicks")
+  googleSignups     Int      @default(0) @map("google_signups")
+  paidSubscriptions Int      @default(0) @map("paid_subscriptions")
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("referral_stats")
 }
