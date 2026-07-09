@@ -11,8 +11,7 @@ import {
   Copy, 
   Calendar,
   Wallet,
-  IndianRupee,
-  RefreshCw
+  IndianRupee
 } from "lucide-react";
 
 export default function ReferEarnPage() {
@@ -20,13 +19,12 @@ export default function ReferEarnPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
-  // Updated state for stats
   const [stats, setStats] = useState({
     referralClicks: 0,
     googleSignups: 0,
     paidSubscriptions: 0,
     conversionRate: 0,
-    totalEarnings: 0, // 👈 New field
+    totalEarnings: 0,
   });
   const [statsLoading, setStatsLoading] = useState(true);
 
@@ -65,7 +63,7 @@ export default function ReferEarnPage() {
             googleSignups: data.googleSignups || 0,
             paidSubscriptions: data.paidSubscriptions || 0,
             conversionRate: data.conversionRate || 0,
-            totalEarnings: (data.paidSubscriptions || 0) * 100, // 👈 ₹100 per subscription
+            totalEarnings: (data.paidSubscriptions || 0) * 100,
           });
         }
       } catch (err) {
@@ -77,26 +75,6 @@ export default function ReferEarnPage() {
 
     fetchStats();
   }, []);
-
-  // 👇 Reset Earnings Function (When UPI Payment Done)
-  const handleResetEarnings = async () => {
-    try {
-      const res = await fetch("/api/user/reset-earnings", {
-        method: "POST",
-      });
-      const data = await res.json();
-      
-      if (res.ok && data.success) {
-        setStats(prev => ({
-          ...prev,
-          totalEarnings: 0,
-        }));
-        alert("Earnings reset successful! ₹0");
-      }
-    } catch (err) {
-      console.error("Error resetting earnings:", err);
-    }
-  };
 
   // Construct the full referral link
   const referralLink = referralCode ? `https://reviewreply-ai-pi.vercel.app/r/${referralCode}` : "";
@@ -135,17 +113,13 @@ export default function ReferEarnPage() {
       {/* MAIN GRID */}
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-[auto_auto] gap-6">
 
-        {/* ================= ROW 1 ================= */}
-        
         {/* LEFT CARD */}
         <div className="lg:col-span-2 pr-[2px]">
           <div className="relative bg-gradient-to-br from-[#4f46e5] via-[#6f8dfc] to-[#a48aff] rounded-2xl p-8 text-white overflow-hidden shadow-md h-[350px]">
             
-            {/* Glow Effect Layers */}
             <div className="absolute top-[-50px] right-[-50px] w-[200px] h-[200px] bg-[#c084fc] rounded-full blur-[60px] opacity-30 pointer-events-none"></div>
             <div className="absolute bottom-[-50px] left-[-50px] w-[150px] h-[150px] bg-[#818cf8] rounded-full blur-[50px] opacity-40 pointer-events-none"></div>
             
-            {/* Content */}
             <div className="relative z-10">
               <h2 className="text-3xl font-semibold mb-2">Referral Link</h2>
               <p className="text-blue-100 text-sm mb-6">Share your link and earn rewards</p>
@@ -166,7 +140,7 @@ export default function ReferEarnPage() {
                 </button>
               </div>
 
-              {/* 👇 Total Earnings Display */}
+              {/* Total Earnings Display */}
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 max-w-lg border border-white/20">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -185,7 +159,6 @@ export default function ReferEarnPage() {
         {/* RIGHT SIDEBAR */}
         <div className="lg:col-span-1 -ml-[2px] flex flex-col gap-6 h-full">
           
-          {/* CARD 1: Withdraw */}
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 h-[163.5px] flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-3 mb-1">
@@ -208,7 +181,6 @@ export default function ReferEarnPage() {
             </div>
           </div>
 
-          {/* CARD 2: Found a Bug */}
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 h-[162.5px] flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-3 mb-1">
@@ -227,28 +199,17 @@ export default function ReferEarnPage() {
           </div>
 
         </div>
-        {/* ================= ROW 1 END ================= */}
 
-
-        {/* ================= ROW 2 (TABLE ONLY) ================= */}
+        {/* TABLE */}
         <div className="lg:col-span-3 bg-white rounded-xl border border-gray-100 shadow-sm p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
               <div className="text-gray-800">📊</div>
               <h3 className="text-lg font-bold text-gray-800">Performance Overview</h3>
             </div>
-            <div className="flex items-center gap-3">
-              {/* 👇 Reset Earnings Button */}
-              <button 
-                onClick={handleResetEarnings}
-                className="border border-red-200 bg-red-50 hover:bg-red-100 rounded-lg px-4 py-2 text-sm font-medium text-red-600 flex items-center gap-2 transition"
-              >
-                <RefreshCw className="w-4 h-4" /> Reset Earnings
-              </button>
-              <button className="border border-gray-200 bg-white rounded-lg px-4 py-2 text-sm font-medium text-gray-600 flex items-center gap-2">
-                <Calendar className="w-4 h-4" /> This Month <span className="text-gray-400 text-xs">▼</span>
-              </button>
-            </div>
+            <button className="border border-gray-200 bg-white rounded-lg px-4 py-2 text-sm font-medium text-gray-600 flex items-center gap-2">
+              <Calendar className="w-4 h-4" /> This Month <span className="text-gray-400 text-xs">▼</span>
+            </button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -278,7 +239,6 @@ export default function ReferEarnPage() {
                       Conversion Rate
                     </div>
                   </th>
-                  {/* 👇 New Column: Total Earnings */}
                   <th className="bg-yellow-50/80 text-yellow-600 text-left p-3 text-sm font-medium rounded-tr-lg border-b border-gray-100">
                     <div className="flex items-center gap-2">
                       <IndianRupee className="w-4 h-4" />
@@ -294,7 +254,7 @@ export default function ReferEarnPage() {
                     stats.googleSignups, 
                     stats.paidSubscriptions, 
                     `${stats.conversionRate}%`,
-                    `₹${stats.totalEarnings.toLocaleString()}` // 👈 Earnings in table
+                    `₹${stats.totalEarnings.toLocaleString()}`
                   ]
                 ].map((row, idx) => (
                   <tr key={idx}>
@@ -309,7 +269,6 @@ export default function ReferEarnPage() {
             </table>
           </div>
         </div>
-        {/* ================= ROW 2 END ================= */}
 
       </div>
     </div>
