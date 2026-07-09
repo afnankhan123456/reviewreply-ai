@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { CheckCircle, IndianRupee, RefreshCw, Filter } from "lucide-react";
+import { CheckCircle, IndianRupee, RefreshCw, Filter, Star, Plus, X } from "lucide-react";
 
 interface Referral {
   id: string;
@@ -16,20 +16,27 @@ interface Referral {
   commission: number;
   paidSubscriptions: number;
   totalEarnings: number;
+  isWhitelisted: boolean;
 }
 
 export default function AdminReferralsPage() {
   const [referrals, setReferrals] = useState<Referral[]>([]);
   const [loading, setLoading] = useState(true);
   
-  // 👇 New states
-  const [filter, setFilter] = useState<"all" | "subscribed" | "not-subscribed">("all");
+  // States
+  const [filter, setFilter] = useState<"all" | "subscribed" | "not-subscribed" | "whitelisted">("all");
   const [resetEmail, setResetEmail] = useState("");
   const [showResetModal, setShowResetModal] = useState(false);
   const [resetting, setResetting] = useState(false);
+  
+  // Whitelist states
+  const [whitelistEmails, setWhitelistEmails] = useState<string[]>([]);
+  const [newWhitelistEmail, setNewWhitelistEmail] = useState("");
+  const [showWhitelistSection, setShowWhitelistSection] = useState(true);
 
   useEffect(() => {
     fetchReferrals();
+    fetchWhitelist();
   }, []);
 
   const fetchReferrals = async () => {
@@ -37,7 +44,17 @@ export default function AdminReferralsPage() {
       const res = await fetch("/api/admin/referrals");
       const data = await res.json();
       if (data.success) {
-        setReferrals(data.referrals);
+        // Fetch whitelist to mark referrals
+        const whitelistRes = await fetch("/api/admin/partners");
+        const whitelistData = await whitelistRes.json();
+        const whitelist = whitelistData.success ? whitelistData.emails : [];
+        
+        const enrichedData = data.referrals.map((ref: Referral) => ({
+          ...ref,
+          isWhitelisted: whitelist.includes(ref.referrerEmail),
+        }));
+        
+        setReferrals(enrichedData);
       }
     } catch (error) {
       console.error("Error fetching referrals:", error);
@@ -46,14 +63,63 @@ export default function AdminReferralsPage() {
     }
   };
 
-  // 👇 Filter logic
+  const fetchWhitelist = async () => {
+    try {
+      const res = await fetch("/api/admin/partners");
+      const data = await res.json();
+      if (data.success) {
+        setWhitelistEmails(data.emails);
+      }
+    } catch (error) {
+      console.error("Error fetching whitelist:", error);
+    }
+  };
+
+  const addToWhitelist = async () => {
+    if (!newWhitelistEmail.trim()) return;
+    try {
+      const res = await fetch("/api/admin/partners", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: newWhitelistEmail.trim() }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setNewWhitelistEmail("");
+        fetchWhitelist();
+        fetchReferrals();
+      }
+    } catch (error) {
+      console.error("Error adding to whitelist:", error);
+    }
+  };
+
+  const removeFromWhitelist = async (email: string) => {
+    try {
+      const res = await fetch("/api/admin/partners", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        fetchWhitelist();
+        fetchReferrals();
+      }
+    } catch (error) {
+      console.error("Error removing from whitelist:", error);
+    }
+  };
+
+  // Filter logic
   const filteredReferrals = referrals.filter((r) => {
     if (filter === "subscribed") return r.hasSubscription;
     if (filter === "not-subscribed") return !r.hasSubscription;
+    if (filter === "whitelisted") return r.isWhitelisted;
     return true; // "all"
   });
 
-  // 👇 Reset earnings function
+  // Reset earnings function
   const handleResetEarnings = async () => {
     if (!resetEmail.trim()) {
       alert("Please enter referrer email");
@@ -99,6 +165,70 @@ export default function AdminReferralsPage() {
           🔗 Referral Tracking
         </h1>
 
+        {/* 👇 Whitelist Section */}
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-5 mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Star className="w-5 h-5 text-yellow-500" />
+              <h2 className="font-semibold text-gray-800">Partner Whitelist</h2>
+              <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
+                {whitelistEmails.length} emails
+              </span>
+            </div>
+            <button
+              onClick={() => setShowWhitelistSection(!showWhitelistSection)}
+              className="text-xs text-gray-500 hover:text-gray-700"
+            >
+              {showWhitelistSection ? "Hide" : "Show"}
+            </button>
+          </div>
+
+          {showWhitelistSection && (
+            <>
+              {/* Whitelisted Emails */}
+              <div className="flex flex-wrap gap-2 mb-3">
+                {whitelistEmails.length === 0 ? (
+                  <span className="text-sm text-gray-400">No partner emails added yet</span>
+                ) : (
+                  whitelistEmails.map((email) => (
+                    <span
+                      key={email}
+                      className="bg-yellow-50 border border-yellow-200 text-yellow-700 px-3 py-1 rounded-full text-sm flex items-center gap-2"
+                    >
+                      <Star className="w-3 h-3" />
+                      {email}
+                      <button
+                        onClick={() => removeFromWhitelist(email)}
+                        className="hover:text-red-500"
+                      >
+                        <X className="w-3 h-3" />
+                      </button>
+                    </span>
+                  ))
+                )}
+              </div>
+
+              {/* Add Email */}
+              <div className="flex gap-2">
+                <input
+                  type="email"
+                  value={newWhitelistEmail}
+                  onChange={(e) => setNewWhitelistEmail(e.target.value)}
+                  placeholder="Enter partner email"
+                  className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm outline-none focus:border-yellow-500"
+                  onKeyDown={(e) => e.key === "Enter" && addToWhitelist()}
+                />
+                <button
+                  onClick={addToWhitelist}
+                  className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-1 transition"
+                >
+                  <Plus className="w-4 h-4" /> Add
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+
         {/* 👇 Filter & Reset Buttons */}
         <div className="flex items-center justify-between mb-4 gap-4 flex-wrap">
           {/* Filter */}
@@ -110,6 +240,7 @@ export default function AdminReferralsPage() {
               className="text-sm font-medium text-gray-700 bg-transparent outline-none"
             >
               <option value="all">All Referrals</option>
+              <option value="whitelisted">⭐ Whitelisted</option>
               <option value="subscribed">✅ Subscribed</option>
               <option value="not-subscribed">❌ Not Subscribed</option>
             </select>
@@ -150,6 +281,7 @@ export default function AdminReferralsPage() {
               <thead>
                 <tr className="bg-gray-50 border-b">
                   <th className="text-left p-4 text-sm font-medium text-gray-600">#</th>
+                  <th className="text-left p-4 text-sm font-medium text-gray-600">Type</th>
                   <th className="text-left p-4 text-sm font-medium text-gray-600">Referrer</th>
                   <th className="text-left p-4 text-sm font-medium text-gray-600">Referrer Email</th>
                   <th className="text-left p-4 text-sm font-medium text-gray-600">Referred User</th>
@@ -164,13 +296,13 @@ export default function AdminReferralsPage() {
               <tbody>
                 {loading ? (
                   <tr>
-                    <td colSpan={10} className="text-center p-8 text-gray-500">
+                    <td colSpan={11} className="text-center p-8 text-gray-500">
                       Loading...
                     </td>
                   </tr>
                 ) : filteredReferrals.length === 0 ? (
                   <tr>
-                    <td colSpan={10} className="text-center p-8 text-gray-500">
+                    <td colSpan={11} className="text-center p-8 text-gray-500">
                       No referrals found
                     </td>
                   </tr>
@@ -178,6 +310,17 @@ export default function AdminReferralsPage() {
                   filteredReferrals.map((ref, idx) => (
                     <tr key={ref.id} className="border-b hover:bg-gray-50">
                       <td className="p-4 text-sm text-gray-600">{idx + 1}</td>
+                      <td className="p-4 text-sm">
+                        {ref.isWhitelisted ? (
+                          <span className="bg-yellow-50 text-yellow-700 px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1 w-fit">
+                            <Star className="w-3 h-3" /> Partner
+                          </span>
+                        ) : (
+                          <span className="bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full text-xs">
+                            Normal
+                          </span>
+                        )}
+                      </td>
                       <td className="p-4 text-sm font-medium text-gray-800">
                         {ref.referrerName}
                       </td>
