@@ -16,6 +16,51 @@ function generateReferralCode() {
   return code;
 }
 
+// 👇 New: Track Google Signup for Referral
+async function trackReferralSignup(referrerEmail: string) {
+  try {
+    if (!referrerEmail) return;
+
+    // Find referrer user
+    const referrer = await prisma.user.findUnique({
+      where: { email: referrerEmail },
+    });
+
+    if (!referrer) return;
+
+    // Check if referral_stats entry exists
+    const existingStats = await prisma.referralStats.findFirst({
+      where: { userId: referrer.id },
+    });
+
+    if (existingStats) {
+      // Update: google_signups +1
+      await prisma.referralStats.update({
+        where: { id: existingStats.id },
+        data: {
+          googleSignups: { increment: 1 },
+          updatedAt: new Date(),
+        },
+      });
+    } else {
+      // Create new stats entry
+      await prisma.referralStats.create({
+        data: {
+          userId: referrer.id,
+          referralCode: referrer.referralCode || "",
+          referralClicks: 0,
+          googleSignups: 1,
+          paidSubscriptions: 0,
+        },
+      });
+    }
+
+    console.log(`✅ Google signup tracked for referrer: ${referrerEmail}`);
+  } catch (error) {
+    console.error("Error tracking referral signup:", error);
+  }
+}
+
 const handler = NextAuth({
   providers: [
     GoogleProvider({
@@ -30,7 +75,6 @@ const handler = NextAuth({
         if (!user.email) return false;
         const existingUser = await prisma.user.findUnique({ where: { email: user.email } });
 
-        // ✅ FIXED: Read cookie with correct name 'referrerEmail'
         const cookieStore = await cookies();
         const referrerEmailFromCookie = cookieStore.get("referrerEmail")?.value || null;
 
@@ -53,25 +97,46 @@ const handler = NextAuth({
               referralCode,
             },
           });
-          await prisma.referralSignup.create({
-            data: {
-              signupEmail: user.email,
-              referrerEmail: referrerEmailFromCookie, // ✅ Fixed
-            },
-          });
+
+          // 👇 Track new signup
+          if (referrerEmailFromCookie) {
+            await prisma.referralSignup.create({
+              data: {
+                signupEmail: user.email,
+                referrerEmail: referrerEmailFromCookie,
+              },
+            });
+
+            // 👇 Update referrer stats: googleSignups +1
+            await trackReferralSignup(referrerEmailFromCookie);
+          }
         } else {
           const updateData: any = { lastLogin: new Date() };
           if (!existingUser.referralCode) {
             updateData.referralCode = generateReferralCode();
           }
           await prisma.user.update({ where: { email: user.email }, data: updateData });
+
           if (referrerEmailFromCookie) {
-            await prisma.referralSignup.create({
-              data: {
+            // Check if already tracked
+            const alreadyTracked = await prisma.referralSignup.findFirst({
+              where: {
                 signupEmail: user.email,
-                referrerEmail: referrerEmailFromCookie, // ✅ Fixed
+                referrerEmail: referrerEmailFromCookie,
               },
             });
+
+            if (!alreadyTracked) {
+              await prisma.referralSignup.create({
+                data: {
+                  signupEmail: user.email,
+                  referrerEmail: referrerEmailFromCookie,
+                },
+              });
+
+              // 👇 Update referrer stats: googleSignups +1
+              await trackReferralSignup(referrerEmailFromCookie);
+            }
           }
         }
         return true;
