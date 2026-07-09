@@ -10,7 +10,9 @@ import {
   Bug, 
   Copy, 
   Calendar,
-  Wallet
+  Wallet,
+  IndianRupee,
+  RefreshCw
 } from "lucide-react";
 
 export default function ReferEarnPage() {
@@ -24,6 +26,7 @@ export default function ReferEarnPage() {
     googleSignups: 0,
     paidSubscriptions: 0,
     conversionRate: 0,
+    totalEarnings: 0, // 👈 New field
   });
   const [statsLoading, setStatsLoading] = useState(true);
 
@@ -62,6 +65,7 @@ export default function ReferEarnPage() {
             googleSignups: data.googleSignups || 0,
             paidSubscriptions: data.paidSubscriptions || 0,
             conversionRate: data.conversionRate || 0,
+            totalEarnings: (data.paidSubscriptions || 0) * 100, // 👈 ₹100 per subscription
           });
         }
       } catch (err) {
@@ -73,6 +77,26 @@ export default function ReferEarnPage() {
 
     fetchStats();
   }, []);
+
+  // 👇 Reset Earnings Function (When UPI Payment Done)
+  const handleResetEarnings = async () => {
+    try {
+      const res = await fetch("/api/user/reset-earnings", {
+        method: "POST",
+      });
+      const data = await res.json();
+      
+      if (res.ok && data.success) {
+        setStats(prev => ({
+          ...prev,
+          totalEarnings: 0,
+        }));
+        alert("Earnings reset successful! ₹0");
+      }
+    } catch (err) {
+      console.error("Error resetting earnings:", err);
+    }
+  };
 
   // Construct the full referral link
   const referralLink = referralCode ? `https://reviewreply-ai-pi.vercel.app/r/${referralCode}` : "";
@@ -141,6 +165,19 @@ export default function ReferEarnPage() {
                   <Copy className="w-4 h-4" /> Copy Link
                 </button>
               </div>
+
+              {/* 👇 Total Earnings Display */}
+              <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 max-w-lg border border-white/20">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <IndianRupee className="w-5 h-5 text-yellow-300" />
+                    <span className="text-white/90 text-sm">Total Earnings</span>
+                  </div>
+                  <span className="text-2xl font-bold text-yellow-300">
+                    ₹{statsLoading ? "..." : stats.totalEarnings.toLocaleString()}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -200,9 +237,18 @@ export default function ReferEarnPage() {
               <div className="text-gray-800">📊</div>
               <h3 className="text-lg font-bold text-gray-800">Performance Overview</h3>
             </div>
-            <button className="border border-gray-200 bg-white rounded-lg px-4 py-2 text-sm font-medium text-gray-600 flex items-center gap-2">
-              <Calendar className="w-4 h-4" /> This Month <span className="text-gray-400 text-xs">▼</span>
-            </button>
+            <div className="flex items-center gap-3">
+              {/* 👇 Reset Earnings Button */}
+              <button 
+                onClick={handleResetEarnings}
+                className="border border-red-200 bg-red-50 hover:bg-red-100 rounded-lg px-4 py-2 text-sm font-medium text-red-600 flex items-center gap-2 transition"
+              >
+                <RefreshCw className="w-4 h-4" /> Reset Earnings
+              </button>
+              <button className="border border-gray-200 bg-white rounded-lg px-4 py-2 text-sm font-medium text-gray-600 flex items-center gap-2">
+                <Calendar className="w-4 h-4" /> This Month <span className="text-gray-400 text-xs">▼</span>
+              </button>
+            </div>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -226,23 +272,37 @@ export default function ReferEarnPage() {
                       Paid Subscriptions
                     </div>
                   </th>
-                  <th className="bg-purple-50/80 text-purple-600 text-left p-3 text-sm font-medium rounded-tr-lg border-b border-gray-100">
+                  <th className="bg-purple-50/80 text-purple-600 text-left p-3 text-sm font-medium border-b border-gray-100">
                     <div className="flex items-center gap-2">
                       <Eye className="w-4 h-4" />
                       Conversion Rate
+                    </div>
+                  </th>
+                  {/* 👇 New Column: Total Earnings */}
+                  <th className="bg-yellow-50/80 text-yellow-600 text-left p-3 text-sm font-medium rounded-tr-lg border-b border-gray-100">
+                    <div className="flex items-center gap-2">
+                      <IndianRupee className="w-4 h-4" />
+                      Total Earnings
                     </div>
                   </th>
                 </tr>
               </thead>
               <tbody className="bg-white">
                 {[
-                  [stats.referralClicks, stats.googleSignups, stats.paidSubscriptions, `${stats.conversionRate}%`]
+                  [
+                    stats.referralClicks, 
+                    stats.googleSignups, 
+                    stats.paidSubscriptions, 
+                    `${stats.conversionRate}%`,
+                    `₹${stats.totalEarnings.toLocaleString()}` // 👈 Earnings in table
+                  ]
                 ].map((row, idx) => (
                   <tr key={idx}>
-                    <td className="p-4 text-sm text-gray-600">{statsLoading ? "Loading..." : row[0].toLocaleString()}</td>
-                    <td className="p-4 text-sm text-gray-600">{statsLoading ? "Loading..." : row[1].toLocaleString()}</td>
-                    <td className="p-4 text-sm text-gray-600">{statsLoading ? "Loading..." : row[2].toLocaleString()}</td>
-                    <td className="p-4 text-sm text-gray-600">{statsLoading ? "Loading..." : row[3]}</td>
+                    <td className="p-4 text-sm text-gray-600">{statsLoading ? "..." : row[0].toLocaleString()}</td>
+                    <td className="p-4 text-sm text-gray-600">{statsLoading ? "..." : row[1].toLocaleString()}</td>
+                    <td className="p-4 text-sm text-gray-600">{statsLoading ? "..." : row[2].toLocaleString()}</td>
+                    <td className="p-4 text-sm text-gray-600">{statsLoading ? "..." : row[3]}</td>
+                    <td className="p-4 text-sm font-semibold text-yellow-600">{statsLoading ? "..." : row[4]}</td>
                   </tr>
                 ))}
               </tbody>
