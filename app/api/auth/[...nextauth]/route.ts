@@ -76,6 +76,13 @@ const handler = NextAuth({
         const cookieStore = await cookies();
         const referrerCodeFromCookie = cookieStore.get("referrerCode")?.value || null;
 
+        // 👇 Pehle referrer dhundho
+        const referrer = referrerCodeFromCookie
+          ? await prisma.user.findUnique({
+              where: { referralCode: referrerCodeFromCookie },
+            })
+          : null;
+
         if (!existingUser) {
           const referralCode = generateReferralCode();
           await prisma.user.create({
@@ -100,7 +107,7 @@ const handler = NextAuth({
             await prisma.referralSignup.create({
               data: {
                 signupEmail: user.email,
-                referrerEmail: referrerCodeFromCookie,
+                referrerEmail: referrer?.email || referrerCodeFromCookie, // ✅ FIXED
               },
             });
 
@@ -117,7 +124,7 @@ const handler = NextAuth({
             const alreadyTracked = await prisma.referralSignup.findFirst({
               where: {
                 signupEmail: user.email,
-                referrerEmail: referrerCodeFromCookie,
+                referrerEmail: referrer?.email || referrerCodeFromCookie, // ✅ FIXED
               },
             });
 
@@ -125,7 +132,7 @@ const handler = NextAuth({
               await prisma.referralSignup.create({
                 data: {
                   signupEmail: user.email,
-                  referrerEmail: referrerCodeFromCookie,
+                  referrerEmail: referrer?.email || referrerCodeFromCookie, // ✅ FIXED
                 },
               });
 
