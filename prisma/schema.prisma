@@ -52,7 +52,7 @@ model User {
   bugReports          BugReport[]
   referralClicks      ReferralClick[]
   referralSignups     ReferralSignup[]
-  referralStats       ReferralStats[]      // 👈 New relation
+  referralStats       ReferralStats[]
 }
 
 model BusinessLocation {
@@ -144,7 +144,6 @@ model ReferralSignup {
   user           User?    @relation(fields: [referrerEmail], references: [email])
 }
 
-// 👇 NEW MODEL: Referral Stats
 model ReferralStats {
   id                Int      @id @default(autoincrement())
   userId            String   @map("user_id")
@@ -158,4 +157,13 @@ model ReferralStats {
   user User @relation(fields: [userId], references: [id])
 
   @@map("referral_stats")
+}
+
+// 👇 NEW MODEL: Partner Whitelist
+model PartnerWhitelist {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  createdAt DateTime @default(now())
+
+  @@map("partner_whitelist")
 }
