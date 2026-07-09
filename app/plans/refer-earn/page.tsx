@@ -30,7 +30,9 @@ export default function ReferEarnPage() {
   const [statsLoading, setStatsLoading] = useState(true);
 
   const [showBugModal, setShowBugModal] = useState(false);
-  const [bugMessage, setBugMessage] = useState("");
+  const [bugFeature, setBugFeature] = useState("");
+  const [bugIssueType, setBugIssueType] = useState("");
+  const [bugDescription, setBugDescription] = useState("");
   const [bugSubmitting, setBugSubmitting] = useState(false);
 
   useEffect(() => {
@@ -76,8 +78,8 @@ export default function ReferEarnPage() {
   }, []);
 
   const handleBugSubmit = async () => {
-    if (!bugMessage.trim()) {
-      alert("Please enter a message");
+    if (!bugFeature || !bugIssueType || !bugDescription.trim()) {
+      alert("Please fill all fields");
       return;
     }
     setBugSubmitting(true);
@@ -86,16 +88,18 @@ export default function ReferEarnPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
-          feature: "General",
-          issueType: "Bug",
-          description: bugMessage 
+          feature: bugFeature,
+          issueType: bugIssueType,
+          description: bugDescription 
         }),
       });
       const data = await res.json();
       if (data.success) {
         alert("✅ Bug reported successfully!");
         setShowBugModal(false);
-        setBugMessage("");
+        setBugFeature("");
+        setBugIssueType("");
+        setBugDescription("");
       }
     } catch (err) {
       alert("Error submitting bug report");
@@ -145,29 +149,13 @@ export default function ReferEarnPage() {
               <h2 className="text-3xl font-semibold mb-2">Referral Link</h2>
               <p className="text-blue-100 text-sm mb-6">Share your link and earn rewards</p>
               <div className="flex flex-col md:flex-row gap-0 bg-white rounded-lg p-1.5 mb-6 shadow-md max-w-lg">
-                <input
-                  type="text"
-                  value={referralLink}
-                  readOnly
-                  className="flex-1 bg-transparent text-gray-800 px-4 py-3 outline-none text-sm font-medium"
-                  placeholder={loading ? "Loading..." : "No referral link available"}
-                />
-                <button 
-                  onClick={handleCopy}
-                  className="bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white px-5 py-3 rounded-md flex items-center justify-center gap-2 text-sm font-medium transition"
-                >
-                  <Copy className="w-4 h-4" /> Copy Link
-                </button>
+                <input type="text" value={referralLink} readOnly className="flex-1 bg-transparent text-gray-800 px-4 py-3 outline-none text-sm font-medium" placeholder={loading ? "Loading..." : "No referral link available"} />
+                <button onClick={handleCopy} className="bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white px-5 py-3 rounded-md flex items-center justify-center gap-2 text-sm font-medium transition"><Copy className="w-4 h-4" /> Copy Link</button>
               </div>
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 max-w-lg border border-white/20">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <IndianRupee className="w-5 h-5 text-yellow-300" />
-                    <span className="text-white/90 text-sm">Total Earnings</span>
-                  </div>
-                  <span className="text-2xl font-bold text-yellow-300">
-                    ₹{statsLoading ? "..." : stats.totalEarnings.toLocaleString()}
-                  </span>
+                  <div className="flex items-center gap-2"><IndianRupee className="w-5 h-5 text-yellow-300" /><span className="text-white/90 text-sm">Total Earnings</span></div>
+                  <span className="text-2xl font-bold text-yellow-300">₹{statsLoading ? "..." : stats.totalEarnings.toLocaleString()}</span>
                 </div>
               </div>
             </div>
@@ -177,73 +165,38 @@ export default function ReferEarnPage() {
         <div className="lg:col-span-1 -ml-[2px] flex flex-col gap-6 h-full">
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 h-[163.5px] flex flex-col justify-between">
             <div>
-              <div className="flex items-center gap-3 mb-1">
-                <div className="bg-purple-50 p-2 rounded-lg">
-                  <Wallet className="w-5 h-5 text-purple-600" />
-                </div>
-                <h3 className="font-semibold text-lg text-gray-800">Withdraw Your Earnings</h3>
-              </div>
-              <p className="text-xs text-gray-500 leading-relaxed mb-1">
-                Fill out the Google Form below to withdraw your earnings.
-              </p>
+              <div className="flex items-center gap-3 mb-1"><div className="bg-purple-50 p-2 rounded-lg"><Wallet className="w-5 h-5 text-purple-600" /></div><h3 className="font-semibold text-lg text-gray-800">Withdraw Your Earnings</h3></div>
+              <p className="text-xs text-gray-500 leading-relaxed mb-1">Fill out the Google Form below to withdraw your earnings.</p>
             </div>
             <div>
-              <button className="w-full bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white py-3 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition">
-                Open Google Form <span className="text-sm">↗</span>
-              </button>
-              <p className="text-[10px] text-gray-400 mt-0">
-                We will verify your request.
-              </p>
+              <button className="w-full bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white py-3 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition">Open Google Form <span className="text-sm">↗</span></button>
+              <p className="text-[10px] text-gray-400 mt-0">We will verify your request.</p>
             </div>
           </div>
 
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 h-[162.5px] flex flex-col justify-between">
             <div>
-              <div className="flex items-center gap-3 mb-1">
-                <div className="bg-purple-50 p-2 rounded-lg">
-                  <Bug className="w-5 h-5 text-purple-600" />
-                </div>
-                <h3 className="font-semibold text-lg text-gray-800">Found a Bug?</h3>
-              </div>
-              <p className="text-xs text-gray-500 leading-relaxed mb-1">
-                Report any issues you face on the platform.
-              </p>
+              <div className="flex items-center gap-3 mb-1"><div className="bg-purple-50 p-2 rounded-lg"><Bug className="w-5 h-5 text-purple-600" /></div><h3 className="font-semibold text-lg text-gray-800">Found a Bug?</h3></div>
+              <p className="text-xs text-gray-500 leading-relaxed mb-1">Report any issues you face on the platform.</p>
             </div>
-            <button onClick={() => setShowBugModal(true)} className="w-full bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white py-3 rounded-lg font-medium text-sm flex items-center justify-between px-6 transition">
-              Report Bug <span className="text-lg">›</span>
-            </button>
+            <button onClick={() => setShowBugModal(true)} className="w-full bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white py-3 rounded-lg font-medium text-sm flex items-center justify-between px-6 transition">Report Bug <span className="text-lg">›</span></button>
           </div>
         </div>
 
         <div className="lg:col-span-3 bg-white rounded-xl border border-gray-100 shadow-sm p-6">
           <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-2">
-              <div className="text-gray-800">📊</div>
-              <h3 className="text-lg font-bold text-gray-800">Performance Overview</h3>
-            </div>
-            <button className="border border-gray-200 bg-white rounded-lg px-4 py-2 text-sm font-medium text-gray-600 flex items-center gap-2">
-              <Calendar className="w-4 h-4" /> This Month <span className="text-gray-400 text-xs">▼</span>
-            </button>
+            <div className="flex items-center gap-2"><div className="text-gray-800">📊</div><h3 className="text-lg font-bold text-gray-800">Performance Overview</h3></div>
+            <button className="border border-gray-200 bg-white rounded-lg px-4 py-2 text-sm font-medium text-gray-600 flex items-center gap-2"><Calendar className="w-4 h-4" /> This Month <span className="text-gray-400 text-xs">▼</span></button>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr>
-                  <th className="bg-blue-50/80 text-blue-600 text-left p-3 text-sm font-medium rounded-tl-lg border-b border-gray-100">
-                    <div className="flex items-center gap-2"><MousePointer2 className="w-4 h-4" />Referral Clicks</div>
-                  </th>
-                  <th className="bg-orange-50/80 text-orange-600 text-left p-3 text-sm font-medium border-b border-gray-100">
-                    <div className="flex items-center gap-2"><UserPlus className="w-4 h-4" />Google Signups</div>
-                  </th>
-                  <th className="bg-green-50/80 text-green-600 text-left p-3 text-sm font-medium border-b border-gray-100">
-                    <div className="flex items-center gap-2"><Users className="w-4 h-4" />Paid Subscriptions</div>
-                  </th>
-                  <th className="bg-purple-50/80 text-purple-600 text-left p-3 text-sm font-medium border-b border-gray-100">
-                    <div className="flex items-center gap-2"><Eye className="w-4 h-4" />Conversion Rate</div>
-                  </th>
-                  <th className="bg-yellow-50/80 text-yellow-600 text-left p-3 text-sm font-medium rounded-tr-lg border-b border-gray-100">
-                    <div className="flex items-center gap-2"><IndianRupee className="w-4 h-4" />Total Earnings</div>
-                  </th>
+                  <th className="bg-blue-50/80 text-blue-600 text-left p-3 text-sm font-medium rounded-tl-lg border-b border-gray-100"><div className="flex items-center gap-2"><MousePointer2 className="w-4 h-4" />Referral Clicks</div></th>
+                  <th className="bg-orange-50/80 text-orange-600 text-left p-3 text-sm font-medium border-b border-gray-100"><div className="flex items-center gap-2"><UserPlus className="w-4 h-4" />Google Signups</div></th>
+                  <th className="bg-green-50/80 text-green-600 text-left p-3 text-sm font-medium border-b border-gray-100"><div className="flex items-center gap-2"><Users className="w-4 h-4" />Paid Subscriptions</div></th>
+                  <th className="bg-purple-50/80 text-purple-600 text-left p-3 text-sm font-medium border-b border-gray-100"><div className="flex items-center gap-2"><Eye className="w-4 h-4" />Conversion Rate</div></th>
+                  <th className="bg-yellow-50/80 text-yellow-600 text-left p-3 text-sm font-medium rounded-tr-lg border-b border-gray-100"><div className="flex items-center gap-2"><IndianRupee className="w-4 h-4" />Total Earnings</div></th>
                 </tr>
               </thead>
               <tbody className="bg-white">
@@ -265,11 +218,41 @@ export default function ReferEarnPage() {
       {showBugModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold text-gray-800">🐛 Report a Bug</h2>
               <button onClick={() => setShowBugModal(false)}><X className="w-5 h-5 text-gray-400 hover:text-gray-600" /></button>
             </div>
-            <textarea value={bugMessage} onChange={(e) => setBugMessage(e.target.value)} placeholder="Describe the issue you're facing..." rows={4} className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-purple-500 resize-none mb-4" />
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Which feature has the issue? *</label>
+              <select value={bugFeature} onChange={(e) => setBugFeature(e.target.value)} className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-purple-500">
+                <option value="">-- Select feature --</option>
+                <option value="Referral System">Referral System</option>
+                <option value="Dashboard">Dashboard</option>
+                <option value="Review Management">Review Management</option>
+                <option value="Login/Auth">Login/Auth</option>
+                <option value="Payment">Payment</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">What type of problem is it? *</label>
+              <select value={bugIssueType} onChange={(e) => setBugIssueType(e.target.value)} className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-purple-500">
+                <option value="">-- Select issue type --</option>
+                <option value="Bug">Bug</option>
+                <option value="UI/UX Issue">UI/UX Issue</option>
+                <option value="Performance">Performance</option>
+                <option value="Feature Request">Feature Request</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Description *</label>
+              <textarea value={bugDescription} onChange={(e) => setBugDescription(e.target.value)} placeholder="Describe the issue..." rows={4} className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-purple-500 resize-none" />
+            </div>
+
             <div className="flex gap-3 justify-end">
               <button onClick={() => setShowBugModal(false)} className="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-lg">Cancel</button>
               <button onClick={handleBugSubmit} disabled={bugSubmitting} className="bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50">{bugSubmitting ? "Sending..." : "Send Report"}</button>
