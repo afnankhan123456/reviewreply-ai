@@ -11,7 +11,8 @@ import {
   Copy, 
   Calendar,
   Wallet,
-  IndianRupee
+  IndianRupee,
+  X
 } from "lucide-react";
 
 export default function ReferEarnPage() {
@@ -28,13 +29,15 @@ export default function ReferEarnPage() {
   });
   const [statsLoading, setStatsLoading] = useState(true);
 
-  // Fetch referral code from API on page load
+  const [showBugModal, setShowBugModal] = useState(false);
+  const [bugMessage, setBugMessage] = useState("");
+  const [bugSubmitting, setBugSubmitting] = useState(false);
+
   useEffect(() => {
     async function fetchReferralCode() {
       try {
         const res = await fetch("/api/user/referral");
         const data = await res.json();
-
         if (res.ok && data.success) {
           setReferralCode(data.referralCode);
         } else {
@@ -46,17 +49,14 @@ export default function ReferEarnPage() {
         setLoading(false);
       }
     }
-
     fetchReferralCode();
   }, []);
 
-  // Fetch stats from API
   useEffect(() => {
     async function fetchStats() {
       try {
         const res = await fetch("/api/user/stats/monthly");
         const data = await res.json();
-
         if (res.ok && data.success) {
           setStats({
             referralClicks: data.referralClicks || 0,
@@ -72,14 +72,40 @@ export default function ReferEarnPage() {
         setStatsLoading(false);
       }
     }
-
     fetchStats();
   }, []);
 
-  // Construct the full referral link
+  const handleBugSubmit = async () => {
+    if (!bugMessage.trim()) {
+      alert("Please enter a message");
+      return;
+    }
+    setBugSubmitting(true);
+    try {
+      const res = await fetch("/api/bugs/report", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          feature: "General",
+          issueType: "Bug",
+          description: bugMessage 
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert("✅ Bug reported successfully!");
+        setShowBugModal(false);
+        setBugMessage("");
+      }
+    } catch (err) {
+      alert("Error submitting bug report");
+    } finally {
+      setBugSubmitting(false);
+    }
+  };
+
   const referralLink = referralCode ? `https://reviewreply-ai-pi.vercel.app/r/${referralCode}` : "";
 
-  // Copy link function
   const handleCopy = () => {
     if (referralLink) {
       navigator.clipboard.writeText(referralLink);
@@ -89,7 +115,6 @@ export default function ReferEarnPage() {
   return (
     <div className="min-h-screen bg-[#fbfbfb] text-black px-6 py-6 font-sans">
 
-      {/* TOP HEADER */}
       <div className="max-w-7xl mx-auto flex items-center justify-between mb-8">
         <div className="flex items-center gap-3">
           <img 
@@ -110,20 +135,15 @@ export default function ReferEarnPage() {
         </Link>
       </div>
 
-      {/* MAIN GRID */}
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-[auto_auto] gap-6">
 
-        {/* LEFT CARD */}
         <div className="lg:col-span-2 pr-[2px]">
           <div className="relative bg-gradient-to-br from-[#4f46e5] via-[#6f8dfc] to-[#a48aff] rounded-2xl p-8 text-white overflow-hidden shadow-md h-[350px]">
-            
             <div className="absolute top-[-50px] right-[-50px] w-[200px] h-[200px] bg-[#c084fc] rounded-full blur-[60px] opacity-30 pointer-events-none"></div>
             <div className="absolute bottom-[-50px] left-[-50px] w-[150px] h-[150px] bg-[#818cf8] rounded-full blur-[50px] opacity-40 pointer-events-none"></div>
-            
             <div className="relative z-10">
               <h2 className="text-3xl font-semibold mb-2">Referral Link</h2>
               <p className="text-blue-100 text-sm mb-6">Share your link and earn rewards</p>
-
               <div className="flex flex-col md:flex-row gap-0 bg-white rounded-lg p-1.5 mb-6 shadow-md max-w-lg">
                 <input
                   type="text"
@@ -139,8 +159,6 @@ export default function ReferEarnPage() {
                   <Copy className="w-4 h-4" /> Copy Link
                 </button>
               </div>
-
-              {/* Total Earnings Display */}
               <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 max-w-lg border border-white/20">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -156,9 +174,7 @@ export default function ReferEarnPage() {
           </div>
         </div>
 
-        {/* RIGHT SIDEBAR */}
         <div className="lg:col-span-1 -ml-[2px] flex flex-col gap-6 h-full">
-          
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 h-[163.5px] flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-3 mb-1">
@@ -193,14 +209,12 @@ export default function ReferEarnPage() {
                 Report any issues you face on the platform.
               </p>
             </div>
-            <button className="w-full bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white py-3 rounded-lg font-medium text-sm flex items-center justify-between px-6 transition">
+            <button onClick={() => setShowBugModal(true)} className="w-full bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white py-3 rounded-lg font-medium text-sm flex items-center justify-between px-6 transition">
               Report Bug <span className="text-lg">›</span>
             </button>
           </div>
-
         </div>
 
-        {/* TABLE */}
         <div className="lg:col-span-3 bg-white rounded-xl border border-gray-100 shadow-sm p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2">
@@ -216,47 +230,24 @@ export default function ReferEarnPage() {
               <thead>
                 <tr>
                   <th className="bg-blue-50/80 text-blue-600 text-left p-3 text-sm font-medium rounded-tl-lg border-b border-gray-100">
-                    <div className="flex items-center gap-2">
-                      <MousePointer2 className="w-4 h-4" />
-                      Referral Clicks
-                    </div>
+                    <div className="flex items-center gap-2"><MousePointer2 className="w-4 h-4" />Referral Clicks</div>
                   </th>
                   <th className="bg-orange-50/80 text-orange-600 text-left p-3 text-sm font-medium border-b border-gray-100">
-                    <div className="flex items-center gap-2">
-                      <UserPlus className="w-4 h-4" />
-                      Google Signups
-                    </div>
+                    <div className="flex items-center gap-2"><UserPlus className="w-4 h-4" />Google Signups</div>
                   </th>
                   <th className="bg-green-50/80 text-green-600 text-left p-3 text-sm font-medium border-b border-gray-100">
-                    <div className="flex items-center gap-2">
-                      <Users className="w-4 h-4" />
-                      Paid Subscriptions
-                    </div>
+                    <div className="flex items-center gap-2"><Users className="w-4 h-4" />Paid Subscriptions</div>
                   </th>
                   <th className="bg-purple-50/80 text-purple-600 text-left p-3 text-sm font-medium border-b border-gray-100">
-                    <div className="flex items-center gap-2">
-                      <Eye className="w-4 h-4" />
-                      Conversion Rate
-                    </div>
+                    <div className="flex items-center gap-2"><Eye className="w-4 h-4" />Conversion Rate</div>
                   </th>
                   <th className="bg-yellow-50/80 text-yellow-600 text-left p-3 text-sm font-medium rounded-tr-lg border-b border-gray-100">
-                    <div className="flex items-center gap-2">
-                      <IndianRupee className="w-4 h-4" />
-                      Total Earnings
-                    </div>
+                    <div className="flex items-center gap-2"><IndianRupee className="w-4 h-4" />Total Earnings</div>
                   </th>
                 </tr>
               </thead>
               <tbody className="bg-white">
-                {[
-                  [
-                    stats.referralClicks, 
-                    stats.googleSignups, 
-                    stats.paidSubscriptions, 
-                    `${stats.conversionRate}%`,
-                    `₹${stats.totalEarnings.toLocaleString()}`
-                  ]
-                ].map((row, idx) => (
+                {[[stats.referralClicks, stats.googleSignups, stats.paidSubscriptions, `${stats.conversionRate}%`, `₹${stats.totalEarnings.toLocaleString()}`]].map((row, idx) => (
                   <tr key={idx}>
                     <td className="p-4 text-sm text-gray-600">{statsLoading ? "..." : row[0].toLocaleString()}</td>
                     <td className="p-4 text-sm text-gray-600">{statsLoading ? "..." : row[1].toLocaleString()}</td>
@@ -269,8 +260,23 @@ export default function ReferEarnPage() {
             </table>
           </div>
         </div>
-
       </div>
+
+      {showBugModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-lg font-bold text-gray-800">🐛 Report a Bug</h2>
+              <button onClick={() => setShowBugModal(false)}><X className="w-5 h-5 text-gray-400 hover:text-gray-600" /></button>
+            </div>
+            <textarea value={bugMessage} onChange={(e) => setBugMessage(e.target.value)} placeholder="Describe the issue you're facing..." rows={4} className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm outline-none focus:border-purple-500 resize-none mb-4" />
+            <div className="flex gap-3 justify-end">
+              <button onClick={() => setShowBugModal(false)} className="px-4 py-2 text-sm font-medium text-gray-600 hover:bg-gray-100 rounded-lg">Cancel</button>
+              <button onClick={handleBugSubmit} disabled={bugSubmitting} className="bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50">{bugSubmitting ? "Sending..." : "Send Report"}</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
