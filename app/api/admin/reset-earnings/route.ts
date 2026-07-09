@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Find and reset referral stats
+    // Find and reset ALL referral stats
     const existingStats = await prisma.referralStats.findFirst({
       where: { userId: user.id },
     });
@@ -34,6 +34,8 @@ export async function POST(req: NextRequest) {
       await prisma.referralStats.update({
         where: { id: existingStats.id },
         data: {
+          referralClicks: 0,
+          googleSignups: 0,
           paidSubscriptions: 0,
           updatedAt: new Date(),
         },
@@ -42,7 +44,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: `Earnings reset to ₹0 for ${user.email}`,
+      message: `All stats reset to 0 for ${user.email}`,
     });
   } catch (error) {
     console.error("Error resetting earnings:", error);
