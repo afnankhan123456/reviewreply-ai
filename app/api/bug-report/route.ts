@@ -37,7 +37,7 @@ export async function POST(req: any) {
         userId: user.id,
         feature,
         issueType,
-        status: "Open",          // only unresolved tickets
+        status: "Open",
       },
     });
 
@@ -45,10 +45,10 @@ export async function POST(req: any) {
       return NextResponse.json(
         {
           success: false,
-          error: "You already have an open ticket for this issue. We are working on it.",
-          existingTicket: existingOpen,    // optional: frontend can use it
+          error: `You already have an open ticket for "${feature}" - "${issueType}". We are working on it. Please check other issues or select a different type.`,
+          existingTicket: existingOpen,
         },
-        { status: 409 }                   // Conflict
+        { status: 409 }
       );
     }
 
@@ -59,7 +59,7 @@ export async function POST(req: any) {
         feature,
         issueType,
         description,
-        status: "Open",          // new field
+        status: "Open",
       },
     });
 
