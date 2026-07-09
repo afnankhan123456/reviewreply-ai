@@ -7,7 +7,8 @@ import {
   LayoutDashboard,
   Bug,
   Settings,
-  Users, // 👈 Naya icon
+  Users,
+  Star, // 👈 Naya icon
 } from "lucide-react";
 
 export default function AdminLayout({
@@ -29,9 +30,14 @@ export default function AdminLayout({
       icon: Bug,
     },
     {
-      name: "Referral Users Info", // 👈 Naya link
+      name: "Referral Users Info",
       href: "/admin/referrals",
       icon: Users,
+    },
+    {
+      name: "Whitelist Users", // 👈 Naya link
+      href: "/admin/whitelist",
+      icon: Star,
     },
     {
       name: "Settings",
