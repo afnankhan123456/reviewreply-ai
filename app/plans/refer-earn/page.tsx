@@ -66,6 +66,23 @@ export default function ReferEarnPage() {
   const [showStatusModal, setShowStatusModal] = useState(false);
   const [statusTab, setStatusTab] = useState<"withdrawals" | "bugs">("withdrawals");
 
+  const [selectedMonth, setSelectedMonth] = useState("");
+
+  const months = [
+    { value: "0", label: "January" },
+    { value: "1", label: "February" },
+    { value: "2", label: "March" },
+    { value: "3", label: "April" },
+    { value: "4", label: "May" },
+    { value: "5", label: "June" },
+    { value: "6", label: "July" },
+    { value: "7", label: "August" },
+    { value: "8", label: "September" },
+    { value: "9", label: "October" },
+    { value: "10", label: "November" },
+    { value: "11", label: "December" },
+  ];
+
   useEffect(() => {
     async function fetchReferralCode() {
       try {
@@ -85,26 +102,32 @@ export default function ReferEarnPage() {
     fetchReferralCode();
   }, []);
 
-  useEffect(() => {
-    async function fetchStats() {
-      try {
-        const res = await fetch("/api/user/stats/monthly");
-        const data = await res.json();
-        if (res.ok && data.success) {
-          setStats({
-            referralClicks: data.referralClicks || 0,
-            googleSignups: data.googleSignups || 0,
-            paidSubscriptions: data.paidSubscriptions || 0,
-            conversionRate: data.conversionRate || 0,
-            totalEarnings: (data.paidSubscriptions || 0) * 100,
-          });
-        }
-      } catch (err) {
-        console.error("Error fetching stats:", err);
-      } finally {
-        setStatsLoading(false);
+  const fetchStats = async (month?: string) => {
+    setStatsLoading(true);
+    try {
+      let url = "/api/user/stats/monthly";
+      if (month) {
+        url += `?month=${month}`;
       }
+      const res = await fetch(url);
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setStats({
+          referralClicks: data.referralClicks || 0,
+          googleSignups: data.googleSignups || 0,
+          paidSubscriptions: data.paidSubscriptions || 0,
+          conversionRate: data.conversionRate || 0,
+          totalEarnings: (data.paidSubscriptions || 0) * 100,
+        });
+      }
+    } catch (err) {
+      console.error("Error fetching stats:", err);
+    } finally {
+      setStatsLoading(false);
     }
+  };
+
+  useEffect(() => {
     fetchStats();
   }, []);
 
@@ -275,7 +298,21 @@ export default function ReferEarnPage() {
         <div className="lg:col-span-3 bg-white rounded-xl border border-gray-100 shadow-sm p-6">
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-2"><div className="text-gray-800">📊</div><h3 className="text-lg font-bold text-gray-800">Performance Overview</h3></div>
-            <button className="border border-gray-200 bg-white rounded-lg px-4 py-2 text-sm font-medium text-gray-600 flex items-center gap-2"><Calendar className="w-4 h-4" /> This Month <span className="text-gray-400 text-xs">▼</span></button>
+            <select
+              value={selectedMonth}
+              onChange={(e) => {
+                setSelectedMonth(e.target.value);
+                fetchStats(e.target.value);
+              }}
+              className="border border-gray-200 bg-white rounded-lg px-4 py-2 text-sm font-medium text-gray-600 outline-none"
+            >
+              <option value="">All Months</option>
+              {months.map((month) => (
+                <option key={month.value} value={month.value}>
+                  {month.label}
+                </option>
+              ))}
+            </select>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full">
@@ -313,7 +350,6 @@ export default function ReferEarnPage() {
               <button onClick={() => setShowStatusModal(false)}><X className="w-5 h-5 text-gray-400 hover:text-gray-600" /></button>
             </div>
 
-            {/* Tabs */}
             <div className="flex gap-2 mb-4">
               <button
                 onClick={() => setStatusTab("withdrawals")}
@@ -337,7 +373,6 @@ export default function ReferEarnPage() {
               </button>
             </div>
 
-            {/* Content */}
             {statusLoading ? (
               <p className="text-center text-gray-500 py-8">Loading...</p>
             ) : statusTab === "withdrawals" ? (
