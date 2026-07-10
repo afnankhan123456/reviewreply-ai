@@ -12,8 +12,31 @@ import {
   Calendar,
   Wallet,
   IndianRupee,
-  X
+  X,
+  Clock,
+  CheckCircle,
+  XCircle,
+  AlertCircle
 } from "lucide-react";
+
+interface WithdrawalStatus {
+  id: string;
+  email: string;
+  upiId: string;
+  name: string;
+  phoneNumber: string;
+  status: string;
+  createdAt: string;
+}
+
+interface BugStatus {
+  id: string;
+  feature: string;
+  issueType: string;
+  description: string;
+  status: string;
+  createdAt: string;
+}
 
 export default function ReferEarnPage() {
   const [referralCode, setReferralCode] = useState<string>("");
@@ -36,6 +59,12 @@ export default function ReferEarnPage() {
   const [bugOtherType, setBugOtherType] = useState("");
   const [bugDescription, setBugDescription] = useState("");
   const [bugSubmitting, setBugSubmitting] = useState(false);
+
+  const [withdrawals, setWithdrawals] = useState<WithdrawalStatus[]>([]);
+  const [bugs, setBugs] = useState<BugStatus[]>([]);
+  const [statusLoading, setStatusLoading] = useState(true);
+  const [showStatusModal, setShowStatusModal] = useState(false);
+  const [statusTab, setStatusTab] = useState<"withdrawals" | "bugs">("withdrawals");
 
   useEffect(() => {
     async function fetchReferralCode() {
@@ -78,6 +107,26 @@ export default function ReferEarnPage() {
     }
     fetchStats();
   }, []);
+
+  const fetchStatuses = async () => {
+    setStatusLoading(true);
+    try {
+      const [withRes, bugRes] = await Promise.all([
+        fetch("/api/user/withdrawal-status"),
+        fetch("/api/user/bug-status"),
+      ]);
+      
+      const withData = await withRes.json();
+      const bugData = await bugRes.json();
+      
+      if (withData.success) setWithdrawals(withData.withdrawals);
+      if (bugData.success) setBugs(bugData.bugs);
+    } catch (err) {
+      console.error("Error fetching statuses:", err);
+    } finally {
+      setStatusLoading(false);
+    }
+  };
 
   const handleBugSubmit = async () => {
     const finalFeature = bugFeature === "Other" ? bugOtherFeature : bugFeature;
@@ -134,6 +183,19 @@ export default function ReferEarnPage() {
     }
   };
 
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "Pending": return <Clock className="w-4 h-4 text-yellow-500" />;
+      case "Approved": return <CheckCircle className="w-4 h-4 text-blue-500" />;
+      case "Rejected": return <XCircle className="w-4 h-4 text-red-500" />;
+      case "Paid": return <CheckCircle className="w-4 h-4 text-green-500" />;
+      case "Open": return <AlertCircle className="w-4 h-4 text-yellow-500" />;
+      case "Resolved": return <CheckCircle className="w-4 h-4 text-green-500" />;
+      case "Closed": return <XCircle className="w-4 h-4 text-gray-500" />;
+      default: return <Clock className="w-4 h-4 text-gray-500" />;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#fbfbfb] text-black px-6 py-6 font-sans">
 
@@ -176,6 +238,13 @@ export default function ReferEarnPage() {
                   <span className="text-2xl font-bold text-yellow-300">₹{statsLoading ? "..." : stats.totalEarnings.toLocaleString()}</span>
                 </div>
               </div>
+              {/* Status Button */}
+              <button
+                onClick={() => { setShowStatusModal(true); fetchStatuses(); }}
+                className="mt-4 bg-white/20 hover:bg-white/30 text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2"
+              >
+                <Clock className="w-4 h-4" /> View Your Status
+              </button>
             </div>
           </div>
         </div>
@@ -235,6 +304,102 @@ export default function ReferEarnPage() {
         </div>
       </div>
 
+      {/* Status Modal */}
+      {showStatusModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-2xl shadow-xl max-h-[80vh] overflow-y-auto">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold text-gray-800">📋 Your Status</h2>
+              <button onClick={() => setShowStatusModal(false)}><X className="w-5 h-5 text-gray-400 hover:text-gray-600" /></button>
+            </div>
+
+            {/* Tabs */}
+            <div className="flex gap-2 mb-4">
+              <button
+                onClick={() => setStatusTab("withdrawals")}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                  statusTab === "withdrawals"
+                    ? "bg-[#7c5cfc] text-white"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                💰 Withdrawals
+              </button>
+              <button
+                onClick={() => setStatusTab("bugs")}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${
+                  statusTab === "bugs"
+                    ? "bg-[#7c5cfc] text-white"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                🐛 Bug Reports
+              </button>
+            </div>
+
+            {/* Content */}
+            {statusLoading ? (
+              <p className="text-center text-gray-500 py-8">Loading...</p>
+            ) : statusTab === "withdrawals" ? (
+              withdrawals.length === 0 ? (
+                <p className="text-center text-gray-500 py-8">No withdrawal requests yet</p>
+              ) : (
+                <div className="space-y-3">
+                  {withdrawals.map((w) => (
+                    <div key={w.id} className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-medium text-gray-800">{w.name}</p>
+                          <p className="text-sm text-gray-500">{w.upiId}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {getStatusIcon(w.status)}
+                          <span className={`text-sm font-medium ${
+                            w.status === "Approved" || w.status === "Paid" ? "text-green-600" :
+                            w.status === "Rejected" ? "text-red-600" : "text-yellow-600"
+                          }`}>{w.status}</span>
+                        </div>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-2">
+                        {new Date(w.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )
+            ) : (
+              bugs.length === 0 ? (
+                <p className="text-center text-gray-500 py-8">No bug reports yet</p>
+              ) : (
+                <div className="space-y-3">
+                  {bugs.map((b) => (
+                    <div key={b.id} className="border border-gray-200 rounded-lg p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-medium text-gray-800">{b.feature}</p>
+                          <p className="text-sm text-gray-500">{b.issueType}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {getStatusIcon(b.status)}
+                          <span className={`text-sm font-medium ${
+                            b.status === "Resolved" ? "text-green-600" :
+                            b.status === "Closed" ? "text-gray-600" : "text-yellow-600"
+                          }`}>{b.status}</span>
+                        </div>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-1">{b.description}</p>
+                      <p className="text-xs text-gray-400 mt-2">
+                        {new Date(b.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )
+            )}
+          </div>
+        </div>
+      )}
+
       {showBugModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
           <div className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl">
@@ -289,6 +454,3 @@ export default function ReferEarnPage() {
     </div>
   );
 }
-
-
-
