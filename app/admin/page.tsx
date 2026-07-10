@@ -4,9 +4,25 @@ export default function AdminPage() {
       <h1 className="text-4xl font-bold text-black dark:text-white mb-4">
         Admin Dashboard
       </h1>
-      <p className="text-zinc-500 dark:text-zinc-400 max-w-md">
+      <p className="text-zinc-500 dark:text-zinc-400 max-w-md mb-8">
         Use the sidebar to manage <strong>Bug Reports</strong> and <strong>Settings</strong>.
       </p>
+
+      {/* Withdraw Info Card */}
+      <div className="bg-white dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700 shadow-sm p-6 w-full max-w-md">
+        <div className="flex items-center gap-3 mb-3">
+          <div className="bg-purple-50 dark:bg-purple-900/20 p-2 rounded-lg">
+            <span className="text-2xl">💰</span>
+          </div>
+          <h3 className="font-semibold text-lg text-gray-800 dark:text-white">Withdraw Info</h3>
+        </div>
+        <p className="text-sm text-gray-500 dark:text-zinc-400 mb-4">
+          View and manage user withdrawal requests.
+        </p>
+        <button className="w-full bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white py-2.5 rounded-lg font-medium text-sm transition">
+          View Withdrawals
+        </button>
+      </div>
     </div>
   );
 }
