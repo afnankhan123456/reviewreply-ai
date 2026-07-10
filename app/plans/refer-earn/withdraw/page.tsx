@@ -188,7 +188,14 @@ export default function WithdrawPage() {
                 <span className="text-3xl">✅</span>
               </div>
               <h2 className="text-2xl font-bold text-gray-800 mb-2">Request Submitted!</h2>
-              <p className="text-sm text-gray-500 mb-6">Your withdrawal request has been submitted successfully. We will verify and process it soon.</p>
+              <p className="text-sm text-gray-800 font-semibold mb-2">✅ Payment will be received within 48 hours.</p>
+              <p className="text-xs text-gray-400 mb-6">
+                If payment not received, please{" "}
+                <Link href="/plans/refer-earn" className="text-[#7c5cfc] underline font-medium">
+                  raise a ticket
+                </Link>
+                .
+              </p>
               <Link
                 href="/plans/refer-earn"
                 className="inline-flex items-center gap-2 bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white px-6 py-3 rounded-xl font-medium text-sm transition"
