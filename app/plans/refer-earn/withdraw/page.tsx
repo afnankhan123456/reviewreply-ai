@@ -103,7 +103,7 @@ export default function WithdrawPage() {
             </div>
           </div>
           <Link
-            href="/refer-earn"
+            href="/plans/refer-earn"
             className="bg-white border border-gray-200 hover:border-indigo-400 px-5 py-2.5 rounded-2xl shadow-sm transition font-medium text-gray-700 flex items-center gap-2"
           >
             <ArrowLeft className="w-4 h-4" /> Back
@@ -190,11 +190,11 @@ export default function WithdrawPage() {
               <h2 className="text-2xl font-bold text-gray-800 mb-2">Request Submitted!</h2>
               <p className="text-sm text-gray-500 mb-6">Your withdrawal request has been submitted successfully. We will verify and process it soon.</p>
               <Link
-                href="/refer-earn"
+                href="/plans/refer-earn"
                 className="inline-flex items-center gap-2 bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white px-6 py-3 rounded-xl font-medium text-sm transition"
               >
                 <ArrowLeft className="w-4 h-4" /> Back to Refer & Earn
-              </Link>
+              </ArrowLeft>
             </div>
           )}
         </div>
