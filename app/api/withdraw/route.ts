@@ -1,7 +1,18 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export async function POST(request: Request) {
   try {
+    const session = await getServerSession(authOptions);
+    
+    if (!session || !session.user?.email) {
+      return NextResponse.json(
+        { success: false, error: "Please login first" },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     const { upiId, name, phoneNumber } = body;
 
@@ -29,8 +40,17 @@ export async function POST(request: Request) {
       );
     }
 
-    // TODO: Save to database (yahan aap database me save kar sakte ho)
-    console.log("Withdrawal Request:", { upiId, name, phoneNumber });
+    const withdrawalData = {
+      email: session.user.email,
+      upiId,
+      name,
+      phoneNumber,
+      status: "Pending",
+      createdAt: new Date().toISOString(),
+    };
+
+    // TODO: Save to database
+    console.log("Withdrawal Request:", withdrawalData);
 
     return NextResponse.json(
       { success: true, message: "Withdrawal request submitted successfully" },
