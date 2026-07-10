@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
+import { prisma } from "@/lib/prisma";
 
 export async function POST(request: Request) {
   try {
@@ -40,23 +41,25 @@ export async function POST(request: Request) {
       );
     }
 
-    const withdrawalData = {
-      email: session.user.email,
-      upiId,
-      name,
-      phoneNumber,
-      status: "Pending",
-      createdAt: new Date().toISOString(),
-    };
+    // Save to database
+    const withdrawal = await prisma.withdrawal.create({
+      data: {
+        email: session.user.email,
+        upiId,
+        name,
+        phoneNumber,
+        status: "Pending",
+      },
+    });
 
-    // TODO: Save to database
-    console.log("Withdrawal Request:", withdrawalData);
+    console.log("Withdrawal Request Saved:", withdrawal);
 
     return NextResponse.json(
       { success: true, message: "Withdrawal request submitted successfully" },
       { status: 200 }
     );
   } catch (error) {
+    console.error("Error saving withdrawal:", error);
     return NextResponse.json(
       { success: false, error: "Internal server error" },
       { status: 500 }
