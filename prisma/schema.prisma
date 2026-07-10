@@ -13,37 +13,25 @@ model User {
   name                String?
   email               String              @unique
   image               String?
-
   plan                String              @default("basic")
-
   subscriptionStatus  String              @default("active")
   subscriptionStart   DateTime            @default(now())
   subscriptionEnd     DateTime?
-
   reviewsUsed         Int                 @default(0)
   reviewsLimit        Int                 @default(100)
-
   locationsUsed       Int                 @default(0)
   locationsLimit      Int                 @default(1)
-
   googleConnected     Boolean             @default(false)
-
   lastReviewSync      DateTime?
   syncEnabled         Boolean             @default(true)
-
   monthlyResetDate    DateTime?
-
-  // Gmail alert fields
   gmailConnected      Boolean             @default(false)
   alertEmailsSent     Int                 @default(0)
   alertEmailsLimit    Int                 @default(100)
   alertMonthlyReset   DateTime?
-
   createdAt           DateTime            @default(now())
   lastLogin           DateTime            @default(now())
-
   referralCode        String              @unique
-
   businessLocations   BusinessLocation[]
   reviews             Review[]
   templates           Template[]
@@ -153,17 +141,26 @@ model ReferralStats {
   paidSubscriptions Int      @default(0) @map("paid_subscriptions")
   createdAt         DateTime @default(now()) @map("created_at")
   updatedAt         DateTime @updatedAt @map("updated_at")
-
-  user User @relation(fields: [userId], references: [id])
-
+  user              User     @relation(fields: [userId], references: [id])
   @@map("referral_stats")
 }
 
-// 👇 NEW MODEL: Partner Whitelist
 model PartnerWhitelist {
   id        String   @id @default(cuid())
   email     String   @unique
   createdAt DateTime @default(now())
-
   @@map("partner_whitelist")
+}
+
+// 👇 NEW MODEL
+model Withdrawal {
+  id          String   @id @default(cuid())
+  email       String
+  upiId       String
+  name        String
+  phoneNumber String
+  status      String   @default("Pending")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  @@map("withdrawals")
 }
