@@ -98,7 +98,7 @@ export default function ReferEarnPage() {
 
     setBugSubmitting(true);
     try {
-      const res = await fetch("/api/bugs/report", {
+      const res = await fetch("/api/bug-report", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
