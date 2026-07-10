@@ -8,7 +8,8 @@ import {
   Bug,
   Settings,
   Users,
-  Star, // 👈 Naya icon
+  Star,
+  IndianRupee,
 } from "lucide-react";
 
 export default function AdminLayout({
@@ -21,7 +22,7 @@ export default function AdminLayout({
   const menuItems = [
     {
       name: "Dashboard",
-      href: "/admin",
+      href: "/admin/dashboard",
       icon: LayoutDashboard,
     },
     {
@@ -35,9 +36,14 @@ export default function AdminLayout({
       icon: Users,
     },
     {
-      name: "Whitelist Users", // 👈 Naya link
+      name: "Whitelist Users",
       href: "/admin/whitelist",
       icon: Star,
+    },
+    {
+      name: "Withdrawals",
+      href: "/admin/dashboard/withdrawals",
+      icon: IndianRupee,
     },
     {
       name: "Settings",
