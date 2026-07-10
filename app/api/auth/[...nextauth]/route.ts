@@ -59,16 +59,16 @@ async function trackReferralSignup(referrerCode: string) {
   }
 }
 
-const handler = NextAuth({
+export const authOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
     }),
   ],
-  session: { strategy: "jwt" },
+  session: { strategy: "jwt" as const },
   callbacks: {
-    async signIn({ user }) {
+    async signIn({ user }: any) {
       try {
         if (!user.email) return false;
         const existingUser = await prisma.user.findUnique({ where: { email: user.email } });
@@ -76,7 +76,6 @@ const handler = NextAuth({
         const cookieStore = await cookies();
         const referrerCodeFromCookie = cookieStore.get("referrerCode")?.value || null;
 
-        // 👇 Pehle referrer dhundho
         const referrer = referrerCodeFromCookie
           ? await prisma.user.findUnique({
               where: { referralCode: referrerCodeFromCookie },
@@ -107,7 +106,7 @@ const handler = NextAuth({
             await prisma.referralSignup.create({
               data: {
                 signupEmail: user.email,
-                referrerEmail: referrer?.email || referrerCodeFromCookie, // ✅ FIXED
+                referrerEmail: referrer?.email || referrerCodeFromCookie,
               },
             });
 
@@ -124,7 +123,7 @@ const handler = NextAuth({
             const alreadyTracked = await prisma.referralSignup.findFirst({
               where: {
                 signupEmail: user.email,
-                referrerEmail: referrer?.email || referrerCodeFromCookie, // ✅ FIXED
+                referrerEmail: referrer?.email || referrerCodeFromCookie,
               },
             });
 
@@ -132,7 +131,7 @@ const handler = NextAuth({
               await prisma.referralSignup.create({
                 data: {
                   signupEmail: user.email,
-                  referrerEmail: referrer?.email || referrerCodeFromCookie, // ✅ FIXED
+                  referrerEmail: referrer?.email || referrerCodeFromCookie,
                 },
               });
 
@@ -146,7 +145,7 @@ const handler = NextAuth({
         return true;
       }
     },
-    async jwt({ token, account, user }) {
+    async jwt({ token, account, user }: any) {
       if (account?.access_token) (token as any).accessToken = account.access_token;
       if (account?.provider) (token as any).provider = account.provider;
       if (user?.email) (token as any).isAdmin = user.email === adminEmail;
@@ -163,19 +162,21 @@ const handler = NextAuth({
       }
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token }: any) {
       (session as any).accessToken = (token as any).accessToken;
       (session as any).isAdmin = (token as any).isAdmin;
       (session as any).referralCode = (token as any).referralCode;
       return session;
     },
-    async redirect({ baseUrl, url }) {
+    async redirect({ baseUrl, url }: any) {
       if (url.includes("admin=true")) return `${baseUrl}/admin`;
       return `${baseUrl}/plans`;
     },
   },
   pages: { signIn: "/login" },
   secret: process.env.NEXTAUTH_SECRET,
-});
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
