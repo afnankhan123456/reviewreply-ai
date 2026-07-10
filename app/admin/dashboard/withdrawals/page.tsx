@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Search, Filter, IndianRupee } from "lucide-react";
+import { Search, IndianRupee } from "lucide-react";
 
 interface Withdrawal {
-  _id: string;
+  id: string;
   email: string;
   upiId: string;
   name: string;
@@ -18,6 +18,7 @@ export default function WithdrawalsPage() {
   const [loading, setLoading] = useState(true);
   const [emailFilter, setEmailFilter] = useState("");
   const [monthFilter, setMonthFilter] = useState("");
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
   const months = [
     { value: "0", label: "January" },
@@ -79,12 +80,35 @@ export default function WithdrawalsPage() {
     fetchWithdrawals();
   };
 
+  const updateStatus = async (id: string, status: string) => {
+    setUpdatingId(id);
+    try {
+      const res = await fetch(`/api/admin/withdrawals/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        fetchWithdrawals(emailFilter, monthFilter);
+      } else {
+        alert(data.error || "Failed to update status");
+      }
+    } catch (error) {
+      alert("Error updating status");
+    } finally {
+      setUpdatingId(null);
+    }
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Pending":
         return "bg-yellow-100 text-yellow-700";
       case "Approved":
         return "bg-blue-100 text-blue-700";
+      case "Rejected":
+        return "bg-red-100 text-red-700";
       case "Paid":
         return "bg-green-100 text-green-700";
       default:
@@ -167,24 +191,25 @@ export default function WithdrawalsPage() {
                 <th className="text-left p-4 text-sm font-semibold text-gray-600">Phone</th>
                 <th className="text-left p-4 text-sm font-semibold text-gray-600">Date</th>
                 <th className="text-left p-4 text-sm font-semibold text-gray-600">Status</th>
+                <th className="text-left p-4 text-sm font-semibold text-gray-600">Actions</th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={6} className="text-center p-8 text-gray-500">
+                  <td colSpan={7} className="text-center p-8 text-gray-500">
                     Loading...
                   </td>
                 </tr>
               ) : withdrawals.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="text-center p-8 text-gray-500">
+                  <td colSpan={7} className="text-center p-8 text-gray-500">
                     No withdrawal requests found
                   </td>
                 </tr>
               ) : (
                 withdrawals.map((withdrawal) => (
-                  <tr key={withdrawal._id} className="border-b border-gray-100 hover:bg-gray-50">
+                  <tr key={withdrawal.id} className="border-b border-gray-100 hover:bg-gray-50">
                     <td className="p-4 text-sm text-gray-700">{withdrawal.email}</td>
                     <td className="p-4 text-sm text-gray-700 font-medium">{withdrawal.name}</td>
                     <td className="p-4 text-sm text-gray-700">{withdrawal.upiId}</td>
@@ -200,6 +225,35 @@ export default function WithdrawalsPage() {
                       <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(withdrawal.status)}`}>
                         {withdrawal.status}
                       </span>
+                    </td>
+                    <td className="p-4">
+                      {withdrawal.status === "Pending" && (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => updateStatus(withdrawal.id, "Approved")}
+                            disabled={updatingId === withdrawal.id}
+                            className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg text-xs font-medium transition disabled:opacity-50"
+                          >
+                            Approve
+                          </button>
+                          <button
+                            onClick={() => updateStatus(withdrawal.id, "Rejected")}
+                            disabled={updatingId === withdrawal.id}
+                            className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg text-xs font-medium transition disabled:opacity-50"
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      )}
+                      {withdrawal.status === "Approved" && (
+                        <button
+                          onClick={() => updateStatus(withdrawal.id, "Paid")}
+                          disabled={updatingId === withdrawal.id}
+                          className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-lg text-xs font-medium transition disabled:opacity-50"
+                        >
+                          Mark Paid
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))
