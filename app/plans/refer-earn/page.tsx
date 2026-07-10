@@ -187,7 +187,7 @@ export default function ReferEarnPage() {
               <p className="text-xs text-gray-500 leading-relaxed mb-1">Fill out the form to withdraw your earnings.</p>
             </div>
             <div>
-              <Link href="/refer-earn/withdraw" className="w-full bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white py-3 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition">
+              <Link href="/plans/refer-earn/withdraw" className="w-full bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white py-3 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition">
                 Open Form <span className="text-sm">↗</span>
               </Link>
               <p className="text-[10px] text-gray-400 mt-0">We will verify your request.</p>
