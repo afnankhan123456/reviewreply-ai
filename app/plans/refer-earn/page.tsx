@@ -184,10 +184,12 @@ export default function ReferEarnPage() {
           <div className="bg-white rounded-xl border border-gray-100 shadow-sm p-5 h-[163.5px] flex flex-col justify-between">
             <div>
               <div className="flex items-center gap-3 mb-1"><div className="bg-purple-50 p-2 rounded-lg"><Wallet className="w-5 h-5 text-purple-600" /></div><h3 className="font-semibold text-lg text-gray-800">Withdraw Your Earnings</h3></div>
-              <p className="text-xs text-gray-500 leading-relaxed mb-1">Fill out the Google Form below to withdraw your earnings.</p>
+              <p className="text-xs text-gray-500 leading-relaxed mb-1">Fill out the form to withdraw your earnings.</p>
             </div>
             <div>
-              <button className="w-full bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white py-3 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition">Open Google Form <span className="text-sm">↗</span></button>
+              <Link href="/refer-earn/withdraw" className="w-full bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white py-3 rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition">
+                Open Form <span className="text-sm">↗</span>
+              </Link>
               <p className="text-[10px] text-gray-400 mt-0">We will verify your request.</p>
             </div>
           </div>
