@@ -11,7 +11,7 @@ export default function AdminPage() {
       </p>
 
       {/* Withdraw Info Card */}
-      <div className="bg-white dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700 shadow-sm p-6 w-full max-w-md hover:shadow-md transition cursor-pointer">
+      <div className="bg-white dark:bg-zinc-800 rounded-xl border border-gray-200 dark:border-zinc-700 shadow-sm p-6 w-full max-w-md hover:shadow-md transition">
         <div className="flex items-center gap-3 mb-3">
           <div className="bg-purple-50 dark:bg-purple-900/20 p-2 rounded-lg">
             <span className="text-2xl">💰</span>
@@ -21,10 +21,11 @@ export default function AdminPage() {
         <p className="text-sm text-gray-500 dark:text-zinc-400 mb-4">
           View and manage user withdrawal requests. Filter by email or month.
         </p>
-        <Link href="/admin/dashboard/withdrawals">
-          <div className="w-full bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white py-2.5 rounded-lg font-medium text-sm transition text-center">
-            View Withdrawals →
-          </div>
+        <Link 
+          href="/admin/dashboard/withdrawals"
+          className="w-full bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white py-2.5 rounded-lg font-medium text-sm transition text-center block"
+        >
+          View Withdrawals →
         </Link>
       </div>
     </div>
