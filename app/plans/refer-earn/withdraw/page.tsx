@@ -194,7 +194,7 @@ export default function WithdrawPage() {
                 className="inline-flex items-center gap-2 bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white px-6 py-3 rounded-xl font-medium text-sm transition"
               >
                 <ArrowLeft className="w-4 h-4" /> Back to Refer & Earn
-              </ArrowLeft>
+              </Link>
             </div>
           )}
         </div>
