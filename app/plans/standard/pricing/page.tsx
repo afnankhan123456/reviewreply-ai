@@ -1,3 +1,5 @@
+"use client";
+
 const pricingPlans = [
   {
     id: "monthly",
