@@ -1,4 +1,6 @@
-import React from 'react';
+"use client"; // <-- IMPORTANT: Isko add karna zaroori hai React state ke liye
+
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { 
   LayoutDashboard, Star, Sparkles, BarChart3, FileText, 
@@ -10,6 +12,9 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // State track karne ke liye ki kaunsa item active hai
+  const [activeItem, setActiveItem] = useState('Overview');
+
   return (
     <div className="flex h-screen w-full bg-[#0B0E14] text-gray-200 font-sans overflow-hidden">
       
@@ -23,17 +28,83 @@ export default function DashboardLayout({
         </div>
 
         <nav className="space-y-1 flex-1">
-          <NavItem icon={<LayoutDashboard size={20} />} label="Overview" href="/plans/standard/dashboard" active />
-          <NavItem icon={<Star size={20} />} label="Reviews" href="#" />
-          <NavItem icon={<Sparkles size={20} />} label="AI Reply Center" href="#" />
-          <NavItem icon={<BarChart3 size={20} />} label="Analytics" href="#" />
-          <NavItem icon={<FileText size={20} />} label="Reports" href="#" />
-          <NavItem icon={<Send size={20} />} label="Requests" href="#" />
-          <NavItem icon={<LayoutTemplate size={20} />} label="Templates" href="#" />
-          <NavItem icon={<Bell size={20} />} label="Alerts" href="#" />
-          <NavItem icon={<ShieldCheck size={20} />} label="Competitors" href="#" />
-          <NavItem icon={<Users size={20} />} label="Team" href="#" />
-          <NavItem icon={<Settings size={20} />} label="Settings" href="#" />
+          <NavItem 
+            icon={<LayoutDashboard size={20} />} 
+            label="Overview" 
+            href="/plans/standard/dashboard" 
+            isActive={activeItem === 'Overview'}
+            onClick={() => setActiveItem('Overview')}
+          />
+          <NavItem 
+            icon={<Star size={20} />} 
+            label="Reviews" 
+            href="#" 
+            isActive={activeItem === 'Reviews'}
+            onClick={() => setActiveItem('Reviews')}
+          />
+          <NavItem 
+            icon={<Sparkles size={20} />} 
+            label="AI Reply Center" 
+            href="#" 
+            isActive={activeItem === 'AI Reply Center'}
+            onClick={() => setActiveItem('AI Reply Center')}
+          />
+          <NavItem 
+            icon={<BarChart3 size={20} />} 
+            label="Analytics" 
+            href="#" 
+            isActive={activeItem === 'Analytics'}
+            onClick={() => setActiveItem('Analytics')}
+          />
+          <NavItem 
+            icon={<FileText size={20} />} 
+            label="Reports" 
+            href="#" 
+            isActive={activeItem === 'Reports'}
+            onClick={() => setActiveItem('Reports')}
+          />
+          <NavItem 
+            icon={<Send size={20} />} 
+            label="Requests" 
+            href="#" 
+            isActive={activeItem === 'Requests'}
+            onClick={() => setActiveItem('Requests')}
+          />
+          <NavItem 
+            icon={<LayoutTemplate size={20} />} 
+            label="Templates" 
+            href="#" 
+            isActive={activeItem === 'Templates'}
+            onClick={() => setActiveItem('Templates')}
+          />
+          <NavItem 
+            icon={<Bell size={20} />} 
+            label="Alerts" 
+            href="#" 
+            isActive={activeItem === 'Alerts'}
+            onClick={() => setActiveItem('Alerts')}
+          />
+          <NavItem 
+            icon={<ShieldCheck size={20} />} 
+            label="Competitors" 
+            href="#" 
+            isActive={activeItem === 'Competitors'}
+            onClick={() => setActiveItem('Competitors')}
+          />
+          <NavItem 
+            icon={<Users size={20} />} 
+            label="Team" 
+            href="#" 
+            isActive={activeItem === 'Team'}
+            onClick={() => setActiveItem('Team')}
+          />
+          <NavItem 
+            icon={<Settings size={20} />} 
+            label="Settings" 
+            href="#" 
+            isActive={activeItem === 'Settings'}
+            onClick={() => setActiveItem('Settings')}
+          />
         </nav>
 
         {/* Bottom Card */}
@@ -58,18 +129,19 @@ export default function DashboardLayout({
   );
 }
 
-// UPDATED: Reusable Sidebar Item Component with Hover Liquid Feel
-function NavItem({ icon, label, href, active = false }: { icon: React.ReactNode, label: string, href: string, active?: boolean }) {
+// UPDATED: Reusable Sidebar Item Component (Now handles Click active state)
+function NavItem({ icon, label, href, isActive, onClick }: { icon: React.ReactNode, label: string, href: string, isActive: boolean, onClick: () => void }) {
   return (
     <Link 
       href={href} 
-      className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-300 ${
-        active 
+      onClick={onClick}
+      className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-300 cursor-pointer ${
+        isActive 
           ? 'text-indigo-400 border-l-2 border-indigo-500' 
-          : 'text-gray-400 hover:text-white hover:bg-indigo-500/10' // <-- YAHAN LIQUID GLOW ADD KIYA HAI
+          : 'text-gray-400 hover:text-white hover:bg-indigo-500/10'
       }`}
     >
-      <span className={active ? 'text-indigo-400' : ''}>{icon}</span>
+      <span className={isActive ? 'text-indigo-400' : ''}>{icon}</span>
       <span className="text-sm font-medium">{label}</span>
     </Link>
   );
