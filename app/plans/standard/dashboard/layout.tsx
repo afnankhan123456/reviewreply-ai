@@ -1,10 +1,11 @@
-"use client"; // <-- IMPORTANT: Isko add karna zaroori hai React state ke liye
+"use client";
 
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { 
   LayoutDashboard, Star, Sparkles, BarChart3, FileText, 
-  Send, LayoutTemplate, Bell, ShieldCheck, Users, Settings, Gift
+  Send, LayoutTemplate, Bell, ShieldCheck, Users, Settings, Gift,
+  Tag, Download // <-- Yahan 2 naye icons add kiye hain
 } from 'lucide-react';
 
 export default function DashboardLayout({
@@ -62,6 +63,20 @@ export default function DashboardLayout({
             href="#" 
             isActive={activeItem === 'Reports'}
             onClick={() => setActiveItem('Reports')}
+          />
+          <NavItem 
+            icon={<Tag size={20} />} // <-- NEW ITEM 1: Tags & Categories
+            label="Tags & Categories" 
+            href="#" 
+            isActive={activeItem === 'Tags & Categories'}
+            onClick={() => setActiveItem('Tags & Categories')}
+          />
+          <NavItem 
+            icon={<Download size={20} />} // <-- NEW ITEM 2: Export
+            label="Export" 
+            href="#" 
+            isActive={activeItem === 'Export'}
+            onClick={() => setActiveItem('Export')}
           />
           <NavItem 
             icon={<Send size={20} />} 
@@ -129,7 +144,7 @@ export default function DashboardLayout({
   );
 }
 
-// UPDATED: Reusable Sidebar Item Component (Now handles Click active state)
+// Reusable Sidebar Item Component
 function NavItem({ icon, label, href, isActive, onClick }: { icon: React.ReactNode, label: string, href: string, isActive: boolean, onClick: () => void }) {
   return (
     <Link 
