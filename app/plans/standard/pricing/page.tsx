@@ -11,6 +11,7 @@ const pricingPlans = [
     discount: null,
     monthlyEquivalent: "$29.00/mo",
     popular: false,
+    days: 30,
   },
   {
     id: "quarterly",
@@ -20,6 +21,7 @@ const pricingPlans = [
     discount: "8% OFF",
     monthlyEquivalent: "$26.67/mo",
     popular: false,
+    days: 90,
   },
   {
     id: "halfyearly",
@@ -29,6 +31,7 @@ const pricingPlans = [
     discount: "14% OFF",
     monthlyEquivalent: "$24.83/mo",
     popular: true,
+    days: 180,
   },
   {
     id: "yearly",
@@ -38,6 +41,7 @@ const pricingPlans = [
     discount: "22% OFF",
     monthlyEquivalent: "$22.42/mo",
     popular: false,
+    days: 360,
   },
 ];
 
@@ -45,7 +49,7 @@ export default function StandardPricingPage() {
   const router = useRouter();
 
   const handleChoosePlan = (plan) => {
-    router.push(`/plans/standard/dashboard?plan=${plan.id}`);
+    router.push(`/plans/standard/dashboard?plan=${plan.id}&days=${plan.days}`);
   };
 
   return (
