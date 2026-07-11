@@ -45,7 +45,7 @@ export default function StandardPricingPage() {
   const router = useRouter();
 
   const handleChoosePlan = (plan) => {
-    router.push(`/dashboard?plan=${plan.id}`);
+    router.push(`/plans/standard/dashboard?plan=${plan.id}`);
   };
 
   return (
