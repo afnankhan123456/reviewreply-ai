@@ -122,8 +122,8 @@ export default function PlansPage() {
               Best for growing businesses
             </p>
 
-            <div className="space-y-2.5 text-zinc-300 text-sm flex-1">
-              <div>✓ 2 Business Locations &nbsp;&nbsp; ✓ 1,000 Reviews Sync / Month</div>
+            <div className="space-y-2 text-zinc-300 text-sm flex-1">
+              <div>✓ Business Locations &nbsp;&nbsp; ✓ AI Replies / Month</div>
               <div>✓ Google Review Sync &nbsp;&nbsp; ✓ Facebook Review Sync</div>
               <div>✓ Review Dashboard &nbsp;&nbsp; ✓ New Review Email Alerts</div>
               <div>✓ Unanswered Reviews Tracking &nbsp;&nbsp; ✓ Rating Overview</div>
@@ -136,10 +136,11 @@ export default function PlansPage() {
               <div>✓ Review Search & Filter &nbsp;&nbsp; ✓ Sentiment Analysis</div>
               <div>✓ Review Tags & Categories &nbsp;&nbsp; ✓ Unlimited Data History</div>
               <div>✓ CSV/PDF Export &nbsp;&nbsp; ✓ Email Notifications</div>
-              <div>✓ QR Code & Review Request Link &nbsp;&nbsp; ✓ SMS Review Requests</div>
-              <div>✓ Email Review Requests &nbsp;&nbsp; ✓ Competitor Comparison</div>
-              <div>✓ 3 Team Members &nbsp;&nbsp; ✓ Role-Based Access</div>
-              <div>✓ Custom Review Request Landing Page &nbsp;&nbsp; ✓ Priority Support</div>
+              <div>✓ QR Code Generator &nbsp;&nbsp; ✓ Review Request Link</div>
+              <div>✓ SMS Review Requests &nbsp;&nbsp; ✓ Email Review Requests</div>
+              <div>✓ Competitor Comparison &nbsp;&nbsp; ✓ Team Members</div>
+              <div>✓ Role-Based Access &nbsp;&nbsp; ✓ Custom Review Request Landing Page</div>
+              <div>✓ Priority Support</div>
             </div>
 
             <div className="mt-6 pt-4 border-t border-zinc-800">
