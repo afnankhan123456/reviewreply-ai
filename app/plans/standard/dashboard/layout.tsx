@@ -13,7 +13,7 @@ export default function DashboardLayout({
   return (
     <div className="flex h-screen w-full bg-[#0B0E14] text-gray-200 font-sans overflow-hidden">
       
-      {/* Sidebar - Left Panel (Exact same as your image) */}
+      {/* Sidebar - Left Panel */}
       <aside className="w-64 bg-[#11141C] border-r border-[#1F2430] flex flex-col p-4 overflow-y-auto">
         <div className="flex items-center gap-2 mb-10 px-2">
           <div className="bg-indigo-500 p-1.5 rounded-lg">
@@ -23,7 +23,6 @@ export default function DashboardLayout({
         </div>
 
         <nav className="space-y-1 flex-1">
-          {/* Active item has NO background, only left border and indigo color */}
           <NavItem icon={<LayoutDashboard size={20} />} label="Overview" href="/plans/standard/dashboard" active />
           <NavItem icon={<Star size={20} />} label="Reviews" href="#" />
           <NavItem icon={<Sparkles size={20} />} label="AI Reply Center" href="#" />
@@ -37,7 +36,7 @@ export default function DashboardLayout({
           <NavItem icon={<Settings size={20} />} label="Settings" href="#" />
         </nav>
 
-        {/* Bottom Card (Kept the exact background box as your image) */}
+        {/* Bottom Card */}
         <div className="mt-auto pt-6 border-t border-[#1F2430]">
           <div className="flex items-center gap-3 px-2 py-3 bg-[#1A1D27] rounded-lg cursor-pointer hover:bg-[#222633] transition-colors">
             <div className="bg-gradient-to-r from-pink-500 to-purple-500 p-1.5 rounded-md">
@@ -59,18 +58,18 @@ export default function DashboardLayout({
   );
 }
 
-// Reusable Sidebar Item Component (NO BACKGROUND BOXES, EXACTLY LIKE IMAGE)
+// UPDATED: Reusable Sidebar Item Component with Hover Liquid Feel
 function NavItem({ icon, label, href, active = false }: { icon: React.ReactNode, label: string, href: string, active?: boolean }) {
   return (
     <Link 
       href={href} 
-      className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-colors ${
+      className={`flex items-center gap-3 px-3 py-3 rounded-lg transition-all duration-300 ${
         active 
-          ? 'text-indigo-400 border-l-2 border-indigo-500' // Only border & indigo text. NO background.
-          : 'text-gray-400 hover:text-white'              // Only text color change on hover. NO background.
+          ? 'text-indigo-400 border-l-2 border-indigo-500' 
+          : 'text-gray-400 hover:text-white hover:bg-indigo-500/10' // <-- YAHAN LIQUID GLOW ADD KIYA HAI
       }`}
     >
-      <span>{icon}</span>
+      <span className={active ? 'text-indigo-400' : ''}>{icon}</span>
       <span className="text-sm font-medium">{label}</span>
     </Link>
   );
