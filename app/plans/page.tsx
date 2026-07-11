@@ -91,11 +91,41 @@ export default function PlansPage() {
               Best for growing businesses
             </p>
 
-            <div className="space-y-4 text-zinc-300 flex-1">
-              <div>✓ Multiple Locations</div>
-              <div>✓ Smart AI Replies</div>
-              <div>✓ Advanced Analytics</div>
-              <div>✓ Templates & Insights</div>
+            <div className="space-y-3 text-zinc-300 text-sm flex-1">
+              <div>✅ 2 Business Locations</div>
+              <div>✅ 1,000 Reviews Sync / Month</div>
+              <div>✅ Google Review Sync</div>
+              <div>✅ Facebook Review Sync</div>
+              <div>✅ Review Dashboard</div>
+              <div>✅ New Review Email Alerts</div>
+              <div>✅ Unanswered Reviews Tracking</div>
+              <div>✅ Rating Overview</div>
+              <div>✅ Positive & Negative Detection</div>
+              <div>✅ Basic Analytics</div>
+              <div>✅ Advanced Analytics</div>
+              <div>✅ Low Rating Alerts</div>
+              <div>✅ Monthly PDF Report</div>
+              <div>✅ Weekly Performance Report</div>
+              <div>✅ AI Review Reply Generator</div>
+              <div>✅ Unlimited AI Reply Templates</div>
+              <div>✅ Custom AI Tone</div>
+              <div>✅ Auto-Reply Rules (5⭐–1⭐)</div>
+              <div>✅ Response Rate Tracking</div>
+              <div>✅ Top 20 Review Keywords</div>
+              <div>✅ Review Search & Filter</div>
+              <div>✅ Sentiment Analysis</div>
+              <div>✅ Review Tags & Categories</div>
+              <div>✅ Unlimited Data History</div>
+              <div>✅ CSV/PDF Export</div>
+              <div>✅ Email Notifications</div>
+              <div>✅ QR Code & Review Request Link</div>
+              <div>✅ SMS Review Requests</div>
+              <div>✅ Email Review Requests</div>
+              <div>✅ Competitor Comparison</div>
+              <div>✅ 3 Team Members</div>
+              <div>✅ Role-Based Access</div>
+              <div>✅ Custom Review Request Landing Page</div>
+              <div>✅ Priority Support</div>
             </div>
 
           </div>
