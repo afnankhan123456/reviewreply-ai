@@ -123,24 +123,20 @@ export default function PlansPage() {
             </p>
 
             <div className="space-y-2 text-zinc-300 text-sm flex-1">
-              <div>✓ Business Locations &nbsp;&nbsp; ✓ AI Replies / Month</div>
+              <div>✓ 2 Business Locations &nbsp;&nbsp; ✓ 500 AI Replies / Month</div>
               <div>✓ Google Review Sync &nbsp;&nbsp; ✓ Facebook Review Sync</div>
               <div>✓ Review Dashboard &nbsp;&nbsp; ✓ New Review Email Alerts</div>
               <div>✓ Unanswered Reviews Tracking &nbsp;&nbsp; ✓ Rating Overview</div>
               <div>✓ Positive & Negative Detection &nbsp;&nbsp; ✓ Basic Analytics</div>
               <div>✓ Advanced Analytics &nbsp;&nbsp; ✓ Low Rating Alerts</div>
               <div>✓ Monthly PDF Report &nbsp;&nbsp; ✓ Weekly Performance Report</div>
-              <div>✓ AI Review Reply Generator &nbsp;&nbsp; ✓ Unlimited AI Reply Templates</div>
-              <div>✓ Custom AI Tone &nbsp;&nbsp; ✓ Auto-Reply Rules (5⭐–1⭐)</div>
+              <div>✓ AI Review Reply Generator &nbsp;&nbsp; ✓ 500 AI Reply Templates</div>
               <div>✓ Response Rate Tracking &nbsp;&nbsp; ✓ Top 20 Review Keywords</div>
               <div>✓ Review Search & Filter &nbsp;&nbsp; ✓ Sentiment Analysis</div>
-              <div>✓ Review Tags & Categories &nbsp;&nbsp; ✓ Unlimited Data History</div>
+              <div>✓ Review Tags & Categories &nbsp;&nbsp; ✓ 6 Months Data History</div>
               <div>✓ CSV/PDF Export &nbsp;&nbsp; ✓ Email Notifications</div>
-              <div>✓ QR Code Generator &nbsp;&nbsp; ✓ Review Request Link</div>
-              <div>✓ SMS Review Requests &nbsp;&nbsp; ✓ Email Review Requests</div>
-              <div>✓ Competitor Comparison &nbsp;&nbsp; ✓ Team Members</div>
-              <div>✓ Role-Based Access &nbsp;&nbsp; ✓ Custom Review Request Landing Page</div>
-              <div>✓ Priority Support</div>
+              <div>✓ QR Code Generator &nbsp;&nbsp; ✓ Email Review Requests</div>
+              <div>✓ 2 Team Members &nbsp;&nbsp; ✓ Priority Support</div>
             </div>
 
             <div className="mt-6 pt-4 border-t border-zinc-800">
