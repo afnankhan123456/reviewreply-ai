@@ -111,7 +111,6 @@ export default function PlansPage() {
               <div>Custom Review Request Landing Page / Priority Support</div>
             </div>
 
-            {/* View Full Pricing Button */}
             <div className="mt-6 pt-4 border-t border-zinc-800">
               <div className="bg-blue-600 hover:bg-blue-700 text-white text-center font-semibold py-3 px-6 rounded-xl transition-all text-sm">
                 View Full Pricing
@@ -136,10 +135,10 @@ export default function PlansPage() {
             </p>
 
             <div className="space-y-4 text-zinc-300 flex-1">
-              <div>✓ Unlimited Locations</div>
-              <div>✓ Premium AI Features</div>
-              <div>✓ Team Access</div>
-              <div>✓ Priority Support</div>
+              <div>Unlimited Locations</div>
+              <div>Premium AI Features</div>
+              <div>Team Access</div>
+              <div>Priority Support</div>
             </div>
 
           </div>
