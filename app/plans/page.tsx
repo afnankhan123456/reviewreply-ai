@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import PlanCard from "./basic/pricing/PlanCard";
 
 export default function PlansPage() {
   return (
@@ -76,7 +75,38 @@ export default function PlansPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto items-stretch">
 
         {/* BASIC */}
-        <PlanCard />
+        <Link href="/plans/basic/pricing" className="h-full">
+
+          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 hover:border-violet-500 transition-all cursor-pointer h-full flex flex-col">
+
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Basic
+            </h2>
+
+            <p className="text-zinc-400 mb-8">
+              Perfect for small businesses
+            </p>
+
+            <div className="space-y-2 text-zinc-300 text-sm flex-1">
+              <div>1 Business Location</div>
+              <div>500 Reviews Sync / Month</div>
+              <div>Google Review Sync</div>
+              <div>Review Dashboard</div>
+              <div>Basic Analytics</div>
+              <div>AI Reply Generator</div>
+              <div>Email Notifications</div>
+              <div>CSV Export</div>
+            </div>
+
+            <div className="mt-6 pt-4 border-t border-zinc-800">
+              <div className="bg-violet-600 hover:bg-violet-700 text-white text-center font-semibold py-3 px-6 rounded-xl transition-all text-sm">
+                View Full Pricing
+              </div>
+            </div>
+
+          </div>
+
+        </Link>
 
         {/* STANDARD */}
         <Link href="/plans/standard/pricing" className="h-full">
@@ -92,23 +122,23 @@ export default function PlansPage() {
             </p>
 
             <div className="space-y-2.5 text-zinc-300 text-sm flex-1">
-              <div>2 Business Locations / 1,000 Reviews Sync / Month</div>
-              <div>Google Review Sync / Facebook Review Sync</div>
-              <div>Review Dashboard / New Review Email Alerts</div>
-              <div>Unanswered Reviews Tracking / Rating Overview</div>
-              <div>Positive & Negative Detection / Basic Analytics</div>
-              <div>Advanced Analytics / Low Rating Alerts</div>
-              <div>Monthly PDF Report / Weekly Performance Report</div>
-              <div>AI Review Reply Generator / Unlimited AI Reply Templates</div>
-              <div>Custom AI Tone / Auto-Reply Rules (5⭐–1⭐)</div>
-              <div>Response Rate Tracking / Top 20 Review Keywords</div>
-              <div>Review Search & Filter / Sentiment Analysis</div>
-              <div>Review Tags & Categories / Unlimited Data History</div>
-              <div>CSV/PDF Export / Email Notifications</div>
-              <div>QR Code & Review Request Link / SMS Review Requests</div>
-              <div>Email Review Requests / Competitor Comparison</div>
-              <div>3 Team Members / Role-Based Access</div>
-              <div>Custom Review Request Landing Page / Priority Support</div>
+              <div>✓ 2 Business Locations &nbsp;&nbsp; ✓ 1,000 Reviews Sync / Month</div>
+              <div>✓ Google Review Sync &nbsp;&nbsp; ✓ Facebook Review Sync</div>
+              <div>✓ Review Dashboard &nbsp;&nbsp; ✓ New Review Email Alerts</div>
+              <div>✓ Unanswered Reviews Tracking &nbsp;&nbsp; ✓ Rating Overview</div>
+              <div>✓ Positive & Negative Detection &nbsp;&nbsp; ✓ Basic Analytics</div>
+              <div>✓ Advanced Analytics &nbsp;&nbsp; ✓ Low Rating Alerts</div>
+              <div>✓ Monthly PDF Report &nbsp;&nbsp; ✓ Weekly Performance Report</div>
+              <div>✓ AI Review Reply Generator &nbsp;&nbsp; ✓ Unlimited AI Reply Templates</div>
+              <div>✓ Custom AI Tone &nbsp;&nbsp; ✓ Auto-Reply Rules (5⭐–1⭐)</div>
+              <div>✓ Response Rate Tracking &nbsp;&nbsp; ✓ Top 20 Review Keywords</div>
+              <div>✓ Review Search & Filter &nbsp;&nbsp; ✓ Sentiment Analysis</div>
+              <div>✓ Review Tags & Categories &nbsp;&nbsp; ✓ Unlimited Data History</div>
+              <div>✓ CSV/PDF Export &nbsp;&nbsp; ✓ Email Notifications</div>
+              <div>✓ QR Code & Review Request Link &nbsp;&nbsp; ✓ SMS Review Requests</div>
+              <div>✓ Email Review Requests &nbsp;&nbsp; ✓ Competitor Comparison</div>
+              <div>✓ 3 Team Members &nbsp;&nbsp; ✓ Role-Based Access</div>
+              <div>✓ Custom Review Request Landing Page &nbsp;&nbsp; ✓ Priority Support</div>
             </div>
 
             <div className="mt-6 pt-4 border-t border-zinc-800">
