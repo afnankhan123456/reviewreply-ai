@@ -1,5 +1,7 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+
 const pricingPlans = [
   {
     id: "monthly",
@@ -40,8 +42,10 @@ const pricingPlans = [
 ];
 
 export default function StandardPricingPage() {
+  const router = useRouter();
+
   const handleChoosePlan = (plan) => {
-    alert(`You selected the ${plan.title} plan for $${plan.finalPrice}`);
+    router.push(`/dashboard?plan=${plan.id}`);
   };
 
   return (
