@@ -4,7 +4,7 @@ import React from 'react';
 import { 
   Search, Bell, User, ChevronDown, Download, MapPin, 
   RefreshCw, MessageSquare, FileText, CheckCircle, TrendingUp, TrendingDown, 
-  Send // <--- YAHAN IMPORT ADD KAR DIYA HAI. AB BUILD NAHI TOOTEGA.
+  Send
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -57,17 +57,20 @@ export default function DashboardPage() {
         </div>
       </header>
 
-      {/* Filter Chips */}
+      {/* Filter Chips - UPDATED */}
       <div className="flex flex-wrap items-center gap-2 mb-6">
+        
+        {/* NEW CARD: 500 AI Replies / Month (Bada card, same style as location chips) */}
         <span className="px-3 py-1 bg-[#181D27] border border-[#2A303C] rounded-full text-xs text-gray-300 flex items-center gap-1">
-          <span className="w-1.5 h-1.5 bg-blue-500 rounded-full"></span> Downtown Branch
+          <span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span> 500 AI Replies / Month
         </span>
-        <span className="px-3 py-1 bg-[#181D27] border border-[#2A303C] rounded-full text-xs text-gray-300 flex items-center gap-1">
-          <span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span> Uptown Branch
-        </span>
+        
+        {/* + Add Location remains */}
         <button className="px-3 py-1 border border-dashed border-[#2A303C] rounded-full text-xs text-gray-400 hover:border-gray-300">
           + Add Location
         </button>
+        
+        {/* Date picker remains */}
         <div className="ml-auto flex items-center gap-2 text-xs text-gray-400 bg-[#181D27] px-3 py-1 rounded-lg border border-[#2A303C]">
           <span>📅</span> May 1 – May 31, 2026
         </div>
