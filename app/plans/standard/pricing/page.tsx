@@ -38,6 +38,10 @@ const pricingPlans = [
 ];
 
 export default function StandardPricingPage() {
+  const handleChoosePlan = (plan) => {
+    alert(`You selected the ${plan.title} plan for $${plan.finalPrice}`);
+  };
+
   return (
     <main className="min-h-screen bg-slate-50 py-16 px-6">
       <div className="mx-auto max-w-7xl">
@@ -107,7 +111,10 @@ export default function StandardPricingPage() {
                   </td>
 
                   <td className="px-8 py-6 text-center">
-                    <button className="rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700">
+                    <button
+                      onClick={() => handleChoosePlan(plan)}
+                      className="rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700"
+                    >
                       Choose Plan
                     </button>
                   </td>
