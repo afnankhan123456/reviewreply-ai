@@ -88,14 +88,15 @@ export default function PlansPage() {
             </p>
 
             <div className="space-y-2 text-zinc-300 text-sm flex-1">
-              <div>1 Business Location</div>
-              <div>500 Reviews Sync / Month</div>
-              <div>Google Review Sync</div>
-              <div>Review Dashboard</div>
-              <div>Basic Analytics</div>
-              <div>AI Reply Generator</div>
-              <div>Email Notifications</div>
-              <div>CSV Export</div>
+              <div>✓ 1 Business Location &nbsp;&nbsp; ✓ 100 Reviews Sync / Month</div>
+              <div>✓ Google Review Sync &nbsp;&nbsp; ✓ Review Dashboard</div>
+              <div>✓ New Review Email Alerts &nbsp;&nbsp; ✓ Unanswered Reviews Tracking</div>
+              <div>✓ Rating Overview &nbsp;&nbsp; ✓ Positive & Negative Detection</div>
+              <div>✓ Basic Analytics &nbsp;&nbsp; ✓ Low Rating Alerts</div>
+              <div>✓ Monthly PDF Report &nbsp;&nbsp; ✓ Review Reply Templates</div>
+              <div>✓ Response Rate Tracking &nbsp;&nbsp; ✓ Top 5 Review Keywords</div>
+              <div>✓ Review Search & Filter &nbsp;&nbsp; ✓ 30 Days Data History</div>
+              <div>✓ CSV/PDF Export</div>
             </div>
 
             <div className="mt-6 pt-4 border-t border-zinc-800">
@@ -165,10 +166,8 @@ export default function PlansPage() {
             </p>
 
             <div className="space-y-4 text-zinc-300 flex-1">
-              <div>Unlimited Locations</div>
-              <div>Premium AI Features</div>
-              <div>Team Access</div>
-              <div>Priority Support</div>
+              <div>✓ Unlimited Locations &nbsp;&nbsp; ✓ Premium AI Features</div>
+              <div>✓ Team Access &nbsp;&nbsp; ✓ Priority Support</div>
             </div>
 
           </div>
