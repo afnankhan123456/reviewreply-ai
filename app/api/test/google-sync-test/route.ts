@@ -27,6 +27,7 @@ async function getAccessToken(): Promise<string> {
   return data.access_token;
 }
 
+// ✅ GET: Google API Test (Real Reviews Fetch)
 export async function GET() {
   console.log('🚀 Google API Test Started...');
 
@@ -55,8 +56,34 @@ export async function GET() {
   }
 }
 
+// ✅ POST: Dummy Review Add (Auto Sync Test Ke Liye)
+export async function POST() {
+  console.log('🚀 Adding Dummy Review for Auto Sync Test...');
 
+  const dummyReview = {
+    author: "Test User",
+    rating: 5,
+    text: "This is a test review for auto-sync check.",
+    source: "google",
+    date: new Date().toISOString()
+  };
 
+  try {
+    // 🔥 YAHAN APNA DATABASE SAVE LOGIC DAALO
+    // await prisma.review.create({ data: dummyReview });
 
+    console.log('✅ Dummy Review Added:', dummyReview);
 
-
+    return NextResponse.json({ 
+      success: true, 
+      message: "Test review added successfully",
+      review: dummyReview
+    });
+  } catch (error) {
+    console.error('❌ Error adding dummy review:', error);
+    return NextResponse.json({ 
+      success: false, 
+      error: String(error) 
+    }, { status: 500 });
+  }
+}
