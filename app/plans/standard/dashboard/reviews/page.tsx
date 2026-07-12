@@ -19,12 +19,22 @@ export default function ReviewsPage() {
   const [selectedReviewText, setSelectedReviewText] = useState('');
   const [replyText, setReplyText] = useState('');
 
-  // ✅ NEW: Toast State
+  // ✅ Toast State
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   useEffect(() => {
     fetchDashboardData();
   }, []);
+
+  // ✅ NEW: Auto-hide toast after 2 seconds (GUARANTEED)
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => {
+        setToast(null);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
 
   const fetchDashboardData = async () => {
     try {
@@ -93,13 +103,12 @@ export default function ReviewsPage() {
   return (
     <div className="flex-1 flex flex-col p-6 overflow-y-auto bg-[#0B0E14] text-gray-200">
       
-      {/* ✅ Toast Notification */}
+      {/* ✅ Toast Notification - 100% auto-hide in 2 seconds */}
       {toast && (
         <div 
           className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg text-sm font-medium transition-all duration-300 ${
             toast.type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
           }`}
-          onAnimationEnd={() => setTimeout(() => setToast(null), 2000)}
         >
           {toast.message}
         </div>
