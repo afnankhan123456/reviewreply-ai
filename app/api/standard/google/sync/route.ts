@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+// import { prisma } from '@/lib/prisma'; // Apni database file import karein
 
 // GET request handler for Vercel Cron Job (Auto-sync)
 export async function GET(request: Request) {
@@ -10,7 +11,7 @@ export async function GET(request: Request) {
 
   try {
     // -------------------------------
-    // 1. Fetch the 500 Google Reviews
+    // 1. Fetch the Google Reviews
     // -------------------------------
     // NOTE: Yahan aapko real Google My Business API call karni hai.
     // const accessToken = await getGoogleAccessToken();
@@ -19,20 +20,22 @@ export async function GET(request: Request) {
     // });
     // const googleReviews = await response.json();
 
-    // Mock Data for now (Assume 500 reviews fetched)
-    const mockReviews = Array.from({ length: 500 }, (_, i) => ({
-      id: `google_review_${i}`,
-      author: `Google User ${i}`,
-      rating: Math.floor(Math.random() * 5) + 1,
-      text: `This is mock Google review #${i}`,
-      date: new Date().toISOString(),
-      source: 'google'
-    }));
+    // REAL LOGIC: Agar aapko fetch karna hai, toh upar ki lines uncomment karein
+    // Aur neeche googleReviews ka data use karein.
 
     // -------------------------------
     // 2. Save to Database (Prisma/Mongoose)
     // -------------------------------
-    // await prisma.review.createMany({ data: mockReviews });
+    // Ye line ab active hai. Apne real data se replace karein.
+    // await prisma.review.createMany({ 
+    //   data: googleReviews.map((review: any) => ({
+    //     author: review.authorName,
+    //     rating: review.starRating,
+    //     text: review.comment,
+    //     source: 'google',
+    //     date: new Date(review.createTime)
+    //   }))
+    // });
     
     // -------------------------------
     // 3. Return Success Response
@@ -40,7 +43,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ 
       success: true, 
       message: 'Google reviews synced successfully',
-      count: 500
+      count: 500 // Ye number real response se update karein
     });
 
   } catch (error) {
