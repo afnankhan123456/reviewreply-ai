@@ -23,7 +23,7 @@ export default function ReviewsPage() {
   const fetchDashboardData = async () => {
     try {
       // ✅ 1. Fetch reviews from database
-      const res = await fetch('/api/standard/reviews'); // <-- FIXED URL
+      const res = await fetch('/api/test/fetch-reviews'); // <-- ✅ URL FIXED
       const data = await res.json();
       if (data.success) {
         setReviews(data.reviews);
