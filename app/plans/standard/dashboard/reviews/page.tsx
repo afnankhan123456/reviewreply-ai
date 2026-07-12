@@ -16,6 +16,11 @@ export default function ReviewsPage() {
   // ✅ NEW: Reviews state
   const [reviews, setReviews] = useState<any[]>([]);
 
+  // ✅ NEW: Reply Modal State
+  const [showReplyModal, setShowReplyModal] = useState(false);
+  const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState('');
+
   useEffect(() => {
     fetchDashboardData();
   }, []);
@@ -53,6 +58,36 @@ export default function ReviewsPage() {
       alert('Error syncing reviews');
     } finally {
       setIsSyncing(false);
+    }
+  };
+
+  // ✅ NEW: Handle Reply Submission
+  const handleReplySubmit = async () => {
+    if (!selectedReviewId || !replyText.trim()) return;
+
+    try {
+      const res = await fetch('/api/standard/reviews/reply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          reviewId: selectedReviewId,
+          replyText: replyText,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        alert('Reply sent successfully!');
+        setShowReplyModal(false);
+        setReplyText('');
+        setSelectedReviewId(null);
+        fetchDashboardData(); // ✅ Refresh UI
+      } else {
+        alert('Failed to send reply: ' + data.message);
+      }
+    } catch (error) {
+      alert('Error sending reply');
     }
   };
 
@@ -146,12 +181,17 @@ export default function ReviewsPage() {
             reviews.map((review, index) => (
               <ReviewRow 
                 key={index}
+                reviewId={review.id} // ✅ Pass review ID
                 name={review.author || review.reviewerName}
                 text={review.text || review.comment}
                 rating={review.rating}
                 sentiment={review.rating >= 4 ? 'Positive' : review.rating >= 3 ? 'Neutral' : 'Negative'}
                 source={review.source}
                 status={review.replied ? 'Replied' : 'Unanswered'}
+                onReplyClick={(id) => {
+                  setSelectedReviewId(id);
+                  setShowReplyModal(true);
+                }}
               />
             ))
           ) : (
@@ -169,11 +209,47 @@ export default function ReviewsPage() {
         </div>
 
       </div>
+
+      {/* ✅ PROFESSIONAL REPLY MODAL */}
+      {showReplyModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
+          <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-6 w-[500px] shadow-2xl">
+            <h3 className="text-white text-lg font-medium mb-3">Reply to Review</h3>
+            <textarea
+              className="w-full bg-[#181D27] border border-[#2A303C] rounded-lg p-3 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-indigo-500 resize-none"
+              rows={4}
+              placeholder="Write your professional reply here..."
+              value={replyText}
+              onChange={(e) => setReplyText(e.target.value)}
+            />
+            <div className="flex justify-end gap-3 mt-4">
+              <button
+                className="px-4 py-2 bg-[#1F2430] text-gray-400 rounded-lg hover:bg-[#2A303C] transition-colors"
+                onClick={() => {
+                  setShowReplyModal(false);
+                  setReplyText('');
+                  setSelectedReviewId(null);
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                onClick={handleReplySubmit}
+                disabled={!replyText.trim()}
+              >
+                Send Reply
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
 
-function ReviewRow({ name, text, rating, sentiment, source, status }: any) {
+// ✅ UPDATED ReviewRow Component with reviewId and onReplyClick
+function ReviewRow({ reviewId, name, text, rating, sentiment, source, status, onReplyClick }: any) {
   return (
     <div className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-[#181D27] transition-colors">
       <div className="col-span-4 flex flex-col gap-1">
@@ -218,14 +294,7 @@ function ReviewRow({ name, text, rating, sentiment, source, status }: any) {
         {status === 'Unanswered' && (
           <button 
             className="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-0.5 rounded"
-            onClick={() => {
-              const replyText = prompt('Enter your reply:');
-              if (replyText) {
-                alert(`Reply sent: ${replyText}`);
-                // 🔥 REAL LOGIC YAHAN AAYEGA
-                // fetch('/api/standard/reviews/reply', { method: 'POST', body: JSON.stringify({ reviewId: review.id, replyText }) })
-              }
-            }}
+            onClick={() => onReplyClick(reviewId)}
           >
             Reply
           </button>
