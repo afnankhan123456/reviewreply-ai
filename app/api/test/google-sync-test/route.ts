@@ -1,50 +1,246 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma'; // <-- Apni database file import karein
+import { prisma } from '@/lib/prisma';
 
 export async function GET() {
-  // 📦 MORE DUMMY DATA (20+ reviews with different statuses, sources, sentiments)
+  // 📦 DUMMY DATA WITH ALL REQUIRED FIELDS FOR PRISMA
   const dummyReviews = [
     // Positive Reviews
-    { author: "Aarav Sharma", rating: 5, text: "Absolutely loved the service! Will definitely come back.", source: "google" },
-    { author: "Priya Patel", rating: 5, text: "Best experience ever. Highly recommended to everyone.", source: "facebook" },
-    { author: "Rohit Singh", rating: 4, text: "Great ambiance and friendly staff. Food was delicious.", source: "google" },
-    { author: "Sneha Kapoor", rating: 5, text: "Amazing quality and timely delivery. Very satisfied.", source: "google" },
-    { author: "Amit Kumar", rating: 4, text: "Good value for money. Will visit again with family.", source: "facebook" },
-    { author: "Neha Jain", rating: 5, text: "Very professional and clean environment. Loved it.", source: "google" },
-    { author: "Rahul Verma", rating: 4, text: "Decent place, good service. Staff was courteous.", source: "facebook" },
+    {
+      userId: "test_user_1",
+      businessLocationId: "loc_google_1",
+      reviewerName: "Aarav Sharma",
+      rating: 5,
+      comment: "Absolutely loved the service! Will definitely come back.",
+      source: "google",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "test_user_1",
+      businessLocationId: "loc_fb_1",
+      reviewerName: "Priya Patel",
+      rating: 5,
+      comment: "Best experience ever. Highly recommended to everyone.",
+      source: "facebook",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "test_user_1",
+      businessLocationId: "loc_google_1",
+      reviewerName: "Rohit Singh",
+      rating: 4,
+      comment: "Great ambiance and friendly staff. Food was delicious.",
+      source: "google",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "test_user_1",
+      businessLocationId: "loc_google_1",
+      reviewerName: "Sneha Kapoor",
+      rating: 5,
+      comment: "Amazing quality and timely delivery. Very satisfied.",
+      source: "google",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "test_user_1",
+      businessLocationId: "loc_fb_1",
+      reviewerName: "Amit Kumar",
+      rating: 4,
+      comment: "Good value for money. Will visit again with family.",
+      source: "facebook",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "test_user_1",
+      businessLocationId: "loc_google_1",
+      reviewerName: "Neha Jain",
+      rating: 5,
+      comment: "Very professional and clean environment. Loved it.",
+      source: "google",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "test_user_1",
+      businessLocationId: "loc_fb_1",
+      reviewerName: "Rahul Verma",
+      rating: 4,
+      comment: "Decent place, good service. Staff was courteous.",
+      source: "facebook",
+      reviewDate: new Date(),
+      replied: false
+    },
     
     // Neutral Reviews
-    { author: "Meera Reddy", rating: 3, text: "Service was okay, but the waiting time was long.", source: "google" },
-    { author: "Ankit Gupta", rating: 3, text: "Not bad, not great. Just an average experience.", source: "facebook" },
-    { author: "Pooja Mehta", rating: 3, text: "The food was fine but the staff seemed rushed.", source: "google" },
-    { author: "Vikram Singh", rating: 3, text: "Decent place, but the pricing could be better.", source: "facebook" },
-    { author: "Kavya Nair", rating: 3, text: "It was okay. Nothing special, but nothing wrong either.", source: "google" },
+    {
+      userId: "test_user_1",
+      businessLocationId: "loc_google_1",
+      reviewerName: "Meera Reddy",
+      rating: 3,
+      comment: "Service was okay, but the waiting time was long.",
+      source: "google",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "test_user_1",
+      businessLocationId: "loc_fb_1",
+      reviewerName: "Ankit Gupta",
+      rating: 3,
+      comment: "Not bad, not great. Just an average experience.",
+      source: "facebook",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "test_user_1",
+      businessLocationId: "loc_google_1",
+      reviewerName: "Pooja Mehta",
+      rating: 3,
+      comment: "The food was fine but the staff seemed rushed.",
+      source: "google",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "test_user_1",
+      businessLocationId: "loc_fb_1",
+      reviewerName: "Vikram Singh",
+      rating: 3,
+      comment: "Decent place, but the pricing could be better.",
+      source: "facebook",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "test_user_1",
+      businessLocationId: "loc_google_1",
+      reviewerName: "Kavya Nair",
+      rating: 3,
+      comment: "It was okay. Nothing special, but nothing wrong either.",
+      source: "google",
+      reviewDate: new Date(),
+      replied: false
+    },
 
     // Negative Reviews
-    { author: "Rohit Sharma", rating: 1, text: "Very bad experience. Will not come again. Service was extremely slow.", source: "google" },
-    { author: "Amit Verma", rating: 2, text: "Not satisfied with the product quality. Item was damaged.", source: "google" },
-    { author: "Sanya Khanna", rating: 1, text: "Worst service ever! Staff was very rude.", source: "facebook" },
-    { author: "Karan Joshi", rating: 2, text: "Overpriced and not worth the money. Disappointed.", source: "google" },
-    { author: "Riya Malhotra", rating: 1, text: "Terrible experience. I want a refund.", source: "facebook" },
-    { author: "Gaurav Singh", rating: 2, text: "The delivery was delayed by 2 hours. Very frustrating.", source: "google" },
-    { author: "Anjali Desai", rating: 1, text: "Unprofessional staff and bad quality. Not recommended.", source: "facebook" },
+    {
+      userId: "test_user_1",
+      businessLocationId: "loc_google_1",
+      reviewerName: "Rohit Sharma",
+      rating: 1,
+      comment: "Very bad experience. Will not come again. Service was extremely slow.",
+      source: "google",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "test_user_1",
+      businessLocationId: "loc_google_1",
+      reviewerName: "Amit Verma",
+      rating: 2,
+      comment: "Not satisfied with the product quality. Item was damaged.",
+      source: "google",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "test_user_1",
+      businessLocationId: "loc_fb_1",
+      reviewerName: "Sanya Khanna",
+      rating: 1,
+      comment: "Worst service ever! Staff was very rude.",
+      source: "facebook",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "test_user_1",
+      businessLocationId: "loc_google_1",
+      reviewerName: "Karan Joshi",
+      rating: 2,
+      comment: "Overpriced and not worth the money. Disappointed.",
+      source: "google",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "test_user_1",
+      businessLocationId: "loc_fb_1",
+      reviewerName: "Riya Malhotra",
+      rating: 1,
+      comment: "Terrible experience. I want a refund.",
+      source: "facebook",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "test_user_1",
+      businessLocationId: "loc_google_1",
+      reviewerName: "Gaurav Singh",
+      rating: 2,
+      comment: "The delivery was delayed by 2 hours. Very frustrating.",
+      source: "google",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "test_user_1",
+      businessLocationId: "loc_fb_1",
+      reviewerName: "Anjali Desai",
+      rating: 1,
+      comment: "Unprofessional staff and bad quality. Not recommended.",
+      source: "facebook",
+      reviewDate: new Date(),
+      replied: false
+    },
     
     // Unanswered / Replied mix
-    { author: "Sneha Patel", rating: 5, text: "Absolutely loved the ambiance! Will definitely visit again.", source: "google", replied: true },
-    { author: "Rahul Singh", rating: 4, text: "Good value for money. The food was delicious.", source: "google", replied: false },
-    { author: "Pooja Mehta", rating: 3, text: "Service was okay but staff was rude.", source: "facebook", replied: true },
+    {
+      userId: "test_user_1",
+      businessLocationId: "loc_google_1",
+      reviewerName: "Sneha Patel",
+      rating: 5,
+      comment: "Absolutely loved the ambiance! Will definitely visit again.",
+      source: "google",
+      reviewDate: new Date(),
+      replied: true
+    },
+    {
+      userId: "test_user_1",
+      businessLocationId: "loc_google_1",
+      reviewerName: "Rahul Singh",
+      rating: 4,
+      comment: "Good value for money. The food was delicious.",
+      source: "google",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "test_user_1",
+      businessLocationId: "loc_fb_1",
+      reviewerName: "Pooja Mehta",
+      rating: 3,
+      comment: "Service was okay but staff was rude.",
+      source: "facebook",
+      reviewDate: new Date(),
+      replied: true
+    },
   ];
 
-  console.log('✅ 20+ Dummy Reviews Generated:', dummyReviews);
+  console.log('✅ 22 Dummy Reviews Generated with valid Prisma fields:', dummyReviews);
 
-  // ==========================================
-  // ✅ DATABASE SAVE LOGIC (Now Uncommented)
-  // ==========================================
+  // ✅ DATABASE SAVE LOGIC
   await prisma.review.createMany({ data: dummyReviews });
 
   return NextResponse.json({ 
     success: true, 
-    message: "20+ dummy reviews saved to database successfully!",
+    message: "22 dummy reviews saved to database successfully!",
     count: dummyReviews.length,
     data: dummyReviews
   });
