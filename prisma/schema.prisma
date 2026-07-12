@@ -60,9 +60,10 @@ model Review {
   user             User     @relation(fields: [userId], references: [id])
   businessLocationId String
   businessLocation   BusinessLocation @relation(fields: [businessLocationId], references: [id])
-  googleReviewId   String?   @unique  // <-- ✅ SIRF YEH LINE CHANGE KI (?) LAGAYA
+  googleReviewId   String?   @unique
   reviewerName     String
   reviewerPhoto    String?
+  source           String?   // <-- ✅ YEH EK LINE ADD KI HAI
   rating           Int
   comment          String?
   reviewReply      String?
@@ -152,7 +153,6 @@ model PartnerWhitelist {
   @@map("partner_whitelist")
 }
 
-// 👇 NEW MODEL
 model Withdrawal {
   id          String   @id @default(cuid())
   email       String
