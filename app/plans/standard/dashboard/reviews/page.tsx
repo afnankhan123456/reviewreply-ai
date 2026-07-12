@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 
 export default function ReviewsPage() {
-  // Placeholder state for search/filter (Logic baad mein lagayenge)
+  // Placeholder state for search/filter
   const [searchTerm, setSearchTerm] = useState('');
   const [filterSentiment, setFilterSentiment] = useState('All');
 
@@ -23,9 +23,9 @@ export default function ReviewsPage() {
       </div>
 
       {/* ========================================== */}
-      {/* TOP CARDS SECTION (4 Cards) */}
+      {/* TOP CARDS SECTION (3 Cards - Facebook Removed) */}
       {/* ========================================== */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-6">
         
         {/* CARD 1: Review Search & Filter */}
         <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-4 flex flex-col gap-3">
@@ -47,12 +47,10 @@ export default function ReviewsPage() {
               <Filter size={16} />
             </button>
           </div>
-          {/* Filter Chips (Placeholder) */}
           <div className="flex flex-wrap gap-1.5">
             <span className="text-[10px] bg-[#1F2430] text-gray-400 px-2 py-0.5 rounded-full cursor-pointer hover:bg-[#2A303C]">Positive</span>
             <span className="text-[10px] bg-[#1F2430] text-gray-400 px-2 py-0.5 rounded-full cursor-pointer hover:bg-[#2A303C]">Negative</span>
             <span className="text-[10px] bg-[#1F2430] text-gray-400 px-2 py-0.5 rounded-full cursor-pointer hover:bg-[#2A303C]">Google</span>
-            <span className="text-[10px] bg-[#1F2430] text-gray-400 px-2 py-0.5 rounded-full cursor-pointer hover:bg-[#2A303C]">Facebook</span>
           </div>
         </div>
 
@@ -89,23 +87,6 @@ export default function ReviewsPage() {
           </button>
         </div>
 
-        {/* CARD 4: Facebook Review Sync (With 500 Badge) */}
-        <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-4 flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-gray-400 text-xs font-medium">
-              <RefreshCw size={14} /> Facebook Review Sync
-            </div>
-            {/* The 500 Badge */}
-            <span className="bg-purple-500/20 text-purple-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-purple-500/30">
-              500
-            </span>
-          </div>
-          <div className="text-[10px] text-gray-500 mt-2">Last synced: 5 hours ago</div>
-          <button className="w-full mt-3 bg-purple-600 hover:bg-purple-500 text-white text-xs font-medium py-1.5 rounded-lg transition-colors">
-            Sync Now
-          </button>
-        </div>
-
       </div>
 
       {/* ========================================== */}
@@ -113,7 +94,6 @@ export default function ReviewsPage() {
       {/* ========================================== */}
       <div className="bg-[#11141C] border border-[#1F2430] rounded-xl overflow-hidden">
         
-        {/* Table Header */}
         <div className="grid grid-cols-12 gap-4 px-6 py-3 border-b border-[#1F2430] bg-[#181D27]/50 text-[10px] text-gray-400 font-medium uppercase tracking-wider">
           <div className="col-span-4">Customer & Review</div>
           <div className="col-span-2 text-center">Rating</div>
@@ -122,7 +102,6 @@ export default function ReviewsPage() {
           <div className="col-span-2 text-center">Status / Action</div>
         </div>
 
-        {/* Review Rows */}
         <div className="divide-y divide-[#1F2430]">
           <ReviewRow 
             name="Rohit Sharma"
@@ -137,7 +116,7 @@ export default function ReviewsPage() {
             text="Service was okay but staff was rude. Not what I expected from this place."
             rating={5}
             sentiment="Neutral"
-            source="Facebook"
+            source="Google"
             status="Replied"
           />
           <ReviewRow 
@@ -153,7 +132,7 @@ export default function ReviewsPage() {
             text="Absolutely loved the ambiance! Will definitely visit again with friends."
             rating={5}
             sentiment="Positive"
-            source="Facebook"
+            source="Google"
             status="Replied"
           />
           <ReviewRow 
@@ -166,7 +145,6 @@ export default function ReviewsPage() {
           />
         </div>
 
-        {/* Table Footer / Pagination Placeholder */}
         <div className="flex justify-between items-center px-6 py-4 border-t border-[#1F2430] text-[10px] text-gray-500">
           <span>Showing 1-5 of 1,248 reviews</span>
           <div className="flex gap-2">
@@ -180,14 +158,9 @@ export default function ReviewsPage() {
   );
 }
 
-// ==========================================
-// REUSABLE COMPONENT: Review Row
-// ==========================================
 function ReviewRow({ name, text, rating, sentiment, source, status }: any) {
   return (
     <div className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-[#181D27] transition-colors">
-      
-      {/* Col 1: Name & Text */}
       <div className="col-span-4 flex flex-col gap-1">
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 rounded-full bg-blue-900 text-blue-300 flex items-center justify-center text-[10px] font-bold">
@@ -197,8 +170,6 @@ function ReviewRow({ name, text, rating, sentiment, source, status }: any) {
         </div>
         <div className="text-[11px] text-gray-400 line-clamp-2">{text}</div>
       </div>
-
-      {/* Col 2: Rating */}
       <div className="col-span-2 flex items-center justify-center gap-1">
         <div className="flex text-[10px] text-yellow-500">
           {Array.from({ length: 5 }).map((_, i) => (
@@ -206,8 +177,6 @@ function ReviewRow({ name, text, rating, sentiment, source, status }: any) {
           ))}
         </div>
       </div>
-
-      {/* Col 3: Sentiment */}
       <div className="col-span-2 flex items-center justify-center">
         <span className={`text-[10px] px-2 py-0.5 rounded-full border ${
           sentiment === 'Positive' ? 'bg-green-500/20 text-green-400 border-green-500/30' :
@@ -217,8 +186,6 @@ function ReviewRow({ name, text, rating, sentiment, source, status }: any) {
           {sentiment}
         </span>
       </div>
-
-      {/* Col 4: Source */}
       <div className="col-span-2 flex items-center justify-center">
         <span className={`text-[10px] px-2 py-0.5 rounded-full border ${
           source === 'Google' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
@@ -227,8 +194,6 @@ function ReviewRow({ name, text, rating, sentiment, source, status }: any) {
           {source}
         </span>
       </div>
-
-      {/* Col 5: Status / Action */}
       <div className="col-span-2 flex items-center justify-center gap-2">
         <span className={`text-[10px] px-2 py-0.5 rounded-full ${
           status === 'Replied' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'
