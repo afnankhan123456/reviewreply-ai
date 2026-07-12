@@ -13,23 +13,13 @@ export default function ReviewsPage() {
   const [unansweredCount, setUnansweredCount] = useState(0);
   const [isSyncing, setIsSyncing] = useState(false);
 
-  // Fetch data on page load
   useEffect(() => {
     fetchDashboardData();
   }, []);
 
   const fetchDashboardData = async () => {
     try {
-      // TODO: In APIs ko baad mein banayenge
-      // Fetch last sync time
-      // const syncRes = await fetch('/api/standard/google/sync-status');
-      // const syncData = await syncRes.json();
-      // setLastSynced(syncData.lastSynced || 'Never');
-
-      // Fetch unanswered count
-      // const countRes = await fetch('/api/reviews/unanswered-count');
-      // const countData = await countRes.json();
-      // setUnansweredCount(countData.count || 0);
+      // APIs will be added later
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     }
@@ -42,7 +32,7 @@ export default function ReviewsPage() {
       const data = await res.json();
       if (data.success) {
         alert('Sync successful!');
-        fetchDashboardData(); // Refresh UI
+        fetchDashboardData();
       } else {
         alert('Sync failed: ' + data.message);
       }
@@ -64,12 +54,10 @@ export default function ReviewsPage() {
         </div>
       </div>
 
-      {/* ========================================== */}
-      {/* TOP CARDS SECTION */}
-      {/* ========================================== */}
+      {/* Top Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-6">
         
-        {/* CARD 1: Review Search & Filter */}
+        {/* Card 1: Search & Filter */}
         <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-4 flex flex-col gap-3">
           <div className="flex items-center gap-2 text-gray-400 text-xs font-medium">
             <Search size={14} /> Review Search & Filter
@@ -96,7 +84,7 @@ export default function ReviewsPage() {
           </div>
         </div>
 
-        {/* CARD 2: Unanswered Reviews Tracking */}
+        {/* Card 2: Unanswered Reviews */}
         <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-4 flex flex-col justify-between">
           <div className="flex items-center gap-2 text-gray-400 text-xs font-medium">
             <XCircle size={14} /> Unanswered Reviews
@@ -112,7 +100,7 @@ export default function ReviewsPage() {
           </button>
         </div>
 
-        {/* CARD 3: Google Review Sync (Without Button) */}
+        {/* Card 3: Google Review Sync */}
         <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-4 flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-gray-400 text-xs font-medium">
@@ -122,19 +110,16 @@ export default function ReviewsPage() {
               500
             </span>
           </div>
-          {/* ✅ BUTTON REMOVED. SIRF TIME DIKHEGA */}
           <div className="text-[10px] text-gray-500 mt-2">Last synced: {lastSynced}</div>
         </div>
 
       </div>
 
-      {/* ========================================== */}
-      {/* BOTTOM SECTION: FULL REVIEW DASHBOARD LIST WITH SCROLL */}
-      {/* ========================================== */}
-      <div className="bg-[#11141C] border border-[#1F2430] rounded-xl overflow-hidden">
+      {/* Reviews Table with Thin Scroll */}
+      <div className="bg-[#11141C] border border-[#1F2430] rounded-xl overflow-hidden flex flex-col">
         
-        {/* Header (Fixed) */}
-        <div className="grid grid-cols-12 gap-4 px-6 py-3 border-b border-[#1F2430] bg-[#181D27]/50 text-[10px] text-gray-400 font-medium uppercase tracking-wider">
+        {/* Header */}
+        <div className="grid grid-cols-12 gap-4 px-6 py-3 border-b border-[#1F2430] bg-[#181D27]/50 text-[10px] text-gray-400 font-medium uppercase tracking-wider shrink-0">
           <div className="col-span-4">Customer & Review</div>
           <div className="col-span-2 text-center">Rating</div>
           <div className="col-span-2 text-center">Sentiment</div>
@@ -142,8 +127,8 @@ export default function ReviewsPage() {
           <div className="col-span-2 text-center">Status / Action</div>
         </div>
 
-        {/* ✅ Scrollable Review List (Scroll bar hidden) */}
-        <div className="max-h-[600px] overflow-y-auto scrollbar-hide divide-y divide-[#1F2430]">
+        {/* Scrollable List - WITH CUSTOM THIN SCROLLBAR */}
+        <div className="h-[600px] overflow-y-auto custom-scroll divide-y divide-[#1F2430]">
           <ReviewRow 
             name="Rohit Sharma"
             text="Very bad experience. Will not come again. The service was extremely slow."
@@ -186,8 +171,8 @@ export default function ReviewsPage() {
           />
         </div>
 
-        {/* Footer / Pagination (Fixed) */}
-        <div className="flex justify-between items-center px-6 py-4 border-t border-[#1F2430] text-[10px] text-gray-500">
+        {/* Footer / Pagination */}
+        <div className="flex justify-between items-center px-6 py-4 border-t border-[#1F2430] text-[10px] text-gray-500 shrink-0">
           <span>Showing 1-5 of 1,248 reviews</span>
           <div className="flex gap-2">
             <button className="px-3 py-1 bg-[#1F2430] rounded hover:bg-[#2A303C]">Previous</button>
