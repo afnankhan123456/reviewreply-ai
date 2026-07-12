@@ -26,7 +26,7 @@ export default function ReviewsPage() {
     fetchDashboardData();
   }, []);
 
-  // ✅ NEW: Auto-hide toast after 2 seconds (GUARANTEED)
+  // ✅ Auto-hide toast after 2 seconds
   useEffect(() => {
     if (toast) {
       const timer = setTimeout(() => {
@@ -100,10 +100,39 @@ export default function ReviewsPage() {
     }
   };
 
+  // ✅ Filter Logic
+  const filteredReviews = reviews.filter((review) => {
+    const name = review.author || review.reviewerName || '';
+    const text = review.text || review.comment || '';
+    const source = review.source || '';
+    const rating = review.rating || 0;
+
+    // Search filter (name ya text)
+    const matchesSearch =
+      name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      text.toLowerCase().includes(searchTerm.toLowerCase());
+
+    // Sentiment filter
+    let matchesSentiment = true;
+    if (filterSentiment === 'Positive') {
+      matchesSentiment = rating >= 4;
+    } else if (filterSentiment === 'Negative') {
+      matchesSentiment = rating <= 2;
+    } else if (filterSentiment === 'Neutral') {
+      matchesSentiment = rating === 3;
+    } else if (filterSentiment === 'Google') {
+      matchesSentiment = source.toLowerCase() === 'google';
+    } else if (filterSentiment === 'Facebook') {
+      matchesSentiment = source.toLowerCase() === 'facebook';
+    }
+
+    return matchesSearch && matchesSentiment;
+  });
+
   return (
     <div className="flex-1 flex flex-col p-6 overflow-y-auto bg-[#0B0E14] text-gray-200">
       
-      {/* ✅ Toast Notification - 100% auto-hide in 2 seconds */}
+      {/* Toast Notification */}
       {toast && (
         <div 
           className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg text-sm font-medium transition-all duration-300 ${
@@ -146,9 +175,46 @@ export default function ReviewsPage() {
             </button>
           </div>
           <div className="flex flex-wrap gap-1.5">
-            <span className="text-[10px] bg-[#1F2430] text-gray-400 px-2 py-0.5 rounded-full cursor-pointer hover:bg-[#2A303C]">Positive</span>
-            <span className="text-[10px] bg-[#1F2430] text-gray-400 px-2 py-0.5 rounded-full cursor-pointer hover:bg-[#2A303C]">Negative</span>
-            <span className="text-[10px] bg-[#1F2430] text-gray-400 px-2 py-0.5 rounded-full cursor-pointer hover:bg-[#2A303C]">Google</span>
+            <span 
+              className={`text-[10px] px-2 py-0.5 rounded-full cursor-pointer transition-colors ${
+                filterSentiment === 'Positive' 
+                  ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
+                  : 'bg-[#1F2430] text-gray-400 hover:bg-[#2A303C]'
+              }`}
+              onClick={() => setFilterSentiment('Positive')}
+            >
+              Positive
+            </span>
+            <span 
+              className={`text-[10px] px-2 py-0.5 rounded-full cursor-pointer transition-colors ${
+                filterSentiment === 'Negative' 
+                  ? 'bg-red-500/20 text-red-400 border border-red-500/30' 
+                  : 'bg-[#1F2430] text-gray-400 hover:bg-[#2A303C]'
+              }`}
+              onClick={() => setFilterSentiment('Negative')}
+            >
+              Negative
+            </span>
+            <span 
+              className={`text-[10px] px-2 py-0.5 rounded-full cursor-pointer transition-colors ${
+                filterSentiment === 'Google' 
+                  ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' 
+                  : 'bg-[#1F2430] text-gray-400 hover:bg-[#2A303C]'
+              }`}
+              onClick={() => setFilterSentiment('Google')}
+            >
+              Google
+            </span>
+            <span 
+              className={`text-[10px] px-2 py-0.5 rounded-full cursor-pointer transition-colors ${
+                filterSentiment === 'All' 
+                  ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' 
+                  : 'bg-[#1F2430] text-gray-400 hover:bg-[#2A303C]'
+              }`}
+              onClick={() => setFilterSentiment('All')}
+            >
+              All
+            </span>
           </div>
         </div>
 
@@ -196,8 +262,8 @@ export default function ReviewsPage() {
         </div>
 
         <div className="h-[600px] overflow-y-auto custom-scroll divide-y divide-[#1F2430]">
-          {reviews.length > 0 ? (
-            reviews.map((review, index) => (
+          {filteredReviews.length > 0 ? (
+            filteredReviews.map((review, index) => (
               <ReviewRow 
                 key={index}
                 reviewId={review.id}
@@ -216,12 +282,12 @@ export default function ReviewsPage() {
               />
             ))
           ) : (
-            <div className="p-6 text-center text-gray-500 text-sm">No reviews found. Run the test API to add dummy data.</div>
+            <div className="p-6 text-center text-gray-500 text-sm">No matching reviews found.</div>
           )}
         </div>
 
         <div className="flex justify-between items-center px-6 py-4 border-t border-[#1F2430] text-[10px] text-gray-500 shrink-0">
-          <span>Showing {reviews.length} reviews</span>
+          <span>Showing {filteredReviews.length} reviews</span>
           <div className="flex gap-2">
             <button className="px-3 py-1 bg-[#1F2430] rounded hover:bg-[#2A303C]">Previous</button>
             <button className="px-3 py-1 bg-[#1F2430] rounded hover:bg-[#2A303C]">Next</button>
