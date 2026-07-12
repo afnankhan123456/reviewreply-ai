@@ -2,13 +2,12 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
 export async function GET() {
-  // 📦 DUMMY DATA WITH ALL REQUIRED FIELDS FOR PRISMA
+  // 📦 DUMMY DATA (Real User ID from DB)
   const dummyReviews = [
-    // Positive Reviews
     {
-      userId: "test_user_1",
-      businessLocationId: "loc_google_1",
-      googleReviewId: "google_review_1", // <-- ✅ ADDED
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_1",
       reviewerName: "Aarav Sharma",
       rating: 5,
       comment: "Absolutely loved the service! Will definitely come back.",
@@ -17,9 +16,9 @@ export async function GET() {
       replied: false
     },
     {
-      userId: "test_user_1",
-      businessLocationId: "loc_fb_1",
-      googleReviewId: "google_review_2", // <-- ✅ ADDED
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_2",
       reviewerName: "Priya Patel",
       rating: 5,
       comment: "Best experience ever. Highly recommended to everyone.",
@@ -28,9 +27,9 @@ export async function GET() {
       replied: false
     },
     {
-      userId: "test_user_1",
-      businessLocationId: "loc_google_1",
-      googleReviewId: "google_review_3", // <-- ✅ ADDED
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_3",
       reviewerName: "Rohit Singh",
       rating: 4,
       comment: "Great ambiance and friendly staff. Food was delicious.",
@@ -39,9 +38,9 @@ export async function GET() {
       replied: false
     },
     {
-      userId: "test_user_1",
-      businessLocationId: "loc_google_1",
-      googleReviewId: "google_review_4", // <-- ✅ ADDED
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_4",
       reviewerName: "Sneha Kapoor",
       rating: 5,
       comment: "Amazing quality and timely delivery. Very satisfied.",
@@ -50,9 +49,9 @@ export async function GET() {
       replied: false
     },
     {
-      userId: "test_user_1",
-      businessLocationId: "loc_fb_1",
-      googleReviewId: "google_review_5", // <-- ✅ ADDED
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_5",
       reviewerName: "Amit Kumar",
       rating: 4,
       comment: "Good value for money. Will visit again with family.",
@@ -61,9 +60,9 @@ export async function GET() {
       replied: false
     },
     {
-      userId: "test_user_1",
-      businessLocationId: "loc_google_1",
-      googleReviewId: "google_review_6", // <-- ✅ ADDED
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_6",
       reviewerName: "Neha Jain",
       rating: 5,
       comment: "Very professional and clean environment. Loved it.",
@@ -72,9 +71,9 @@ export async function GET() {
       replied: false
     },
     {
-      userId: "test_user_1",
-      businessLocationId: "loc_fb_1",
-      googleReviewId: "google_review_7", // <-- ✅ ADDED
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_7",
       reviewerName: "Rahul Verma",
       rating: 4,
       comment: "Decent place, good service. Staff was courteous.",
@@ -82,12 +81,10 @@ export async function GET() {
       reviewDate: new Date(),
       replied: false
     },
-    
-    // Neutral Reviews
     {
-      userId: "test_user_1",
-      businessLocationId: "loc_google_1",
-      googleReviewId: "google_review_8", // <-- ✅ ADDED
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_8",
       reviewerName: "Meera Reddy",
       rating: 3,
       comment: "Service was okay, but the waiting time was long.",
@@ -96,9 +93,9 @@ export async function GET() {
       replied: false
     },
     {
-      userId: "test_user_1",
-      businessLocationId: "loc_fb_1",
-      googleReviewId: "google_review_9", // <-- ✅ ADDED
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_9",
       reviewerName: "Ankit Gupta",
       rating: 3,
       comment: "Not bad, not great. Just an average experience.",
@@ -107,9 +104,9 @@ export async function GET() {
       replied: false
     },
     {
-      userId: "test_user_1",
-      businessLocationId: "loc_google_1",
-      googleReviewId: "google_review_10", // <-- ✅ ADDED
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_10",
       reviewerName: "Pooja Mehta",
       rating: 3,
       comment: "The food was fine but the staff seemed rushed.",
@@ -118,9 +115,9 @@ export async function GET() {
       replied: false
     },
     {
-      userId: "test_user_1",
-      businessLocationId: "loc_fb_1",
-      googleReviewId: "google_review_11", // <-- ✅ ADDED
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_11",
       reviewerName: "Vikram Singh",
       rating: 3,
       comment: "Decent place, but the pricing could be better.",
@@ -129,9 +126,9 @@ export async function GET() {
       replied: false
     },
     {
-      userId: "test_user_1",
-      businessLocationId: "loc_google_1",
-      googleReviewId: "google_review_12", // <-- ✅ ADDED
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_12",
       reviewerName: "Kavya Nair",
       rating: 3,
       comment: "It was okay. Nothing special, but nothing wrong either.",
@@ -139,12 +136,10 @@ export async function GET() {
       reviewDate: new Date(),
       replied: false
     },
-
-    // Negative Reviews
     {
-      userId: "test_user_1",
-      businessLocationId: "loc_google_1",
-      googleReviewId: "google_review_13", // <-- ✅ ADDED
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_13",
       reviewerName: "Rohit Sharma",
       rating: 1,
       comment: "Very bad experience. Will not come again. Service was extremely slow.",
@@ -153,9 +148,9 @@ export async function GET() {
       replied: false
     },
     {
-      userId: "test_user_1",
-      businessLocationId: "loc_google_1",
-      googleReviewId: "google_review_14", // <-- ✅ ADDED
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_14",
       reviewerName: "Amit Verma",
       rating: 2,
       comment: "Not satisfied with the product quality. Item was damaged.",
@@ -164,9 +159,9 @@ export async function GET() {
       replied: false
     },
     {
-      userId: "test_user_1",
-      businessLocationId: "loc_fb_1",
-      googleReviewId: "google_review_15", // <-- ✅ ADDED
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_15",
       reviewerName: "Sanya Khanna",
       rating: 1,
       comment: "Worst service ever! Staff was very rude.",
@@ -175,9 +170,9 @@ export async function GET() {
       replied: false
     },
     {
-      userId: "test_user_1",
-      businessLocationId: "loc_google_1",
-      googleReviewId: "google_review_16", // <-- ✅ ADDED
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_16",
       reviewerName: "Karan Joshi",
       rating: 2,
       comment: "Overpriced and not worth the money. Disappointed.",
@@ -186,9 +181,9 @@ export async function GET() {
       replied: false
     },
     {
-      userId: "test_user_1",
-      businessLocationId: "loc_fb_1",
-      googleReviewId: "google_review_17", // <-- ✅ ADDED
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_17",
       reviewerName: "Riya Malhotra",
       rating: 1,
       comment: "Terrible experience. I want a refund.",
@@ -197,9 +192,9 @@ export async function GET() {
       replied: false
     },
     {
-      userId: "test_user_1",
-      businessLocationId: "loc_google_1",
-      googleReviewId: "google_review_18", // <-- ✅ ADDED
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_18",
       reviewerName: "Gaurav Singh",
       rating: 2,
       comment: "The delivery was delayed by 2 hours. Very frustrating.",
@@ -208,9 +203,9 @@ export async function GET() {
       replied: false
     },
     {
-      userId: "test_user_1",
-      businessLocationId: "loc_fb_1",
-      googleReviewId: "google_review_19", // <-- ✅ ADDED
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_19",
       reviewerName: "Anjali Desai",
       rating: 1,
       comment: "Unprofessional staff and bad quality. Not recommended.",
@@ -218,12 +213,10 @@ export async function GET() {
       reviewDate: new Date(),
       replied: false
     },
-    
-    // Unanswered / Replied mix
     {
-      userId: "test_user_1",
-      businessLocationId: "loc_google_1",
-      googleReviewId: "google_review_20", // <-- ✅ ADDED
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_20",
       reviewerName: "Sneha Patel",
       rating: 5,
       comment: "Absolutely loved the ambiance! Will definitely visit again.",
@@ -232,9 +225,9 @@ export async function GET() {
       replied: true
     },
     {
-      userId: "test_user_1",
-      businessLocationId: "loc_google_1",
-      googleReviewId: "google_review_21", // <-- ✅ ADDED
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_21",
       reviewerName: "Rahul Singh",
       rating: 4,
       comment: "Good value for money. The food was delicious.",
@@ -243,9 +236,9 @@ export async function GET() {
       replied: false
     },
     {
-      userId: "test_user_1",
-      businessLocationId: "loc_fb_1",
-      googleReviewId: "google_review_22", // <-- ✅ ADDED
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_22",
       reviewerName: "Pooja Mehta",
       rating: 3,
       comment: "Service was okay but staff was rude.",
