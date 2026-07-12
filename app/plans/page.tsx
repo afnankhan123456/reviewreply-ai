@@ -124,7 +124,7 @@ export default function PlansPage() {
 
             <div className="space-y-2 text-zinc-300 text-sm flex-1">
               <div>✓ 2 Business Locations &nbsp;&nbsp; ✓ 500 AI Replies / Month</div>
-              <div>✓ Google Review Sync &nbsp;&nbsp; ✓ Facebook Review Sync</div>
+              <div>✓ Google Review Sync</div>
               <div>✓ Review Dashboard &nbsp;&nbsp; ✓ New Review Email Alerts</div>
               <div>✓ Unanswered Reviews Tracking &nbsp;&nbsp; ✓ Rating Overview</div>
               <div>✓ Positive & Negative Detection &nbsp;&nbsp; ✓ Basic Analytics</div>
