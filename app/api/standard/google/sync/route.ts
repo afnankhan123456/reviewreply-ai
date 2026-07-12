@@ -10,25 +10,29 @@ export async function GET(request: Request) {
   }
 
   try {
-    // -------------------------------
+    // ==========================================
     // 1. Fetch the Google Reviews
-    // -------------------------------
-    // NOTE: Yahan aapko real Google My Business API call karni hai.
+    // ==========================================
+    // YAHAN APNA REAL GOOGLE API CODE LAGAYEN:
     // const accessToken = await getGoogleAccessToken();
     // const response = await fetch('https://mybusiness.googleapis.com/v4/...', {
     //   headers: { Authorization: `Bearer ${accessToken}` }
     // });
-    // const googleReviews = await response.json();
+    // const allReviews = await response.json();
 
-    // REAL LOGIC: Agar aapko fetch karna hai, toh upar ki lines uncomment karein
-    // Aur neeche googleReviews ka data use karein.
+    // ==========================================
+    // 2. STANDARD PLAN LIMIT (500)
+    // ==========================================
+    const PLAN_LIMIT = 500; // Standard plan limit set
 
-    // -------------------------------
-    // 2. Save to Database (Prisma/Mongoose)
-    // -------------------------------
-    // Ye line ab active hai. Apne real data se replace karein.
+    // Agar reviews 500 se zyada aaye, toh sirf 500 lo
+    // const limitedReviews = allReviews.slice(0, PLAN_LIMIT);
+
+    // ==========================================
+    // 3. Save to Database (Prisma/Mongoose)
+    // ==========================================
     // await prisma.review.createMany({ 
-    //   data: googleReviews.map((review: any) => ({
+    //   data: limitedReviews.map((review: any) => ({
     //     author: review.authorName,
     //     rating: review.starRating,
     //     text: review.comment,
@@ -36,14 +40,14 @@ export async function GET(request: Request) {
     //     date: new Date(review.createTime)
     //   }))
     // });
-    
-    // -------------------------------
-    // 3. Return Success Response
-    // -------------------------------
+
+    // ==========================================
+    // 4. Return Success Response
+    // ==========================================
     return NextResponse.json({ 
       success: true, 
       message: 'Google reviews synced successfully',
-      count: 500 // Ye number real response se update karein
+      count: PLAN_LIMIT // Ab ye 500 return karega
     });
 
   } catch (error) {
