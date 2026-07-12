@@ -13,14 +13,14 @@ export default function ReviewsPage() {
   const [unansweredCount, setUnansweredCount] = useState(0);
   const [isSyncing, setIsSyncing] = useState(false);
   
-  // ✅ NEW: Reviews state
   const [reviews, setReviews] = useState<any[]>([]);
-
-  // ✅ NEW: Reply Modal State
   const [showReplyModal, setShowReplyModal] = useState(false);
   const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
-  const [selectedReviewText, setSelectedReviewText] = useState(''); // ✅ NEW
+  const [selectedReviewText, setSelectedReviewText] = useState('');
   const [replyText, setReplyText] = useState('');
+
+  // ✅ NEW: Toast State
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   useEffect(() => {
     fetchDashboardData();
@@ -28,15 +28,13 @@ export default function ReviewsPage() {
 
   const fetchDashboardData = async () => {
     try {
-      // ✅ 1. Fetch reviews from database
-      const res = await fetch('/api/test/fetch-reviews'); // <-- ✅ URL FIXED
+      const res = await fetch('/api/test/fetch-reviews');
       const data = await res.json();
       if (data.success) {
         setReviews(data.reviews);
       }
 
-      // ✅ 2. Fetch unanswered count
-      const countRes = await fetch('/api/standard/reviews/unanswered-count'); // <-- FIXED URL
+      const countRes = await fetch('/api/standard/reviews/unanswered-count');
       const countData = await countRes.json();
       setUnansweredCount(countData.count || 0);
     } catch (error) {
@@ -50,19 +48,18 @@ export default function ReviewsPage() {
       const res = await fetch('/api/standard/google/sync', { method: 'POST' });
       const data = await res.json();
       if (data.success) {
-        alert('Sync successful!');
+        setToast({ message: 'Sync successful!', type: 'success' });
         fetchDashboardData();
       } else {
-        alert('Sync failed: ' + data.message);
+        setToast({ message: 'Sync failed: ' + data.message, type: 'error' });
       }
     } catch (error) {
-      alert('Error syncing reviews');
+      setToast({ message: 'Error syncing reviews', type: 'error' });
     } finally {
       setIsSyncing(false);
     }
   };
 
-  // ✅ NEW: Handle Reply Submission
   const handleReplySubmit = async () => {
     if (!selectedReviewId || !replyText.trim()) return;
 
@@ -79,23 +76,35 @@ export default function ReviewsPage() {
       const data = await res.json();
 
       if (data.success) {
-        alert('Reply sent successfully!');
+        setToast({ message: '✅ Reply sent successfully!', type: 'success' });
         setShowReplyModal(false);
         setReplyText('');
         setSelectedReviewId(null);
         setSelectedReviewText('');
-        fetchDashboardData(); // ✅ Refresh UI
+        fetchDashboardData();
       } else {
-        alert('Failed to send reply: ' + data.message);
+        setToast({ message: 'Failed to send reply: ' + data.message, type: 'error' });
       }
     } catch (error) {
-      alert('Error sending reply');
+      setToast({ message: 'Error sending reply', type: 'error' });
     }
   };
 
   return (
     <div className="flex-1 flex flex-col p-6 overflow-y-auto bg-[#0B0E14] text-gray-200">
       
+      {/* ✅ Toast Notification */}
+      {toast && (
+        <div 
+          className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg text-sm font-medium transition-all duration-300 ${
+            toast.type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+          }`}
+          onAnimationEnd={() => setTimeout(() => setToast(null), 2000)}
+        >
+          {toast.message}
+        </div>
+      )}
+
       {/* Page Header */}
       <div className="flex justify-between items-center mb-6">
         <div>
@@ -177,14 +186,13 @@ export default function ReviewsPage() {
           <div className="col-span-2 text-center">Status / Action</div>
         </div>
 
-        {/* ✅ Scrollable List - DYNAMIC REVIEWS FROM DB */}
         <div className="h-[600px] overflow-y-auto custom-scroll divide-y divide-[#1F2430]">
           {reviews.length > 0 ? (
             reviews.map((review, index) => (
               <ReviewRow 
                 key={index}
-                reviewId={review.id} // ✅ Pass review ID
-                reviewText={review.text || review.comment} // ✅ Pass review text
+                reviewId={review.id}
+                reviewText={review.text || review.comment}
                 name={review.author || review.reviewerName}
                 text={review.text || review.comment}
                 rating={review.rating}
@@ -203,7 +211,6 @@ export default function ReviewsPage() {
           )}
         </div>
 
-        {/* Footer / Pagination */}
         <div className="flex justify-between items-center px-6 py-4 border-t border-[#1F2430] text-[10px] text-gray-500 shrink-0">
           <span>Showing {reviews.length} reviews</span>
           <div className="flex gap-2">
@@ -214,13 +221,12 @@ export default function ReviewsPage() {
 
       </div>
 
-      {/* ✅ PROFESSIONAL REPLY MODAL WITH REVIEW TEXT */}
+      {/* Reply Modal */}
       {showReplyModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
           <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-6 w-[600px] shadow-2xl">
             <h3 className="text-white text-lg font-medium mb-3">Reply to Review</h3>
             
-            {/* ✅ SHOW THE ORIGINAL REVIEW TEXT */}
             <div className="bg-[#181D27] border border-[#2A303C] rounded-lg p-3 mb-4">
               <p className="text-xs text-gray-400 mb-1">Original Review:</p>
               <p className="text-sm text-gray-200">{selectedReviewText}</p>
@@ -260,7 +266,6 @@ export default function ReviewsPage() {
   );
 }
 
-// ✅ UPDATED ReviewRow Component with reviewId, reviewText, and onReplyClick
 function ReviewRow({ reviewId, reviewText, name, text, rating, sentiment, source, status, onReplyClick }: any) {
   return (
     <div className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-[#181D27] transition-colors">
