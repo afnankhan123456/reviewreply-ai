@@ -23,16 +23,16 @@ export default function ReviewsPage() {
   const fetchDashboardData = async () => {
     try {
       // ✅ 1. Fetch reviews from database
-      const res = await fetch('/api/reviews');
+      const res = await fetch('/api/standard/reviews'); // <-- FIXED URL
       const data = await res.json();
       if (data.success) {
         setReviews(data.reviews);
       }
 
       // ✅ 2. Fetch unanswered count
-      // const countRes = await fetch('/api/reviews/unanswered-count');
-      // const countData = await countRes.json();
-      // setUnansweredCount(countData.count || 0);
+      const countRes = await fetch('/api/standard/reviews/unanswered-count'); // <-- FIXED URL
+      const countData = await countRes.json();
+      setUnansweredCount(countData.count || 0);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     }
