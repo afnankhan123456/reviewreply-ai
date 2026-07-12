@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { 
   LayoutDashboard, Star, Sparkles, BarChart3, FileText, 
   Send, LayoutTemplate, Bell, ShieldCheck, Users, Settings, Gift,
-  Tag, Download // <-- Yahan 2 naye icons add kiye hain
+  Tag, Download
 } from 'lucide-react';
 
 export default function DashboardLayout({
@@ -36,13 +36,16 @@ export default function DashboardLayout({
             isActive={activeItem === 'Overview'}
             onClick={() => setActiveItem('Overview')}
           />
+          
+          {/* UPDATED: Reviews ka link ab naye page par jaata hai */}
           <NavItem 
             icon={<Star size={20} />} 
             label="Reviews" 
-            href="#" 
+            href="/plans/standard/dashboard/reviews" 
             isActive={activeItem === 'Reviews'}
             onClick={() => setActiveItem('Reviews')}
           />
+          
           <NavItem 
             icon={<Sparkles size={20} />} 
             label="AI Reply Center" 
@@ -65,14 +68,14 @@ export default function DashboardLayout({
             onClick={() => setActiveItem('Reports')}
           />
           <NavItem 
-            icon={<Tag size={20} />} // <-- NEW ITEM 1: Tags & Categories
+            icon={<Tag size={20} />} 
             label="Tags & Categories" 
             href="#" 
             isActive={activeItem === 'Tags & Categories'}
             onClick={() => setActiveItem('Tags & Categories')}
           />
           <NavItem 
-            icon={<Download size={20} />} // <-- NEW ITEM 2: Export
+            icon={<Download size={20} />} 
             label="Export" 
             href="#" 
             isActive={activeItem === 'Export'}
