@@ -19,6 +19,7 @@ export default function ReviewsPage() {
   // ✅ NEW: Reply Modal State
   const [showReplyModal, setShowReplyModal] = useState(false);
   const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
+  const [selectedReviewText, setSelectedReviewText] = useState(''); // ✅ NEW
   const [replyText, setReplyText] = useState('');
 
   useEffect(() => {
@@ -82,6 +83,7 @@ export default function ReviewsPage() {
         setShowReplyModal(false);
         setReplyText('');
         setSelectedReviewId(null);
+        setSelectedReviewText('');
         fetchDashboardData(); // ✅ Refresh UI
       } else {
         alert('Failed to send reply: ' + data.message);
@@ -182,14 +184,16 @@ export default function ReviewsPage() {
               <ReviewRow 
                 key={index}
                 reviewId={review.id} // ✅ Pass review ID
+                reviewText={review.text || review.comment} // ✅ Pass review text
                 name={review.author || review.reviewerName}
                 text={review.text || review.comment}
                 rating={review.rating}
                 sentiment={review.rating >= 4 ? 'Positive' : review.rating >= 3 ? 'Neutral' : 'Negative'}
                 source={review.source}
                 status={review.replied ? 'Replied' : 'Unanswered'}
-                onReplyClick={(id) => {
+                onReplyClick={(id, text) => {
                   setSelectedReviewId(id);
+                  setSelectedReviewText(text);
                   setShowReplyModal(true);
                 }}
               />
@@ -210,11 +214,18 @@ export default function ReviewsPage() {
 
       </div>
 
-      {/* ✅ PROFESSIONAL REPLY MODAL */}
+      {/* ✅ PROFESSIONAL REPLY MODAL WITH REVIEW TEXT */}
       {showReplyModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
-          <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-6 w-[500px] shadow-2xl">
+          <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-6 w-[600px] shadow-2xl">
             <h3 className="text-white text-lg font-medium mb-3">Reply to Review</h3>
+            
+            {/* ✅ SHOW THE ORIGINAL REVIEW TEXT */}
+            <div className="bg-[#181D27] border border-[#2A303C] rounded-lg p-3 mb-4">
+              <p className="text-xs text-gray-400 mb-1">Original Review:</p>
+              <p className="text-sm text-gray-200">{selectedReviewText}</p>
+            </div>
+
             <textarea
               className="w-full bg-[#181D27] border border-[#2A303C] rounded-lg p-3 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-indigo-500 resize-none"
               rows={4}
@@ -229,6 +240,7 @@ export default function ReviewsPage() {
                   setShowReplyModal(false);
                   setReplyText('');
                   setSelectedReviewId(null);
+                  setSelectedReviewText('');
                 }}
               >
                 Cancel
@@ -248,8 +260,8 @@ export default function ReviewsPage() {
   );
 }
 
-// ✅ UPDATED ReviewRow Component with reviewId and onReplyClick
-function ReviewRow({ reviewId, name, text, rating, sentiment, source, status, onReplyClick }: any) {
+// ✅ UPDATED ReviewRow Component with reviewId, reviewText, and onReplyClick
+function ReviewRow({ reviewId, reviewText, name, text, rating, sentiment, source, status, onReplyClick }: any) {
   return (
     <div className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-[#181D27] transition-colors">
       <div className="col-span-4 flex flex-col gap-1">
@@ -294,7 +306,7 @@ function ReviewRow({ reviewId, name, text, rating, sentiment, source, status, on
         {status === 'Unanswered' && (
           <button 
             className="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-0.5 rounded"
-            onClick={() => onReplyClick(reviewId)}
+            onClick={() => onReplyClick(reviewId, reviewText)}
           >
             Reply
           </button>
