@@ -112,7 +112,7 @@ export default function ReviewsPage() {
           </button>
         </div>
 
-        {/* CARD 3: Google Review Sync */}
+        {/* CARD 3: Google Review Sync (Without Button) */}
         <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-4 flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-gray-400 text-xs font-medium">
@@ -122,23 +122,18 @@ export default function ReviewsPage() {
               500
             </span>
           </div>
+          {/* ✅ BUTTON REMOVED. SIRF TIME DIKHEGA */}
           <div className="text-[10px] text-gray-500 mt-2">Last synced: {lastSynced}</div>
-          <button 
-            onClick={handleSyncNow}
-            disabled={isSyncing}
-            className="w-full mt-3 bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium py-1.5 rounded-lg transition-colors disabled:opacity-50"
-          >
-            {isSyncing ? 'Syncing...' : 'Sync Now'}
-          </button>
         </div>
 
       </div>
 
       {/* ========================================== */}
-      {/* BOTTOM SECTION: FULL REVIEW DASHBOARD LIST */}
+      {/* BOTTOM SECTION: FULL REVIEW DASHBOARD LIST WITH SCROLL */}
       {/* ========================================== */}
       <div className="bg-[#11141C] border border-[#1F2430] rounded-xl overflow-hidden">
         
+        {/* Header (Fixed) */}
         <div className="grid grid-cols-12 gap-4 px-6 py-3 border-b border-[#1F2430] bg-[#181D27]/50 text-[10px] text-gray-400 font-medium uppercase tracking-wider">
           <div className="col-span-4">Customer & Review</div>
           <div className="col-span-2 text-center">Rating</div>
@@ -147,7 +142,8 @@ export default function ReviewsPage() {
           <div className="col-span-2 text-center">Status / Action</div>
         </div>
 
-        <div className="divide-y divide-[#1F2430]">
+        {/* ✅ Scrollable Review List (Scroll bar hidden) */}
+        <div className="max-h-[600px] overflow-y-auto scrollbar-hide divide-y divide-[#1F2430]">
           <ReviewRow 
             name="Rohit Sharma"
             text="Very bad experience. Will not come again. The service was extremely slow."
@@ -190,6 +186,7 @@ export default function ReviewsPage() {
           />
         </div>
 
+        {/* Footer / Pagination (Fixed) */}
         <div className="flex justify-between items-center px-6 py-4 border-t border-[#1F2430] text-[10px] text-gray-500">
           <span>Showing 1-5 of 1,248 reviews</span>
           <div className="flex gap-2">
