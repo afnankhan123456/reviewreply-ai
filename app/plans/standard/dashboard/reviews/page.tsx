@@ -216,7 +216,17 @@ function ReviewRow({ name, text, rating, sentiment, source, status }: any) {
           {status}
         </span>
         {status === 'Unanswered' && (
-          <button className="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-0.5 rounded">
+          <button 
+            className="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-0.5 rounded"
+            onClick={() => {
+              const replyText = prompt('Enter your reply:');
+              if (replyText) {
+                alert(`Reply sent: ${replyText}`);
+                // 🔥 REAL LOGIC YAHAN AAYEGA
+                // fetch('/api/standard/reviews/reply', { method: 'POST', body: JSON.stringify({ reviewId: review.id, replyText }) })
+              }
+            }}
+          >
             Reply
           </button>
         )}
