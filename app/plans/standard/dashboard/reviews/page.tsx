@@ -20,15 +20,16 @@ export default function ReviewsPage() {
 
   const fetchDashboardData = async () => {
     try {
+      // TODO: In APIs ko baad mein banayenge
       // Fetch last sync time
-      const syncRes = await fetch('/api/standard/google/sync-status');
-      const syncData = await syncRes.json();
-      setLastSynced(syncData.lastSynced || 'Never');
+      // const syncRes = await fetch('/api/standard/google/sync-status');
+      // const syncData = await syncRes.json();
+      // setLastSynced(syncData.lastSynced || 'Never');
 
       // Fetch unanswered count
-      const countRes = await fetch('/api/reviews/unanswered-count');
-      const countData = await countRes.json();
-      setUnansweredCount(countData.count || 0);
+      // const countRes = await fetch('/api/reviews/unanswered-count');
+      // const countData = await countRes.json();
+      // setUnansweredCount(countData.count || 0);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     }
