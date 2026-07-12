@@ -4,6 +4,7 @@ import { prisma } from '@/lib/prisma';
 export async function GET() {
   // 📦 DUMMY DATA (Real User ID from DB)
   const dummyReviews = [
+    // Existing 27 reviews (Unchanged)
     {
       userId: "cmr1wiait0001jv04cbasfye3",
       businessLocationId: null,
@@ -246,16 +247,296 @@ export async function GET() {
       reviewDate: new Date(),
       replied: true
     },
+    // New 5 reviews from previous step
+    {
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_23",
+      reviewerName: "Vikash Yadav",
+      rating: 4,
+      comment: "Really loved the hospitality. Will recommend to friends.",
+      source: "google",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_24",
+      reviewerName: "Shreya Agarwal",
+      rating: 5,
+      comment: "Best place to hangout. The vibe is amazing.",
+      source: "facebook",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_25",
+      reviewerName: "Rajat Sharma",
+      rating: 2,
+      comment: "Food was okay but the seating was very uncomfortable.",
+      source: "google",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_26",
+      reviewerName: "Priyanka Singh",
+      rating: 5,
+      comment: "Excellent service and amazing food. Totally worth it.",
+      source: "facebook",
+      reviewDate: new Date(),
+      replied: true
+    },
+    {
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_27",
+      reviewerName: "Kunal Deshmukh",
+      rating: 1,
+      comment: "Worst experience ever. Everything was subpar.",
+      source: "google",
+      reviewDate: new Date(),
+      replied: false
+    },
+
+    // ==========================================
+    // 🆕 20 NEW DUMMY REVIEWS (ADDED NOW)
+    // ==========================================
+    {
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_28",
+      reviewerName: "Aditya Sharma",
+      rating: 5,
+      comment: "Excellent service! Very kind and helpful staff.",
+      source: "google",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_29",
+      reviewerName: "Ritu Jain",
+      rating: 4,
+      comment: "Good experience overall. Clean and tidy place.",
+      source: "facebook",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_30",
+      reviewerName: "Sachin Patil",
+      rating: 3,
+      comment: "Decent place. Nothing special but okay for one visit.",
+      source: "google",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_31",
+      reviewerName: "Kiran Shetty",
+      rating: 2,
+      comment: "Service was slow. Took too long to get our order.",
+      source: "facebook",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_32",
+      reviewerName: "Arjun Nair",
+      rating: 1,
+      comment: "Worst experience. Would never recommend to anyone.",
+      source: "google",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_33",
+      reviewerName: "Nidhi Sharma",
+      rating: 5,
+      comment: "Absolutely fantastic! Loved every bit of it.",
+      source: "facebook",
+      reviewDate: new Date(),
+      replied: true
+    },
+    {
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_34",
+      reviewerName: "Manish Kumar",
+      rating: 4,
+      comment: "Great value for money. Staff was very friendly.",
+      source: "google",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_35",
+      reviewerName: "Priti Singh",
+      rating: 3,
+      comment: "It was okayish. Nothing to complain, nothing to praise.",
+      source: "facebook",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_36",
+      reviewerName: "Ramesh Rao",
+      rating: 2,
+      comment: "Food was average. Expected better for the price.",
+      source: "google",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_37",
+      reviewerName: "Swati Gupta",
+      rating: 1,
+      comment: "Very rude staff. Did not feel welcome at all.",
+      source: "facebook",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_38",
+      reviewerName: "Akshay Jha",
+      rating: 5,
+      comment: "Perfect experience. Everything was top notch.",
+      source: "google",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_39",
+      reviewerName: "Sonali Mishra",
+      rating: 4,
+      comment: "Great ambiance and delicious food. Will visit again.",
+      source: "facebook",
+      reviewDate: new Date(),
+      replied: true
+    },
+    {
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_40",
+      reviewerName: "Pankaj Singh",
+      rating: 3,
+      comment: "Average experience. Nothing special.",
+      source: "google",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_41",
+      reviewerName: "Kavya Reddy",
+      rating: 2,
+      comment: "Not worth the money. Quality was poor.",
+      source: "facebook",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_42",
+      reviewerName: "Girish Rao",
+      rating: 1,
+      comment: "Terrible experience. Staff was unprofessional.",
+      source: "google",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_43",
+      reviewerName: "Ananya Sharma",
+      rating: 5,
+      comment: "Excellent service. Very happy with the experience.",
+      source: "facebook",
+      reviewDate: new Date(),
+      replied: true
+    },
+    {
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_44",
+      reviewerName: "Rohit Yadav",
+      rating: 4,
+      comment: "Good food and friendly atmosphere.",
+      source: "google",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_45",
+      reviewerName: "Neha Mehta",
+      rating: 3,
+      comment: "Decent food but the service was slow.",
+      source: "facebook",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_46",
+      reviewerName: "Vivek Singh",
+      rating: 2,
+      comment: "Overpriced. Did not meet expectations.",
+      source: "google",
+      reviewDate: new Date(),
+      replied: false
+    },
+    {
+      userId: "cmr1wiait0001jv04cbasfye3",
+      businessLocationId: null,
+      googleReviewId: "google_review_47",
+      reviewerName: "Deepak Kumar",
+      rating: 1,
+      comment: "Very disappointing experience. I will not come back.",
+      source: "facebook",
+      reviewDate: new Date(),
+      replied: false
+    },
   ];
 
-  console.log('✅ 22 Dummy Reviews Generated with valid Prisma fields:', dummyReviews);
+  console.log('✅ 47 Dummy Reviews Generated with valid Prisma fields:', dummyReviews);
 
   // ✅ DATABASE SAVE LOGIC
   await prisma.review.createMany({ data: dummyReviews });
 
   return NextResponse.json({ 
     success: true, 
-    message: "22 dummy reviews saved to database successfully!",
+    message: "47 dummy reviews saved to database successfully!",
     count: dummyReviews.length,
     data: dummyReviews
   });
