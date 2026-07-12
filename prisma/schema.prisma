@@ -60,7 +60,7 @@ model Review {
   user             User     @relation(fields: [userId], references: [id])
   businessLocationId String
   businessLocation   BusinessLocation @relation(fields: [businessLocationId], references: [id])
-  googleReviewId   String   @unique
+  googleReviewId   String?   @unique  // <-- ✅ SIRF YEH LINE CHANGE KI (?) LAGAYA
   reviewerName     String
   reviewerPhoto    String?
   rating           Int
