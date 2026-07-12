@@ -5,8 +5,8 @@ export async function GET() {
   console.log('🚀 API /api/test/google-sync-test started...');
 
   try {
-    // ✅ 50 unique reviews (100% verified)
-    const dummyReviews = Array.from({ length: 50 }, (_, i) => {
+    // ✅ 100 unique reviews
+    const dummyReviews = Array.from({ length: 100 }, (_, i) => {
       const id = i + 1;
       const rating = Math.floor(Math.random() * 5) + 1;
       const source = i % 2 === 0 ? 'google' : 'facebook';
@@ -14,7 +14,14 @@ export async function GET() {
       const names = [
         'Aarav Sharma', 'Priya Patel', 'Rohit Singh', 'Sneha Kapoor', 'Amit Kumar',
         'Neha Jain', 'Rahul Verma', 'Meera Reddy', 'Ankit Gupta', 'Pooja Mehta',
-        'Vikram Singh', 'Kavya Nair', 'Rohit Sharma', 'Amit Verma', 'Sanya Khanna'
+        'Vikram Singh', 'Kavya Nair', 'Rohit Sharma', 'Amit Verma', 'Sanya Khanna',
+        'Karan Joshi', 'Riya Malhotra', 'Gaurav Singh', 'Anjali Desai', 'Sneha Patel',
+        'Rahul Singh', 'Pooja Mehta', 'Vikash Yadav', 'Shreya Agarwal', 'Rajat Sharma',
+        'Priyanka Singh', 'Kunal Deshmukh', 'Aditya Sharma', 'Ritu Jain', 'Sachin Patil',
+        'Kiran Shetty', 'Arjun Nair', 'Nidhi Sharma', 'Manish Kumar', 'Priti Singh',
+        'Ramesh Rao', 'Swati Gupta', 'Akshay Jha', 'Sonali Mishra', 'Pankaj Singh',
+        'Kavya Reddy', 'Girish Rao', 'Ananya Sharma', 'Rohit Yadav', 'Neha Mehta',
+        'Vivek Singh', 'Deepak Kumar', 'Shubham Jain', 'Rekha Sharma', 'Sunil Kumar'
       ];
       const name = names[i % names.length];
 
@@ -23,7 +30,16 @@ export async function GET() {
         'Amazing quality.', 'Good value for money.', 'Very professional.',
         'Decent place.', 'Service was okay.', 'Not bad, not great.',
         'The food was fine.', 'Decent place.', 'It was okay.',
-        'Very bad experience.', 'Not satisfied.', 'Worst service ever!'
+        'Very bad experience.', 'Not satisfied.', 'Worst service ever!',
+        'Overpriced.', 'Terrible experience.', 'The delivery was delayed.',
+        'Unprofessional staff.', 'Absolutely loved the ambiance!',
+        'Really loved the hospitality.', 'Best place to hangout.',
+        'Food was okay but seating was uncomfortable.', 'Excellent service.',
+        'Worst experience ever.', 'Excellent service!', 'Good experience overall.',
+        'Great ambiance and delicious food.', 'Average experience.',
+        'Not worth the money.', 'Terrible experience.', 'Excellent service.',
+        'Good food and friendly atmosphere.', 'Decent food but service was slow.',
+        'Overpriced.', 'Very disappointing experience.', 'Everything was perfect.'
       ];
       const comment = comments[i % comments.length];
       const replied = i % 3 === 0;
@@ -48,7 +64,7 @@ export async function GET() {
 
     return NextResponse.json({ 
       success: true, 
-      message: "50 dummy reviews saved successfully!",
+      message: "100 dummy reviews saved successfully!",
       count: dummyReviews.length,
       data: dummyReviews
     });
