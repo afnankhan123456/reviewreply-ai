@@ -58,12 +58,12 @@ model Review {
   id               String   @id @default(cuid())
   userId           String
   user             User     @relation(fields: [userId], references: [id])
-  businessLocationId String
-  businessLocation   BusinessLocation @relation(fields: [businessLocationId], references: [id])
+  businessLocationId String?   // <-- ✅ YAHAN '?' LAGA DIYA (OPTIONAL)
+  businessLocation   BusinessLocation? @relation(fields: [businessLocationId], references: [id])
   googleReviewId   String?   @unique
   reviewerName     String
   reviewerPhoto    String?
-  source           String?   // <-- ✅ YEH EK LINE ADD KI HAI
+  source           String?
   rating           Int
   comment          String?
   reviewReply      String?
