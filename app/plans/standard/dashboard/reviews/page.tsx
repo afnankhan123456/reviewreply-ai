@@ -1,15 +1,56 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Search, Filter, RefreshCw, CheckCircle, XCircle, 
   Star, ThumbsUp, ThumbsDown, MoreHorizontal
 } from 'lucide-react';
 
 export default function ReviewsPage() {
-  // Placeholder state for search/filter
   const [searchTerm, setSearchTerm] = useState('');
   const [filterSentiment, setFilterSentiment] = useState('All');
+  const [lastSynced, setLastSynced] = useState('Loading...');
+  const [unansweredCount, setUnansweredCount] = useState(0);
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  // Fetch data on page load
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      // Fetch last sync time
+      const syncRes = await fetch('/api/standard/google/sync-status');
+      const syncData = await syncRes.json();
+      setLastSynced(syncData.lastSynced || 'Never');
+
+      // Fetch unanswered count
+      const countRes = await fetch('/api/reviews/unanswered-count');
+      const countData = await countRes.json();
+      setUnansweredCount(countData.count || 0);
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+    }
+  };
+
+  const handleSyncNow = async () => {
+    setIsSyncing(true);
+    try {
+      const res = await fetch('/api/standard/google/sync', { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        alert('Sync successful!');
+        fetchDashboardData(); // Refresh UI
+      } else {
+        alert('Sync failed: ' + data.message);
+      }
+    } catch (error) {
+      alert('Error syncing reviews');
+    } finally {
+      setIsSyncing(false);
+    }
+  };
 
   return (
     <div className="flex-1 flex flex-col p-6 overflow-y-auto bg-[#0B0E14] text-gray-200">
@@ -23,7 +64,7 @@ export default function ReviewsPage() {
       </div>
 
       {/* ========================================== */}
-      {/* TOP CARDS SECTION (3 Cards - Facebook Removed) */}
+      {/* TOP CARDS SECTION */}
       {/* ========================================== */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-6">
         
@@ -60,7 +101,7 @@ export default function ReviewsPage() {
             <XCircle size={14} /> Unanswered Reviews
           </div>
           <div className="flex items-end justify-between mt-2">
-            <div className="text-4xl font-bold text-white">18</div>
+            <div className="text-4xl font-bold text-white">{unansweredCount}</div>
             <div className="text-[10px] text-yellow-400 flex items-center gap-1">
               <span className="w-1.5 h-1.5 bg-yellow-400 rounded-full"></span> Awaiting Reply
             </div>
@@ -70,20 +111,23 @@ export default function ReviewsPage() {
           </button>
         </div>
 
-        {/* CARD 3: Google Review Sync (With 500 Badge) */}
+        {/* CARD 3: Google Review Sync */}
         <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-4 flex flex-col justify-between">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2 text-gray-400 text-xs font-medium">
               <RefreshCw size={14} /> Google Review Sync
             </div>
-            {/* The 500 Badge */}
             <span className="bg-blue-500/20 text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-500/30">
               500
             </span>
           </div>
-          <div className="text-[10px] text-gray-500 mt-2">Last synced: 2 hours ago</div>
-          <button className="w-full mt-3 bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium py-1.5 rounded-lg transition-colors">
-            Sync Now
+          <div className="text-[10px] text-gray-500 mt-2">Last synced: {lastSynced}</div>
+          <button 
+            onClick={handleSyncNow}
+            disabled={isSyncing}
+            className="w-full mt-3 bg-blue-600 hover:bg-blue-500 text-white text-xs font-medium py-1.5 rounded-lg transition-colors disabled:opacity-50"
+          >
+            {isSyncing ? 'Syncing...' : 'Sync Now'}
           </button>
         </div>
 
