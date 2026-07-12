@@ -1,14 +1,13 @@
 import { NextResponse } from 'next/server';
+// import { prisma } from '@/lib/prisma'; // Apni database file import karein
 
-// Google Webhook - GET request (Verification ke liye)
-// Jab aap Google Cloud Console mein webhook URL register karenge, toh Google ek GET request bhejega.
+// GET request for Webhook Verification
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const mode = url.searchParams.get('hub.mode');
   const token = url.searchParams.get('hub.verify_token');
   const challenge = url.searchParams.get('hub.challenge');
 
-  // Apne .env se verify token check karein
   if (mode === 'subscribe' && token === process.env.GOOGLE_WEBHOOK_VERIFY_TOKEN) {
     console.log('Google Webhook verified successfully!');
     return new Response(challenge as string, { status: 200 });
@@ -17,21 +16,20 @@ export async function GET(request: Request) {
   }
 }
 
-// Google Webhook - POST request (Jab naya review aaye)
+// POST request for receiving new reviews
 export async function POST(request: Request) {
   try {
-    // Google se aaya hua data (naya review)
     const body = await request.json();
     console.log('Google Webhook Received:', body);
 
     // -------------------------------
     // DATA SAVE LOGIC (Database mein save karna)
     // -------------------------------
-    // Example: 
+    // EXAMPLE PRISMA CODE:
     // const newReview = {
-    //   author: body.authorName,
-    //   rating: body.rating,
-    //   text: body.comment,
+    //   author: body.authorName || 'Anonymous',
+    //   rating: body.rating || 0,
+    //   text: body.comment || '',
     //   source: 'google',
     //   date: new Date().toISOString()
     // };
