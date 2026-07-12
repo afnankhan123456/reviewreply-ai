@@ -12,6 +12,9 @@ export default function ReviewsPage() {
   const [lastSynced, setLastSynced] = useState('Loading...');
   const [unansweredCount, setUnansweredCount] = useState(0);
   const [isSyncing, setIsSyncing] = useState(false);
+  
+  // ✅ NEW: Reviews state
+  const [reviews, setReviews] = useState<any[]>([]);
 
   useEffect(() => {
     fetchDashboardData();
@@ -19,7 +22,17 @@ export default function ReviewsPage() {
 
   const fetchDashboardData = async () => {
     try {
-      // APIs will be added later
+      // ✅ 1. Fetch reviews from database
+      const res = await fetch('/api/reviews');
+      const data = await res.json();
+      if (data.success) {
+        setReviews(data.reviews);
+      }
+
+      // ✅ 2. Fetch unanswered count
+      // const countRes = await fetch('/api/reviews/unanswered-count');
+      // const countData = await countRes.json();
+      // setUnansweredCount(countData.count || 0);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     }
@@ -127,53 +140,28 @@ export default function ReviewsPage() {
           <div className="col-span-2 text-center">Status / Action</div>
         </div>
 
-        {/* Scrollable List - WITH CUSTOM THIN SCROLLBAR */}
+        {/* ✅ Scrollable List - DYNAMIC REVIEWS FROM DB */}
         <div className="h-[600px] overflow-y-auto custom-scroll divide-y divide-[#1F2430]">
-          <ReviewRow 
-            name="Rohit Sharma"
-            text="Very bad experience. Will not come again. The service was extremely slow."
-            rating={3}
-            sentiment="Negative"
-            source="Google"
-            status="Unanswered"
-          />
-          <ReviewRow 
-            name="Pooja Mehta"
-            text="Service was okay but staff was rude. Not what I expected from this place."
-            rating={5}
-            sentiment="Neutral"
-            source="Google"
-            status="Replied"
-          />
-          <ReviewRow 
-            name="Amit Verma"
-            text="Not satisfied with the product quality. The item was damaged upon delivery."
-            rating={2}
-            sentiment="Negative"
-            source="Google"
-            status="Unanswered"
-          />
-          <ReviewRow 
-            name="Sneha Patel"
-            text="Absolutely loved the ambiance! Will definitely visit again with friends."
-            rating={5}
-            sentiment="Positive"
-            source="Google"
-            status="Replied"
-          />
-          <ReviewRow 
-            name="Rahul Singh"
-            text="Good value for money. The food was delicious and the staff was friendly."
-            rating={4}
-            sentiment="Positive"
-            source="Google"
-            status="Unanswered"
-          />
+          {reviews.length > 0 ? (
+            reviews.map((review, index) => (
+              <ReviewRow 
+                key={index}
+                name={review.author || review.reviewerName}
+                text={review.text || review.comment}
+                rating={review.rating}
+                sentiment={review.rating >= 4 ? 'Positive' : review.rating >= 3 ? 'Neutral' : 'Negative'}
+                source={review.source}
+                status={review.replied ? 'Replied' : 'Unanswered'}
+              />
+            ))
+          ) : (
+            <div className="p-6 text-center text-gray-500 text-sm">No reviews found. Run the test API to add dummy data.</div>
+          )}
         </div>
 
         {/* Footer / Pagination */}
         <div className="flex justify-between items-center px-6 py-4 border-t border-[#1F2430] text-[10px] text-gray-500 shrink-0">
-          <span>Showing 1-5 of 1,248 reviews</span>
+          <span>Showing {reviews.length} reviews</span>
           <div className="flex gap-2">
             <button className="px-3 py-1 bg-[#1F2430] rounded hover:bg-[#2A303C]">Previous</button>
             <button className="px-3 py-1 bg-[#1F2430] rounded hover:bg-[#2A303C]">Next</button>
