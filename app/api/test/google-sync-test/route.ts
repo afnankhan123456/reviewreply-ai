@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { prisma } from '@/lib/prisma'; // <-- Apni database file import karein
 
 export async function GET() {
   // 📦 MORE DUMMY DATA (20+ reviews with different statuses, sources, sentiments)
@@ -36,12 +37,14 @@ export async function GET() {
 
   console.log('✅ 20+ Dummy Reviews Generated:', dummyReviews);
 
-  // 🔥 DATABASE SAVE LOGIC (Uncomment when ready)
-  // await prisma.review.createMany({ data: dummyReviews });
+  // ==========================================
+  // ✅ DATABASE SAVE LOGIC (Now Uncommented)
+  // ==========================================
+  await prisma.review.createMany({ data: dummyReviews });
 
   return NextResponse.json({ 
     success: true, 
-    message: "20+ dummy reviews ready for auto sync test",
+    message: "20+ dummy reviews saved to database successfully!",
     count: dummyReviews.length,
     data: dummyReviews
   });
