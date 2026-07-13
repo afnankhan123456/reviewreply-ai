@@ -30,17 +30,16 @@ export async function GET() {
       negativePercent = Math.round((Number(negative) / Number(totalRated)) * 100);
     }
 
-    // ✅ FIXED: AI usage limit (500) - Sirf AI replies count
-    // Note: Abhi database mein `aiReplied` column nahi hai, isliye hum manual+AI count kar rahe hain.
-    // Jab aap `aiReplied` column add karoge, toh `repliedReviews` ko `aiRepliedCount` se replace kar dena.
+    // ✅ FIXED: AI usage limit (5 for testing)
     const aiRepliedCount = await prisma.review.count({ where: { aiReplied: true } });
-    const aiUsed = aiRepliedCount > 500 ? 500 : aiRepliedCount;
+    const aiUsed = aiRepliedCount > 5 ? 5 : aiRepliedCount;
+    const limit = 5;
 
     return NextResponse.json({
       success: true,
       data: {
         used: aiUsed,
-        limit: 500,
+        limit: limit,
         responseRate,
         positive: positivePercent,
         negative: negativePercent,
