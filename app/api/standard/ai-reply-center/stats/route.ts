@@ -9,10 +9,10 @@ export async function GET() {
     // Replied reviews count
     const repliedReviews = await prisma.review.count({ where: { replied: true } });
     
-    // ✅ Improved: Response Rate calculate (0% nahi dikhega agar 0 reviews hain)
+    // ✅ FIXED: Response Rate calculate (Number() use kiya taaki decimal na kate)
     let responseRate = 0;
     if (totalReviews > 0) {
-      responseRate = Math.round((repliedReviews / totalReviews) * 100);
+      responseRate = Math.round((Number(repliedReviews) / Number(totalReviews)) * 100);
     }
 
     // Positive (rating >= 4) aur Negative (rating <= 2) count
@@ -20,12 +20,12 @@ export async function GET() {
     const negative = await prisma.review.count({ where: { rating: { lte: 2 } } });
     const totalRated = await prisma.review.count({ where: { rating: { not: null } } });
 
-    // Positive aur Negative percentage
+    // ✅ FIXED: Positive aur Negative percentage (Number() use kiya)
     let positivePercent = 0;
     let negativePercent = 0;
     if (totalRated > 0) {
-      positivePercent = Math.round((positive / totalRated) * 100);
-      negativePercent = Math.round((negative / totalRated) * 100);
+      positivePercent = Math.round((Number(positive) / Number(totalRated)) * 100);
+      negativePercent = Math.round((Number(negative) / Number(totalRated)) * 100);
     }
 
     // AI usage limit (500)
