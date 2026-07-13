@@ -68,6 +68,7 @@ model Review {
   comment          String?
   reviewReply      String?
   replied          Boolean  @default(false)
+  aiReplied        Boolean  @default(false) // <-- ✅ NEW COLUMN: AI replies track karne ke liye
   reviewDate       DateTime
   syncedAt         DateTime @default(now())
   createdAt        DateTime @default(now())
