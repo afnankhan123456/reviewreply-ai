@@ -51,14 +51,15 @@ export default function DashboardLayout({
             onClick={() => setActiveItem('Reviews')}
           />
           
-          {/* ✅ 4. Baaki sab buttons ka href reviews page par set kar diya (taaki blank na dikhe) */}
+          {/* ✅ UPDATED: AI Reply Center ka link ab naye page par jaata hai */}
           <NavItem 
             icon={<Sparkles size={20} />} 
             label="AI Reply Center" 
-            href="/plans/standard/dashboard/reviews" 
+            href="/plans/standard/dashboard/ai-reply-center" 
             isActive={activeItem === 'AI Reply Center'}
             onClick={() => setActiveItem('AI Reply Center')}
           />
+          
           <NavItem 
             icon={<BarChart3 size={20} />} 
             label="Analytics" 
