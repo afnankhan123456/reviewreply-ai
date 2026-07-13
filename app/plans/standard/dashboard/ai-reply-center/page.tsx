@@ -138,7 +138,7 @@ export default function AIReplyCenterPage() {
           </div>
         </div>
 
-        {/* Card 3: Positive & Negative Detection */}
+        {/* Card 3: Positive & Negative Detection (UPDATED WITH NEUTRAL) */}
         <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-4 flex flex-col justify-between">
           <div className="flex items-center gap-2 text-gray-400 text-xs font-medium mb-2">
             <MessageSquare size={14} /> Positive & Negative Detection
@@ -147,6 +147,11 @@ export default function AIReplyCenterPage() {
             <div className="text-center">
               <div className="text-2xl font-bold text-green-400">{stats.positive}%</div>
               <div className="text-[10px] text-gray-500">Positive</div>
+            </div>
+            <div className="h-8 w-[1px] bg-[#1F2430]"></div>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-yellow-400">{100 - stats.positive - stats.negative}%</div>
+              <div className="text-[10px] text-gray-500">Neutral</div>
             </div>
             <div className="h-8 w-[1px] bg-[#1F2430]"></div>
             <div className="text-center">
@@ -166,7 +171,6 @@ export default function AIReplyCenterPage() {
             <Sparkles size={14} /> AI Review Reply Generator
           </div>
           <div className="flex gap-3 mb-3">
-            {/* ✅ Width updated to 450px */}
             <select 
               className="w-[450px] h-12 bg-[#181D27] border border-[#2A303C] rounded-lg px-3 py-2 text-sm text-gray-300 outline-none"
               value={selectedTemplate}
