@@ -203,7 +203,7 @@ export default function AIReplyCenterPage() {
           )}
         </div>
 
-        {/* Right: 500 AI Reply Templates (WITH FILTER) */}
+        {/* Right: 500 AI Reply Templates (WITH FILTER & NO SLICE) */}
         <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-5">
           <div className="flex items-center gap-2 text-gray-400 text-xs font-medium mb-3">
             <Copy size={14} /> 500 AI Reply Templates
@@ -226,9 +226,9 @@ export default function AIReplyCenterPage() {
             ))}
           </div>
 
-          {/* ✅ Filtered Template List */}
+          {/* ✅ Filtered Template List (NO SLICE) */}
           <div className="space-y-2 mt-2 max-h-[250px] overflow-y-auto custom-scroll">
-            {filteredTemplates.slice(0, 5).map((tpl) => (
+            {filteredTemplates.map((tpl) => (
               <div 
                 key={tpl}
                 className="flex items-center justify-between bg-[#181D27] border border-[#2A303C] rounded-lg px-3 py-2 cursor-pointer hover:bg-[#222633] transition-colors"
