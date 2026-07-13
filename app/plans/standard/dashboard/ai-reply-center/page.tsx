@@ -190,12 +190,12 @@ export default function AIReplyCenterPage() {
           )}
         </div>
 
-        {/* Right: 500 AI Reply Templates */}
+        {/* Right: 500 AI Reply Templates (WITH SCROLL) */}
         <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-5">
           <div className="flex items-center gap-2 text-gray-400 text-xs font-medium mb-3">
             <Copy size={14} /> 500 AI Reply Templates
           </div>
-          <div className="space-y-2 mt-2">
+          <div className="space-y-2 mt-2 max-h-[250px] overflow-y-auto custom-scroll">
             {templates.slice(0, 5).map((tpl) => (
               <div 
                 key={tpl}
