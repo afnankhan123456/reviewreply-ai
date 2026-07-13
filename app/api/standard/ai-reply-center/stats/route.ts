@@ -18,7 +18,9 @@ export async function GET() {
     // Positive (rating >= 4) aur Negative (rating <= 2) count
     const positive = await prisma.review.count({ where: { rating: { gte: 4 } } });
     const negative = await prisma.review.count({ where: { rating: { lte: 2 } } });
-    const totalRated = await prisma.review.count({ where: { rating: { not: null } } });
+    
+    // ✅ FIXED: totalRated = saare reviews (kyunki rating kabhi null nahi hota)
+    const totalRated = await prisma.review.count();
 
     // ✅ FIXED: Positive aur Negative percentage (Number() use kiya)
     let positivePercent = 0;
@@ -46,6 +48,3 @@ export async function GET() {
     return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
   }
 }
-
-
-
