@@ -58,7 +58,7 @@ model Review {
   id               String   @id @default(cuid())
   userId           String
   user             User     @relation(fields: [userId], references: [id])
-  businessLocationId String?   // <-- ✅ YAHAN '?' LAGA DIYA (OPTIONAL)
+  businessLocationId String?
   businessLocation   BusinessLocation? @relation(fields: [businessLocationId], references: [id])
   googleReviewId   String?   @unique
   reviewerName     String
@@ -66,9 +66,10 @@ model Review {
   source           String?
   rating           Int
   comment          String?
+  text             String?   // <-- ✅ NEW COLUMN ADDED (Line 157) — Kuch remove nahi kiya
   reviewReply      String?
   replied          Boolean  @default(false)
-  aiReplied        Boolean  @default(false) // <-- ✅ NEW COLUMN: AI replies track karne ke liye
+  aiReplied        Boolean  @default(false)
   reviewDate       DateTime
   syncedAt         DateTime @default(now())
   createdAt        DateTime @default(now())
@@ -165,3 +166,5 @@ model Withdrawal {
   updatedAt   DateTime @updatedAt
   @@map("withdrawals")
 }
+
+
