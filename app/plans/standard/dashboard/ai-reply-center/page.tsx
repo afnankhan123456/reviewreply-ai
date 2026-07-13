@@ -160,14 +160,15 @@ export default function AIReplyCenterPage() {
       {/* Middle Section: AI Generator & Templates */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 mb-6">
         
-        {/* Left: AI Review Reply Generator (BADA - lg:col-span-2) */}
+        {/* Left: AI Review Reply Generator */}
         <div className="lg:col-span-2 bg-[#11141C] border border-[#1F2430] rounded-xl p-5">
           <div className="flex items-center gap-2 text-gray-400 text-xs font-medium mb-3">
             <Sparkles size={14} /> AI Review Reply Generator
           </div>
           <div className="flex gap-3 mb-3">
+            {/* ✅ Width updated to 450px */}
             <select 
-              className="w-64 h-12 bg-[#181D27] border border-[#2A303C] rounded-lg px-3 py-2 text-sm text-gray-300 outline-none"
+              className="w-[450px] h-12 bg-[#181D27] border border-[#2A303C] rounded-lg px-3 py-2 text-sm text-gray-300 outline-none"
               value={selectedTemplate}
               onChange={(e) => setSelectedTemplate(e.target.value)}
             >
@@ -201,7 +202,7 @@ export default function AIReplyCenterPage() {
           )}
         </div>
 
-        {/* Right: 500 AI Reply Templates (CHHOTA - lg:col-span-1) */}
+        {/* Right: 500 AI Reply Templates */}
         <div className="lg:col-span-1 bg-[#11141C] border border-[#1F2430] rounded-xl p-5">
           <div className="flex items-center gap-2 text-gray-400 text-xs font-medium mb-3">
             <Copy size={14} /> 500 AI Reply Templates
@@ -224,7 +225,7 @@ export default function AIReplyCenterPage() {
             ))}
           </div>
 
-          {/* Filtered Template List (NO SLICE) */}
+          {/* Filtered Template List */}
           <div className="space-y-2 mt-2 max-h-[250px] overflow-y-auto custom-scroll">
             {filteredTemplates.map((tpl) => (
               <div 
