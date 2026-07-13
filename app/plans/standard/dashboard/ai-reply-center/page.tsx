@@ -9,7 +9,7 @@ import {
 export default function AIReplyCenterPage() {
   const [stats, setStats] = useState({
     used: 0,
-    limit: 500,
+    limit: 5, // ✅ Test mode: 5
     responseRate: 0,
     positive: 0,
     negative: 0,
@@ -138,7 +138,7 @@ export default function AIReplyCenterPage() {
           </div>
         </div>
 
-        {/* Card 3: Positive & Negative Detection (UPDATED WITH NEUTRAL) */}
+        {/* Card 3: Positive & Negative Detection */}
         <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-4 flex flex-col justify-between">
           <div className="flex items-center gap-2 text-gray-400 text-xs font-medium mb-2">
             <MessageSquare size={14} /> Positive & Negative Detection
