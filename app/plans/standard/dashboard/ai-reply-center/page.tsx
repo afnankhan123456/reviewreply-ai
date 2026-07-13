@@ -20,6 +20,9 @@ export default function AIReplyCenterPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
+  // ✅ Filter State
+  const [filterCategory, setFilterCategory] = useState('All');
+
   useEffect(() => {
     fetchStats();
     fetchTemplates();
@@ -70,6 +73,16 @@ export default function AIReplyCenterPage() {
       setIsGenerating(false);
     }
   };
+
+  // ✅ Filter Logic (5 Categories)
+  const filteredTemplates = templates.filter((tpl) => {
+    if (filterCategory === 'All') return true;
+    if (filterCategory === 'Positive') return tpl.includes('Positive') || tpl.includes('glowing') || tpl.includes('5-star') || tpl.includes('enjoyed') || tpl.includes('thrilled');
+    if (filterCategory === 'Negative') return tpl.includes('Negative') || tpl.includes('sorry') || tpl.includes('apologize') || tpl.includes('improve') || tpl.includes('disappointed');
+    if (filterCategory === 'Professional') return tpl.includes('Dear Customer') || tpl.includes('Dear Valued') || tpl.includes('Dear Guest');
+    if (filterCategory === 'General') return tpl.includes('Thank you') && !tpl.includes('Dear');
+    return true;
+  });
 
   if (isLoading) {
     return <div className="flex-1 flex items-center justify-center text-gray-400">Loading AI data...</div>;
@@ -190,13 +203,32 @@ export default function AIReplyCenterPage() {
           )}
         </div>
 
-        {/* Right: 500 AI Reply Templates (FIXED SCROLL) */}
+        {/* Right: 500 AI Reply Templates (WITH FILTER) */}
         <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-5">
           <div className="flex items-center gap-2 text-gray-400 text-xs font-medium mb-3">
             <Copy size={14} /> 500 AI Reply Templates
           </div>
+
+          {/* ✅ Filter Buttons */}
+          <div className="flex flex-wrap gap-2 mb-3">
+            {['All', 'General', 'Positive', 'Negative', 'Professional'].map((cat) => (
+              <button
+                key={cat}
+                className={`text-[10px] px-3 py-1 rounded-full border transition-colors ${
+                  filterCategory === cat
+                    ? 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30'
+                    : 'bg-[#1F2430] text-gray-400 border-[#2A303C] hover:bg-[#2A303C]'
+                }`}
+                onClick={() => setFilterCategory(cat)}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          {/* ✅ Filtered Template List */}
           <div className="space-y-2 mt-2 max-h-[250px] overflow-y-auto custom-scroll">
-            {templates.map((tpl) => (
+            {filteredTemplates.slice(0, 5).map((tpl) => (
               <div 
                 key={tpl}
                 className="flex items-center justify-between bg-[#181D27] border border-[#2A303C] rounded-lg px-3 py-2 cursor-pointer hover:bg-[#222633] transition-colors"
