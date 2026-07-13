@@ -1,33 +1,80 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Sparkles, BarChart3, MessageSquare, RefreshCw, 
   ThumbsUp, ThumbsDown, AlertCircle, Copy, CheckCircle
 } from 'lucide-react';
 
 export default function AIReplyCenterPage() {
+  const [stats, setStats] = useState({
+    used: 0,
+    limit: 500,
+    responseRate: 0,
+    positive: 0,
+    negative: 0,
+  });
+  const [templates, setTemplates] = useState<string[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [generatedReply, setGeneratedReply] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Mock Data
-  const aiRepliesUsed = 320;
-  const aiRepliesLimit = 500;
-  const responseRate = 76;
-  const positivePercentage = 82;
-  const negativePercentage = 6;
+  // Fetch real data on load
+  useEffect(() => {
+    fetchStats();
+    fetchTemplates();
+  }, []);
 
-  const handleGenerateReply = () => {
-    setIsGenerating(true);
-    // Simulate AI generation
-    setTimeout(() => {
-      setGeneratedReply(
-        "Dear Customer, thank you for your valuable feedback. We truly appreciate your kind words and are delighted to hear that you had a great experience with us. We look forward to serving you again soon!"
-      );
-      setIsGenerating(false);
-    }, 1500);
+  const fetchStats = async () => {
+    try {
+      const res = await fetch('/api/ai-reply-center/stats');
+      const data = await res.json();
+      if (data.success) {
+        setStats(data.data);
+      }
+      setIsLoading(false);
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    }
   };
+
+  const fetchTemplates = async () => {
+    try {
+      const res = await fetch('/api/ai-reply-center/templates');
+      const data = await res.json();
+      if (data.success) {
+        setTemplates(data.templates);
+      }
+    } catch (error) {
+      console.error('Error fetching templates:', error);
+    }
+  };
+
+  const handleGenerateReply = async () => {
+    setIsGenerating(true);
+    try {
+      const res = await fetch('/api/ai-reply-center/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ template: selectedTemplate }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setGeneratedReply(data.reply);
+      } else {
+        alert('Failed to generate reply');
+      }
+    } catch (error) {
+      alert('Error generating reply');
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  if (isLoading) {
+    return <div className="flex-1 flex items-center justify-center text-gray-400">Loading AI data...</div>;
+  }
 
   return (
     <div className="flex-1 flex flex-col p-6 overflow-y-auto bg-[#0B0E14] text-gray-200">
@@ -44,28 +91,28 @@ export default function AIReplyCenterPage() {
         </div>
       </div>
 
-      {/* Top Stats Cards */}
+      {/* Top Stats Cards - Real Data */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         
-        {/* Card 1: AI Reply Usage Limit */}
+        {/* Card 1: 500 AI Replies / Month */}
         <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-4 flex flex-col justify-between">
           <div className="flex items-center gap-2 text-gray-400 text-xs font-medium mb-2">
             <RefreshCw size={14} /> 500 AI Replies / Month
           </div>
           <div className="flex items-end justify-between">
             <div>
-              <div className="text-2xl font-bold text-white">{aiRepliesUsed}</div>
+              <div className="text-2xl font-bold text-white">{stats.used}</div>
               <div className="text-[10px] text-gray-500">Used this month</div>
             </div>
             <div className="text-right">
-              <div className="text-sm font-medium text-white">{aiRepliesLimit - aiRepliesUsed}</div>
+              <div className="text-sm font-medium text-white">{stats.limit - stats.used}</div>
               <div className="text-[10px] text-gray-500">Remaining</div>
             </div>
           </div>
           <div className="w-full h-1.5 bg-[#1F2430] rounded-full mt-3 overflow-hidden">
             <div 
               className="h-full bg-indigo-500 rounded-full"
-              style={{ width: `${(aiRepliesUsed / aiRepliesLimit) * 100}%` }}
+              style={{ width: `${(stats.used / stats.limit) * 100}%` }}
             ></div>
           </div>
         </div>
@@ -75,9 +122,9 @@ export default function AIReplyCenterPage() {
           <div className="flex items-center gap-2 text-gray-400 text-xs font-medium mb-2">
             <BarChart3 size={14} /> Response Rate Tracking
           </div>
-          <div className="text-4xl font-bold text-white">{responseRate}%</div>
+          <div className="text-4xl font-bold text-white">{stats.responseRate}%</div>
           <div className="text-[10px] text-green-400 flex items-center gap-1">
-            <ThumbsUp size={12} /> Above industry average
+            <ThumbsUp size={12} /> Real-time analytics
           </div>
         </div>
 
@@ -88,12 +135,12 @@ export default function AIReplyCenterPage() {
           </div>
           <div className="flex items-center justify-between mt-1">
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-400">{positivePercentage}%</div>
+              <div className="text-2xl font-bold text-green-400">{stats.positive}%</div>
               <div className="text-[10px] text-gray-500">Positive</div>
             </div>
             <div className="h-8 w-[1px] bg-[#1F2430]"></div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-red-400">{negativePercentage}%</div>
+              <div className="text-2xl font-bold text-red-400">{stats.negative}%</div>
               <div className="text-[10px] text-gray-500">Negative</div>
             </div>
           </div>
@@ -115,9 +162,9 @@ export default function AIReplyCenterPage() {
               onChange={(e) => setSelectedTemplate(e.target.value)}
             >
               <option value="">Select a template (optional)</option>
-              <option value="general">General Thank You</option>
-              <option value="positive">Positive Review Response</option>
-              <option value="negative">Negative Review Response</option>
+              {templates.map((tpl) => (
+                <option key={tpl} value={tpl}>{tpl}</option>
+              ))}
             </select>
             <button 
               className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm px-4 py-2 rounded-lg transition-colors"
@@ -150,7 +197,7 @@ export default function AIReplyCenterPage() {
             <Copy size={14} /> 500 AI Reply Templates
           </div>
           <div className="space-y-2 mt-2">
-            {['General Thank You', 'Positive Review', 'Negative Review', 'Neutral Review', 'Short & Sweet'].map((tpl) => (
+            {templates.slice(0, 5).map((tpl) => (
               <div 
                 key={tpl}
                 className="flex items-center justify-between bg-[#181D27] border border-[#2A303C] rounded-lg px-3 py-2 cursor-pointer hover:bg-[#222633] transition-colors"
@@ -167,7 +214,7 @@ export default function AIReplyCenterPage() {
         </div>
       </div>
 
-      {/* Recent AI Activity (Optional) */}
+      {/* Recent AI Activity - Real Data */}
       <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-5">
         <h3 className="text-white text-sm font-medium mb-3">Recent AI Activity</h3>
         <div className="space-y-3">
