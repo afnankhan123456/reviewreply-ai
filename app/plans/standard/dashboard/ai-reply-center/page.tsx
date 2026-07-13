@@ -20,7 +20,6 @@ export default function AIReplyCenterPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch real data on load
   useEffect(() => {
     fetchStats();
     fetchTemplates();
@@ -28,7 +27,7 @@ export default function AIReplyCenterPage() {
 
   const fetchStats = async () => {
     try {
-      const res = await fetch('/api/ai-reply-center/stats');
+      const res = await fetch('/api/standard/ai-reply-center/stats');
       const data = await res.json();
       if (data.success) {
         setStats(data.data);
@@ -41,7 +40,7 @@ export default function AIReplyCenterPage() {
 
   const fetchTemplates = async () => {
     try {
-      const res = await fetch('/api/ai-reply-center/templates');
+      const res = await fetch('/api/standard/ai-reply-center/templates');
       const data = await res.json();
       if (data.success) {
         setTemplates(data.templates);
@@ -54,7 +53,7 @@ export default function AIReplyCenterPage() {
   const handleGenerateReply = async () => {
     setIsGenerating(true);
     try {
-      const res = await fetch('/api/ai-reply-center/generate', {
+      const res = await fetch('/api/standard/ai-reply-center/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ template: selectedTemplate }),
@@ -214,7 +213,7 @@ export default function AIReplyCenterPage() {
         </div>
       </div>
 
-      {/* Recent AI Activity - Real Data */}
+      {/* Recent AI Activity */}
       <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-5">
         <h3 className="text-white text-sm font-medium mb-3">Recent AI Activity</h3>
         <div className="space-y-3">
