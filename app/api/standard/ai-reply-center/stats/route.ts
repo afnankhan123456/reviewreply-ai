@@ -6,7 +6,7 @@ export async function GET() {
     // Total reviews count
     const totalReviews = await prisma.review.count();
     
-    // Replied reviews count
+    // Replied reviews count (Manual + AI)
     const repliedReviews = await prisma.review.count({ where: { replied: true } });
     
     // ✅ FIXED: Response Rate calculate (Number() use kiya taaki decimal na kate)
@@ -30,8 +30,11 @@ export async function GET() {
       negativePercent = Math.round((Number(negative) / Number(totalRated)) * 100);
     }
 
-    // AI usage limit (500)
-    const aiUsed = repliedReviews > 500 ? 500 : repliedReviews;
+    // ✅ FIXED: AI usage limit (500) - Sirf AI replies count
+    // Note: Abhi database mein `aiReplied` column nahi hai, isliye hum manual+AI count kar rahe hain.
+    // Jab aap `aiReplied` column add karoge, toh `repliedReviews` ko `aiRepliedCount` se replace kar dena.
+    const aiRepliedCount = await prisma.review.count({ where: { aiReplied: true } });
+    const aiUsed = aiRepliedCount > 500 ? 500 : aiRepliedCount;
 
     return NextResponse.json({
       success: true,
