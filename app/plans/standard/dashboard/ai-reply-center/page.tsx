@@ -167,7 +167,7 @@ export default function AIReplyCenterPage() {
           </div>
           <div className="flex gap-3 mb-3">
             <select 
-              className="flex-1 bg-[#181D27] border border-[#2A303C] rounded-lg px-3 py-2 text-sm text-gray-300 outline-none"
+              className="w-64 h-12 bg-[#181D27] border border-[#2A303C] rounded-lg px-3 py-2 text-sm text-gray-300 outline-none"
               value={selectedTemplate}
               onChange={(e) => setSelectedTemplate(e.target.value)}
             >
