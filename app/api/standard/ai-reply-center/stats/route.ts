@@ -31,7 +31,13 @@ export async function GET() {
     }
 
     // ✅ FIXED: AI usage limit (5 for testing)
-    const aiRepliedCount = await prisma.review.count({ where: { aiReplied: true } });
+    // Sirf AI replies count karega (manual replies count nahi hoga)
+    const aiRepliedCount = await prisma.review.count({ 
+      where: { 
+        replied: true,
+        aiReplied: true 
+      } 
+    });
     const aiUsed = aiRepliedCount > 5 ? 5 : aiRepliedCount;
     const limit = 5;
 
@@ -50,6 +56,3 @@ export async function GET() {
     return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
   }
 }
-
-
-
