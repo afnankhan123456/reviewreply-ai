@@ -160,7 +160,7 @@ export default function AIReplyCenterPage() {
       </div>
 
       {/* Middle Section: AI Generator & Templates */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-6">
         
         {/* Left: AI Review Reply Generator */}
         <div className="lg:col-span-2 bg-[#11141C] border border-[#1F2430] rounded-xl p-5">
