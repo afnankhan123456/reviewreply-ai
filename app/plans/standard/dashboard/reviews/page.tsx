@@ -38,13 +38,17 @@ export default function ReviewsPage() {
 
   const fetchDashboardData = async () => {
     try {
-      const res = await fetch('/api/test/fetch-reviews');
-      const data = await res.json();
-      if (data.success) {
-        setReviews(data.reviews);
+      // ✅ PARALLEL FETCHING (Promise.all) - Fast load
+      const [reviewsRes, countRes] = await Promise.all([
+        fetch('/api/test/fetch-reviews'),
+        fetch('/api/standard/reviews/unanswered-count')
+      ]);
+
+      const reviewsData = await reviewsRes.json();
+      if (reviewsData.success) {
+        setReviews(reviewsData.reviews);
       }
 
-      const countRes = await fetch('/api/standard/reviews/unanswered-count');
       const countData = await countRes.json();
       setUnansweredCount(countData.count || 0);
     } catch (error) {
