@@ -21,11 +21,10 @@ export default function ReportsPage() {
     setShowMonthlyMenu(false);
     try {
       const res = await fetch(`/api/standard/reports/monthly?format=${format}`);
-      const data = await res.json();
       
       if (format === 'csv') {
-        const csvContent = data.data;
-        const blob = new Blob([csvContent], { type: 'text/csv' });
+        // ✅ CSV: Binary file download
+        const blob = await res.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -33,7 +32,8 @@ export default function ReportsPage() {
         a.click();
         window.URL.revokeObjectURL(url);
       } else {
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        // ✅ PDF: Binary file download
+        const blob = await res.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -54,11 +54,10 @@ export default function ReportsPage() {
     setShowWeeklyMenu(false);
     try {
       const res = await fetch(`/api/standard/reports/weekly?format=${format}`);
-      const data = await res.json();
       
       if (format === 'csv') {
-        const csvContent = data.data;
-        const blob = new Blob([csvContent], { type: 'text/csv' });
+        // ✅ CSV: Binary file download
+        const blob = await res.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -66,7 +65,8 @@ export default function ReportsPage() {
         a.click();
         window.URL.revokeObjectURL(url);
       } else {
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        // ✅ PDF: Binary file download
+        const blob = await res.blob();
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -86,9 +86,7 @@ export default function ReportsPage() {
     setIsGeneratingHistory(true);
     try {
       const res = await fetch('/api/standard/reports/history');
-      const data = await res.json();
-      
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const blob = await res.blob(); // ✅ Binary file download
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
