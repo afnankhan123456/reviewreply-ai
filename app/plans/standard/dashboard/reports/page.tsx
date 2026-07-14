@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   FileText, Download, Calendar, Clock, 
   Loader2, ChevronDown, Database, TrendingUp, TrendingDown, Star, BarChart3
@@ -16,32 +16,10 @@ export default function ReportsPage() {
   const [showMonthlyMenu, setShowMonthlyMenu] = useState(false);
   const [showWeeklyMenu, setShowWeeklyMenu] = useState(false);
 
-  const [monthlyData, setMonthlyData] = useState<any>(null);
-  const [weeklyData, setWeeklyData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [monthlyRes, weeklyRes] = await Promise.all([
-          fetch('/api/standard/reports/monthly?format=pdf'),
-          fetch('/api/standard/reports/weekly?format=pdf')
-        ]);
-        
-        const monthlyJson = await monthlyRes.json();
-        const weeklyJson = await weeklyRes.json();
-        
-        if (monthlyJson.success) setMonthlyData(monthlyJson.data);
-        if (weeklyJson.success) setWeeklyData(weeklyJson.data);
-      } catch (error) {
-        console.error('Failed to fetch report data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchData();
-  }, []);
+  // ✅ Hardcoded N/A data (always shows N/A)
+  const monthlyData = null;
+  const weeklyData = null;
+  const loading = false;
 
   const handleDownloadMonthly = async (format: 'pdf' | 'csv') => {
     setIsGeneratingMonthly(true);
@@ -154,21 +132,15 @@ export default function ReportsPage() {
             <div className="bg-[#181D27] border border-[#2A303C] rounded-lg p-4 mb-4">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-400">Last generated</span>
-                <span className="text-gray-300">
-                  {loading ? 'Loading...' : (monthlyData ? new Date(monthlyData.generatedAt).toLocaleDateString() : 'N/A')}
-                </span>
+                <span className="text-gray-300">N/A</span>
               </div>
               <div className="flex justify-between items-center text-sm mt-2">
                 <span className="text-gray-400">Total reviews</span>
-                <span className="text-gray-300">
-                  {loading ? '...' : (monthlyData ? monthlyData.totalReviews : 'N/A')}
-                </span>
+                <span className="text-gray-300">N/A</span>
               </div>
               <div className="flex justify-between items-center text-sm mt-2">
                 <span className="text-gray-400">Avg rating</span>
-                <span className="text-gray-300">
-                  {loading ? '...' : (monthlyData ? monthlyData.avgRating.toFixed(1) + ' ★' : 'N/A')}
-                </span>
+                <span className="text-gray-300">N/A</span>
               </div>
             </div>
             
@@ -242,21 +214,15 @@ export default function ReportsPage() {
             <div className="bg-[#181D27] border border-[#2A303C] rounded-lg p-4 mb-4">
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-400">Last generated</span>
-                <span className="text-gray-300">
-                  {loading ? 'Loading...' : (weeklyData ? new Date(weeklyData.generatedAt).toLocaleDateString() : 'N/A')}
-                </span>
+                <span className="text-gray-300">N/A</span>
               </div>
               <div className="flex justify-between items-center text-sm mt-2">
                 <span className="text-gray-400">New reviews</span>
-                <span className="text-gray-300">
-                  {loading ? '...' : (weeklyData ? weeklyData.newReviews : 'N/A')}
-                </span>
+                <span className="text-gray-300">N/A</span>
               </div>
               <div className="flex justify-between items-center text-sm mt-2">
                 <span className="text-gray-400">Response rate</span>
-                <span className="text-gray-300">
-                  {loading ? '...' : (weeklyData ? weeklyData.responseRate + '%' : 'N/A')}
-                </span>
+                <span className="text-gray-300">N/A</span>
               </div>
             </div>
             
