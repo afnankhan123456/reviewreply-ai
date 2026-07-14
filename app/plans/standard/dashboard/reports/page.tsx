@@ -2,50 +2,107 @@
 
 import React, { useState } from 'react';
 import { 
-  FileText, Download, Calendar, Clock, CheckCircle, 
-  Loader2, AlertCircle, BarChart3, Database
+  FileText, Download, Calendar, Clock, 
+  Loader2, ChevronDown, Database
 } from 'lucide-react';
 
 export default function ReportsPage() {
   const [isGeneratingMonthly, setIsGeneratingMonthly] = useState(false);
   const [isGeneratingWeekly, setIsGeneratingWeekly] = useState(false);
-  const [isGeneratingExport, setIsGeneratingExport] = useState(false);
   const [isGeneratingHistory, setIsGeneratingHistory] = useState(false);
+  
+  const [monthlyFormat, setMonthlyFormat] = useState<'pdf' | 'csv'>('pdf');
+  const [weeklyFormat, setWeeklyFormat] = useState<'pdf' | 'csv'>('pdf');
+  const [showMonthlyMenu, setShowMonthlyMenu] = useState(false);
+  const [showWeeklyMenu, setShowWeeklyMenu] = useState(false);
 
-  const handleDownloadMonthly = async () => {
+  const handleDownloadMonthly = async (format: 'pdf' | 'csv') => {
     setIsGeneratingMonthly(true);
-    // Simulate report generation
-    setTimeout(() => {
+    setShowMonthlyMenu(false);
+    try {
+      const res = await fetch(`/api/standard/reports/monthly?format=${format}`);
+      const data = await res.json();
+      
+      if (format === 'csv') {
+        // CSV download logic
+        const csvContent = data.data; // Assuming API returns CSV string
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `monthly-report-${new Date().toISOString().split('T')[0]}.csv`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      } else {
+        // PDF download logic (JSON as PDF for now)
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `monthly-report-${new Date().toISOString().split('T')[0]}.pdf`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error('Download error:', error);
+      alert('Failed to download report');
+    } finally {
       setIsGeneratingMonthly(false);
-      alert('Monthly report downloaded successfully!');
-    }, 1500);
+    }
   };
 
-  const handleDownloadWeekly = async () => {
+  const handleDownloadWeekly = async (format: 'pdf' | 'csv') => {
     setIsGeneratingWeekly(true);
-    // Simulate report generation
-    setTimeout(() => {
+    setShowWeeklyMenu(false);
+    try {
+      const res = await fetch(`/api/standard/reports/weekly?format=${format}`);
+      const data = await res.json();
+      
+      if (format === 'csv') {
+        const csvContent = data.data;
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `weekly-report-${new Date().toISOString().split('T')[0]}.csv`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      } else {
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `weekly-report-${new Date().toISOString().split('T')[0]}.pdf`;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      }
+    } catch (error) {
+      console.error('Download error:', error);
+      alert('Failed to download report');
+    } finally {
       setIsGeneratingWeekly(false);
-      alert('Weekly report downloaded successfully!');
-    }, 1500);
-  };
-
-  const handleDownloadExport = async () => {
-    setIsGeneratingExport(true);
-    // Simulate report generation
-    setTimeout(() => {
-      setIsGeneratingExport(false);
-      alert('CSV/PDF Export downloaded successfully!');
-    }, 1500);
+    }
   };
 
   const handleDownloadHistory = async () => {
     setIsGeneratingHistory(true);
-    // Simulate report generation
-    setTimeout(() => {
+    try {
+      const res = await fetch('/api/standard/reports/history');
+      const data = await res.json();
+      
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `history-data-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Download error:', error);
+      alert('Failed to download history');
+    } finally {
       setIsGeneratingHistory(false);
-      alert('6 Months Data History downloaded successfully!');
-    }, 1500);
+    }
   };
 
   return (
@@ -55,11 +112,11 @@ export default function ReportsPage() {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-2xl font-bold text-white">Reports</h1>
-          <p className="text-sm text-gray-400">Download detailed performance reports in PDF format.</p>
+          <p className="text-sm text-gray-400">Download detailed performance reports in PDF or CSV format.</p>
         </div>
       </div>
 
-      {/* Reports Cards - 2x2 Grid */}
+      {/* Reports Cards - 2x2 Grid (3 cards only) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         {/* Monthly Report Card */}
@@ -89,23 +146,47 @@ export default function ReportsPage() {
             </div>
           </div>
           
-          <button
-            onClick={handleDownloadMonthly}
-            disabled={isGeneratingMonthly}
-            className="w-full flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isGeneratingMonthly ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Generating...</span>
-              </>
-            ) : (
-              <>
-                <Download className="w-4 h-4" />
-                <span>Download Monthly Report</span>
-              </>
+          <div className="relative">
+            <button
+              onClick={() => setShowMonthlyMenu(!showMonthlyMenu)}
+              disabled={isGeneratingMonthly}
+              className="w-full flex items-center justify-between gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span className="flex items-center gap-2">
+                {isGeneratingMonthly ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Generating...</span>
+                  </>
+                ) : (
+                  <>
+                    <Download className="w-4 h-4" />
+                    <span>Download ({monthlyFormat.toUpperCase()})</span>
+                  </>
+                )}
+              </span>
+              <ChevronDown className="w-4 h-4" />
+            </button>
+            
+            {showMonthlyMenu && (
+              <div className="absolute bottom-full left-0 w-full mb-2 bg-[#1A1F2E] border border-[#2A303C] rounded-lg shadow-lg overflow-hidden z-10">
+                <button
+                  onClick={() => handleDownloadMonthly('pdf')}
+                  className="w-full flex items-center gap-2 px-4 py-2 hover:bg-[#2A303C] text-gray-300 text-sm transition-colors"
+                >
+                  <FileText className="w-4 h-4" />
+                  PDF
+                </button>
+                <button
+                  onClick={() => handleDownloadMonthly('csv')}
+                  className="w-full flex items-center gap-2 px-4 py-2 hover:bg-[#2A303C] text-gray-300 text-sm transition-colors"
+                >
+                  <FileText className="w-4 h-4" />
+                  CSV
+                </button>
+              </div>
             )}
-          </button>
+          </div>
         </div>
 
         {/* Weekly Report Card */}
@@ -135,69 +216,47 @@ export default function ReportsPage() {
             </div>
           </div>
           
-          <button
-            onClick={handleDownloadWeekly}
-            disabled={isGeneratingWeekly}
-            className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-500 text-white font-medium py-2.5 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isGeneratingWeekly ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Generating...</span>
-              </>
-            ) : (
-              <>
-                <Download className="w-4 h-4" />
-                <span>Download Weekly Report</span>
-              </>
+          <div className="relative">
+            <button
+              onClick={() => setShowWeeklyMenu(!showWeeklyMenu)}
+              disabled={isGeneratingWeekly}
+              className="w-full flex items-center justify-between gap-2 bg-purple-600 hover:bg-purple-500 text-white font-medium py-2.5 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span className="flex items-center gap-2">
+                {isGeneratingWeekly ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Generating...</span>
+                  </>
+                ) : (
+                  <>
+                    <Download className="w-4 h-4" />
+                    <span>Download ({weeklyFormat.toUpperCase()})</span>
+                  </>
+                )}
+              </span>
+              <ChevronDown className="w-4 h-4" />
+            </button>
+            
+            {showWeeklyMenu && (
+              <div className="absolute bottom-full left-0 w-full mb-2 bg-[#1A1F2E] border border-[#2A303C] rounded-lg shadow-lg overflow-hidden z-10">
+                <button
+                  onClick={() => handleDownloadWeekly('pdf')}
+                  className="w-full flex items-center gap-2 px-4 py-2 hover:bg-[#2A303C] text-gray-300 text-sm transition-colors"
+                >
+                  <FileText className="w-4 h-4" />
+                  PDF
+                </button>
+                <button
+                  onClick={() => handleDownloadWeekly('csv')}
+                  className="w-full flex items-center gap-2 px-4 py-2 hover:bg-[#2A303C] text-gray-300 text-sm transition-colors"
+                >
+                  <FileText className="w-4 h-4" />
+                  CSV
+                </button>
+              </div>
             )}
-          </button>
-        </div>
-
-        {/* CSV/PDF Export Card */}
-        <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-emerald-500/20 rounded-lg">
-              <BarChart3 className="w-6 h-6 text-emerald-400" />
-            </div>
-            <div>
-              <h3 className="text-white font-medium text-lg">CSV/PDF Export</h3>
-              <p className="text-sm text-gray-400">Export data in CSV or PDF format</p>
-            </div>
           </div>
-          
-          <div className="bg-[#181D27] border border-[#2A303C] rounded-lg p-4 mb-4">
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-gray-400">Last exported</span>
-              <span className="text-gray-300">July 10, 2026</span>
-            </div>
-            <div className="flex justify-between items-center text-sm mt-2">
-              <span className="text-gray-400">Total exports</span>
-              <span className="text-gray-300">8</span>
-            </div>
-            <div className="flex justify-between items-center text-sm mt-2">
-              <span className="text-gray-400">Format</span>
-              <span className="text-gray-300">CSV, PDF</span>
-            </div>
-          </div>
-          
-          <button
-            onClick={handleDownloadExport}
-            disabled={isGeneratingExport}
-            className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isGeneratingExport ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Generating...</span>
-              </>
-            ) : (
-              <>
-                <Download className="w-4 h-4" />
-                <span>Download Export</span>
-              </>
-            )}
-          </button>
         </div>
 
         {/* 6 Months Data History Card */}
