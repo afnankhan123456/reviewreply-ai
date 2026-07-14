@@ -16,12 +16,10 @@ export default function ReportsPage() {
   const [showMonthlyMenu, setShowMonthlyMenu] = useState(false);
   const [showWeeklyMenu, setShowWeeklyMenu] = useState(false);
 
-  // ✅ Real data states
   const [monthlyData, setMonthlyData] = useState<any>(null);
   const [weeklyData, setWeeklyData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Fetch real data on mount
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -137,162 +135,186 @@ export default function ReportsPage() {
         </div>
       </div>
 
-      {/* Reports Cards - Grid with 6 Months History spanning full width */}
+      {/* Reports Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         {/* Monthly Report Card */}
-        <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-indigo-500/20 rounded-lg">
-              <Calendar className="w-6 h-6 text-indigo-400" />
-            </div>
-            <div>
-              <h3 className="text-white font-medium text-lg">Monthly PDF Report</h3>
-              <p className="text-sm text-gray-400">Complete performance summary for the month</p>
-            </div>
-          </div>
-          
-          <div className="bg-[#181D27] border border-[#2A303C] rounded-lg p-4 mb-4">
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-gray-400">Last generated</span>
-              <span className="text-gray-300">
-                {loading ? 'Loading...' : (monthlyData ? new Date(monthlyData.generatedAt).toLocaleDateString() : 'N/A')}
-              </span>
-            </div>
-            <div className="flex justify-between items-center text-sm mt-2">
-              <span className="text-gray-400">Total reviews</span>
-              <span className="text-gray-300">
-                {loading ? '...' : (monthlyData ? monthlyData.totalReviews : 'N/A')}
-              </span>
-            </div>
-            <div className="flex justify-between items-center text-sm mt-2">
-              <span className="text-gray-400">Avg rating</span>
-              <span className="text-gray-300">
-                {loading ? '...' : (monthlyData ? monthlyData.avgRating.toFixed(1) + ' ★' : 'N/A')}
-              </span>
-            </div>
-          </div>
-          
-          <div className="relative">
-            <button
-              onClick={() => setShowMonthlyMenu(!showMonthlyMenu)}
-              disabled={isGeneratingMonthly}
-              className="w-full flex items-center justify-between gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span className="flex items-center gap-2">
-                {isGeneratingMonthly ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Generating...</span>
-                  </>
-                ) : (
-                  <>
-                    <Download className="w-4 h-4" />
-                    <span>Download ({monthlyFormat.toUpperCase()})</span>
-                  </>
-                )}
-              </span>
-              <ChevronDown className="w-4 h-4" />
-            </button>
-            
-            {showMonthlyMenu && (
-              <div className="absolute bottom-full left-0 w-full mb-2 bg-[#1A1F2E] border border-[#2A303C] rounded-lg shadow-lg overflow-hidden z-10">
-                <button
-                  onClick={() => handleDownloadMonthly('pdf')}
-                  className="w-full flex items-center gap-2 px-4 py-2 hover:bg-[#2A303C] text-gray-300 text-sm transition-colors"
-                >
-                  <FileText className="w-4 h-4" />
-                  PDF
-                </button>
-                <button
-                  onClick={() => handleDownloadMonthly('csv')}
-                  className="w-full flex items-center gap-2 px-4 py-2 hover:bg-[#2A303C] text-gray-300 text-sm transition-colors"
-                >
-                  <FileText className="w-4 h-4" />
-                  CSV
-                </button>
+        <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-6 flex flex-col">
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-indigo-500/20 rounded-lg">
+                <Calendar className="w-6 h-6 text-indigo-400" />
               </div>
-            )}
+              <div>
+                <h3 className="text-white font-medium text-lg">Monthly PDF Report</h3>
+                <p className="text-sm text-gray-400">Complete performance summary for the month</p>
+              </div>
+            </div>
+            
+            <div className="bg-[#181D27] border border-[#2A303C] rounded-lg p-4 mb-4">
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-gray-400">Last generated</span>
+                <span className="text-gray-300">
+                  {loading ? 'Loading...' : (monthlyData ? new Date(monthlyData.generatedAt).toLocaleDateString() : 'N/A')}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-sm mt-2">
+                <span className="text-gray-400">Total reviews</span>
+                <span className="text-gray-300">
+                  {loading ? '...' : (monthlyData ? monthlyData.totalReviews : 'N/A')}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-sm mt-2">
+                <span className="text-gray-400">Avg rating</span>
+                <span className="text-gray-300">
+                  {loading ? '...' : (monthlyData ? monthlyData.avgRating.toFixed(1) + ' ★' : 'N/A')}
+                </span>
+              </div>
+            </div>
+            
+            <div className="relative">
+              <button
+                onClick={() => setShowMonthlyMenu(!showMonthlyMenu)}
+                disabled={isGeneratingMonthly}
+                className="w-full flex items-center justify-between gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <span className="flex items-center gap-2">
+                  {isGeneratingMonthly ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Generating...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-4 h-4" />
+                      <span>Download ({monthlyFormat.toUpperCase()})</span>
+                    </>
+                  )}
+                </span>
+                <ChevronDown className="w-4 h-4" />
+              </button>
+              
+              {showMonthlyMenu && (
+                <div className="absolute bottom-full left-0 w-full mb-2 bg-[#1A1F2E] border border-[#2A303C] rounded-lg shadow-lg overflow-hidden z-10">
+                  <button
+                    onClick={() => handleDownloadMonthly('pdf')}
+                    className="w-full flex items-center gap-2 px-4 py-2 hover:bg-[#2A303C] text-gray-300 text-sm transition-colors"
+                  >
+                    <FileText className="w-4 h-4" />
+                    PDF
+                  </button>
+                  <button
+                    onClick={() => handleDownloadMonthly('csv')}
+                    className="w-full flex items-center gap-2 px-4 py-2 hover:bg-[#2A303C] text-gray-300 text-sm transition-colors"
+                  >
+                    <FileText className="w-4 h-4" />
+                    CSV
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* ✅ Professional Footer with Divider */}
+          <div className="mt-6 pt-4 border-t border-[#2A303C]">
+            <p className="text-xs text-gray-400 text-center leading-relaxed">
+              ─────────────────────────────<br />
+              Thank you for your continued trust.<br />
+              ReviewReply AI – Empowering businesses with insights.<br />
+              ─────────────────────────────
+            </p>
           </div>
         </div>
 
         {/* Weekly Report Card */}
-        <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-purple-500/20 rounded-lg">
-              <Clock className="w-6 h-6 text-purple-400" />
-            </div>
-            <div>
-              <h3 className="text-white font-medium text-lg">Weekly Performance Report</h3>
-              <p className="text-sm text-gray-400">Track weekly performance trends</p>
-            </div>
-          </div>
-          
-          <div className="bg-[#181D27] border border-[#2A303C] rounded-lg p-4 mb-4">
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-gray-400">Last generated</span>
-              <span className="text-gray-300">
-                {loading ? 'Loading...' : (weeklyData ? new Date(weeklyData.generatedAt).toLocaleDateString() : 'N/A')}
-              </span>
-            </div>
-            <div className="flex justify-between items-center text-sm mt-2">
-              <span className="text-gray-400">New reviews</span>
-              <span className="text-gray-300">
-                {loading ? '...' : (weeklyData ? weeklyData.newReviews : 'N/A')}
-              </span>
-            </div>
-            <div className="flex justify-between items-center text-sm mt-2">
-              <span className="text-gray-400">Response rate</span>
-              <span className="text-gray-300">
-                {loading ? '...' : (weeklyData ? weeklyData.responseRate + '%' : 'N/A')}
-              </span>
-            </div>
-          </div>
-          
-          <div className="relative">
-            <button
-              onClick={() => setShowWeeklyMenu(!showWeeklyMenu)}
-              disabled={isGeneratingWeekly}
-              className="w-full flex items-center justify-between gap-2 bg-purple-600 hover:bg-purple-500 text-white font-medium py-2.5 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <span className="flex items-center gap-2">
-                {isGeneratingWeekly ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Generating...</span>
-                  </>
-                ) : (
-                  <>
-                    <Download className="w-4 h-4" />
-                    <span>Download ({weeklyFormat.toUpperCase()})</span>
-                  </>
-                )}
-              </span>
-              <ChevronDown className="w-4 h-4" />
-            </button>
-            
-            {showWeeklyMenu && (
-              <div className="absolute bottom-full left-0 w-full mb-2 bg-[#1A1F2E] border border-[#2A303C] rounded-lg shadow-lg overflow-hidden z-10">
-                <button
-                  onClick={() => handleDownloadWeekly('pdf')}
-                  className="w-full flex items-center gap-2 px-4 py-2 hover:bg-[#2A303C] text-gray-300 text-sm transition-colors"
-                >
-                  <FileText className="w-4 h-4" />
-                  PDF
-                </button>
-                <button
-                  onClick={() => handleDownloadWeekly('csv')}
-                  className="w-full flex items-center gap-2 px-4 py-2 hover:bg-[#2A303C] text-gray-300 text-sm transition-colors"
-                >
-                  <FileText className="w-4 h-4" />
-                  CSV
-                </button>
+        <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-6 flex flex-col">
+          <div className="flex-1">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-purple-500/20 rounded-lg">
+                <Clock className="w-6 h-6 text-purple-400" />
               </div>
-            )}
+              <div>
+                <h3 className="text-white font-medium text-lg">Weekly Performance Report</h3>
+                <p className="text-sm text-gray-400">Track weekly performance trends</p>
+              </div>
+            </div>
+            
+            <div className="bg-[#181D27] border border-[#2A303C] rounded-lg p-4 mb-4">
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-gray-400">Last generated</span>
+                <span className="text-gray-300">
+                  {loading ? 'Loading...' : (weeklyData ? new Date(weeklyData.generatedAt).toLocaleDateString() : 'N/A')}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-sm mt-2">
+                <span className="text-gray-400">New reviews</span>
+                <span className="text-gray-300">
+                  {loading ? '...' : (weeklyData ? weeklyData.newReviews : 'N/A')}
+                </span>
+              </div>
+              <div className="flex justify-between items-center text-sm mt-2">
+                <span className="text-gray-400">Response rate</span>
+                <span className="text-gray-300">
+                  {loading ? '...' : (weeklyData ? weeklyData.responseRate + '%' : 'N/A')}
+                </span>
+              </div>
+            </div>
+            
+            <div className="relative">
+              <button
+                onClick={() => setShowWeeklyMenu(!showWeeklyMenu)}
+                disabled={isGeneratingWeekly}
+                className="w-full flex items-center justify-between gap-2 bg-purple-600 hover:bg-purple-500 text-white font-medium py-2.5 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <span className="flex items-center gap-2">
+                  {isGeneratingWeekly ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <span>Generating...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Download className="w-4 h-4" />
+                      <span>Download ({weeklyFormat.toUpperCase()})</span>
+                    </>
+                  )}
+                </span>
+                <ChevronDown className="w-4 h-4" />
+              </button>
+              
+              {showWeeklyMenu && (
+                <div className="absolute bottom-full left-0 w-full mb-2 bg-[#1A1F2E] border border-[#2A303C] rounded-lg shadow-lg overflow-hidden z-10">
+                  <button
+                    onClick={() => handleDownloadWeekly('pdf')}
+                    className="w-full flex items-center gap-2 px-4 py-2 hover:bg-[#2A303C] text-gray-300 text-sm transition-colors"
+                  >
+                    <FileText className="w-4 h-4" />
+                    PDF
+                  </button>
+                  <button
+                    onClick={() => handleDownloadWeekly('csv')}
+                    className="w-full flex items-center gap-2 px-4 py-2 hover:bg-[#2A303C] text-gray-300 text-sm transition-colors"
+                  >
+                    <FileText className="w-4 h-4" />
+                    CSV
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* ✅ Professional Footer with Divider */}
+          <div className="mt-6 pt-4 border-t border-[#2A303C]">
+            <p className="text-xs text-gray-400 text-center leading-relaxed">
+              ─────────────────────────────<br />
+              Thank you for your continued trust.<br />
+              ReviewReply AI – Empowering businesses with insights.<br />
+              ─────────────────────────────
+            </p>
           </div>
         </div>
 
-        {/* 6 Months Data History Card - Full Width (spanning 2 columns) */}
+        {/* 6 Months Data History Card - Full Width */}
         <div className="md:col-span-2 bg-[#11141C] border border-[#1F2430] rounded-xl p-6">
           <div className="flex justify-between items-start">
             <div className="flex items-center gap-3 mb-4">
@@ -305,9 +327,7 @@ export default function ReportsPage() {
               </div>
             </div>
             
-            {/* Right Side Stats - Best Month, Worst Month, Trend */}
             <div className="flex gap-6">
-              {/* Best Month */}
               <div className="text-center">
                 <div className="flex items-center gap-1 text-amber-400 text-xs font-medium">
                   <TrendingUp className="w-3 h-3" />
@@ -316,8 +336,6 @@ export default function ReportsPage() {
                 <p className="text-white font-bold text-lg">June</p>
                 <p className="text-xs text-gray-400">245 reviews</p>
               </div>
-
-              {/* Worst Month */}
               <div className="text-center">
                 <div className="flex items-center gap-1 text-amber-400 text-xs font-medium">
                   <TrendingDown className="w-3 h-3" />
@@ -326,8 +344,6 @@ export default function ReportsPage() {
                 <p className="text-white font-bold text-lg">Feb</p>
                 <p className="text-xs text-gray-400">89 reviews</p>
               </div>
-
-              {/* Trend */}
               <div className="text-center">
                 <div className="flex items-center gap-1 text-amber-400 text-xs font-medium">
                   <BarChart3 className="w-3 h-3" />
