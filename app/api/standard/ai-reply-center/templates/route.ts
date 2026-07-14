@@ -1,7 +1,15 @@
 import { NextResponse } from 'next/server';
+import { cache } from '@/lib/cache'; // ✅ Cache import
 
 export async function GET() {
-  // 📦 300 AI REPLY TEMPLATES
+  // ✅ 1. Check cache first
+  const cached = cache.get('templates');
+  if (cached) {
+    console.log('✅ Returning cached templates');
+    return NextResponse.json(cached);
+  }
+
+  // 2. Prepare 300 templates
   const templates = [
     // ===== GENERAL (50) =====
     "Thank you for your feedback! We truly appreciate your kind words.",
@@ -373,5 +381,11 @@ export async function GET() {
     "Dear Valued Customer, we are so glad we could serve you well.",
   ];
 
-  return NextResponse.json({ success: true, templates });
+  // ✅ 3. Prepare response
+  const responseData = { success: true, templates };
+
+  // ✅ 4. Save to cache (60 seconds)
+  cache.set('templates', responseData, 60);
+
+  return NextResponse.json(responseData);
 }
