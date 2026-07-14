@@ -186,16 +186,6 @@ export default function ReportsPage() {
               )}
             </div>
           </div>
-
-          {/* ✅ Professional Footer with Divider */}
-          <div className="mt-6 pt-4 border-t border-[#2A303C]">
-            <p className="text-xs text-gray-400 text-center leading-relaxed">
-              ─────────────────────────────<br />
-              Thank you for your continued trust.<br />
-              ReviewReply AI – Empowering businesses with insights.<br />
-              ─────────────────────────────
-            </p>
-          </div>
         </div>
 
         {/* Weekly Report Card */}
@@ -267,16 +257,6 @@ export default function ReportsPage() {
                 </div>
               )}
             </div>
-          </div>
-
-          {/* ✅ Professional Footer with Divider */}
-          <div className="mt-6 pt-4 border-t border-[#2A303C]">
-            <p className="text-xs text-gray-400 text-center leading-relaxed">
-              ─────────────────────────────<br />
-              Thank you for your continued trust.<br />
-              ReviewReply AI – Empowering businesses with insights.<br />
-              ─────────────────────────────
-            </p>
           </div>
         </div>
 
