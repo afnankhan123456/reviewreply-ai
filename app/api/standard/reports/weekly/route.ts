@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getCachedOrFetch } from '@/app/lib/cache';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 export async function GET(request: Request) {
   try {
@@ -18,7 +20,6 @@ export async function GET(request: Request) {
         const endOfWeek = new Date(now);
         endOfWeek.setHours(23, 59, 59, 999);
 
-        // New reviews (Monday to today)
         const newReviews = await prisma.review.count({
           where: {
             createdAt: {
@@ -28,7 +29,6 @@ export async function GET(request: Request) {
           },
         });
 
-        // Total reviews (Monday to today)
         const totalReviews = await prisma.review.count({
           where: {
             createdAt: {
@@ -38,7 +38,6 @@ export async function GET(request: Request) {
           },
         });
 
-        // Replied reviews (Monday to today)
         const repliedReviews = await prisma.review.count({
           where: {
             replied: true,
@@ -53,7 +52,6 @@ export async function GET(request: Request) {
           ? Math.round((repliedReviews / totalReviews) * 100)
           : 0;
 
-        // Positive reviews (rating >= 4)
         const positiveReviews = await prisma.review.count({
           where: {
             rating: { gte: 4 },
@@ -64,7 +62,6 @@ export async function GET(request: Request) {
           },
         });
 
-        // Negative reviews (rating <= 2)
         const negativeReviews = await prisma.review.count({
           where: {
             rating: { lte: 2 },
@@ -75,7 +72,6 @@ export async function GET(request: Request) {
           },
         });
 
-        // Daily trend (7 days, but only up to today)
         const dailyData = [];
         for (let i = 6; i >= 0; i--) {
           const date = new Date(now);
@@ -96,7 +92,6 @@ export async function GET(request: Request) {
           dailyData.push(count);
         }
 
-        // All reviews (for export)
         const reviews = await prisma.review.findMany({
           where: {
             createdAt: {
@@ -129,7 +124,7 @@ export async function GET(request: Request) {
       3600
     );
 
-    // ✅ CSV format
+    // ✅ CSV format (data download)
     if (format === 'csv') {
       const { data } = responseData;
       const rows = data.reviews.map((review: any) => ({
@@ -156,7 +151,67 @@ export async function GET(request: Request) {
       });
     }
 
-    // ✅ PDF format (JSON response)
+    // ✅ PDF format (actual PDF file download)
+    if (format === 'pdf') {
+      const { data } = responseData;
+      const doc = new jsPDF();
+      
+      // Title
+      doc.setFontSize(20);
+      doc.text(`Weekly Report - ${data.week} ${data.year}`, 105, 20, { align: 'center' });
+      
+      // Stats
+      doc.setFontSize(12);
+      doc.text(`New Reviews: ${data.newReviews}`, 20, 40);
+      doc.text(`Total Reviews: ${data.totalReviews}`, 20, 50);
+      doc.text(`Response Rate: ${data.responseRate}%`, 20, 60);
+      doc.text(`Positive: ${data.positiveReviews}`, 20, 70);
+      doc.text(`Negative: ${data.negativeReviews}`, 20, 80);
+      
+      // Daily Trend
+      doc.text('Daily Trend:', 20, 95);
+      const trendData = data.dailyTrend.map((count: number, index: number) => {
+        const date = new Date();
+        date.setDate(date.getDate() - (6 - index));
+        return [date.toLocaleDateString(), count];
+      });
+
+      autoTable(doc, {
+        head: [['Date', 'Reviews']],
+        body: trendData,
+        startY: 100,
+        styles: { fontSize: 8 },
+        headStyles: { fillColor: [168, 85, 247] },
+      });
+
+      // Reviews Table
+      const tableData = data.reviews.map((review: any) => [
+        review.id,
+        review.rating,
+        review.comment || '',
+        review.replied ? 'Yes' : 'No',
+        new Date(review.createdAt).toLocaleDateString(),
+      ]);
+
+      autoTable(doc, {
+        head: [['ID', 'Rating', 'Comment', 'Replied', 'Date']],
+        body: tableData,
+        startY: (doc as any).lastAutoTable.finalY + 10,
+        styles: { fontSize: 8 },
+        headStyles: { fillColor: [168, 85, 247] },
+      });
+
+      // PDF Buffer
+      const pdfBuffer = doc.output('arraybuffer');
+
+      return new NextResponse(pdfBuffer, {
+        headers: {
+          'Content-Type': 'application/pdf',
+          'Content-Disposition': `attachment; filename="weekly-report-${data.week.replace(/ /g, '-')}-${data.year}.pdf"`,
+        },
+      });
+    }
+
     return NextResponse.json(responseData);
   } catch (error) {
     console.error('Weekly Report Error:', error);
