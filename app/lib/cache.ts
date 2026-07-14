@@ -6,7 +6,7 @@ type CacheItem<T> = {
 class MemoryCache {
   private cache = new Map<string, CacheItem<any>>();
 
-  set<T>(key: string, value: T, ttlSeconds: number = 60): void {
+  set<T>(key: string, value: T, ttlSeconds: number = 300): void {  // ✅ 60 → 300
     const expiresAt = Date.now() + ttlSeconds * 1000;
     this.cache.set(key, { value, expiresAt });
   }
@@ -32,7 +32,7 @@ export const cache = new MemoryCache();
 export async function getCachedOrFetch<T>(
   key: string,
   fetchFn: () => Promise<T>,
-  ttlSeconds: number = 60
+  ttlSeconds: number = 300  // ✅ 60 → 300
 ): Promise<T> {
   // Check cache first
   const cached = cache.get<T>(key);
