@@ -1,8 +1,16 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { cache } from '@/lib/cache'; // ✅ Cache import
 
 export async function GET() {
   try {
+    // ✅ 1. Check cache first
+    const cached = cache.get('weekly-trends');
+    if (cached) {
+      console.log('✅ Returning cached weekly trends');
+      return NextResponse.json(cached);
+    }
+
     const today = new Date();
     const weeklyData = [];
 
@@ -28,10 +36,16 @@ export async function GET() {
       weeklyData.push(count);
     }
 
-    return NextResponse.json({
+    // Prepare response
+    const responseData = {
       success: true,
       data: weeklyData,
-    });
+    };
+
+    // Save to cache (60 seconds)
+    cache.set('weekly-trends', responseData, 60);
+
+    return NextResponse.json(responseData);
   } catch (error) {
     console.error('Weekly Trends Error:', error);
     return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
