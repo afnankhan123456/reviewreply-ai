@@ -68,6 +68,10 @@ export default function AnalyticsPage() {
   const maxDaily = Math.max(...(analyticsData.daily || [0]), 1);
   const maxWeekly = Math.max(...(analyticsData.weekly || [0]), 1);
 
+  const p = analyticsData.stats.positive || 0;
+  const n = analyticsData.stats.negative || 0;
+  const neutral = 100 - p - n;
+
   return (
     <div className="flex-1 flex flex-col p-6 overflow-y-auto bg-[#0B0E14] text-gray-200">
       
@@ -172,14 +176,46 @@ export default function AnalyticsPage() {
       {/* Sentiment Analysis */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         
-        {/* Sentiment Overview */}
+        {/* Sentiment Overview - Fixed Multi-Colour Donut */}
         <div className="md:col-span-1 bg-[#11141C] border border-[#1F2430] rounded-xl p-5">
           <h3 className="text-white text-sm font-medium mb-3">Sentiment Overview</h3>
           <div className="flex flex-col items-center justify-center py-4">
-            <div className="w-28 h-28 rounded-full border-8 border-green-500 flex items-center justify-center bg-[#181D27] relative">
-              <div className="text-center">
-                <div className="text-xl font-bold text-white">{analyticsData.stats.positive || 0}%</div>
-                <div className="text-[10px] text-gray-500">Positive</div>
+            <div className="relative w-28 h-28">
+              {/* Multi-colour Donut Chart */}
+              <svg viewBox="0 0 36 36" className="w-full h-full transform -rotate-90">
+                {/* Neutral (Yellow) */}
+                <path
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="#EAB308"
+                  strokeWidth="3"
+                  strokeDasharray={`${neutral}, 100`}
+                  strokeDashoffset="0"
+                />
+                {/* Positive (Green) */}
+                <path
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="#22C55E"
+                  strokeWidth="3"
+                  strokeDasharray={`${p}, 100`}
+                  strokeDashoffset={`-${neutral}`}
+                />
+                {/* Negative (Red) */}
+                <path
+                  d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none"
+                  stroke="#EF4444"
+                  strokeWidth="3"
+                  strokeDasharray={`${n}, 100`}
+                  strokeDashoffset={`-${neutral + p}`}
+                />
+              </svg>
+              <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-xl font-bold text-white">
+                  {analyticsData.stats.positive || 0}%
+                </span>
+                <span className="text-[10px] text-gray-500">Positive</span>
               </div>
             </div>
             <div className="flex justify-between w-full mt-4 text-xs">
