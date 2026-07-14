@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { cache } from '@/lib/cache'; // ✅ Cache import
+import { cache } from '@/app/lib/cache'; // ✅ Import path fixed
 
 export async function GET() {
   try {
