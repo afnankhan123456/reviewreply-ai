@@ -7,7 +7,18 @@ import {
 } from 'lucide-react';
 
 export default function AnalyticsPage() {
-  const [analyticsData, setAnalyticsData] = useState<any>(null);
+  const [analyticsData, setAnalyticsData] = useState<any>({
+    stats: {
+      totalReviews: 0,
+      used: 0,
+      limit: 5,
+      responseRate: 0,
+      positive: 0,
+      negative: 0,
+    },
+    daily: [],
+    weekly: [],
+  });
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -16,23 +27,33 @@ export default function AnalyticsPage() {
 
   const fetchAnalyticsData = async () => {
     try {
-      // 1. Real Stats API
+      // 1. Stats API
       const statsRes = await fetch('/api/standard/ai-reply-center/stats');
-      const statsData = await statsRes.json();
+      if (statsRes.ok) {
+        const statsData = await statsRes.json();
+        if (statsData.success) {
+          setAnalyticsData((prev) => ({ ...prev, stats: statsData.data }));
+        }
+      }
 
-      // 2. Real Daily Trends (Last 7 days)
+      // 2. Daily Trends
       const dailyRes = await fetch('/api/standard/analytics/trends/daily');
-      const dailyData = await dailyRes.json();
+      if (dailyRes.ok) {
+        const dailyData = await dailyRes.json();
+        if (dailyData.success) {
+          setAnalyticsData((prev) => ({ ...prev, daily: dailyData.data || [] }));
+        }
+      }
 
-      // 3. Real Weekly Trends (Last 7 weeks)
+      // 3. Weekly Trends
       const weeklyRes = await fetch('/api/standard/analytics/trends/weekly');
-      const weeklyData = await weeklyRes.json();
+      if (weeklyRes.ok) {
+        const weeklyData = await weeklyRes.json();
+        if (weeklyData.success) {
+          setAnalyticsData((prev) => ({ ...prev, weekly: weeklyData.data || [] }));
+        }
+      }
 
-      setAnalyticsData({
-        stats: statsData.data,
-        daily: dailyData.data || [],
-        weekly: weeklyData.data || [],
-      });
       setIsLoading(false);
     } catch (error) {
       console.error('Error fetching analytics data:', error);
@@ -44,9 +65,8 @@ export default function AnalyticsPage() {
     return <div className="flex-1 flex items-center justify-center text-gray-400">Loading analytics data...</div>;
   }
 
-  // Max value for chart scaling
-  const maxDaily = Math.max(...(analyticsData?.daily || [0]), 1);
-  const maxWeekly = Math.max(...(analyticsData?.weekly || [0]), 1);
+  const maxDaily = Math.max(...(analyticsData.daily || [0]), 1);
+  const maxWeekly = Math.max(...(analyticsData.weekly || [0]), 1);
 
   return (
     <div className="flex-1 flex flex-col p-6 overflow-y-auto bg-[#0B0E14] text-gray-200">
@@ -57,24 +77,25 @@ export default function AnalyticsPage() {
           <h1 className="text-2xl font-bold text-white">Analytics</h1>
           <p className="text-sm text-gray-400">Track your review performance with real-time analytics and sentiment insights.</p>
         </div>
-        <button className="flex items-center gap-2 bg-[#181D27] border border-[#2A303C] rounded-lg px-3 py-2 text-sm text-gray-300 hover:text-white transition-colors">
+        <button 
+          className="flex items-center gap-2 bg-[#181D27] border border-[#2A303C] rounded-lg px-3 py-2 text-sm text-gray-300 hover:text-white transition-colors"
+          onClick={fetchAnalyticsData}
+        >
           <RefreshCw size={14} />
           <span>Refresh</span>
         </button>
       </div>
 
-      {/* ========================================== */}
-      {/* BASIC ANALYTICS - Top Stats Cards */}
-      {/* ========================================== */}
+      {/* Basic Analytics - Top Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         
-        {/* Card 1: Total Reviews (FIXED: stats.totalReviews) */}
+        {/* Card 1: Total Reviews */}
         <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-4 flex flex-col justify-between">
           <div className="flex items-center gap-2 text-gray-400 text-xs font-medium mb-2">
             <BarChart3 size={14} /> Total Reviews
           </div>
           <div className="text-4xl font-bold text-white">
-            {analyticsData?.stats?.totalReviews || 0}
+            {analyticsData.stats.totalReviews || 0}
           </div>
           <div className="text-[10px] text-green-400 flex items-center gap-1">
             <TrendingUp size={12} /> +12% this month
@@ -86,7 +107,7 @@ export default function AnalyticsPage() {
           <div className="flex items-center gap-2 text-gray-400 text-xs font-medium mb-2">
             <TrendingUp size={14} /> Response Rate
           </div>
-          <div className="text-4xl font-bold text-white">{analyticsData?.stats?.responseRate || 0}%</div>
+          <div className="text-4xl font-bold text-white">{analyticsData.stats.responseRate || 0}%</div>
           <div className="text-[10px] text-green-400 flex items-center gap-1">
             <TrendingUp size={12} /> +5% this month
           </div>
@@ -97,16 +118,14 @@ export default function AnalyticsPage() {
           <div className="flex items-center gap-2 text-gray-400 text-xs font-medium mb-2">
             <ThumbsUp size={14} /> AI Replies Used
           </div>
-          <div className="text-4xl font-bold text-white">{analyticsData?.stats?.used || 0}</div>
+          <div className="text-4xl font-bold text-white">{analyticsData.stats.used || 0}</div>
           <div className="text-[10px] text-yellow-400 flex items-center gap-1">
-            <Minus size={12} /> {analyticsData?.stats?.limit - analyticsData?.stats?.used || 0} remaining
+            <Minus size={12} /> {analyticsData.stats.limit - analyticsData.stats.used || 0} remaining
           </div>
         </div>
       </div>
 
-      {/* ========================================== */}
-      {/* ADVANCED ANALYTICS - Charts & Trends (REAL DATA) */}
-      {/* ========================================== */}
+      {/* Advanced Analytics - Charts & Trends */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         
         {/* Daily Trends Chart */}
@@ -116,7 +135,7 @@ export default function AnalyticsPage() {
             <span className="text-[10px] text-gray-400">Last 7 days</span>
           </div>
           <div className="h-40 w-full flex items-end justify-between gap-2">
-            {analyticsData?.daily?.map((val: number, i: number) => (
+            {analyticsData.daily.map((val: number, i: number) => (
               <div key={i} className="flex flex-col items-center gap-1 flex-1">
                 <div 
                   className="w-full bg-indigo-500 rounded-t-md hover:bg-indigo-400 transition-colors"
@@ -135,7 +154,7 @@ export default function AnalyticsPage() {
             <span className="text-[10px] text-gray-400">Last 7 weeks</span>
           </div>
           <div className="h-40 w-full flex items-end justify-between gap-2">
-            {analyticsData?.weekly?.map((val: number, i: number) => (
+            {analyticsData.weekly.map((val: number, i: number) => (
               <div key={i} className="flex flex-col items-center gap-1 flex-1">
                 <div 
                   className="w-full bg-purple-500 rounded-t-md hover:bg-purple-400 transition-colors"
@@ -148,9 +167,7 @@ export default function AnalyticsPage() {
         </div>
       </div>
 
-      {/* ========================================== */}
-      {/* SENTIMENT ANALYSIS */}
-      {/* ========================================== */}
+      {/* Sentiment Analysis */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         
         {/* Sentiment Overview */}
@@ -159,7 +176,7 @@ export default function AnalyticsPage() {
           <div className="flex flex-col items-center justify-center py-4">
             <div className="w-28 h-28 rounded-full border-8 border-green-500 flex items-center justify-center bg-[#181D27] relative">
               <div className="text-center">
-                <div className="text-xl font-bold text-white">{analyticsData?.stats?.positive || 0}%</div>
+                <div className="text-xl font-bold text-white">{analyticsData.stats.positive || 0}%</div>
                 <div className="text-[10px] text-gray-500">Positive</div>
               </div>
             </div>
@@ -187,28 +204,28 @@ export default function AnalyticsPage() {
             <div>
               <div className="flex justify-between text-xs mb-1">
                 <span className="text-gray-300">Positive</span>
-                <span className="text-gray-400">{analyticsData?.stats?.positive || 0}%</span>
+                <span className="text-gray-400">{analyticsData.stats.positive || 0}%</span>
               </div>
               <div className="w-full bg-[#1F2430] h-2 rounded-full overflow-hidden">
-                <div className="h-full bg-green-500 rounded-full" style={{ width: `${analyticsData?.stats?.positive || 0}%` }}></div>
+                <div className="h-full bg-green-500 rounded-full" style={{ width: `${analyticsData.stats.positive || 0}%` }}></div>
               </div>
             </div>
             <div>
               <div className="flex justify-between text-xs mb-1">
                 <span className="text-gray-300">Neutral</span>
-                <span className="text-gray-400">{100 - (analyticsData?.stats?.positive || 0) - (analyticsData?.stats?.negative || 0)}%</span>
+                <span className="text-gray-400">{100 - (analyticsData.stats.positive || 0) - (analyticsData.stats.negative || 0)}%</span>
               </div>
               <div className="w-full bg-[#1F2430] h-2 rounded-full overflow-hidden">
-                <div className="h-full bg-yellow-500 rounded-full" style={{ width: `${100 - (analyticsData?.stats?.positive || 0) - (analyticsData?.stats?.negative || 0)}%` }}></div>
+                <div className="h-full bg-yellow-500 rounded-full" style={{ width: `${100 - (analyticsData.stats.positive || 0) - (analyticsData.stats.negative || 0)}%` }}></div>
               </div>
             </div>
             <div>
               <div className="flex justify-between text-xs mb-1">
                 <span className="text-gray-300">Negative</span>
-                <span className="text-gray-400">{analyticsData?.stats?.negative || 0}%</span>
+                <span className="text-gray-400">{analyticsData.stats.negative || 0}%</span>
               </div>
               <div className="w-full bg-[#1F2430] h-2 rounded-full overflow-hidden">
-                <div className="h-full bg-red-500 rounded-full" style={{ width: `${analyticsData?.stats?.negative || 0}%` }}></div>
+                <div className="h-full bg-red-500 rounded-full" style={{ width: `${analyticsData.stats.negative || 0}%` }}></div>
               </div>
             </div>
           </div>
