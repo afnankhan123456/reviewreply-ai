@@ -27,3 +27,25 @@ class MemoryCache {
 }
 
 export const cache = new MemoryCache();
+
+// ✅ New function added - getCachedOrFetch
+export async function getCachedOrFetch<T>(
+  key: string,
+  fetchFn: () => Promise<T>,
+  ttlSeconds: number = 60
+): Promise<T> {
+  // Check cache first
+  const cached = cache.get<T>(key);
+  if (cached) {
+    console.log(`✅ Returning cached data for key: ${key}`);
+    return cached;
+  }
+
+  // Fetch fresh data
+  const data = await fetchFn();
+  
+  // Save to cache
+  cache.set(key, data, ttlSeconds);
+  
+  return data;
+}
