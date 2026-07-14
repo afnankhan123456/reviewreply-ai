@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { 
   FileText, Download, Calendar, Clock, 
-  Loader2, ChevronDown, Database
+  Loader2, ChevronDown, Database, TrendingUp, Star, BarChart3
 } from 'lucide-react';
 
 export default function ReportsPage() {
@@ -24,8 +24,7 @@ export default function ReportsPage() {
       const data = await res.json();
       
       if (format === 'csv') {
-        // CSV download logic
-        const csvContent = data.data; // Assuming API returns CSV string
+        const csvContent = data.data;
         const blob = new Blob([csvContent], { type: 'text/csv' });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -34,7 +33,6 @@ export default function ReportsPage() {
         a.click();
         window.URL.revokeObjectURL(url);
       } else {
-        // PDF download logic (JSON as PDF for now)
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -116,7 +114,7 @@ export default function ReportsPage() {
         </div>
       </div>
 
-      {/* Reports Cards - 2x2 Grid (3 cards only) */}
+      {/* Reports Cards - 2x2 Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         {/* Monthly Report Card */}
@@ -259,15 +257,42 @@ export default function ReportsPage() {
           </div>
         </div>
 
-        {/* 6 Months Data History Card */}
+        {/* 6 Months Data History Card (with Quick Stats) */}
         <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="p-2 bg-amber-500/20 rounded-lg">
-              <Database className="w-6 h-6 text-amber-400" />
+          <div className="flex justify-between items-start">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-amber-500/20 rounded-lg">
+                <Database className="w-6 h-6 text-amber-400" />
+              </div>
+              <div>
+                <h3 className="text-white font-medium text-lg">6 Months Data History</h3>
+                <p className="text-sm text-gray-400">Complete historical data for last 6 months</p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-white font-medium text-lg">6 Months Data History</h3>
-              <p className="text-sm text-gray-400">Complete historical data for last 6 months</p>
+            
+            {/* Quick Stats - Right Side */}
+            <div className="flex gap-4">
+              <div className="text-center">
+                <div className="flex items-center gap-1 text-amber-400 text-xs font-medium">
+                  <TrendingUp className="w-3 h-3" />
+                  Total
+                </div>
+                <p className="text-white font-bold text-lg">1,247</p>
+              </div>
+              <div className="text-center">
+                <div className="flex items-center gap-1 text-amber-400 text-xs font-medium">
+                  <Star className="w-3 h-3" />
+                  Avg Rating
+                </div>
+                <p className="text-white font-bold text-lg">4.2 ★</p>
+              </div>
+              <div className="text-center">
+                <div className="flex items-center gap-1 text-amber-400 text-xs font-medium">
+                  <BarChart3 className="w-3 h-3" />
+                  Busy Month
+                </div>
+                <p className="text-white font-bold text-lg">Jun</p>
+              </div>
             </div>
           </div>
           
