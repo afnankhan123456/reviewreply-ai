@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
-import { cache } from '@/app/lib/cache';
+import { prisma } from '@/lib/prisma';
+import { getCachedOrFetch } from '@/app/lib/cache'; // ✅ New import
 
 export async function GET() {
   // ✅ 1. Check cache first
-  const cached = cache.get('templates');
+  const cached = getCachedOrFetch('templates');
   if (cached) {
     console.log('✅ Returning cached templates');
     return NextResponse.json(cached);
@@ -384,8 +385,10 @@ export async function GET() {
   // ✅ 3. Prepare response
   const responseData = { success: true, templates };
 
-  // ✅ 4. Save to cache (60 seconds)
-  cache.set('templates', responseData, 60);
+  // ✅ 4. Save to cache using getCachedOrFetch (60 seconds TTL)
+  const data = await getCachedOrFetch('templates', async () => {
+    return responseData;
+  }, 60);
 
-  return NextResponse.json(responseData);
+  return NextResponse.json(data);
 }
