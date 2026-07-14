@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { cache } from '@/lib/cache'; // ✅ Cache import
+import { cache } from '@/app/lib/cache';
 
 export async function GET() {
   // ✅ 1. Check cache first
