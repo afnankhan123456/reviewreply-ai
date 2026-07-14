@@ -16,20 +16,22 @@ export default function AnalyticsPage() {
 
   const fetchAnalyticsData = async () => {
     try {
-      // Real data fetch from stats API (reuse existing)
+      // 1. Real Stats API
       const statsRes = await fetch('/api/standard/ai-reply-center/stats');
       const statsData = await statsRes.json();
 
-      // Mock trends data for advanced analytics
-      const mockTrends = {
-        daily: [12, 18, 15, 22, 14, 20, 25],
-        weekly: [85, 92, 78, 105, 88, 95, 110],
-        monthly: [320, 350, 280, 400, 360, 380, 420]
-      };
+      // 2. Real Daily Trends (Last 7 days)
+      const dailyRes = await fetch('/api/standard/analytics/trends/daily');
+      const dailyData = await dailyRes.json();
+
+      // 3. Real Weekly Trends (Last 7 weeks)
+      const weeklyRes = await fetch('/api/standard/analytics/trends/weekly');
+      const weeklyData = await weeklyRes.json();
 
       setAnalyticsData({
         stats: statsData.data,
-        trends: mockTrends
+        daily: dailyData.data || [],
+        weekly: weeklyData.data || [],
       });
       setIsLoading(false);
     } catch (error) {
@@ -41,6 +43,10 @@ export default function AnalyticsPage() {
   if (isLoading) {
     return <div className="flex-1 flex items-center justify-center text-gray-400">Loading analytics data...</div>;
   }
+
+  // Max value for chart scaling
+  const maxDaily = Math.max(...(analyticsData?.daily || [0]), 1);
+  const maxWeekly = Math.max(...(analyticsData?.weekly || [0]), 1);
 
   return (
     <div className="flex-1 flex flex-col p-6 overflow-y-auto bg-[#0B0E14] text-gray-200">
@@ -62,13 +68,13 @@ export default function AnalyticsPage() {
       {/* ========================================== */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         
-        {/* Card 1: Total Reviews */}
+        {/* Card 1: Total Reviews (FIXED: stats.totalReviews) */}
         <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-4 flex flex-col justify-between">
           <div className="flex items-center gap-2 text-gray-400 text-xs font-medium mb-2">
             <BarChart3 size={14} /> Total Reviews
           </div>
           <div className="text-4xl font-bold text-white">
-            {analyticsData?.stats?.used + analyticsData?.stats?.limit || 0}
+            {analyticsData?.stats?.totalReviews || 0}
           </div>
           <div className="text-[10px] text-green-400 flex items-center gap-1">
             <TrendingUp size={12} /> +12% this month
@@ -99,7 +105,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* ========================================== */}
-      {/* ADVANCED ANALYTICS - Charts & Trends */}
+      {/* ADVANCED ANALYTICS - Charts & Trends (REAL DATA) */}
       {/* ========================================== */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         
@@ -110,11 +116,11 @@ export default function AnalyticsPage() {
             <span className="text-[10px] text-gray-400">Last 7 days</span>
           </div>
           <div className="h-40 w-full flex items-end justify-between gap-2">
-            {analyticsData?.trends?.daily.map((val: number, i: number) => (
+            {analyticsData?.daily?.map((val: number, i: number) => (
               <div key={i} className="flex flex-col items-center gap-1 flex-1">
                 <div 
                   className="w-full bg-indigo-500 rounded-t-md hover:bg-indigo-400 transition-colors"
-                  style={{ height: `${(val / 25) * 100}%` }}
+                  style={{ height: `${(val / maxDaily) * 100}%` }}
                 />
                 <span className="text-[9px] text-gray-500">Day {i + 1}</span>
               </div>
@@ -129,11 +135,11 @@ export default function AnalyticsPage() {
             <span className="text-[10px] text-gray-400">Last 7 weeks</span>
           </div>
           <div className="h-40 w-full flex items-end justify-between gap-2">
-            {analyticsData?.trends?.weekly.map((val: number, i: number) => (
+            {analyticsData?.weekly?.map((val: number, i: number) => (
               <div key={i} className="flex flex-col items-center gap-1 flex-1">
                 <div 
                   className="w-full bg-purple-500 rounded-t-md hover:bg-purple-400 transition-colors"
-                  style={{ height: `${(val / 110) * 100}%` }}
+                  style={{ height: `${(val / maxWeekly) * 100}%` }}
                 />
                 <span className="text-[9px] text-gray-500">Week {i + 1}</span>
               </div>
