@@ -5,80 +5,77 @@ import { getCachedOrFetch } from '@/app/lib/cache';
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const format = searchParams.get('format') || 'pdf'; // pdf or excel
+    const format = searchParams.get('format') || 'pdf';
 
     const responseData = await getCachedOrFetch(
       'weekly-report',
       async () => {
         const now = new Date();
-        // ✅ START: Monday of current week
         const startOfWeek = new Date(now);
         startOfWeek.setDate(now.getDate() - now.getDay());
         startOfWeek.setHours(0, 0, 0, 0);
 
-        // ✅ END: Today (current date)
         const endOfWeek = new Date(now);
         endOfWeek.setHours(23, 59, 59, 999);
 
-        // New reviews this week (Monday to Today)
+        // New reviews (Monday to today)
         const newReviews = await prisma.review.count({
           where: {
             createdAt: {
               gte: startOfWeek,
-              lte: endOfWeek,  // ✅ Today tak
+              lte: endOfWeek,
             },
           },
         });
 
-        // Total reviews (Monday to Today)
+        // Total reviews (Monday to today)
         const totalReviews = await prisma.review.count({
           where: {
             createdAt: {
               gte: startOfWeek,
-              lte: endOfWeek,  // ✅ Today tak
+              lte: endOfWeek,
             },
           },
         });
 
-        // Replied reviews (Monday to Today)
+        // Replied reviews (Monday to today)
         const repliedReviews = await prisma.review.count({
-          where: { 
+          where: {
             replied: true,
             createdAt: {
               gte: startOfWeek,
-              lte: endOfWeek,  // ✅ Today tak
+              lte: endOfWeek,
             },
           },
         });
 
-        // Response rate
-        const responseRate = totalReviews > 0 
-          ? Math.round((repliedReviews / totalReviews) * 100) 
+        const responseRate = totalReviews > 0
+          ? Math.round((repliedReviews / totalReviews) * 100)
           : 0;
 
-        // Positive reviews (rating >= 4) - Monday to Today
+        // Positive reviews (rating >= 4)
         const positiveReviews = await prisma.review.count({
           where: {
             rating: { gte: 4 },
             createdAt: {
               gte: startOfWeek,
-              lte: endOfWeek,  // ✅ Today tak
+              lte: endOfWeek,
             },
           },
         });
 
-        // Negative reviews (rating <= 2) - Monday to Today
+        // Negative reviews (rating <= 2)
         const negativeReviews = await prisma.review.count({
           where: {
             rating: { lte: 2 },
             createdAt: {
               gte: startOfWeek,
-              lte: endOfWeek,  // ✅ Today tak
+              lte: endOfWeek,
             },
           },
         });
 
-        // Daily trend (last 7 days, but data only up to today)
+        // Daily trend (7 days, but only up to today)
         const dailyData = [];
         for (let i = 6; i >= 0; i--) {
           const date = new Date(now);
@@ -99,12 +96,12 @@ export async function GET(request: Request) {
           dailyData.push(count);
         }
 
-        // Fetch all reviews for export - Monday to Today
+        // All reviews (for export)
         const reviews = await prisma.review.findMany({
           where: {
             createdAt: {
               gte: startOfWeek,
-              lte: endOfWeek,  // ✅ Today tak
+              lte: endOfWeek,
             },
           },
           orderBy: { createdAt: 'desc' },
@@ -129,11 +126,11 @@ export async function GET(request: Request) {
           format,
         };
       },
-      3600 // 1 hour cache
+      3600
     );
 
-    // If Excel format requested
-    if (format === 'excel') {
+    // ✅ CSV format
+    if (format === 'csv') {
       const { data } = responseData;
       const rows = data.reviews.map((review: any) => ({
         'Review ID': review.id,
@@ -144,15 +141,22 @@ export async function GET(request: Request) {
         'Created At': new Date(review.createdAt).toLocaleDateString(),
       }));
 
-      return NextResponse.json({
-        success: true,
-        data: rows,
-        format: 'excel',
-        filename: `weekly-report-week-${data.week.replace(/ /g, '-')}-${data.year}.xlsx`,
+      const headers = Object.keys(rows[0] || {});
+      const csvRows = [
+        headers.join(','),
+        ...rows.map(row => headers.map(h => `"${row[h]}"`).join(','))
+      ];
+      const csvString = csvRows.join('\n');
+
+      return new NextResponse(csvString, {
+        headers: {
+          'Content-Type': 'text/csv',
+          'Content-Disposition': `attachment; filename="weekly-report-week-${data.week.replace(/ /g, '-')}-${data.year}.csv"`,
+        },
       });
     }
 
-    // Default: PDF format
+    // ✅ PDF format (JSON response)
     return NextResponse.json(responseData);
   } catch (error) {
     console.error('Weekly Report Error:', error);
