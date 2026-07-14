@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { 
   FileText, Download, Calendar, Clock, 
-  Loader2, ChevronDown, Database, TrendingUp, Star, BarChart3
+  Loader2, ChevronDown, Database, TrendingUp, TrendingDown, Star, BarChart3
 } from 'lucide-react';
 
 export default function ReportsPage() {
@@ -257,7 +257,7 @@ export default function ReportsPage() {
           </div>
         </div>
 
-        {/* 6 Months Data History Card (with Quick Stats) */}
+        {/* 6 Months Data History Card (with Best Month, Worst Month, Trend) */}
         <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-6">
           <div className="flex justify-between items-start">
             <div className="flex items-center gap-3 mb-4">
@@ -270,28 +270,39 @@ export default function ReportsPage() {
               </div>
             </div>
             
-            {/* Quick Stats - Right Side */}
-            <div className="flex gap-4">
+            {/* Right Side Stats - Best Month, Worst Month, Trend */}
+            <div className="flex gap-6">
+              {/* Best Month */}
               <div className="text-center">
                 <div className="flex items-center gap-1 text-amber-400 text-xs font-medium">
                   <TrendingUp className="w-3 h-3" />
-                  Total
+                  Best Month
                 </div>
-                <p className="text-white font-bold text-lg">1,247</p>
+                <p className="text-white font-bold text-lg">June</p>
+                <p className="text-xs text-gray-400">245 reviews</p>
               </div>
+
+              {/* Worst Month */}
               <div className="text-center">
                 <div className="flex items-center gap-1 text-amber-400 text-xs font-medium">
-                  <Star className="w-3 h-3" />
-                  Avg Rating
+                  <TrendingDown className="w-3 h-3" />
+                  Worst Month
                 </div>
-                <p className="text-white font-bold text-lg">4.2 ★</p>
+                <p className="text-white font-bold text-lg">Feb</p>
+                <p className="text-xs text-gray-400">89 reviews</p>
               </div>
+
+              {/* Trend */}
               <div className="text-center">
                 <div className="flex items-center gap-1 text-amber-400 text-xs font-medium">
                   <BarChart3 className="w-3 h-3" />
-                  Busy Month
+                  Trend
                 </div>
-                <p className="text-white font-bold text-lg">Jun</p>
+                <div className="flex items-center justify-center gap-1">
+                  <TrendingUp className="w-4 h-4 text-green-400" />
+                  <p className="text-white font-bold text-lg text-green-400">+12%</p>
+                </div>
+                <p className="text-xs text-gray-400">Growth</p>
               </div>
             </div>
           </div>
