@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getCachedOrFetch } from '@/app/lib/cache';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 export async function GET(request: Request) {
   try {
@@ -98,7 +100,7 @@ export async function GET(request: Request) {
       3600
     );
 
-    // ✅ CSV format (data download)
+    // ✅ CSV format
     if (format === 'csv') {
       const { data } = responseData;
       const rows = data.reviews.map((review: any) => ({
@@ -125,54 +127,44 @@ export async function GET(request: Request) {
       });
     }
 
-    // ✅ PDF format (using pdfmake - same as your file)
+    // ✅ PDF format (using jspdf)
     if (format === 'pdf') {
       const { data } = responseData;
+      const doc = new jsPDF();
       
-      // Dynamic import of pdfmake (to avoid build issues)
-      const pdfMake = (await import('pdfmake/build/pdfmake')).default;
-      const pdfFonts = (await import('pdfmake/build/vfs_fonts'));
-      pdfMake.vfs = pdfFonts.default?.pdfMake?.vfs || pdfFonts.default;
+      // Title
+      doc.setFontSize(20);
+      doc.text(`Monthly Report - ${data.month}`, 105, 20, { align: 'center' });
+      
+      // Stats
+      doc.setFontSize(12);
+      doc.text(`Total Reviews: ${data.totalReviews}`, 20, 40);
+      doc.text(`Avg Rating: ${data.avgRating.toFixed(1)} ★`, 20, 50);
+      doc.text(`Response Rate: ${data.responseRate}%`, 20, 60);
+      doc.text(`Positive: ${data.positiveReviews}`, 20, 70);
+      doc.text(`Negative: ${data.negativeReviews}`, 20, 80);
+      
+      // Reviews Table
+      const tableData = data.reviews.map((review: any) => [
+        review.id.slice(0, 8) + '...',
+        review.rating.toString(),
+        review.comment || '',
+        review.replied ? 'Yes' : 'No',
+        new Date(review.createdAt).toLocaleDateString(),
+      ]);
 
-      // Table rows for PDF
-      const tableRows = [
-        ['Review ID', 'Rating', 'Comment', 'Replied', 'Date'],
-        ...data.reviews.map((review: any) => [
-          review.id,
-          review.rating.toString(),
-          review.comment || '',
-          review.replied ? 'Yes' : 'No',
-          new Date(review.createdAt).toLocaleDateString(),
-        ]),
-      ];
-
-      const docDefinition: any = {
-        content: [
-          { text: `Monthly Report - ${data.month}`, style: 'header' },
-          { text: `Total Reviews: ${data.totalReviews}   Avg Rating: ${data.avgRating.toFixed(1)} ★   Response Rate: ${data.responseRate}%`, margin: [0, 8] },
-          { text: `Positive: ${data.positiveReviews}   Negative: ${data.negativeReviews}`, margin: [0, 4] },
-          { text: ' ', margin: [0, 8] },
-          {
-            table: {
-              headerRows: 1,
-              widths: ['auto', 'auto', '*', 'auto', 'auto'],
-              body: tableRows,
-            },
-          },
-        ],
-        styles: {
-          header: { fontSize: 18, bold: true, margin: [0, 0, 0, 8] },
-        },
-      };
-
-      const pdfDoc = pdfMake.createPdf(docDefinition);
-      const pdfBuffer: Buffer = await new Promise((resolve) => {
-        pdfDoc.getBuffer((buffer: Buffer) => resolve(buffer));
+      autoTable(doc, {
+        head: [['ID', 'Rating', 'Comment', 'Replied', 'Date']],
+        body: tableData,
+        startY: 90,
+        styles: { fontSize: 8 },
+        headStyles: { fillColor: [79, 70, 229] },
       });
 
-      const pdfArray = new Uint8Array(pdfBuffer);
+      // PDF Buffer
+      const pdfBuffer = doc.output('arraybuffer');
 
-      return new NextResponse(pdfArray, {
+      return new NextResponse(pdfBuffer, {
         headers: {
           'Content-Type': 'application/pdf',
           'Content-Disposition': `attachment; filename="monthly-report-${data.month.replace(/ /g, '-')}.pdf"`,
