@@ -23,32 +23,31 @@ export default function AIReplyCenterPage() {
   const [filterCategory, setFilterCategory] = useState('All');
 
   useEffect(() => {
-    fetchStats();
-    fetchTemplates();
+    fetchDashboardData();
   }, []);
 
-  const fetchStats = async () => {
+  const fetchDashboardData = async () => {
     try {
-      const res = await fetch('/api/standard/ai-reply-center/stats');
-      const data = await res.json();
-      if (data.success) {
-        setStats(data.data);
+      // ✅ PARALLEL FETCHING - Fast load
+      const [statsRes, templatesRes] = await Promise.all([
+        fetch('/api/standard/ai-reply-center/stats'),
+        fetch('/api/standard/ai-reply-center/templates')
+      ]);
+
+      const statsData = await statsRes.json();
+      if (statsData.success) {
+        setStats(statsData.data);
       }
+
+      const templatesData = await templatesRes.json();
+      if (templatesData.success) {
+        setTemplates(templatesData.templates);
+      }
+
       setIsLoading(false);
     } catch (error) {
-      console.error('Error fetching stats:', error);
-    }
-  };
-
-  const fetchTemplates = async () => {
-    try {
-      const res = await fetch('/api/standard/ai-reply-center/templates');
-      const data = await res.json();
-      if (data.success) {
-        setTemplates(data.templates);
-      }
-    } catch (error) {
-      console.error('Error fetching templates:', error);
+      console.error('Error fetching data:', error);
+      setIsLoading(false);
     }
   };
 
