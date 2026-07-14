@@ -2,8 +2,11 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getCachedOrFetch } from '@/app/lib/cache';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const format = searchParams.get('format') || 'pdf'; // pdf or excel
+
     const responseData = await getCachedOrFetch(
       'weekly-report',
       async () => {
@@ -82,10 +85,23 @@ export async function GET() {
           dailyData.push(count);
         }
 
+        // Fetch all reviews for export
+        const reviews = await prisma.review.findMany({
+          where: {
+            createdAt: {
+              gte: startOfWeek,
+              lte: endOfWeek,
+            },
+          },
+          orderBy: { createdAt: 'desc' },
+        });
+
+        const weekNumber = Math.ceil((now.getDate() + new Date(now.getFullYear(), now.getMonth(), 1).getDay()) / 7);
+
         return {
           success: true,
           data: {
-            week: `Week ${Math.ceil((now.getDate() + new Date(now.getFullYear(), now.getMonth(), 1).getDay()) / 7)}`,
+            week: `Week ${weekNumber}`,
             year: now.getFullYear(),
             newReviews,
             totalReviews,
@@ -93,13 +109,36 @@ export async function GET() {
             positiveReviews,
             negativeReviews,
             dailyTrend: dailyData,
+            reviews,
             generatedAt: now.toISOString(),
           },
+          format,
         };
       },
       3600 // 1 hour cache
     );
 
+    // If Excel format requested
+    if (format === 'excel') {
+      const { data } = responseData;
+      const rows = data.reviews.map((review: any) => ({
+        'Review ID': review.id,
+        'Rating': review.rating,
+        'Comment': review.comment || '',
+        'Replied': review.replied ? 'Yes' : 'No',
+        'AI Replied': review.aiReplied ? 'Yes' : 'No',
+        'Created At': new Date(review.createdAt).toLocaleDateString(),
+      }));
+
+      return NextResponse.json({
+        success: true,
+        data: rows,
+        format: 'excel',
+        filename: `weekly-report-week-${data.week.replace(/ /g, '-')}-${data.year}.xlsx`,
+      });
+    }
+
+    // Default: PDF format
     return NextResponse.json(responseData);
   } catch (error) {
     console.error('Weekly Report Error:', error);
