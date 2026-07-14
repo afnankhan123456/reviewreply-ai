@@ -100,7 +100,7 @@ export async function GET(request: Request) {
               lte: endOfWeek,
             },
           },
-          take: 50,  
+          take: 500,  
           orderBy: { createdAt: 'desc' },
         });
 
