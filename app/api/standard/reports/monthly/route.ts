@@ -11,25 +11,28 @@ export async function GET(request: Request) {
       'monthly-report',
       async () => {
         const now = new Date();
+        // ✅ START: 1st of current month
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        const startOfNextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+        // ✅ END: Today (current date)
+        const endOfMonth = new Date(now);
+        endOfMonth.setHours(23, 59, 59, 999);
 
-        // Total reviews this month
+        // Total reviews this month (start to today)
         const totalReviews = await prisma.review.count({
           where: {
             createdAt: {
               gte: startOfMonth,
-              lt: startOfNextMonth,
+              lte: endOfMonth,  // ✅ Today tak
             },
           },
         });
 
-        // Average rating this month
+        // Average rating this month (start to today)
         const avgRating = await prisma.review.aggregate({
           where: {
             createdAt: {
               gte: startOfMonth,
-              lt: startOfNextMonth,
+              lte: endOfMonth,  // ✅ Today tak
             },
           },
           _avg: {
@@ -37,35 +40,35 @@ export async function GET(request: Request) {
           },
         });
 
-        // Positive reviews (rating >= 4)
+        // Positive reviews (rating >= 4) - start to today
         const positiveReviews = await prisma.review.count({
           where: {
             rating: { gte: 4 },
             createdAt: {
               gte: startOfMonth,
-              lt: startOfNextMonth,
+              lte: endOfMonth,  // ✅ Today tak
             },
           },
         });
 
-        // Negative reviews (rating <= 2)
+        // Negative reviews (rating <= 2) - start to today
         const negativeReviews = await prisma.review.count({
           where: {
             rating: { lte: 2 },
             createdAt: {
               gte: startOfMonth,
-              lt: startOfNextMonth,
+              lte: endOfMonth,  // ✅ Today tak
             },
           },
         });
 
-        // Response rate
+        // Response rate - start to today
         const repliedReviews = await prisma.review.count({
           where: {
             replied: true,
             createdAt: {
               gte: startOfMonth,
-              lt: startOfNextMonth,
+              lte: endOfMonth,  // ✅ Today tak
             },
           },
         });
@@ -74,12 +77,12 @@ export async function GET(request: Request) {
           ? Math.round((repliedReviews / totalReviews) * 100) 
           : 0;
 
-        // Fetch all reviews for export
+        // Fetch all reviews for export - start to today
         const reviews = await prisma.review.findMany({
           where: {
             createdAt: {
               gte: startOfMonth,
-              lt: startOfNextMonth,
+              lte: endOfMonth,  // ✅ Today tak
             },
           },
           orderBy: { createdAt: 'desc' },
