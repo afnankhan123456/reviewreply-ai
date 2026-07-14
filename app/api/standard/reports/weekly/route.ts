@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getCachedOrFetch } from '@/app/lib/cache';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 
 export async function GET(request: Request) {
   try {
@@ -151,60 +149,73 @@ export async function GET(request: Request) {
       });
     }
 
-    // ✅ PDF format (actual PDF file download)
+    // ✅ PDF format (using pdfmake - same as your file)
     if (format === 'pdf') {
       const { data } = responseData;
-      const doc = new jsPDF();
       
-      // Title
-      doc.setFontSize(20);
-      doc.text(`Weekly Report - ${data.week} ${data.year}`, 105, 20, { align: 'center' });
-      
-      // Stats
-      doc.setFontSize(12);
-      doc.text(`New Reviews: ${data.newReviews}`, 20, 40);
-      doc.text(`Total Reviews: ${data.totalReviews}`, 20, 50);
-      doc.text(`Response Rate: ${data.responseRate}%`, 20, 60);
-      doc.text(`Positive: ${data.positiveReviews}`, 20, 70);
-      doc.text(`Negative: ${data.negativeReviews}`, 20, 80);
-      
-      // Daily Trend
-      doc.text('Daily Trend:', 20, 95);
-      const trendData = data.dailyTrend.map((count: number, index: number) => {
-        const date = new Date();
-        date.setDate(date.getDate() - (6 - index));
-        return [date.toLocaleDateString(), count];
+      // Dynamic import of pdfmake (to avoid build issues)
+      const pdfMake = (await import('pdfmake/build/pdfmake')).default;
+      const pdfFonts = (await import('pdfmake/build/vfs_fonts'));
+      pdfMake.vfs = pdfFonts.default?.pdfMake?.vfs || pdfFonts.default;
+
+      // Table rows for PDF
+      const tableRows = [
+        ['Review ID', 'Rating', 'Comment', 'Replied', 'Date'],
+        ...data.reviews.map((review: any) => [
+          review.id,
+          review.rating.toString(),
+          review.comment || '',
+          review.replied ? 'Yes' : 'No',
+          new Date(review.createdAt).toLocaleDateString(),
+        ]),
+      ];
+
+      // Daily trend data (optional)
+      const trendRows = [
+        ['Date', 'Reviews'],
+        ...data.dailyTrend.map((count: number, index: number) => {
+          const date = new Date();
+          date.setDate(date.getDate() - (6 - index));
+          return [date.toLocaleDateString(), count];
+        }),
+      ];
+
+      const docDefinition: any = {
+        content: [
+          { text: `Weekly Report - ${data.week} ${data.year}`, style: 'header' },
+          { text: `New Reviews: ${data.newReviews}   Total Reviews: ${data.totalReviews}   Response Rate: ${data.responseRate}%`, margin: [0, 8] },
+          { text: `Positive: ${data.positiveReviews}   Negative: ${data.negativeReviews}`, margin: [0, 4] },
+          { text: 'Daily Trend:', margin: [0, 8] },
+          {
+            table: {
+              headerRows: 1,
+              widths: ['auto', 'auto'],
+              body: trendRows,
+            },
+            margin: [0, 0, 0, 8],
+          },
+          { text: 'Reviews List:', margin: [0, 8] },
+          {
+            table: {
+              headerRows: 1,
+              widths: ['auto', 'auto', '*', 'auto', 'auto'],
+              body: tableRows,
+            },
+          },
+        ],
+        styles: {
+          header: { fontSize: 18, bold: true, margin: [0, 0, 0, 8] },
+        },
+      };
+
+      const pdfDoc = pdfMake.createPdf(docDefinition);
+      const pdfBuffer: Buffer = await new Promise((resolve) => {
+        pdfDoc.getBuffer((buffer: Buffer) => resolve(buffer));
       });
 
-      autoTable(doc, {
-        head: [['Date', 'Reviews']],
-        body: trendData,
-        startY: 100,
-        styles: { fontSize: 8 },
-        headStyles: { fillColor: [168, 85, 247] },
-      });
+      const pdfArray = new Uint8Array(pdfBuffer);
 
-      // Reviews Table
-      const tableData = data.reviews.map((review: any) => [
-        review.id,
-        review.rating,
-        review.comment || '',
-        review.replied ? 'Yes' : 'No',
-        new Date(review.createdAt).toLocaleDateString(),
-      ]);
-
-      autoTable(doc, {
-        head: [['ID', 'Rating', 'Comment', 'Replied', 'Date']],
-        body: tableData,
-        startY: (doc as any).lastAutoTable.finalY + 10,
-        styles: { fontSize: 8 },
-        headStyles: { fillColor: [168, 85, 247] },
-      });
-
-      // PDF Buffer
-      const pdfBuffer = doc.output('arraybuffer');
-
-      return new NextResponse(pdfBuffer, {
+      return new NextResponse(pdfArray, {
         headers: {
           'Content-Type': 'application/pdf',
           'Content-Disposition': `attachment; filename="weekly-report-${data.week.replace(/ /g, '-')}-${data.year}.pdf"`,
