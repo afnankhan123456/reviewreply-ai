@@ -2,8 +2,11 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getCachedOrFetch } from '@/app/lib/cache';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
+    const { searchParams } = new URL(request.url);
+    const format = searchParams.get('format') || 'pdf'; // pdf or excel
+
     const responseData = await getCachedOrFetch(
       'monthly-report',
       async () => {
@@ -71,22 +74,59 @@ export async function GET() {
           ? Math.round((repliedReviews / totalReviews) * 100) 
           : 0;
 
+        // Fetch all reviews for export
+        const reviews = await prisma.review.findMany({
+          where: {
+            createdAt: {
+              gte: startOfMonth,
+              lt: startOfNextMonth,
+            },
+          },
+          orderBy: { createdAt: 'desc' },
+        });
+
+        const monthName = now.toLocaleString('default', { month: 'long', year: 'numeric' });
+
         return {
           success: true,
           data: {
-            month: now.toLocaleString('default', { month: 'long', year: 'numeric' }),
+            month: monthName,
             totalReviews,
             avgRating: avgRating._avg.rating || 0,
             positiveReviews,
             negativeReviews,
             responseRate,
+            reviews,
             generatedAt: now.toISOString(),
           },
+          format,
         };
       },
       3600 // 1 hour cache
     );
 
+    // If Excel format requested
+    if (format === 'excel') {
+      const { data } = responseData;
+      const rows = data.reviews.map((review: any) => ({
+        'Review ID': review.id,
+        'Rating': review.rating,
+        'Comment': review.comment || '',
+        'Replied': review.replied ? 'Yes' : 'No',
+        'AI Replied': review.aiReplied ? 'Yes' : 'No',
+        'Created At': new Date(review.createdAt).toLocaleDateString(),
+      }));
+
+      // Return JSON for client-side Excel generation
+      return NextResponse.json({
+        success: true,
+        data: rows,
+        format: 'excel',
+        filename: `monthly-report-${data.month.replace(/ /g, '-')}.xlsx`,
+      });
+    }
+
+    // Default: PDF format (returns JSON for client-side PDF generation)
     return NextResponse.json(responseData);
   } catch (error) {
     console.error('Monthly Report Error:', error);
