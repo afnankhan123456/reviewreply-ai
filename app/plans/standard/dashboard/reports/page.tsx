@@ -3,12 +3,14 @@
 import React, { useState } from 'react';
 import { 
   FileText, Download, Calendar, Clock, CheckCircle, 
-  Loader2, AlertCircle
+  Loader2, AlertCircle, BarChart3, Database
 } from 'lucide-react';
 
 export default function ReportsPage() {
   const [isGeneratingMonthly, setIsGeneratingMonthly] = useState(false);
   const [isGeneratingWeekly, setIsGeneratingWeekly] = useState(false);
+  const [isGeneratingExport, setIsGeneratingExport] = useState(false);
+  const [isGeneratingHistory, setIsGeneratingHistory] = useState(false);
 
   const handleDownloadMonthly = async () => {
     setIsGeneratingMonthly(true);
@@ -28,6 +30,24 @@ export default function ReportsPage() {
     }, 1500);
   };
 
+  const handleDownloadExport = async () => {
+    setIsGeneratingExport(true);
+    // Simulate report generation
+    setTimeout(() => {
+      setIsGeneratingExport(false);
+      alert('CSV/PDF Export downloaded successfully!');
+    }, 1500);
+  };
+
+  const handleDownloadHistory = async () => {
+    setIsGeneratingHistory(true);
+    // Simulate report generation
+    setTimeout(() => {
+      setIsGeneratingHistory(false);
+      alert('6 Months Data History downloaded successfully!');
+    }, 1500);
+  };
+
   return (
     <div className="flex-1 flex flex-col p-6 overflow-y-auto bg-[#0B0E14] text-gray-200">
       
@@ -39,7 +59,7 @@ export default function ReportsPage() {
         </div>
       </div>
 
-      {/* Reports Cards */}
+      {/* Reports Cards - 2x2 Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         {/* Monthly Report Card */}
@@ -129,6 +149,98 @@ export default function ReportsPage() {
               <>
                 <Download className="w-4 h-4" />
                 <span>Download Weekly Report</span>
+              </>
+            )}
+          </button>
+        </div>
+
+        {/* CSV/PDF Export Card */}
+        <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2 bg-emerald-500/20 rounded-lg">
+              <BarChart3 className="w-6 h-6 text-emerald-400" />
+            </div>
+            <div>
+              <h3 className="text-white font-medium text-lg">CSV/PDF Export</h3>
+              <p className="text-sm text-gray-400">Export data in CSV or PDF format</p>
+            </div>
+          </div>
+          
+          <div className="bg-[#181D27] border border-[#2A303C] rounded-lg p-4 mb-4">
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-gray-400">Last exported</span>
+              <span className="text-gray-300">July 10, 2026</span>
+            </div>
+            <div className="flex justify-between items-center text-sm mt-2">
+              <span className="text-gray-400">Total exports</span>
+              <span className="text-gray-300">8</span>
+            </div>
+            <div className="flex justify-between items-center text-sm mt-2">
+              <span className="text-gray-400">Format</span>
+              <span className="text-gray-300">CSV, PDF</span>
+            </div>
+          </div>
+          
+          <button
+            onClick={handleDownloadExport}
+            disabled={isGeneratingExport}
+            className="w-full flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2.5 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isGeneratingExport ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Generating...</span>
+              </>
+            ) : (
+              <>
+                <Download className="w-4 h-4" />
+                <span>Download Export</span>
+              </>
+            )}
+          </button>
+        </div>
+
+        {/* 6 Months Data History Card */}
+        <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2 bg-amber-500/20 rounded-lg">
+              <Database className="w-6 h-6 text-amber-400" />
+            </div>
+            <div>
+              <h3 className="text-white font-medium text-lg">6 Months Data History</h3>
+              <p className="text-sm text-gray-400">Complete historical data for last 6 months</p>
+            </div>
+          </div>
+          
+          <div className="bg-[#181D27] border border-[#2A303C] rounded-lg p-4 mb-4">
+            <div className="flex justify-between items-center text-sm">
+              <span className="text-gray-400">Last updated</span>
+              <span className="text-gray-300">July 13, 2026</span>
+            </div>
+            <div className="flex justify-between items-center text-sm mt-2">
+              <span className="text-gray-400">Total records</span>
+              <span className="text-gray-300">1,247</span>
+            </div>
+            <div className="flex justify-between items-center text-sm mt-2">
+              <span className="text-gray-400">Date range</span>
+              <span className="text-gray-300">Jan - Jun 2026</span>
+            </div>
+          </div>
+          
+          <button
+            onClick={handleDownloadHistory}
+            disabled={isGeneratingHistory}
+            className="w-full flex items-center justify-center gap-2 bg-amber-600 hover:bg-amber-500 text-white font-medium py-2.5 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isGeneratingHistory ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span>Generating...</span>
+              </>
+            ) : (
+              <>
+                <Download className="w-4 h-4" />
+                <span>Download History</span>
               </>
             )}
           </button>
