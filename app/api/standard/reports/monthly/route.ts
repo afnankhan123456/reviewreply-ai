@@ -70,6 +70,7 @@ export async function GET(request: Request) {
           ? Math.round((repliedReviews / totalReviews) * 100)
           : 0;
 
+        // ✅ FIX: Sirf 50 reviews fetch karo (timeout fix)
         const reviews = await prisma.review.findMany({
           where: {
             createdAt: {
@@ -77,6 +78,7 @@ export async function GET(request: Request) {
               lte: endOfMonth,
             },
           },
+          take: 50,  
           orderBy: { createdAt: 'desc' },
         });
 
@@ -127,16 +129,14 @@ export async function GET(request: Request) {
       });
     }
 
-    // ✅ PDF format (using jspdf)
+    // ✅ PDF format
     if (format === 'pdf') {
       const { data } = responseData;
       const doc = new jsPDF();
       
-      // Title
       doc.setFontSize(20);
       doc.text(`Monthly Report - ${data.month}`, 105, 20, { align: 'center' });
       
-      // Stats
       doc.setFontSize(12);
       doc.text(`Total Reviews: ${data.totalReviews}`, 20, 40);
       doc.text(`Avg Rating: ${data.avgRating.toFixed(1)} ★`, 20, 50);
@@ -144,7 +144,6 @@ export async function GET(request: Request) {
       doc.text(`Positive: ${data.positiveReviews}`, 20, 70);
       doc.text(`Negative: ${data.negativeReviews}`, 20, 80);
       
-      // Reviews Table
       const tableData = data.reviews.map((review: any) => [
         review.id.slice(0, 8) + '...',
         review.rating.toString(),
@@ -161,7 +160,6 @@ export async function GET(request: Request) {
         headStyles: { fillColor: [79, 70, 229] },
       });
 
-      // PDF Buffer
       const pdfBuffer = doc.output('arraybuffer');
 
       return new NextResponse(pdfBuffer, {
