@@ -92,6 +92,7 @@ export async function GET(request: Request) {
           dailyData.push(count);
         }
 
+        // ✅ FIX: Sirf 50 reviews fetch karo (timeout fix)
         const reviews = await prisma.review.findMany({
           where: {
             createdAt: {
@@ -99,6 +100,7 @@ export async function GET(request: Request) {
               lte: endOfWeek,
             },
           },
+          take: 50,  
           orderBy: { createdAt: 'desc' },
         });
 
@@ -151,16 +153,14 @@ export async function GET(request: Request) {
       });
     }
 
-    // ✅ PDF format (using jspdf)
+    // ✅ PDF format
     if (format === 'pdf') {
       const { data } = responseData;
       const doc = new jsPDF();
       
-      // Title
       doc.setFontSize(20);
       doc.text(`Weekly Report - ${data.week} ${data.year}`, 105, 20, { align: 'center' });
       
-      // Stats
       doc.setFontSize(12);
       doc.text(`New Reviews: ${data.newReviews}`, 20, 40);
       doc.text(`Total Reviews: ${data.totalReviews}`, 20, 50);
@@ -168,7 +168,6 @@ export async function GET(request: Request) {
       doc.text(`Positive: ${data.positiveReviews}`, 20, 70);
       doc.text(`Negative: ${data.negativeReviews}`, 20, 80);
       
-      // Daily Trend
       doc.text('Daily Trend:', 20, 95);
       const trendData = data.dailyTrend.map((count: number, index: number) => {
         const date = new Date();
@@ -184,7 +183,6 @@ export async function GET(request: Request) {
         headStyles: { fillColor: [168, 85, 247] },
       });
 
-      // Reviews Table
       const tableData = data.reviews.map((review: any) => [
         review.id.slice(0, 8) + '...',
         review.rating.toString(),
@@ -201,7 +199,6 @@ export async function GET(request: Request) {
         headStyles: { fillColor: [168, 85, 247] },
       });
 
-      // PDF Buffer
       const pdfBuffer = doc.output('arraybuffer');
 
       return new NextResponse(pdfBuffer, {
