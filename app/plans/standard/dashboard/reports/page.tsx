@@ -114,7 +114,7 @@ export default function ReportsPage() {
         </div>
       </div>
 
-      {/* Reports Cards - 2x2 Grid */}
+      {/* Reports Cards - Grid with 6 Months History spanning full width */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         
         {/* Monthly Report Card */}
@@ -257,8 +257,8 @@ export default function ReportsPage() {
           </div>
         </div>
 
-        {/* 6 Months Data History Card (with Best Month, Worst Month, Trend) */}
-        <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-6">
+        {/* 6 Months Data History Card - Full Width (spanning 2 columns) */}
+        <div className="md:col-span-2 bg-[#11141C] border border-[#1F2430] rounded-xl p-6">
           <div className="flex justify-between items-start">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 bg-amber-500/20 rounded-lg">
