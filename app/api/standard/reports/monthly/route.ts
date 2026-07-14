@@ -78,7 +78,7 @@ export async function GET(request: Request) {
               lte: endOfMonth,
             },
           },
-          take: 50,  
+          take: 500,  
           orderBy: { createdAt: 'desc' },
         });
 
