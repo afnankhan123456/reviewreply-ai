@@ -16,11 +16,29 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
 
-  // ✅ Fixed: AI Reply Center par refresh hone par bhi active rahega
+  // ✅ FUTURE-PROOF FIX: Automatically detect active item from URL path
   const [activeItem, setActiveItem] = useState(() => {
-    if (pathname.includes('/reviews')) return 'Reviews';
-    if (pathname.includes('/ai-reply-center')) return 'AI Reply Center';
-    return 'Overview';
+    // Extract the last part of the URL path
+    const lastSegment = pathname.split('/').pop() || '';
+    
+    // Map URL segments to sidebar labels
+    const segmentToLabel: Record<string, string> = {
+      'dashboard': 'Overview',
+      'reviews': 'Reviews',
+      'ai-reply-center': 'AI Reply Center',
+      'analytics': 'Analytics',
+      'reports': 'Reports',
+      'tags-categories': 'Tags & Categories',
+      'export': 'Export',
+      'requests': 'Requests',
+      'templates': 'Templates',
+      'alerts': 'Alerts',
+      'competitors': 'Competitors',
+      'team': 'Team',
+      'settings': 'Settings'
+    };
+
+    return segmentToLabel[lastSegment] || 'Overview';
   });
 
   return (
@@ -60,7 +78,6 @@ export default function DashboardLayout({
             onClick={() => setActiveItem('AI Reply Center')}
           />
           
-          {/* ✅ UPDATED: Analytics ka link ab naye page par jaata hai */}
           <NavItem 
             icon={<BarChart3 size={20} />} 
             label="Analytics" 
@@ -72,63 +89,63 @@ export default function DashboardLayout({
           <NavItem 
             icon={<FileText size={20} />} 
             label="Reports" 
-            href="/plans/standard/dashboard/reviews" 
+            href="/plans/standard/dashboard/reports" 
             isActive={activeItem === 'Reports'}
             onClick={() => setActiveItem('Reports')}
           />
           <NavItem 
             icon={<Tag size={20} />} 
             label="Tags & Categories" 
-            href="/plans/standard/dashboard/reviews" 
+            href="/plans/standard/dashboard/tags-categories" 
             isActive={activeItem === 'Tags & Categories'}
             onClick={() => setActiveItem('Tags & Categories')}
           />
           <NavItem 
             icon={<Download size={20} />} 
             label="Export" 
-            href="/plans/standard/dashboard/reviews" 
+            href="/plans/standard/dashboard/export" 
             isActive={activeItem === 'Export'}
             onClick={() => setActiveItem('Export')}
           />
           <NavItem 
             icon={<Send size={20} />} 
             label="Requests" 
-            href="/plans/standard/dashboard/reviews" 
+            href="/plans/standard/dashboard/requests" 
             isActive={activeItem === 'Requests'}
             onClick={() => setActiveItem('Requests')}
           />
           <NavItem 
             icon={<LayoutTemplate size={20} />} 
             label="Templates" 
-            href="/plans/standard/dashboard/reviews" 
+            href="/plans/standard/dashboard/templates" 
             isActive={activeItem === 'Templates'}
             onClick={() => setActiveItem('Templates')}
           />
           <NavItem 
             icon={<Bell size={20} />} 
             label="Alerts" 
-            href="/plans/standard/dashboard/reviews" 
+            href="/plans/standard/dashboard/alerts" 
             isActive={activeItem === 'Alerts'}
             onClick={() => setActiveItem('Alerts')}
           />
           <NavItem 
             icon={<ShieldCheck size={20} />} 
             label="Competitors" 
-            href="/plans/standard/dashboard/reviews" 
+            href="/plans/standard/dashboard/competitors" 
             isActive={activeItem === 'Competitors'}
             onClick={() => setActiveItem('Competitors')}
           />
           <NavItem 
             icon={<Users size={20} />} 
             label="Team" 
-            href="/plans/standard/dashboard/reviews" 
+            href="/plans/standard/dashboard/team" 
             isActive={activeItem === 'Team'}
             onClick={() => setActiveItem('Team')}
           />
           <NavItem 
             icon={<Settings size={20} />} 
             label="Settings" 
-            href="/plans/standard/dashboard/reviews" 
+            href="/plans/standard/dashboard/settings" 
             isActive={activeItem === 'Settings'}
             onClick={() => setActiveItem('Settings')}
           />
