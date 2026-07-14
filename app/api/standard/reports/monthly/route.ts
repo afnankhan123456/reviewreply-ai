@@ -5,84 +5,80 @@ import { getCachedOrFetch } from '@/app/lib/cache';
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const format = searchParams.get('format') || 'pdf'; // pdf or excel
+    const format = searchParams.get('format') || 'pdf';
 
     const responseData = await getCachedOrFetch(
       'monthly-report',
       async () => {
         const now = new Date();
-        // ✅ START: 1st of current month
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        // ✅ END: Today (current date)
         const endOfMonth = new Date(now);
         endOfMonth.setHours(23, 59, 59, 999);
 
-        // Total reviews this month (start to today)
+        // Total reviews (1st to today)
         const totalReviews = await prisma.review.count({
           where: {
             createdAt: {
               gte: startOfMonth,
-              lte: endOfMonth,  // ✅ Today tak
+              lte: endOfMonth,
             },
           },
         });
 
-        // Average rating this month (start to today)
+        // Average rating
         const avgRating = await prisma.review.aggregate({
           where: {
             createdAt: {
               gte: startOfMonth,
-              lte: endOfMonth,  // ✅ Today tak
+              lte: endOfMonth,
             },
           },
-          _avg: {
-            rating: true,
-          },
+          _avg: { rating: true },
         });
 
-        // Positive reviews (rating >= 4) - start to today
+        // Positive reviews (rating >= 4)
         const positiveReviews = await prisma.review.count({
           where: {
             rating: { gte: 4 },
             createdAt: {
               gte: startOfMonth,
-              lte: endOfMonth,  // ✅ Today tak
+              lte: endOfMonth,
             },
           },
         });
 
-        // Negative reviews (rating <= 2) - start to today
+        // Negative reviews (rating <= 2)
         const negativeReviews = await prisma.review.count({
           where: {
             rating: { lte: 2 },
             createdAt: {
               gte: startOfMonth,
-              lte: endOfMonth,  // ✅ Today tak
+              lte: endOfMonth,
             },
           },
         });
 
-        // Response rate - start to today
+        // Response rate
         const repliedReviews = await prisma.review.count({
           where: {
             replied: true,
             createdAt: {
               gte: startOfMonth,
-              lte: endOfMonth,  // ✅ Today tak
+              lte: endOfMonth,
             },
           },
         });
 
-        const responseRate = totalReviews > 0 
-          ? Math.round((repliedReviews / totalReviews) * 100) 
+        const responseRate = totalReviews > 0
+          ? Math.round((repliedReviews / totalReviews) * 100)
           : 0;
 
-        // Fetch all reviews for export - start to today
+        // All reviews (for export)
         const reviews = await prisma.review.findMany({
           where: {
             createdAt: {
               gte: startOfMonth,
-              lte: endOfMonth,  // ✅ Today tak
+              lte: endOfMonth,
             },
           },
           orderBy: { createdAt: 'desc' },
@@ -105,11 +101,11 @@ export async function GET(request: Request) {
           format,
         };
       },
-      3600 // 1 hour cache
+      3600
     );
 
-    // If Excel format requested
-    if (format === 'excel') {
+    // ✅ CSV format
+    if (format === 'csv') {
       const { data } = responseData;
       const rows = data.reviews.map((review: any) => ({
         'Review ID': review.id,
@@ -120,16 +116,23 @@ export async function GET(request: Request) {
         'Created At': new Date(review.createdAt).toLocaleDateString(),
       }));
 
-      // Return JSON for client-side Excel generation
-      return NextResponse.json({
-        success: true,
-        data: rows,
-        format: 'excel',
-        filename: `monthly-report-${data.month.replace(/ /g, '-')}.xlsx`,
+      // Convert to CSV string
+      const headers = Object.keys(rows[0] || {});
+      const csvRows = [
+        headers.join(','),
+        ...rows.map(row => headers.map(h => `"${row[h]}"`).join(','))
+      ];
+      const csvString = csvRows.join('\n');
+
+      return new NextResponse(csvString, {
+        headers: {
+          'Content-Type': 'text/csv',
+          'Content-Disposition': `attachment; filename="monthly-report-${data.month.replace(/ /g, '-')}.csv"`,
+        },
       });
     }
 
-    // Default: PDF format (returns JSON for client-side PDF generation)
+    // ✅ PDF format (JSON response)
     return NextResponse.json(responseData);
   } catch (error) {
     console.error('Monthly Report Error:', error);
