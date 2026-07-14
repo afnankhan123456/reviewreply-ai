@@ -60,13 +60,15 @@ export default function DashboardLayout({
             onClick={() => setActiveItem('AI Reply Center')}
           />
           
+          {/* ✅ UPDATED: Analytics ka link ab naye page par jaata hai */}
           <NavItem 
             icon={<BarChart3 size={20} />} 
             label="Analytics" 
-            href="/plans/standard/dashboard/reviews" 
+            href="/plans/standard/dashboard/analytics" 
             isActive={activeItem === 'Analytics'}
             onClick={() => setActiveItem('Analytics')}
           />
+          
           <NavItem 
             icon={<FileText size={20} />} 
             label="Reports" 
