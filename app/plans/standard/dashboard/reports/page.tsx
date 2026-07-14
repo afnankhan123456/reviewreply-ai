@@ -129,19 +129,12 @@ export default function ReportsPage() {
               </div>
             </div>
             
-            <div className="bg-[#181D27] border border-[#2A303C] rounded-lg p-4 mb-4">
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-400">Last generated</span>
-                <span className="text-gray-300">N/A</span>
-              </div>
-              <div className="flex justify-between items-center text-sm mt-2">
-                <span className="text-gray-400">Total reviews</span>
-                <span className="text-gray-300">N/A</span>
-              </div>
-              <div className="flex justify-between items-center text-sm mt-2">
-                <span className="text-gray-400">Avg rating</span>
-                <span className="text-gray-300">N/A</span>
-              </div>
+            {/* ✅ N/A ki jagah Thank you message */}
+            <div className="bg-[#181D27] border border-[#2A303C] rounded-lg p-4 mb-4 text-center">
+              <p className="text-sm text-gray-300 leading-relaxed">
+                Thank you for your continued trust.<br />
+                ReviewReply AI – Empowering businesses with insights.
+              </p>
             </div>
             
             <div className="relative">
@@ -201,19 +194,12 @@ export default function ReportsPage() {
               </div>
             </div>
             
-            <div className="bg-[#181D27] border border-[#2A303C] rounded-lg p-4 mb-4">
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-400">Last generated</span>
-                <span className="text-gray-300">N/A</span>
-              </div>
-              <div className="flex justify-between items-center text-sm mt-2">
-                <span className="text-gray-400">New reviews</span>
-                <span className="text-gray-300">N/A</span>
-              </div>
-              <div className="flex justify-between items-center text-sm mt-2">
-                <span className="text-gray-400">Response rate</span>
-                <span className="text-gray-300">N/A</span>
-              </div>
+            {/* ✅ N/A ki jagah Thank you message */}
+            <div className="bg-[#181D27] border border-[#2A303C] rounded-lg p-4 mb-4 text-center">
+              <p className="text-sm text-gray-300 leading-relaxed">
+                Thank you for your continued trust.<br />
+                ReviewReply AI – Empowering businesses with insights.
+              </p>
             </div>
             
             <div className="relative">
