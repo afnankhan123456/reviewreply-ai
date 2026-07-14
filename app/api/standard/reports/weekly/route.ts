@@ -11,30 +11,44 @@ export async function GET(request: Request) {
       'weekly-report',
       async () => {
         const now = new Date();
+        // ✅ START: Monday of current week
         const startOfWeek = new Date(now);
         startOfWeek.setDate(now.getDate() - now.getDay());
         startOfWeek.setHours(0, 0, 0, 0);
 
-        const endOfWeek = new Date(startOfWeek);
-        endOfWeek.setDate(endOfWeek.getDate() + 6);
+        // ✅ END: Today (current date)
+        const endOfWeek = new Date(now);
         endOfWeek.setHours(23, 59, 59, 999);
 
-        // New reviews this week
+        // New reviews this week (Monday to Today)
         const newReviews = await prisma.review.count({
           where: {
             createdAt: {
               gte: startOfWeek,
-              lte: endOfWeek,
+              lte: endOfWeek,  // ✅ Today tak
             },
           },
         });
 
-        // Total reviews
-        const totalReviews = await prisma.review.count();
+        // Total reviews (Monday to Today)
+        const totalReviews = await prisma.review.count({
+          where: {
+            createdAt: {
+              gte: startOfWeek,
+              lte: endOfWeek,  // ✅ Today tak
+            },
+          },
+        });
 
-        // Replied reviews
+        // Replied reviews (Monday to Today)
         const repliedReviews = await prisma.review.count({
-          where: { replied: true },
+          where: { 
+            replied: true,
+            createdAt: {
+              gte: startOfWeek,
+              lte: endOfWeek,  // ✅ Today tak
+            },
+          },
         });
 
         // Response rate
@@ -42,29 +56,29 @@ export async function GET(request: Request) {
           ? Math.round((repliedReviews / totalReviews) * 100) 
           : 0;
 
-        // Positive reviews (rating >= 4)
+        // Positive reviews (rating >= 4) - Monday to Today
         const positiveReviews = await prisma.review.count({
           where: {
             rating: { gte: 4 },
             createdAt: {
               gte: startOfWeek,
-              lte: endOfWeek,
+              lte: endOfWeek,  // ✅ Today tak
             },
           },
         });
 
-        // Negative reviews (rating <= 2)
+        // Negative reviews (rating <= 2) - Monday to Today
         const negativeReviews = await prisma.review.count({
           where: {
             rating: { lte: 2 },
             createdAt: {
               gte: startOfWeek,
-              lte: endOfWeek,
+              lte: endOfWeek,  // ✅ Today tak
             },
           },
         });
 
-        // Daily trend
+        // Daily trend (last 7 days, but data only up to today)
         const dailyData = [];
         for (let i = 6; i >= 0; i--) {
           const date = new Date(now);
@@ -85,12 +99,12 @@ export async function GET(request: Request) {
           dailyData.push(count);
         }
 
-        // Fetch all reviews for export
+        // Fetch all reviews for export - Monday to Today
         const reviews = await prisma.review.findMany({
           where: {
             createdAt: {
               gte: startOfWeek,
-              lte: endOfWeek,
+              lte: endOfWeek,  // ✅ Today tak
             },
           },
           orderBy: { createdAt: 'desc' },
