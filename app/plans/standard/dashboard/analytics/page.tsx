@@ -97,8 +97,9 @@ export default function AnalyticsPage() {
           <div className="text-4xl font-bold text-white">
             {analyticsData.stats.totalReviews || 0}
           </div>
+          {/* ✅ REAL GROWTH FROM BACKEND */}
           <div className="text-[10px] text-green-400 flex items-center gap-1">
-            <TrendingUp size={12} /> +12% this month
+            <TrendingUp size={12} /> {analyticsData.stats?.growth?.total || 0}% this month
           </div>
         </div>
 
@@ -108,8 +109,9 @@ export default function AnalyticsPage() {
             <TrendingUp size={14} /> Response Rate
           </div>
           <div className="text-4xl font-bold text-white">{analyticsData.stats.responseRate || 0}%</div>
+          {/* ✅ REAL GROWTH FROM BACKEND */}
           <div className="text-[10px] text-green-400 flex items-center gap-1">
-            <TrendingUp size={12} /> +5% this month
+            <TrendingUp size={12} /> {analyticsData.stats?.growth?.response || 0}% this month
           </div>
         </div>
 
