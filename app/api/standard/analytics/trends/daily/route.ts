@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { cache } from '@/app/lib/cache';
+import { getCachedOrFetch } from '@/app/lib/cache'; // ✅ New import
 
 export async function GET() {
   try {
     // ✅ 1. Check cache first
-    const cached = cache.get('daily-trends');
+    const cached = getCachedOrFetch('daily-trends');
     if (cached) {
       console.log('✅ Returning cached daily trends');
       return NextResponse.json(cached);
@@ -46,7 +46,9 @@ export async function GET() {
     };
 
     // Save to cache (60 seconds)
-    cache.set('daily-trends', responseData, 60);
+    getCachedOrFetch('daily-trends', async () => {
+      return responseData;
+    }, 60);
 
     return NextResponse.json(responseData);
   } catch (error) {
