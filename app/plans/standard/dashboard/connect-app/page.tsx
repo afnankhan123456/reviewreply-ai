@@ -2,18 +2,16 @@
 
 import React, { useState } from 'react';
 import { 
-  Plus, X, CheckCircle, Clock, 
+  CheckCircle, Clock, 
   ExternalLink, Trash2, Building, Mail
 } from 'lucide-react';
 
 export default function ConnectAppPage() {
-  // Sirf 2 items: Business ID aur Gmail
+  // Sirf 2 items: Business ID (Connected) aur Gmail (Disconnected)
   const [connectedApps, setConnectedApps] = useState([
     { id: 1, name: 'Business ID', icon: <Building size={24} />, status: 'Connected', lastSync: '2 min ago' },
     { id: 2, name: 'Gmail', icon: <Mail size={24} />, status: 'Disconnected', lastSync: 'N/A' },
   ]);
-
-  const [showConnectModal, setShowConnectModal] = useState(false);
 
   // Toggle connection status
   const toggleConnection = (id: number) => {
@@ -27,22 +25,12 @@ export default function ConnectAppPage() {
   return (
     <div className="flex-1 flex flex-col p-6 overflow-y-auto bg-[#0B0E14]">
       
-      {/* Header */}
-      <header className="flex justify-between items-center mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            Connect App
-          </h1>
-          <p className="text-sm text-gray-400 mt-1">Connect your Business ID & Gmail to get started.</p>
-        </div>
-
-        <button 
-          onClick={() => setShowConnectModal(true)}
-          className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
-        >
-          <Plus size={18} />
-          Connect New
-        </button>
+      {/* Header (Connect New Button REMOVED) */}
+      <header className="mb-8">
+        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+          Connect App
+        </h1>
+        <p className="text-sm text-gray-400 mt-1">Manage your Business ID & Gmail connections.</p>
       </header>
 
       {/* Stats Bar (Sirf 2 items ke hisaab se) */}
@@ -63,7 +51,7 @@ export default function ConnectAppPage() {
         </div>
       </div>
 
-      {/* Apps Grid (Sirf 2 Cards) */}
+      {/* Apps Grid (Sirf 2 Cards - Seedha connect karne ka option) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {connectedApps.map((app) => (
           <AppCard 
@@ -74,60 +62,6 @@ export default function ConnectAppPage() {
         ))}
       </div>
 
-      {/* Connect New App Modal (Sirf 2 options) */}
-      {showConnectModal && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="bg-[#11141C] border border-[#1F2430] rounded-2xl w-full max-w-md p-6 relative">
-            <button 
-              onClick={() => setShowConnectModal(false)}
-              className="absolute right-4 top-4 text-gray-500 hover:text-white"
-            >
-              <X size={20} />
-            </button>
-
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 bg-indigo-600/20 rounded-xl flex items-center justify-center">
-                <Plus className="text-indigo-400" size={24} />
-              </div>
-              <div>
-                <h2 className="text-lg font-bold text-white">Connect New</h2>
-                <p className="text-sm text-gray-400">Select what you want to connect</p>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              {/* Business ID */}
-              <div className="flex items-center justify-between p-3 bg-[#181D27] rounded-lg border border-[#2A303C] hover:border-indigo-500/50 transition-colors cursor-pointer group">
-                <div className="flex items-center gap-3">
-                  <Building size={20} className="text-blue-400" />
-                  <span className="text-white text-sm font-medium">Business ID</span>
-                </div>
-                <button className="text-xs bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-500 transition-colors">
-                  Connect
-                </button>
-              </div>
-
-              {/* Gmail */}
-              <div className="flex items-center justify-between p-3 bg-[#181D27] rounded-lg border border-[#2A303C] hover:border-indigo-500/50 transition-colors cursor-pointer group">
-                <div className="flex items-center gap-3">
-                  <Mail size={20} className="text-red-400" />
-                  <span className="text-white text-sm font-medium">Gmail</span>
-                </div>
-                <button className="text-xs bg-indigo-600 text-white px-3 py-1 rounded hover:bg-indigo-500 transition-colors">
-                  Connect
-                </button>
-              </div>
-            </div>
-
-            <button 
-              onClick={() => setShowConnectModal(false)}
-              className="w-full mt-6 py-2.5 bg-gray-800 text-gray-400 rounded-lg text-sm font-medium hover:bg-gray-700 hover:text-white transition-colors"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
@@ -154,15 +88,16 @@ function AppCard({ app, onToggle }: any) {
           </div>
         </div>
         
+        {/* Action Button - Gmail par "Connect" dikhega, Business ID par "Disconnect" */}
         <button 
           onClick={onToggle}
-          className={`p-1.5 rounded border transition-colors ${
+          className={`p-2 rounded border transition-colors text-xs font-medium ${
             isConnected 
               ? 'bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20' 
               : 'bg-green-500/10 border-green-500/30 text-green-400 hover:bg-green-500/20'
           }`}
         >
-          {isConnected ? <Trash2 size={14} /> : <Plus size={14} />}
+          {isConnected ? 'Disconnect' : 'Connect'}
         </button>
       </div>
 
