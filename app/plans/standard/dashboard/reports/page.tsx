@@ -286,35 +286,7 @@ export default function ReportsPage() {
               </div>
             </div>
             
-            <div className="flex gap-6">
-              <div className="text-center">
-                <div className="flex items-center gap-1 text-amber-400 text-xs font-medium justify-center">
-                  <TrendingUp className="w-3 h-3" />
-                  Best Month
-                </div>
-                <p className="text-white font-bold text-lg">June</p>
-                <p className="text-xs text-gray-400">245 reviews</p>
-              </div>
-              <div className="text-center">
-                <div className="flex items-center gap-1 text-amber-400 text-xs font-medium justify-center">
-                  <TrendingDown className="w-3 h-3" />
-                  Worst Month
-                </div>
-                <p className="text-white font-bold text-lg">Feb</p>
-                <p className="text-xs text-gray-400">89 reviews</p>
-              </div>
-              <div className="text-center">
-                <div className="flex items-center gap-1 text-amber-400 text-xs font-medium justify-center">
-                  <BarChart3 className="w-3 h-3" />
-                  Trend
-                </div>
-                <div className="flex items-center justify-center gap-1">
-                  <TrendingUp className="w-4 h-4 text-green-400" />
-                  <p className="text-white font-bold text-lg text-green-400">+12%</p>
-                </div>
-                <p className="text-xs text-gray-400">Growth</p>
-              </div>
-            </div>
+            {/* ✅ Best/Worst/Trend section REMOVED */}
           </div>
           
           <button
