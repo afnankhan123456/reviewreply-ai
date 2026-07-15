@@ -1,29 +1,9 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getCachedOrFetch } from '@/app/lib/cache';
-import { addToQueue, getQueueStatus } from '../download-queue/queueHelper';
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
-    // ✅ Check if user is in queue
-    const url = new URL(request.url);
-    const userId = url.searchParams.get('userId') || 'anonymous';
-    
-    // Check queue status
-    const queueStatus = await getQueueStatus();
-    
-    // If queue is not empty, return queue status
-    if (queueStatus.queueLength > 0) {
-      return NextResponse.json({
-        success: true,
-        inQueue: true,
-        queueLength: queueStatus.queueLength,
-        position: queueStatus.queue.findIndex((q: any) => q.userId === userId) + 1,
-        message: 'Your request is in queue. Please wait.',
-      });
-    }
-
-    // ✅ If queue is empty, process history data
     const responseData = await getCachedOrFetch(
       'history-report',
       async () => {
