@@ -6,8 +6,7 @@ import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, Star, Sparkles, BarChart3, FileText, 
   Send, Bell, ShieldCheck, Users, Settings, Gift,
-  Tag, // ✅ Integration icon ke liye use kiya (Ya aap 'Link' bhi use kar sakte hain)
-  Link as LinkIcon 
+  Tag, PlugZap // ✅ Changed icon for Connect App
 } from 'lucide-react';
 
 export default function DashboardLayout({
@@ -33,7 +32,7 @@ export default function DashboardLayout({
       'competitors': 'Competitors',
       'team': 'Team',
       'settings': 'Settings',
-      'integrations': 'Integrations' // ✅ New segment added
+      'connect-app': 'Connect App' // ✅ Changed from 'integrations'
     };
 
     return segmentToLabel[lastSegment] || 'Overview';
@@ -113,13 +112,13 @@ export default function DashboardLayout({
             onClick={() => setActiveItem('Alerts')}
           />
           
-          {/* ✅ NEW ITEM ADDED: Integrations */}
+          {/* ✅ CHANGED: Integrations -> Connect App */}
           <NavItem 
-            icon={<LinkIcon size={20} />} 
-            label="Integrations" 
-            href="/plans/standard/dashboard/integrations" 
-            isActive={activeItem === 'Integrations'}
-            onClick={() => setActiveItem('Integrations')}
+            icon={<PlugZap size={20} />} 
+            label="Connect App" 
+            href="/plans/standard/dashboard/connect-app" 
+            isActive={activeItem === 'Connect App'}
+            onClick={() => setActiveItem('Connect App')}
           />
           
           <NavItem 
