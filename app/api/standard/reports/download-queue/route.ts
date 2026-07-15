@@ -1,8 +1,7 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+// app/api/standard/reports/download-queue/route.ts
 
-// ✅ Queue helper functions import karo
-import { addToQueue, getQueueStatus, processQueue } from './queueHelper';
+import { NextResponse } from 'next/server';
+import { addToQueue, getQueueStatus } from './queueHelper';
 
 export async function POST(req: Request) {
   try {
@@ -15,7 +14,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // ✅ Queue mein add karo
     const result = await addToQueue(userId, format, type);
 
     return NextResponse.json({
@@ -34,7 +32,6 @@ export async function POST(req: Request) {
 
 export async function GET() {
   try {
-    // ✅ Queue status return karo
     const status = await getQueueStatus();
 
     return NextResponse.json({
@@ -49,11 +46,4 @@ export async function GET() {
       { status: 500 }
     );
   }
-}
-
-// ✅ Queue processor ko background mein run karo
-if (process.env.NODE_ENV !== 'test') {
-  setInterval(async () => {
-    await processQueue();
-  }, 3000); // Har 3 second mein queue check karo
 }
