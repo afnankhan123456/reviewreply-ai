@@ -62,11 +62,11 @@ export default function AlertsDashboard() {
         </div>
       </div>
 
-      {/* 3-Section Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {/* ✅ FIXED LAYOUT: 2 Equal Columns (Kabhi neeche nahi ghusega) */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        {/* LEFT COLUMN - New Review Alerts */}
-        <div className="lg:col-span-2 space-y-6">
+        {/* LEFT COLUMN */}
+        <div className="space-y-6">
           
           {/* New Review Email Alerts */}
           <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
@@ -84,7 +84,6 @@ export default function AlertsDashboard() {
               <span className="px-3 py-1 bg-blue-600/20 text-blue-400 rounded-full text-xs font-medium border border-blue-600/30">3 New</span>
             </div>
 
-            {/* Review List */}
             <div className="space-y-2">
               {newReviews.map((review) => (
                 <div key={review.id} className="bg-gray-800/50 rounded-xl p-3 flex items-center justify-between group hover:bg-gray-800 transition border border-gray-800/50">
@@ -111,7 +110,7 @@ export default function AlertsDashboard() {
             </div>
           </div>
 
-          {/* Email Review Requests */}
+          {/* Email Review Requests (Yeh card ab barabar width lega) */}
           <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 bg-purple-600/20 rounded-xl flex items-center justify-center text-xl">📨</div>
@@ -148,7 +147,7 @@ export default function AlertsDashboard() {
           </div>
         </div>
 
-        {/* RIGHT COLUMN - Rating Overview + Low Rating Alerts */}
+        {/* RIGHT COLUMN (Yeh card bhi barabar width lega) */}
         <div className="space-y-6">
           
           {/* Rating Overview */}
@@ -161,14 +160,12 @@ export default function AlertsDashboard() {
               </div>
             </div>
 
-            {/* Big Rating */}
             <div className="text-center mb-4">
               <span className="text-5xl font-bold text-white">{ratingStats.average}</span>
               <div className="text-amber-400 text-lg mt-1">★★★★☆</div>
               <span className="text-green-400 text-xs">↑ 12% vs last month</span>
             </div>
 
-            {/* Distribution Bars */}
             <div className="space-y-2">
               {ratingStats.distribution.map((item) => (
                 <div key={item.stars} className="flex items-center gap-2">
@@ -185,7 +182,7 @@ export default function AlertsDashboard() {
             </div>
           </div>
 
-          {/* Low Rating Alerts */}
+          {/* Low Rating Alerts (Yeh card ab kabhi neeche nahi ghusega) */}
           <div className="bg-gray-900 border border-red-900/30 rounded-2xl p-5 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-20 h-20 bg-red-600/10 rounded-full -mr-8 -mt-8 blur-xl"></div>
             <div className="relative">
@@ -227,7 +224,7 @@ export default function AlertsDashboard() {
         </div>
       </div>
 
-      {/* BOTTOM - Notification Settings (Full Width) */}
+      {/* BOTTOM Settings */}
       <div className="mt-6 bg-gray-900 border border-gray-800 rounded-2xl p-5">
         <div className="flex items-center gap-3 mb-5">
           <div className="w-10 h-10 bg-indigo-600/20 rounded-xl flex items-center justify-center text-xl">🔔</div>
@@ -257,17 +254,7 @@ export default function AlertsDashboard() {
             </div>
           ))}
         </div>
-
-        <div>
-          <label className="text-gray-400 text-xs mb-1 block">Notification Email</label>
-          <input 
-            type="email" 
-            defaultValue="admin@example.com"
-            className="w-full md:w-80 bg-gray-800 text-gray-300 p-2.5 rounded-lg border border-gray-700 text-sm focus:outline-none focus:border-indigo-500"
-          />
-        </div>
       </div>
-
     </div>
   );
 }
