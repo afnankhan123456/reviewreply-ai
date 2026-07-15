@@ -52,7 +52,9 @@ export const authOptions = {
     }),
   ],
   session: { strategy: "jwt" as const },
-  secret: process.env.NEXTAUTH_SECRET, // ✅ YEH LINE HO NI CHAHIYE
+  secret: process.env.NEXTAUTH_SECRET,
+  useSecureCookies: true,     // ✅ ADD THIS
+  trustHost: true,            // ✅ ADD THIS
   callbacks: {
     async signIn({ user }: any) {
       try {
@@ -96,7 +98,7 @@ export const authOptions = {
         } else {
           const updateData: any = {
             lastLogin: new Date(),
-            googleBusinessConnected: existingUser.googleBusinessConnected, // preserve existing
+            googleBusinessConnected: existingUser.googleBusinessConnected,
           };
           if (!existingUser.referralCode) {
             updateData.referralCode = generateReferralCode();
@@ -151,11 +153,8 @@ export const authOptions = {
     },
     async redirect({ baseUrl, url }: any) {
       if (url.includes("admin=true")) return `${baseUrl}/admin`;
-      return `${baseUrl}/plans`;
+      return `${baseUrl}/plans/standard/dashboard`; // ✅ Change from '/plans' to dashboard
     },
   },
   pages: { signIn: "/login" },
 };
-
-
-
