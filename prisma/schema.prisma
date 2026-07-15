@@ -26,6 +26,8 @@ model User {
   syncEnabled         Boolean             @default(true)
   monthlyResetDate    DateTime?
   gmailConnected      Boolean             @default(false)
+  // ✅ NEW FIELD ADDED (Kuch nahi hataaya)
+  googleBusinessConnected  Boolean        @default(false)
   alertEmailsSent     Int                 @default(0)
   alertEmailsLimit    Int                 @default(100)
   alertMonthlyReset   DateTime?
@@ -66,7 +68,7 @@ model Review {
   source           String?
   rating           Int
   comment          String?
-  text             String?   // <-- ✅ NEW COLUMN ADDED (Line 157) — Kuch remove nahi kiya
+  text             String?
   reviewReply      String?
   replied          Boolean  @default(false)
   aiReplied        Boolean  @default(false)
@@ -166,5 +168,3 @@ model Withdrawal {
   updatedAt   DateTime @updatedAt
   @@map("withdrawals")
 }
-
-
