@@ -111,9 +111,10 @@ export const authOptions = {
             await trackReferralSignup(referrerCodeFromCookie);
           }
         } else {
+          // ✅ FIXED: Existing user ka status preserve karo, forcefully true mat karo
           const updateData: any = { 
             lastLogin: new Date(),
-            googleBusinessConnected: true 
+            googleBusinessConnected: existingUser.googleBusinessConnected 
           };
           if (!existingUser.referralCode) {
             updateData.referralCode = generateReferralCode();
