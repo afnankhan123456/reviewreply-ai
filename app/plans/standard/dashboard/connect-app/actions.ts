@@ -3,7 +3,6 @@
 // ✅ Import Prisma Client aur NextAuth Session
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
-// ✅ FIXED: route se nahi, authOptions se import karna hai
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
 
 // ✅ 1. Get Connection Status (Page load pe check karega)
@@ -37,7 +36,7 @@ export async function getConnectionStatus() {
   }
 }
 
-// ✅ 2. Connect/Disconnect Google Business ID
+// ✅ 2. Connect/Disconnect Google Business ID (FIXED)
 export async function toggleGoogleBusiness(action: 'connect' | 'disconnect') {
   try {
     const session = await getServerSession(authOptions);
@@ -50,11 +49,12 @@ export async function toggleGoogleBusiness(action: 'connect' | 'disconnect') {
       select: { googleBusinessConnected: true }
     });
 
-    // ✅ Agar pehle se connected hai aur dobara connect kar raha hai -> Rok do
-    if (action === 'connect' && user?.googleBusinessConnected === true) {
+    // ✅ FIXED: Agar pehle se connected hai, toh force se return kar do
+    if (user?.googleBusinessConnected === true) {
       return { 
         success: false, 
-        message: 'Already Connected (Login via Google)' 
+        message: 'Already Connected',
+        googleConnected: true 
       };
     }
 
@@ -78,12 +78,26 @@ export async function toggleGoogleBusiness(action: 'connect' | 'disconnect') {
   }
 }
 
-// ✅ 3. Connect/Disconnect Gmail
+// ✅ 3. Connect/Disconnect Gmail (FIXED)
 export async function toggleGmail(action: 'connect' | 'disconnect') {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return { error: 'Unauthorized' };
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { gmailConnected: true }
+    });
+
+    // ✅ FIXED: Agar pehle se connected hai, toh force se return kar do
+    if (user?.gmailConnected === true) {
+      return { 
+        success: false, 
+        message: 'Already Connected',
+        gmailConnected: true 
+      };
     }
 
     const updatedUser = await prisma.user.update({
