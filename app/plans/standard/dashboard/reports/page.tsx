@@ -297,21 +297,6 @@ export default function ReportsPage() {
             </div>
           </div>
           
-          <div className="bg-[#181D27] border border-[#2A303C] rounded-lg p-4 mb-4">
-            <div className="flex justify-between items-center text-sm">
-              <span className="text-gray-400">Last updated</span>
-              <span className="text-gray-300">July 13, 2026</span>
-            </div>
-            <div className="flex justify-between items-center text-sm mt-2">
-              <span className="text-gray-400">Total records</span>
-              <span className="text-gray-300">1,247</span>
-            </div>
-            <div className="flex justify-between items-center text-sm mt-2">
-              <span className="text-gray-400">Date range</span>
-              <span className="text-gray-300">Jan - Jun 2026</span>
-            </div>
-          </div>
-          
           <button
             onClick={handleDownloadHistory}
             disabled={isGeneratingHistory}
@@ -325,7 +310,7 @@ export default function ReportsPage() {
             ) : (
               <>
                 <Download className="w-4 h-4" />
-                <span>Download History</span>
+                <span>View History</span>
               </>
             )}
           </button>
