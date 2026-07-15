@@ -93,7 +93,6 @@ export const authOptions = {
               locationsUsed: 0,
               locationsLimit: 1,
               googleConnected: false,
-              // ✅ ADDED: Google login se aaya hai toh Business ID auto-connect ho jayega
               googleBusinessConnected: true, 
               createdAt: new Date(),
               lastLogin: new Date(),
@@ -114,7 +113,6 @@ export const authOptions = {
         } else {
           const updateData: any = { 
             lastLogin: new Date(),
-            // ✅ ADDED: Existing user Google se login kar raha hai toh Business ID true karo
             googleBusinessConnected: true 
           };
           if (!existingUser.referralCode) {
