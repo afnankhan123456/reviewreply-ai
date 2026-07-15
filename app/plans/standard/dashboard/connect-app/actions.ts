@@ -3,7 +3,8 @@
 // ✅ Import Prisma Client aur NextAuth Session
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/api/auth/[...nextauth]/route';
+// ✅ FIXED: route se nahi, authOptions se import karna hai
+import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
 
 // ✅ 1. Get Connection Status (Page load pe check karega)
 export async function getConnectionStatus() {
