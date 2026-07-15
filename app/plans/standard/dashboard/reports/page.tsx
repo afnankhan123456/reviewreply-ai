@@ -20,7 +20,6 @@ export default function ReportsPage() {
   const [historyData, setHistoryData] = useState<any[]>([]);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [historyLoading, setHistoryLoading] = useState(false);
-  const [queuePosition, setQueuePosition] = useState<number | null>(null);
 
   // ✅ Hardcoded N/A data (always shows N/A)
   const monthlyData = null;
@@ -89,120 +88,43 @@ export default function ReportsPage() {
     }
   };
 
-  // ✅ View History click handler with queue
+  // ✅ View History - Direct fetch (no queue)
   const handleViewHistory = async () => {
     setIsGeneratingHistory(true);
     setHistoryLoading(true);
-    setQueuePosition(null);
-    
     try {
-      // Step 1: Add to queue
-      const queueRes = await fetch('/api/standard/reports/download-queue', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: 'view-history-user',
-          format: 'json',
-          type: 'history'
-        })
-      });
+      const res = await fetch('/api/standard/reports/history');
+      const data = await res.json();
       
-      const queueData = await queueRes.json();
-      
-      if (queueData.success) {
-        setQueuePosition(queueData.position);
-        
-        // Step 2: Wait for queue processing (poll every 2 seconds)
-        let attempts = 0;
-        const maxAttempts = 30; // 60 seconds max wait
-        
-        const pollQueue = async () => {
-          const statusRes = await fetch('/api/standard/reports/download-queue');
-          const statusData = await statusRes.json();
-          
-          if (statusData.queueLength === 0 || attempts >= maxAttempts) {
-            // Queue is empty, fetch history data
-            const historyRes = await fetch('/api/standard/reports/history?userId=view-history-user');
-            const historyData = await historyRes.json();
-            
-            if (historyData.success) {
-              const sortedData = historyData.data.monthlyData.sort((a: any, b: any) => 
-                new Date(b.month).getTime() - new Date(a.month).getTime()
-              );
-              setHistoryData(sortedData);
-              setShowHistoryModal(true);
-              setQueuePosition(null);
-            } else {
-              alert('Failed to load history');
-            }
-            setIsGeneratingHistory(false);
-            setHistoryLoading(false);
-            return;
-          }
-          
-          attempts++;
-          setTimeout(pollQueue, 2000); // Poll every 2 seconds
-        };
-        
-        pollQueue();
+      if (data.success) {
+        const sortedData = data.data.monthlyData.sort((a: any, b: any) => 
+          new Date(b.month).getTime() - new Date(a.month).getTime()
+        );
+        setHistoryData(sortedData);
+        setShowHistoryModal(true);
       } else {
-        alert('Failed to add to queue');
-        setIsGeneratingHistory(false);
-        setHistoryLoading(false);
+        alert('Failed to load history');
       }
     } catch (error) {
       console.error('History error:', error);
       alert('Failed to load history');
+    } finally {
       setIsGeneratingHistory(false);
       setHistoryLoading(false);
     }
   };
 
-  // ✅ Download specific month with queue
+  // ✅ Download specific month - Direct (no queue)
   const handleDownloadMonth = async (month: string) => {
     try {
-      const queueRes = await fetch('/api/standard/reports/download-queue', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: `download-month-${month}`,
-          format: 'csv',
-          type: 'monthly'
-        })
-      });
-      
-      const queueData = await queueRes.json();
-      
-      if (queueData.success) {
-        // Wait for queue processing
-        let attempts = 0;
-        const maxAttempts = 20;
-        
-        const pollQueue = async () => {
-          const statusRes = await fetch('/api/standard/reports/download-queue');
-          const statusData = await statusRes.json();
-          
-          if (statusData.queueLength === 0 || attempts >= maxAttempts) {
-            // Download the month report
-            const res = await fetch(`/api/standard/reports/monthly?format=csv&month=${month}`);
-            const blob = await res.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `report-${month}.csv`;
-            a.click();
-            window.URL.revokeObjectURL(url);
-            return;
-          }
-          
-          attempts++;
-          setTimeout(pollQueue, 2000);
-        };
-        
-        pollQueue();
-      } else {
-        alert('Failed to add to queue');
-      }
+      const res = await fetch(`/api/standard/reports/monthly?format=csv&month=${month}`);
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `report-${month}.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Download error:', error);
       alert('Failed to download month report');
@@ -403,7 +325,7 @@ export default function ReportsPage() {
             {isGeneratingHistory ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span>Loading... {queuePosition !== null && `(Position: ${queuePosition})`}</span>
+                <span>Loading...</span>
               </>
             ) : (
               <>
