@@ -52,7 +52,7 @@ export const authOptions = {
     }),
   ],
   session: { strategy: "jwt" as const },
-  secret: process.env.NEXTAUTH_SECRET, // ✅ YEH LINE ADD KI HAI
+  secret: process.env.NEXTAUTH_SECRET, // ✅ YEH LINE HO NI CHAHIYE
   callbacks: {
     async signIn({ user }: any) {
       try {
