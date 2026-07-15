@@ -5,8 +5,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, Star, Sparkles, BarChart3, FileText, 
-  Send, LayoutTemplate, Bell, ShieldCheck, Users, Settings, Gift,
-  Tag, Download
+  Send, Bell, ShieldCheck, Users, Settings, Gift,
+  Tag
 } from 'lucide-react';
 
 export default function DashboardLayout({
@@ -29,9 +29,7 @@ export default function DashboardLayout({
       'analytics': 'Analytics',
       'reports': 'Reports',
       'tags-categories': 'Tags & Categories',
-      'export': 'Export',
       'requests': 'Requests',
-      'templates': 'Templates',
       'alerts': 'Alerts',
       'competitors': 'Competitors',
       'team': 'Team',
@@ -100,13 +98,7 @@ export default function DashboardLayout({
             isActive={activeItem === 'Tags & Categories'}
             onClick={() => setActiveItem('Tags & Categories')}
           />
-          <NavItem 
-            icon={<Download size={20} />} 
-            label="Export" 
-            href="/plans/standard/dashboard/export" 
-            isActive={activeItem === 'Export'}
-            onClick={() => setActiveItem('Export')}
-          />
+          {/* ✅ Export removed */}
           <NavItem 
             icon={<Send size={20} />} 
             label="Requests" 
@@ -114,13 +106,7 @@ export default function DashboardLayout({
             isActive={activeItem === 'Requests'}
             onClick={() => setActiveItem('Requests')}
           />
-          <NavItem 
-            icon={<LayoutTemplate size={20} />} 
-            label="Templates" 
-            href="/plans/standard/dashboard/templates" 
-            isActive={activeItem === 'Templates'}
-            onClick={() => setActiveItem('Templates')}
-          />
+          {/* ✅ Templates removed */}
           <NavItem 
             icon={<Bell size={20} />} 
             label="Alerts" 
