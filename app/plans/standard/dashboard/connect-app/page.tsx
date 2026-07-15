@@ -5,41 +5,51 @@ import {
   CheckCircle, Clock, 
   ExternalLink, Building, Mail
 } from 'lucide-react';
+// ✅ Import real actions from your actions.ts file
+import { getConnectionStatus, toggleGoogleBusiness, toggleGmail } from './actions';
 
 export default function ConnectAppPage() {
-  // ✅ State to store connection status from backend/API
-  const [isGoogleConnected, setIsGoogleConnected] = useState<boolean | null>(null);
-  const [isGmailConnected, setIsGmailConnected] = useState<boolean | null>(null);
+  // ✅ State to store connection status
+  const [isGoogleConnected, setIsGoogleConnected] = useState<boolean>(false);
+  const [isGmailConnected, setIsGmailConnected] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Mock API Call (Isko aap apni real backend API se replace kar sakte hain)
+  // ✅ Fetch real connection status from Neon DB on page load & refresh
   useEffect(() => {
-    // Simulate fetching login method & connection status
     const fetchConnectionStatus = async () => {
       setLoading(true);
+      const result = await getConnectionStatus();
       
-      // 🟢 YAHAN LOGIC CHANGE KARNA HAI: 
-      // Agar user "Continue with Google" se login kiya hai -> true
-      // Agar normal email se login kiya hai -> false
-      
-      // Mock: Maan lo user normal email se login kiya hai (Case 1)
-      const isLoggedInViaGoogle = false; // Change this to 'true' to test Case 2
-      
-      setIsGoogleConnected(isLoggedInViaGoogle);
-      setIsGmailConnected(false); // Gmail abhi connected nahi hai
-      
+      if (result.success) {
+        setIsGoogleConnected(result.googleConnected ?? false);
+        setIsGmailConnected(result.gmailConnected ?? false);
+      } else {
+        console.error('Failed to fetch status:', result.error);
+      }
       setLoading(false);
     };
 
     fetchConnectionStatus();
   }, []);
 
-  // ✅ Toggle connection function (Mock)
-  const toggleConnection = (type: 'google' | 'gmail') => {
+  // ✅ Real toggle connection function (Calls server actions)
+  const toggleConnection = async (type: 'google' | 'gmail') => {
     if (type === 'google') {
-      setIsGoogleConnected(prev => !prev);
+      const action = isGoogleConnected ? 'disconnect' : 'connect';
+      const result = await toggleGoogleBusiness(action);
+      if (result.success) {
+        setIsGoogleConnected(result.googleConnected);
+      } else {
+        alert(result.message || 'Failed to update Google connection');
+      }
     } else if (type === 'gmail') {
-      setIsGmailConnected(prev => !prev);
+      const action = isGmailConnected ? 'disconnect' : 'connect';
+      const result = await toggleGmail(action);
+      if (result.success) {
+        setIsGmailConnected(result.gmailConnected);
+      } else {
+        alert(result.message || 'Failed to update Gmail connection');
+      }
     }
   };
 
@@ -90,7 +100,7 @@ export default function ConnectAppPage() {
           isConnected={isGoogleConnected}
           lastSync={isGoogleConnected ? "2 min ago" : "N/A"}
           onToggle={() => toggleConnection('google')}
-          // ✅ Case 2 Logic: Agar Google se login kiya hai, to button DISABLED hoga
+          // ✅ Logic: Agar already connected hai, to button DISABLED (Already Connected) dikhega
           isDisabled={isGoogleConnected === true} 
         />
 
@@ -131,7 +141,7 @@ function AppCard({ name, icon, isConnected, lastSync, onToggle, isDisabled }: an
           </div>
         </div>
         
-        {/* ✅ Updated Button Logic: Disabled if already connected via login */}
+        {/* ✅ Correct Button Logic: Disabled if already connected */}
         <button 
           onClick={onToggle}
           disabled={isDisabled}
