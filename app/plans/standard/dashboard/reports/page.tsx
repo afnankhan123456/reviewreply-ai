@@ -265,9 +265,10 @@ export default function ReportsPage() {
               </div>
             </div>
             
-            <div className="flex gap-6">
+            {/* ✅ Vertical layout (ek ke neeche ek) */}
+            <div className="flex flex-col gap-4">
               <div className="text-center">
-                <div className="flex items-center gap-1 text-amber-400 text-xs font-medium">
+                <div className="flex items-center gap-1 text-amber-400 text-xs font-medium justify-center">
                   <TrendingUp className="w-3 h-3" />
                   Best Month
                 </div>
@@ -275,7 +276,7 @@ export default function ReportsPage() {
                 <p className="text-xs text-gray-400">245 reviews</p>
               </div>
               <div className="text-center">
-                <div className="flex items-center gap-1 text-amber-400 text-xs font-medium">
+                <div className="flex items-center gap-1 text-amber-400 text-xs font-medium justify-center">
                   <TrendingDown className="w-3 h-3" />
                   Worst Month
                 </div>
@@ -283,7 +284,7 @@ export default function ReportsPage() {
                 <p className="text-xs text-gray-400">89 reviews</p>
               </div>
               <div className="text-center">
-                <div className="flex items-center gap-1 text-amber-400 text-xs font-medium">
+                <div className="flex items-center gap-1 text-amber-400 text-xs font-medium justify-center">
                   <BarChart3 className="w-3 h-3" />
                   Trend
                 </div>
@@ -330,34 +331,6 @@ export default function ReportsPage() {
           </button>
         </div>
       </div>
-
-      {/* Recent Reports List */}
-      <div className="mt-6 bg-[#11141C] border border-[#1F2430] rounded-xl p-6">
-        <h3 className="text-white font-medium text-lg mb-4">Recent Reports</h3>
-        <div className="space-y-3">
-          <div className="flex items-center justify-between bg-[#181D27] border border-[#2A303C] rounded-lg p-3">
-            <div className="flex items-center gap-3">
-              <FileText className="w-4 h-4 text-gray-400" />
-              <div>
-                <p className="text-sm text-gray-300">Monthly Report - June 2026</p>
-                <p className="text-xs text-gray-500">Generated 3 days ago</p>
-              </div>
-            </div>
-            <button className="text-xs text-indigo-400 hover:text-indigo-300">Download</button>
-          </div>
-          <div className="flex items-center justify-between bg-[#181D27] border border-[#2A303C] rounded-lg p-3">
-            <div className="flex items-center gap-3">
-              <FileText className="w-4 h-4 text-gray-400" />
-              <div>
-                <p className="text-sm text-gray-300">Weekly Report - Week 28</p>
-                <p className="text-xs text-gray-500">Generated 5 days ago</p>
-              </div>
-            </div>
-            <button className="text-xs text-indigo-400 hover:text-indigo-300">Download</button>
-          </div>
-        </div>
-      </div>
-
     </div>
   );
 }
