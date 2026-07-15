@@ -6,7 +6,8 @@ import { usePathname } from 'next/navigation';
 import { 
   LayoutDashboard, Star, Sparkles, BarChart3, FileText, 
   Send, Bell, ShieldCheck, Users, Settings, Gift,
-  Tag
+  Tag, // ✅ Integration icon ke liye use kiya (Ya aap 'Link' bhi use kar sakte hain)
+  Link as LinkIcon 
 } from 'lucide-react';
 
 export default function DashboardLayout({
@@ -16,12 +17,10 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
 
-  // ✅ FUTURE-PROOF FIX: Automatically detect active item from URL path
+  // ✅ Automatically detect active item from URL path
   const [activeItem, setActiveItem] = useState(() => {
-    // Extract the last part of the URL path
     const lastSegment = pathname.split('/').pop() || '';
     
-    // Map URL segments to sidebar labels
     const segmentToLabel: Record<string, string> = {
       'dashboard': 'Overview',
       'reviews': 'Reviews',
@@ -33,7 +32,8 @@ export default function DashboardLayout({
       'alerts': 'Alerts',
       'competitors': 'Competitors',
       'team': 'Team',
-      'settings': 'Settings'
+      'settings': 'Settings',
+      'integrations': 'Integrations' // ✅ New segment added
     };
 
     return segmentToLabel[lastSegment] || 'Overview';
@@ -98,7 +98,6 @@ export default function DashboardLayout({
             isActive={activeItem === 'Tags & Categories'}
             onClick={() => setActiveItem('Tags & Categories')}
           />
-          {/* ✅ Export removed */}
           <NavItem 
             icon={<Send size={20} />} 
             label="Requests" 
@@ -106,7 +105,6 @@ export default function DashboardLayout({
             isActive={activeItem === 'Requests'}
             onClick={() => setActiveItem('Requests')}
           />
-          {/* ✅ Templates removed */}
           <NavItem 
             icon={<Bell size={20} />} 
             label="Alerts" 
@@ -114,6 +112,16 @@ export default function DashboardLayout({
             isActive={activeItem === 'Alerts'}
             onClick={() => setActiveItem('Alerts')}
           />
+          
+          {/* ✅ NEW ITEM ADDED: Integrations */}
+          <NavItem 
+            icon={<LinkIcon size={20} />} 
+            label="Integrations" 
+            href="/plans/standard/dashboard/integrations" 
+            isActive={activeItem === 'Integrations'}
+            onClick={() => setActiveItem('Integrations')}
+          />
+          
           <NavItem 
             icon={<ShieldCheck size={20} />} 
             label="Competitors" 
