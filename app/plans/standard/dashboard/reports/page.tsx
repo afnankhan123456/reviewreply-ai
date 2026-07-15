@@ -265,8 +265,8 @@ export default function ReportsPage() {
               </div>
             </div>
             
-            {/* ✅ Vertical layout (ek ke neeche ek) */}
-            <div className="flex flex-col gap-4">
+            {/* ✅ Horizontal layout with space */}
+            <div className="flex gap-6">
               <div className="text-center">
                 <div className="flex items-center gap-1 text-amber-400 text-xs font-medium justify-center">
                   <TrendingUp className="w-3 h-3" />
