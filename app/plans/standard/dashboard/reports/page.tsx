@@ -22,6 +22,7 @@ export default function ReportsPage() {
   const loading = false;
 
   const handleDownloadMonthly = async (format: 'pdf' | 'csv') => {
+    // ✅ Button disable kar do (download shuru hone se pehle)
     setIsGeneratingMonthly(true);
     setShowMonthlyMenu(false);
     try {
@@ -48,11 +49,13 @@ export default function ReportsPage() {
       console.error('Download error:', error);
       alert('Failed to download report');
     } finally {
+      // ✅ Download complete hone par button enable kar do
       setIsGeneratingMonthly(false);
     }
   };
 
   const handleDownloadWeekly = async (format: 'pdf' | 'csv') => {
+    // ✅ Button disable kar do (download shuru hone se pehle)
     setIsGeneratingWeekly(true);
     setShowWeeklyMenu(false);
     try {
@@ -79,11 +82,13 @@ export default function ReportsPage() {
       console.error('Download error:', error);
       alert('Failed to download report');
     } finally {
+      // ✅ Download complete hone par button enable kar do
       setIsGeneratingWeekly(false);
     }
   };
 
   const handleDownloadHistory = async () => {
+    // ✅ Button disable kar do (download shuru hone se pehle)
     setIsGeneratingHistory(true);
     try {
       const res = await fetch('/api/standard/reports/history');
@@ -98,6 +103,7 @@ export default function ReportsPage() {
       console.error('Download error:', error);
       alert('Failed to download history');
     } finally {
+      // ✅ Download complete hone par button enable kar do
       setIsGeneratingHistory(false);
     }
   };
