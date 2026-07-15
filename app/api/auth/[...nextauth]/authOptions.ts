@@ -16,27 +16,17 @@ function generateReferralCode() {
 async function trackReferralSignup(referrerCode: string) {
   try {
     if (!referrerCode) return;
-
     const referrer = await prisma.user.findUnique({
       where: { referralCode: referrerCode },
     });
-
-    if (!referrer) {
-      console.log("❌ Referrer not found for code:", referrerCode);
-      return;
-    }
-
+    if (!referrer) return;
     const existingStats = await prisma.referralStats.findFirst({
       where: { userId: referrer.id },
     });
-
     if (existingStats) {
       await prisma.referralStats.update({
         where: { id: existingStats.id },
-        data: {
-          googleSignups: { increment: 1 },
-          updatedAt: new Date(),
-        },
+        data: { googleSignups: { increment: 1 }, updatedAt: new Date() },
       });
     } else {
       await prisma.referralStats.create({
@@ -49,8 +39,6 @@ async function trackReferralSignup(referrerCode: string) {
         },
       });
     }
-
-    console.log(`✅ Google signup tracked for referrer: ${referrer.email}`);
   } catch (error) {
     console.error("Error tracking referral signup:", error);
   }
@@ -64,19 +52,16 @@ export const authOptions = {
     }),
   ],
   session: { strategy: "jwt" as const },
+  secret: process.env.NEXTAUTH_SECRET, // ✅ YEH LINE ADD KI HAI
   callbacks: {
     async signIn({ user }: any) {
       try {
         if (!user.email) return false;
         const existingUser = await prisma.user.findUnique({ where: { email: user.email } });
-
         const cookieStore = await cookies();
         const referrerCodeFromCookie = cookieStore.get("referrerCode")?.value || null;
-
         const referrer = referrerCodeFromCookie
-          ? await prisma.user.findUnique({
-              where: { referralCode: referrerCodeFromCookie },
-            })
+          ? await prisma.user.findUnique({ where: { referralCode: referrerCodeFromCookie } })
           : null;
 
         if (!existingUser) {
@@ -93,13 +78,12 @@ export const authOptions = {
               locationsUsed: 0,
               locationsLimit: 1,
               googleConnected: false,
-              googleBusinessConnected: true, 
+              googleBusinessConnected: true,
               createdAt: new Date(),
               lastLogin: new Date(),
               referralCode,
             },
           });
-
           if (referrerCodeFromCookie) {
             await prisma.referralSignup.create({
               data: {
@@ -107,20 +91,17 @@ export const authOptions = {
                 referrerEmail: referrer?.email || referrerCodeFromCookie,
               },
             });
-
             await trackReferralSignup(referrerCodeFromCookie);
           }
         } else {
-          // ✅ FIXED: Existing user ka status preserve karo, forcefully true mat karo
-          const updateData: any = { 
+          const updateData: any = {
             lastLogin: new Date(),
-            googleBusinessConnected: existingUser.googleBusinessConnected 
+            googleBusinessConnected: existingUser.googleBusinessConnected, // preserve existing
           };
           if (!existingUser.referralCode) {
             updateData.referralCode = generateReferralCode();
           }
           await prisma.user.update({ where: { email: user.email }, data: updateData });
-
           if (referrerCodeFromCookie) {
             const alreadyTracked = await prisma.referralSignup.findFirst({
               where: {
@@ -128,7 +109,6 @@ export const authOptions = {
                 referrerEmail: referrer?.email || referrerCodeFromCookie,
               },
             });
-
             if (!alreadyTracked) {
               await prisma.referralSignup.create({
                 data: {
@@ -136,7 +116,6 @@ export const authOptions = {
                   referrerEmail: referrer?.email || referrerCodeFromCookie,
                 },
               });
-
               await trackReferralSignup(referrerCodeFromCookie);
             }
           }
@@ -148,16 +127,16 @@ export const authOptions = {
       }
     },
     async jwt({ token, account, user }: any) {
-      if (account?.access_token) (token as any).accessToken = account.access_token;
-      if (account?.provider) (token as any).provider = account.provider;
-      if (user?.email) (token as any).isAdmin = user.email === adminEmail;
+      if (account?.access_token) token.accessToken = account.access_token;
+      if (account?.provider) token.provider = account.provider;
+      if (user?.email) token.isAdmin = user.email === adminEmail;
       if (user?.email) {
         try {
           const dbUser = await prisma.user.findUnique({
             where: { email: user.email },
             select: { referralCode: true },
           });
-          if (dbUser) (token as any).referralCode = dbUser.referralCode;
+          if (dbUser) token.referralCode = dbUser.referralCode;
         } catch (err) {
           console.log("Error fetching referral code for JWT:", err);
         }
@@ -165,9 +144,9 @@ export const authOptions = {
       return token;
     },
     async session({ session, token }: any) {
-      (session as any).accessToken = (token as any).accessToken;
-      (session as any).isAdmin = (token as any).isAdmin;
-      (session as any).referralCode = (token as any).referralCode;
+      session.accessToken = token.accessToken;
+      session.isAdmin = token.isAdmin;
+      session.referralCode = token.referralCode;
       return session;
     },
     async redirect({ baseUrl, url }: any) {
@@ -176,5 +155,4 @@ export const authOptions = {
     },
   },
   pages: { signIn: "/login" },
-  secret: process.env.NEXTAUTH_SECRET,
 };
