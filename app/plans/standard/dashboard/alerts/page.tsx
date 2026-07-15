@@ -62,15 +62,15 @@ export default function AlertsDashboard() {
         </div>
       </div>
 
-      {/* ✅ FIXED LAYOUT: 2 Equal Columns (Kabhi neeche nahi ghusega) */}
+      {/* ✅ FIXED LAYOUT: 2 Equal Columns with FIXED HEIGHT */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* LEFT COLUMN */}
         <div className="space-y-6">
           
-          {/* New Review Email Alerts */}
-          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
-            <div className="flex items-center justify-between mb-4">
+          {/* New Review Email Alerts - Fixed Height [h-[420px]] */}
+          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5 h-[420px] flex flex-col">
+            <div className="flex items-center justify-between mb-4 flex-shrink-0">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-blue-600/20 rounded-xl flex items-center justify-center text-xl">📧</div>
                 <div>
@@ -84,7 +84,8 @@ export default function AlertsDashboard() {
               <span className="px-3 py-1 bg-blue-600/20 text-blue-400 rounded-full text-xs font-medium border border-blue-600/30">3 New</span>
             </div>
 
-            <div className="space-y-2">
+            {/* Review List - Scrollable Area */}
+            <div className="flex-1 overflow-y-auto pr-1 space-y-2 custom-scrollbar">
               {newReviews.map((review) => (
                 <div key={review.id} className="bg-gray-800/50 rounded-xl p-3 flex items-center justify-between group hover:bg-gray-800 transition border border-gray-800/50">
                   <div className="flex items-center gap-3">
@@ -110,9 +111,9 @@ export default function AlertsDashboard() {
             </div>
           </div>
 
-          {/* Email Review Requests (Yeh card ab barabar width lega) */}
-          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
-            <div className="flex items-center gap-3 mb-4">
+          {/* Email Review Requests - Fixed Height [h-[420px]] */}
+          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5 h-[420px] flex flex-col">
+            <div className="flex items-center gap-3 mb-4 flex-shrink-0">
               <div className="w-10 h-10 bg-purple-600/20 rounded-xl flex items-center justify-center text-xl">📨</div>
               <div>
                 <h2 className="text-white font-semibold">Email Review Requests</h2>
@@ -123,7 +124,7 @@ export default function AlertsDashboard() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-shrink-0">
               <div>
                 <label className="text-gray-400 text-xs mb-1 block">Send After</label>
                 <select className="w-full bg-gray-800 text-gray-300 p-2.5 rounded-lg border border-gray-700 text-sm focus:outline-none focus:border-purple-500">
@@ -141,18 +142,22 @@ export default function AlertsDashboard() {
                 </select>
               </div>
             </div>
-            <button className="w-full mt-3 py-2.5 bg-purple-600/20 text-purple-400 rounded-lg text-sm font-medium hover:bg-purple-600/30 transition border border-purple-600/30">
-              Preview & Test Email
-            </button>
+            
+            {/* Button area - Fixed bottom */}
+            <div className="mt-auto pt-3 flex-shrink-0">
+              <button className="w-full py-2.5 bg-purple-600/20 text-purple-400 rounded-lg text-sm font-medium hover:bg-purple-600/30 transition border border-purple-600/30">
+                Preview & Test Email
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* RIGHT COLUMN (Yeh card bhi barabar width lega) */}
+        {/* RIGHT COLUMN */}
         <div className="space-y-6">
           
-          {/* Rating Overview */}
-          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
-            <div className="flex items-center gap-3 mb-4">
+          {/* Rating Overview - Fixed Height [h-[420px]] */}
+          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5 h-[420px] flex flex-col">
+            <div className="flex items-center gap-3 mb-4 flex-shrink-0">
               <div className="w-10 h-10 bg-amber-600/20 rounded-xl flex items-center justify-center text-xl">📊</div>
               <div>
                 <h2 className="text-white font-semibold">Rating Overview</h2>
@@ -160,13 +165,14 @@ export default function AlertsDashboard() {
               </div>
             </div>
 
-            <div className="text-center mb-4">
+            <div className="text-center mb-4 flex-shrink-0">
               <span className="text-5xl font-bold text-white">{ratingStats.average}</span>
               <div className="text-amber-400 text-lg mt-1">★★★★☆</div>
               <span className="text-green-400 text-xs">↑ 12% vs last month</span>
             </div>
 
-            <div className="space-y-2">
+            {/* Distribution Bars - Scrollable if needed */}
+            <div className="flex-1 overflow-y-auto pr-1 space-y-2 custom-scrollbar">
               {ratingStats.distribution.map((item) => (
                 <div key={item.stars} className="flex items-center gap-2">
                   <span className="text-gray-400 text-xs w-6">{item.stars}★</span>
@@ -182,11 +188,11 @@ export default function AlertsDashboard() {
             </div>
           </div>
 
-          {/* Low Rating Alerts (Yeh card ab kabhi neeche nahi ghusega) */}
-          <div className="bg-gray-900 border border-red-900/30 rounded-2xl p-5 relative overflow-hidden">
+          {/* Low Rating Alerts - Fixed Height [h-[420px]] */}
+          <div className="bg-gray-900 border border-red-900/30 rounded-2xl p-5 h-[420px] flex flex-col relative overflow-hidden">
             <div className="absolute top-0 right-0 w-20 h-20 bg-red-600/10 rounded-full -mr-8 -mt-8 blur-xl"></div>
-            <div className="relative">
-              <div className="flex items-center justify-between mb-4">
+            <div className="relative flex flex-col h-full">
+              <div className="flex items-center justify-between mb-4 flex-shrink-0">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-red-600/20 rounded-xl flex items-center justify-center text-xl">🚨</div>
                   <div>
@@ -196,7 +202,8 @@ export default function AlertsDashboard() {
                 </div>
               </div>
 
-              <div className="space-y-2">
+              {/* Alerts List - Scrollable Area */}
+              <div className="flex-1 overflow-y-auto pr-1 space-y-2 custom-scrollbar">
                 {lowRatingAlerts.map((alert) => (
                   <div key={alert.id} className="bg-red-950/30 rounded-xl p-3 border border-red-900/20">
                     <div className="flex items-center justify-between mb-1">
@@ -255,10 +262,23 @@ export default function AlertsDashboard() {
           ))}
         </div>
       </div>
+
+      {/* Add custom CSS for scrollbar */}
+      <style>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #374151;
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #4b5563;
+        }
+      `}</style>
     </div>
   );
 }
-
-
-
-
