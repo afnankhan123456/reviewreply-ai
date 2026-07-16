@@ -13,13 +13,8 @@ export async function POST(req: any) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
 
-    // Only allow connection if user logged in via Google (has mail scope)
-    if (token.provider !== "google") {
-      return NextResponse.json({
-        success: false,
-        error: "You must log in with Google to connect Gmail",
-      }, { status: 400 });
-    }
+    // ✅ Allow connection even if user logged in via email (removed provider check)
+    // User can connect their business account even if they logged in with regular email
 
     const user = await prisma.user.findUnique({
       where: { email: token.email },
