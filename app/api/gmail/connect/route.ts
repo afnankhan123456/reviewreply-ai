@@ -13,7 +13,7 @@ export async function POST(req: any) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
 
-    // ✅ Allow connection even if user logged in via email (removed provider check)
+    // Allow connection even if user logged in via email (removed provider check)
     // User can connect their business account even if they logged in with regular email
 
     const user = await prisma.user.findUnique({
@@ -44,3 +44,6 @@ export async function POST(req: any) {
     return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
   }
 }
+
+
+
