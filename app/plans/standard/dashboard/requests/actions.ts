@@ -1,7 +1,7 @@
 'use server'
 
 import nodemailer from 'nodemailer';
-import { getReviewRequestEmailTemplate } from '@/lib/emailTemplate';
+import { getReviewRequestEmailTemplate } from './lib/emailTemplate';
 
 export async function sendReviewRequestEmail(name: string, email: string, orderId: string) {
   if (!email || !name || !orderId) {
