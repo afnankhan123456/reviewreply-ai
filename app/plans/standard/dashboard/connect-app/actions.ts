@@ -9,23 +9,33 @@ export async function getConnectionStatus() {
     console.log('🔍 getConnectionStatus called');
     const session = await getServerSession(authOptions);
     console.log('🔍 Session from getServerSession:', session);
+    console.log('🔍 Session User Email:', session?.user?.email);
 
-    if (!session?.user?.id) {
-      console.error('❌ Session missing or user id missing');
+    if (!session?.user?.id && !session?.user?.email) {
+      console.error('❌ Session missing or user id/email missing');
       return { error: 'Unauthorized' };
     }
 
-    console.log('🔍 User ID:', session.user.id);
-
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { googleBusinessConnected: true, gmailConnected: true },
+    // ✅ Try to find user by ID first, then by email as fallback
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { id: session.user.id },
+          { email: session.user.email }
+        ]
+      },
+      select: { 
+        googleBusinessConnected: true, 
+        gmailConnected: true,
+        email: true,
+        id: true
+      },
     });
 
     console.log('🔍 User from DB:', user);
 
     if (!user) {
-      console.error('❌ User not found in DB for ID:', session.user.id);
+      console.error('❌ User not found in DB for ID:', session.user.id, 'Email:', session.user.email);
       return { error: 'User not found' };
     }
 
@@ -48,14 +58,20 @@ export async function toggleGoogleBusiness(action: 'connect' | 'disconnect') {
     const session = await getServerSession(authOptions);
     console.log('🔍 Session in toggleGoogleBusiness:', session);
 
-    if (!session?.user?.id) {
-      console.error('❌ Unauthorized: session null or missing id');
+    if (!session?.user?.id && !session?.user?.email) {
+      console.error('❌ Unauthorized: session null or missing id/email');
       return { error: 'Unauthorized' };
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { googleBusinessConnected: true },
+    // ✅ Find user by ID or email
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { id: session.user.id },
+          { email: session.user.email }
+        ]
+      },
+      select: { googleBusinessConnected: true, email: true, id: true },
     });
 
     console.log('🔍 User in toggleGoogleBusiness:', user);
@@ -65,10 +81,9 @@ export async function toggleGoogleBusiness(action: 'connect' | 'disconnect') {
       return { success: false, message: 'Already Connected', googleConnected: true };
     }
 
-    console.log('🔍 Proceeding to update googleBusinessConnected to', action === 'connect');
-
+    // ✅ Update using email (more reliable when ID might be mismatched)
     const updatedUser = await prisma.user.update({
-      where: { id: session.user.id },
+      where: { email: user?.email || session.user.email },
       data: { googleBusinessConnected: action === 'connect' },
       select: { googleBusinessConnected: true },
     });
@@ -92,14 +107,20 @@ export async function toggleGmail(action: 'connect' | 'disconnect') {
     const session = await getServerSession(authOptions);
     console.log('🔍 Session in toggleGmail:', session);
 
-    if (!session?.user?.id) {
-      console.error('❌ Unauthorized: session null or missing id');
+    if (!session?.user?.id && !session?.user?.email) {
+      console.error('❌ Unauthorized: session null or missing id/email');
       return { error: 'Unauthorized' };
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { gmailConnected: true },
+    // ✅ Find user by ID or email
+    const user = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { id: session.user.id },
+          { email: session.user.email }
+        ]
+      },
+      select: { gmailConnected: true, email: true, id: true },
     });
 
     console.log('🔍 User in toggleGmail:', user);
@@ -109,10 +130,9 @@ export async function toggleGmail(action: 'connect' | 'disconnect') {
       return { success: false, message: 'Already Connected', gmailConnected: true };
     }
 
-    console.log('🔍 Proceeding to update gmailConnected to', action === 'connect');
-
+    // ✅ Update using email (more reliable when ID might be mismatched)
     const updatedUser = await prisma.user.update({
-      where: { id: session.user.id },
+      where: { email: user?.email || session.user.email },
       data: { gmailConnected: action === 'connect' },
       select: { gmailConnected: true },
     });
