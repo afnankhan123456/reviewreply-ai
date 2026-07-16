@@ -28,7 +28,8 @@ export async function getConnectionStatus() {
         googleBusinessConnected: true, 
         gmailConnected: true,
         email: true,
-        id: true
+        id: true,
+        businessEmail: true
       },
     });
 
@@ -45,6 +46,7 @@ export async function getConnectionStatus() {
       success: true,
       googleConnected: user.googleBusinessConnected ?? false,
       gmailConnected: user.gmailConnected ?? false,
+      businessEmail: user.businessEmail || null,
     };
   } catch (error) {
     console.error('❌ Error in getConnectionStatus:', error);
@@ -71,29 +73,47 @@ export async function toggleGoogleBusiness(action: 'connect' | 'disconnect') {
           { email: session.user.email }
         ]
       },
-      select: { googleBusinessConnected: true, email: true, id: true },
+      select: { googleBusinessConnected: true, email: true, id: true, businessEmail: true },
     });
 
     console.log('🔍 User in toggleGoogleBusiness:', user);
 
-    if (user?.googleBusinessConnected === true) {
-      console.log('✅ Already connected, returning false');
-      return { success: false, message: 'Already Connected', googleConnected: true };
+    if (action === 'connect') {
+      // ✅ NEW: When connecting, check if user has tokens (means they selected business account)
+      console.log('🔍 Action is connect - will be handled in page component');
+      // This will trigger OAuth flow in the frontend
+      return {
+        success: true,
+        message: 'Ready to connect. Complete OAuth in browser.',
+        googleConnected: false,
+      };
     }
 
-    // ✅ Update using email (more reliable when ID might be mismatched)
-    const updatedUser = await prisma.user.update({
-      where: { email: user?.email || session.user.email },
-      data: { googleBusinessConnected: action === 'connect' },
-      select: { googleBusinessConnected: true },
-    });
+    if (user?.googleBusinessConnected === true) {
+      console.log('✅ Already connected, disconnecting...');
+      // ✅ When disconnecting, clear tokens and business email
+      const updatedUser = await prisma.user.update({
+        where: { email: user?.email || session.user.email },
+        data: { 
+          googleBusinessConnected: false,
+          businessEmail: null,
+          googleAccessToken: null,
+          googleRefreshToken: null,
+        },
+        select: { googleBusinessConnected: true },
+      });
 
-    console.log('✅ Updated user:', updatedUser);
+      return {
+        success: true,
+        message: 'Google Business Disconnected!',
+        googleConnected: updatedUser.googleBusinessConnected,
+      };
+    }
 
     return {
-      success: true,
-      message: action === 'connect' ? 'Google Business Connected!' : 'Google Business Disconnected!',
-      googleConnected: updatedUser.googleBusinessConnected,
+      success: false,
+      message: 'Not connected',
+      googleConnected: false,
     };
   } catch (error) {
     console.error('❌ Error in toggleGoogleBusiness:', error);
@@ -126,14 +146,25 @@ export async function toggleGmail(action: 'connect' | 'disconnect') {
     console.log('🔍 User in toggleGmail:', user);
 
     if (user?.gmailConnected === true) {
-      console.log('✅ Already connected, returning false');
-      return { success: false, message: 'Already Connected', gmailConnected: true };
+      console.log('✅ Already connected, disconnecting...');
+      const updatedUser = await prisma.user.update({
+        where: { email: user?.email || session.user.email },
+        data: { gmailConnected: false },
+        select: { gmailConnected: true },
+      });
+
+      return {
+        success: true,
+        message: 'Gmail Disconnected!',
+        gmailConnected: updatedUser.gmailConnected,
+      };
     }
 
-    // ✅ Update using email (more reliable when ID might be mismatched)
+    console.log('🔍 Proceeding to connect Gmail');
+
     const updatedUser = await prisma.user.update({
       where: { email: user?.email || session.user.email },
-      data: { gmailConnected: action === 'connect' },
+      data: { gmailConnected: true },
       select: { gmailConnected: true },
     });
 
@@ -141,7 +172,7 @@ export async function toggleGmail(action: 'connect' | 'disconnect') {
 
     return {
       success: true,
-      message: action === 'connect' ? 'Gmail Connected!' : 'Gmail Disconnected!',
+      message: 'Gmail Connected!',
       gmailConnected: updatedUser.gmailConnected,
     };
   } catch (error) {
