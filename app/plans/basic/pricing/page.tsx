@@ -27,7 +27,7 @@ export default function BasicPricingPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ plan: planType }),
+        body: JSON.stringify({ plan: planType, tier: "basic" }),
       });
 
       const data = await res.json();
