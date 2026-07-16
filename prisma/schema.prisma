@@ -33,6 +33,8 @@ model User {
   alertEmailsSent     Int                 @default(0)
   alertEmailsLimit    Int                 @default(100)
   alertMonthlyReset   DateTime?
+  // ✅ NEW FIELD ADDED
+  googlePlaceId       String?             @map("google_place_id")
   createdAt           DateTime            @default(now())
   lastLogin           DateTime            @default(now())
   referralCode        String              @unique
