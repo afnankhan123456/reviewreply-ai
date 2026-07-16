@@ -172,7 +172,7 @@ export const authOptions = {
     },
     async redirect({ baseUrl, url }: any) {
       if (url.includes("admin=true")) return `${baseUrl}/admin`;
-      return `${baseUrl}/plans/standard/dashboard`;
+      return `${baseUrl}/plans/standard`;
     },
   },
   pages: { signIn: "/login" },
