@@ -134,9 +134,12 @@ export const authOptions = {
         try {
           const dbUser = await prisma.user.findUnique({
             where: { email: user.email },
-            select: { referralCode: true },
+            select: { id: true, referralCode: true },
           });
-          if (dbUser) token.referralCode = dbUser.referralCode;
+          if (dbUser) {
+            token.id = dbUser.id;
+            token.referralCode = dbUser.referralCode;
+          }
         } catch (err) {
           console.log("Error fetching referral code for JWT:", err);
         }
@@ -147,6 +150,9 @@ export const authOptions = {
       session.accessToken = token.accessToken;
       session.isAdmin = token.isAdmin;
       session.referralCode = token.referralCode;
+      if (session.user) {
+        session.user.id = token.id;
+      }
       return session;
     },
     async redirect({ baseUrl, url }: any) {
