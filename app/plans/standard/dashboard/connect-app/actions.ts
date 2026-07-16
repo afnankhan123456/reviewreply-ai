@@ -52,8 +52,9 @@ export async function toggleGmail(action: 'connect' | 'disconnect') {
       return { error: 'User not found' };
     }
 
-    // Plan ke hisaab se limit decide hoti hai: basic = 100, standard = 500
-    const limitForPlan = currentUser.plan === 'standard' ? 500 : 100;
+    // plan ab "basic-1m" ya "standard-monthly" jaisa hota hai (tier-duration format)
+    // isliye exact match ki jagah startsWith use kar rahe hain
+    const limitForPlan = currentUser.plan?.startsWith('standard') ? 500 : 100;
 
     const updatedUser = await prisma.user.update({
       where: { id: session.user.id },
