@@ -80,7 +80,6 @@ export const authOptions = {
               locationsUsed: 0,
               locationsLimit: 1,
               googleConnected: false,
-              googleBusinessConnected: true,
               createdAt: new Date(),
               lastLogin: new Date(),
               referralCode,
@@ -98,7 +97,6 @@ export const authOptions = {
         } else {
           const updateData: any = {
             lastLogin: new Date(),
-            googleBusinessConnected: existingUser.googleBusinessConnected,
           };
           if (!existingUser.referralCode) {
             updateData.referralCode = generateReferralCode();
@@ -153,7 +151,6 @@ export const authOptions = {
     },
     async redirect({ baseUrl, url }: any) {
       if (url.includes("admin=true")) return `${baseUrl}/admin`;
-      // ✅ FIX: Login ke baad seedha /plans par jao (plan select karne ke liye)
       return `${baseUrl}/plans`;
     },
   },
