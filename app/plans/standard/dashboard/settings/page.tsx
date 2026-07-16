@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { saveGooglePlaceId, getGooglePlaceId } from "./actions";
 
 export default function SettingsPage() {
   const [placeId, setPlaceId] = useState("");
-  const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const [isSaved, setIsSaved] = useState(false);
 
+  // Load existing Place ID on page load
   useEffect(() => {
     const fetchPlaceId = async () => {
       const result = await getGooglePlaceId();
@@ -18,14 +19,20 @@ export default function SettingsPage() {
     fetchPlaceId();
   }, []);
 
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  // Auto-save function (triggered on every keystroke)
+  const handleChange = async (value: string) => {
+    setPlaceId(value);
+    setIsSaved(false);
     setMessage("");
 
-    const result = await saveGooglePlaceId(placeId);
-    setMessage(result.message);
-    setLoading(false);
+    if (!value.trim()) return;
+
+    // Call server action to save
+    const result = await saveGooglePlaceId(value);
+    if (result.message) {
+      setMessage(result.message);
+      setIsSaved(true);
+    }
   };
 
   return (
@@ -39,26 +46,22 @@ export default function SettingsPage() {
           </p>
         </div>
 
-        {/* Card Style Input */}
+        {/* Card Style Input - Auto Save */}
         <div className="bg-[#11141C] border border-[#1F2430] rounded-2xl p-6 space-y-4">
           <div>
-            <label className="block text-sm text-gray-400 mb-1">Google Place ID</label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={placeId}
-                onChange={(e) => setPlaceId(e.target.value)}
-                className="flex-1 bg-[#181D27] border border-[#2A303C] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-indigo-500"
-                placeholder="ChIJ1234567890"
-              />
-              <button
-                onClick={handleSave}
-                disabled={loading}
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-sm font-medium transition disabled:opacity-50"
-              >
-                {loading ? "Saving..." : "Save"}
-              </button>
+            <div className="flex items-center justify-between mb-2">
+              <label className="text-sm text-gray-400">Google Place ID</label>
+              {isSaved && placeId.trim() && (
+                <span className="text-xs text-green-400">✓ Saved</span>
+              )}
             </div>
+            <input
+              type="text"
+              value={placeId}
+              onChange={(e) => handleChange(e.target.value)}
+              className="w-full bg-[#181D27] border border-[#2A303C] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-indigo-500"
+              placeholder="ChIJ1234567890"
+            />
             <p className="text-xs text-gray-500 mt-2">
               Find your Place ID from Google Maps URL.
             </p>
