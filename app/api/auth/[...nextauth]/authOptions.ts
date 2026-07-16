@@ -135,7 +135,6 @@ export const authOptions = {
     async jwt({ token, account, user }: any) {
       if (account?.access_token) {
         token.accessToken = account.access_token;
-        // ✅ Store tokens in DB when user logs in
         if (user?.email) {
           try {
             await prisma.user.update({
