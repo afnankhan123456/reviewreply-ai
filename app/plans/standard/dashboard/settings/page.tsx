@@ -1,67 +1,78 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { saveGooglePlaceId, getGooglePlaceId } from "./actions";
+import { useRouter } from "next/navigation";
 
 export default function SettingsPage() {
-  const [placeId, setPlaceId] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+  const router = useRouter();
 
-  useEffect(() => {
-    const fetchPlaceId = async () => {
-      const result = await getGooglePlaceId();
-      if (result?.placeId) {
-        setPlaceId(result.placeId);
-      }
-    };
-    fetchPlaceId();
-  }, []);
-
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("");
-
-    const result = await saveGooglePlaceId(placeId);
-    setMessage(result.message);
-    setLoading(false);
-  };
+  const settingsItems = [
+    {
+      id: "send-review",
+      icon: "📧",
+      label: "Send Review Request",
+      description: "Send a review request to your customers",
+      action: () => router.push("/plans/standard/dashboard/settings/send-review"),
+    },
+    {
+      id: "general",
+      icon: "⚙️",
+      label: "General",
+      description: "Business Name, Address, Google Place ID",
+      action: () => {},
+    },
+    {
+      id: "notifications",
+      icon: "🔔",
+      label: "Notifications",
+      description: "Email Alerts, Push Notifications",
+      action: () => {},
+    },
+    {
+      id: "appearance",
+      icon: "🎨",
+      label: "Appearance",
+      description: "Dark Mode, Light Mode, System Default",
+      action: () => {},
+    },
+  ];
 
   return (
-    <div className="p-6 bg-[#0B0E14] min-h-screen text-white">
-      <h1 className="text-2xl font-bold mb-4">Settings</h1>
-      <p className="text-gray-400 mb-6">
-        Update your business details to personalize review requests.
-      </p>
-
-      <form onSubmit={handleSave} className="max-w-md space-y-4">
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">Google Place ID</label>
-          <input
-            type="text"
-            value={placeId}
-            onChange={(e) => setPlaceId(e.target.value)}
-            className="w-full bg-[#181D27] border border-[#2A303C] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-indigo-500"
-            placeholder="ChIJ1234567890"
-          />
-          <p className="text-xs text-gray-500 mt-1">
-            Find your Place ID from Google Maps URL.
+    <div className="min-h-screen bg-[#0B0E14] text-white p-6">
+      <div className="max-w-2xl mx-auto">
+        {/* Header */}
+        <div className="mb-8">
+          <h1 className="text-3xl font-semibold">Settings</h1>
+          <p className="text-gray-400 mt-1 text-sm">
+            Manage your account and business settings
           </p>
         </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 rounded-lg transition disabled:opacity-50"
-        >
-          {loading ? "Saving..." : "Save Place ID"}
-        </button>
-
-        {message && (
-          <p className="text-sm text-green-400 mt-2">{message}</p>
-        )}
-      </form>
+        {/* Settings List */}
+        <div className="space-y-6">
+          {settingsItems.map((item) => (
+            <div
+              key={item.id}
+              onClick={item.action}
+              className="group flex items-center justify-between p-4 bg-[#11141C] border border-[#1F2430] rounded-2xl hover:bg-[#181D27] hover:border-[#2A303C] transition-all cursor-pointer"
+            >
+              <div className="flex items-center gap-4">
+                <div className="w-10 h-10 bg-[#181D27] rounded-xl flex items-center justify-center text-xl border border-[#2A303C] group-hover:border-[#3A4A5C]">
+                  {item.icon}
+                </div>
+                <div>
+                  <h3 className="text-base font-medium">{item.label}</h3>
+                  <p className="text-sm text-gray-400">{item.description}</p>
+                </div>
+              </div>
+              <div className="text-gray-500 group-hover:text-gray-300">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
