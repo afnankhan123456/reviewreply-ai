@@ -2,11 +2,6 @@ export function getReviewRequestEmailTemplate(name: string, orderId: string, rev
   return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; background: #ffffff; border: 1px solid #e0e0e0; border-radius: 10px; padding: 30px;">
       
-      <!-- Logo -->
-      <div style="text-align: center;">
-        <img src="https://reviewreply-ai-pi.vercel.app/logo.png" alt="ReviewMate Logo" style="height: 50px;">
-      </div>
-
       <!-- Header -->
       <h2 style="color: #4F46E5; text-align: center;">We value your feedback, ${name}!</h2>
 
