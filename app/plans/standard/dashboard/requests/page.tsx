@@ -6,6 +6,7 @@ import { sendReviewRequestEmail } from "./actions";
 export default function RequestsPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [orderId, setOrderId] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -14,7 +15,7 @@ export default function RequestsPage() {
     setLoading(true);
     setMessage("");
 
-    const result = await sendReviewRequestEmail(name, email);
+    const result = await sendReviewRequestEmail(name, email, orderId);
     setMessage(result.message);
     setLoading(false);
   };
@@ -48,6 +49,18 @@ export default function RequestsPage() {
             required
             className="w-full bg-[#181D27] border border-[#2A303C] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-indigo-500"
             placeholder="customer@example.com"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm text-gray-400 mb-1">Order ID</label>
+          <input
+            type="text"
+            value={orderId}
+            onChange={(e) => setOrderId(e.target.value)}
+            required
+            className="w-full bg-[#181D27] border border-[#2A303C] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-indigo-500"
+            placeholder="#ORD-12345"
           />
         </div>
 
