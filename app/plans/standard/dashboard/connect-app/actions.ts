@@ -27,7 +27,7 @@ export async function getConnectionStatus() {
     return {
       success: true,
       gmailConnected: user.gmailConnected ?? false,
-      alertEmailsLimit: user.alertEmailsLimit ?? 500,
+      alertEmailsLimit: user.alertEmailsLimit ?? 100,
       alertEmailsSent: user.alertEmailsSent ?? 0,
     };
   } catch (error) {
@@ -43,16 +43,23 @@ export async function toggleGmail(action: 'connect' | 'disconnect') {
       return { error: 'Unauthorized' };
     }
 
-    const user = await prisma.user.findUnique({
+    const currentUser = await prisma.user.findUnique({
       where: { id: session.user.id },
-      select: { gmailConnected: true }
+      select: { gmailConnected: true, plan: true }
     });
+
+    if (!currentUser) {
+      return { error: 'User not found' };
+    }
+
+    // Plan ke hisaab se limit decide hoti hai: basic = 100, standard = 500
+    const limitForPlan = currentUser.plan === 'standard' ? 500 : 100;
 
     const updatedUser = await prisma.user.update({
       where: { id: session.user.id },
       data: {
         gmailConnected: action === 'connect',
-        alertEmailsLimit: action === 'connect' ? 500 : 0,
+        alertEmailsLimit: action === 'connect' ? limitForPlan : 0,
       },
       select: { gmailConnected: true, alertEmailsLimit: true }
     });
