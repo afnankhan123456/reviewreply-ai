@@ -4,7 +4,6 @@ import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
 
-// ✅ 1. Get Connection Status (Page load pe check karega)
 export async function getConnectionStatus() {
   try {
     const session = await getServerSession(authOptions);
@@ -15,7 +14,6 @@ export async function getConnectionStatus() {
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
       select: {
-        googleBusinessConnected: true,
         gmailConnected: true,
       }
     });
@@ -26,7 +24,6 @@ export async function getConnectionStatus() {
 
     return {
       success: true,
-      googleConnected: user.googleBusinessConnected ?? false,
       gmailConnected: user.gmailConnected ?? false,
     };
   } catch (error) {
@@ -35,42 +32,6 @@ export async function getConnectionStatus() {
   }
 }
 
-// ✅ 2. Connect/Disconnect Google Business ID (Manual)
-export async function toggleGoogleBusiness(action: 'connect' | 'disconnect') {
-  try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return { error: 'Unauthorized' };
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { googleBusinessConnected: true }
-    });
-
-    // Agar pehle se connected hai aur disconnect kar raha hai -> Allow karo
-    // Agar pehle se disconnected hai aur connect kar raha hai -> Allow karo
-    const updatedUser = await prisma.user.update({
-      where: { id: session.user.id },
-      data: {
-        googleBusinessConnected: action === 'connect',
-      },
-      select: { googleBusinessConnected: true }
-    });
-
-    return {
-      success: true,
-      message: action === 'connect' ? 'Google Business Connected!' : 'Google Business Disconnected!',
-      googleConnected: updatedUser.googleBusinessConnected
-    };
-
-  } catch (error) {
-    console.error('Error toggling Google:', error);
-    return { error: 'Failed to update Google connection' };
-  }
-}
-
-// ✅ 3. Connect/Disconnect Gmail (Manual)
 export async function toggleGmail(action: 'connect' | 'disconnect') {
   try {
     const session = await getServerSession(authOptions);
@@ -83,7 +44,6 @@ export async function toggleGmail(action: 'connect' | 'disconnect') {
       select: { gmailConnected: true }
     });
 
-    // Allow manual connect/disconnect
     const updatedUser = await prisma.user.update({
       where: { id: session.user.id },
       data: {
