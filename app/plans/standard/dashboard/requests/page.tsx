@@ -26,6 +26,23 @@ export default function RequestsPage() {
         Enter customer details to send a review request.
       </p>
 
+      {/* ✅ Info Message for Place ID */}
+      <div className="bg-[#181D27] border border-[#2A303C] rounded-lg p-4 mb-6 text-sm">
+        <p className="text-gray-300">
+          💡 <span className="font-medium">Tip:</span> Please save your{" "}
+          <a
+            href="/plans/standard/dashboard/settings"
+            className="text-indigo-400 hover:underline"
+          >
+            Google Place ID in Settings
+          </a>{" "}
+          to include a review link in the email.
+        </p>
+        <p className="text-xs text-gray-500 mt-1">
+          If Place ID is not saved, the email will only contain a text message.
+        </p>
+      </div>
+
       <form onSubmit={handleSubmit} className="max-w-md space-y-4">
         <div>
           <label className="block text-sm text-gray-400 mb-1">Customer Name</label>
