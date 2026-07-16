@@ -9,6 +9,8 @@ import { getConnectionStatus, toggleGmail } from './actions';
 
 export default function ConnectAppPage() {
   const [isGmailConnected, setIsGmailConnected] = useState<boolean>(false);
+  const [emailLimit, setEmailLimit] = useState<number>(0);
+  const [emailsUsed, setEmailsUsed] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -18,6 +20,8 @@ export default function ConnectAppPage() {
       
       if (result.success) {
         setIsGmailConnected(result.gmailConnected ?? false);
+        setEmailLimit(result.alertEmailsLimit ?? 0);
+        setEmailsUsed(result.alertEmailsSent ?? 0);
       } else {
         console.error('Failed to fetch status:', result.error);
       }
@@ -32,6 +36,7 @@ export default function ConnectAppPage() {
     const result = await toggleGmail(action);
     if (result.success) {
       setIsGmailConnected(result.gmailConnected);
+      setEmailLimit(result.alertEmailsLimit);
     } else {
       alert(result.message || 'Failed to update Gmail connection');
     }
@@ -45,10 +50,12 @@ export default function ConnectAppPage() {
     );
   }
 
+  const remaining = Math.max(0, emailLimit - emailsUsed);
+  const availableForUser = Math.max(0, remaining - 50);
+
   return (
     <div className="flex-1 flex flex-col p-6 overflow-y-auto bg-[#0B0E14]">
       
-      {/* Header */}
       <header className="mb-8">
         <h1 className="text-2xl font-bold text-white flex items-center gap-2">
           Connect App
@@ -56,7 +63,6 @@ export default function ConnectAppPage() {
         <p className="text-sm text-gray-400 mt-1">Manage your Gmail connection.</p>
       </header>
 
-      {/* Gmail Card */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <AppCard 
           name="Gmail"
@@ -68,6 +74,29 @@ export default function ConnectAppPage() {
         />
       </div>
 
+      {isGmailConnected && (
+        <div className="mt-6 bg-[#11141C] border border-[#1F2430] rounded-xl p-5">
+          <h3 className="text-white font-medium mb-4">Email Usage</h3>
+          <div className="space-y-3">
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-400">Total Limit</span>
+              <span className="text-white">{emailLimit} / month</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-400">Used</span>
+              <span className="text-white">{emailsUsed}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-400">Remaining (User)</span>
+              <span className="text-white">{availableForUser}</span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-gray-400">Reserved for Alerts</span>
+              <span className="text-yellow-400">50</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
