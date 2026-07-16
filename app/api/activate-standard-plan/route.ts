@@ -8,6 +8,9 @@ export async function POST(req: NextRequest) {
     const subscriptionEnd = new Date();
     subscriptionEnd.setDate(subscriptionEnd.getDate() + days);
 
+    // Plan ke hisaab se alert email limit set hoti hai
+    const alertEmailsLimit = planId === "standard" ? 500 : 100;
+
     const user = await prisma.user.update({
       where: { id: userId },
       data: {
@@ -15,6 +18,7 @@ export async function POST(req: NextRequest) {
         subscriptionStatus: "active",
         subscriptionStart: new Date(),
         subscriptionEnd: subscriptionEnd,
+        alertEmailsLimit,
       },
     });
 
