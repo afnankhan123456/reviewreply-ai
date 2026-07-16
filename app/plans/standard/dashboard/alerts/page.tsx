@@ -2,7 +2,6 @@
 
 export default function AlertsDashboard() {
   // ✅ Dummy data hata diya — real DB se connect hoga
-  const newReviews: any[] = [];
   const lowRatingAlerts: any[] = [];
   const ratingStats: any = {};
 
@@ -28,31 +27,23 @@ export default function AlertsDashboard() {
         </div>
       </div>
 
-      {/* 2 Column Layout - Small Cards */}
+      {/* 2 Column Layout - Sirf 2 cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         
-        {/* LEFT COLUMN - New Review Email Alerts */}
+        {/* LEFT COLUMN - Rating Overview */}
         <div className="bg-gray-900 border border-gray-800 rounded-2xl p-3 h-[280px] flex flex-col">
-          <div className="flex items-center justify-between mb-2 flex-shrink-0">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-blue-600/20 rounded-lg flex items-center justify-center text-lg">📧</div>
-              <div>
-                <h2 className="text-white font-medium text-sm">New Review Email Alerts</h2>
-                <div className="flex items-center gap-2 mt-0.5">
-                  <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-                  <span className="text-green-400 text-xs">Active</span>
-                </div>
-              </div>
+          <div className="flex items-center gap-2 mb-2 flex-shrink-0">
+            <div className="w-8 h-8 bg-amber-600/20 rounded-lg flex items-center justify-center text-lg">📊</div>
+            <div>
+              <h2 className="text-white font-medium text-sm">Rating Overview</h2>
+              <span className="text-gray-500 text-xs">0 total reviews</span>
             </div>
-            <span className="px-2 py-0.5 bg-blue-600/20 text-blue-400 rounded-full text-[10px] font-medium border border-blue-600/30">3 New</span>
           </div>
 
           <div className="flex-1 overflow-y-auto pr-1 space-y-1 custom-scrollbar">
-            {newReviews.length === 0 && (
-              <div className="text-center text-gray-500 text-xs py-6">
-                No new reviews yet.
-              </div>
-            )}
+            <div className="text-center text-gray-500 text-xs py-6">
+              No reviews yet.
+            </div>
           </div>
         </div>
 
@@ -65,17 +56,15 @@ export default function AlertsDashboard() {
                 <div className="w-8 h-8 bg-red-600/20 rounded-lg flex items-center justify-center text-lg">🚨</div>
                 <div>
                   <h2 className="text-white font-medium text-sm">Low Rating Alerts</h2>
-                  <span className="text-red-400 text-xs">⚠ Critical • 2 alerts</span>
+                  <span className="text-red-400 text-xs">⚠ Critical • 0 alerts</span>
                 </div>
               </div>
             </div>
 
             <div className="flex-1 overflow-y-auto pr-1 space-y-1 custom-scrollbar">
-              {lowRatingAlerts.length === 0 && (
-                <div className="text-center text-gray-500 text-xs py-6">
-                  No low rating alerts yet.
-                </div>
-              )}
+              <div className="text-center text-gray-500 text-xs py-6">
+                No low rating alerts yet.
+              </div>
             </div>
           </div>
         </div>
