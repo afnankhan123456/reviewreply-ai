@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 const pricingPlans = [
   {
@@ -47,9 +48,30 @@ const pricingPlans = [
 
 export default function StandardPricingPage() {
   const router = useRouter();
+  const [activatingPlan, setActivatingPlan] = useState<string | null>(null);
 
-  const handleChoosePlan = (plan) => {
-    router.push(`/plans/standard/dashboard?plan=${plan.id}&days=${plan.days}`);
+  const handleChoosePlan = async (plan: (typeof pricingPlans)[number]) => {
+    try {
+      setActivatingPlan(plan.id);
+
+      const res = await fetch("/api/activate-plan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan: plan.id, tier: "standard" }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        router.push(`/plans/standard/dashboard?plan=${plan.id}&days=${plan.days}`);
+      } else {
+        alert(data.error || "Failed to activate plan");
+      }
+    } catch (err) {
+      alert("Something went wrong");
+    } finally {
+      setActivatingPlan(null);
+    }
   };
 
   return (
@@ -123,9 +145,10 @@ export default function StandardPricingPage() {
                   <td className="px-8 py-6 text-center">
                     <button
                       onClick={() => handleChoosePlan(plan)}
-                      className="rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700"
+                      disabled={activatingPlan !== null}
+                      className="rounded-xl bg-blue-600 px-6 py-3 font-semibold text-white transition hover:bg-blue-700 disabled:opacity-50"
                     >
-                      Choose Plan
+                      {activatingPlan === plan.id ? "Activating..." : "Choose Plan"}
                     </button>
                   </td>
                 </tr>
