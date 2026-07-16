@@ -53,8 +53,8 @@ export const authOptions = {
   ],
   session: { strategy: "jwt" as const },
   secret: process.env.NEXTAUTH_SECRET,
-  useSecureCookies: true,     // ✅ ADD THIS
-  trustHost: true,            // ✅ ADD THIS
+  useSecureCookies: true,
+  trustHost: true,
   callbacks: {
     async signIn({ user }: any) {
       try {
@@ -80,7 +80,7 @@ export const authOptions = {
               locationsUsed: 0,
               locationsLimit: 1,
               googleConnected: false,
-              googleBusinessConnected: true,
+              googleBusinessConnected: false,
               createdAt: new Date(),
               lastLogin: new Date(),
               referralCode,
@@ -96,9 +96,9 @@ export const authOptions = {
             await trackReferralSignup(referrerCodeFromCookie);
           }
         } else {
+          // ✅ FIX: Only update lastLogin, don't override googleBusinessConnected
           const updateData: any = {
             lastLogin: new Date(),
-            googleBusinessConnected: existingUser.googleBusinessConnected,
           };
           if (!existingUser.referralCode) {
             updateData.referralCode = generateReferralCode();
@@ -153,7 +153,7 @@ export const authOptions = {
     },
     async redirect({ baseUrl, url }: any) {
       if (url.includes("admin=true")) return `${baseUrl}/admin`;
-      return `${baseUrl}/plans/standard/dashboard`; // ✅ Change from '/plans' to dashboard
+      return `${baseUrl}/plans/standard/dashboard`;
     },
   },
   pages: { signIn: "/login" },
