@@ -4,179 +4,102 @@ import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
 
+// ✅ 1. Get Connection Status (Page load pe check karega)
 export async function getConnectionStatus() {
   try {
-    console.log('🔍 getConnectionStatus called');
     const session = await getServerSession(authOptions);
-    console.log('🔍 Session from getServerSession:', session);
-    console.log('🔍 Session User Email:', session?.user?.email);
-
-    if (!session?.user?.id && !session?.user?.email) {
-      console.error('❌ Session missing or user id/email missing');
+    if (!session?.user?.id) {
       return { error: 'Unauthorized' };
     }
 
-    // ✅ Try to find user by ID first, then by email as fallback
-    const user = await prisma.user.findFirst({
-      where: {
-        OR: [
-          { id: session.user.id },
-          { email: session.user.email }
-        ]
-      },
-      select: { 
-        googleBusinessConnected: true, 
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: {
+        googleBusinessConnected: true,
         gmailConnected: true,
-        email: true,
-        id: true,
-        businessEmail: true
-      },
+      }
     });
 
-    console.log('🔍 User from DB:', user);
-
     if (!user) {
-      console.error('❌ User not found in DB for ID:', session.user.id, 'Email:', session.user.email);
       return { error: 'User not found' };
     }
-
-    console.log('✅ googleBusinessConnected:', user.googleBusinessConnected, 'gmailConnected:', user.gmailConnected);
 
     return {
       success: true,
       googleConnected: user.googleBusinessConnected ?? false,
       gmailConnected: user.gmailConnected ?? false,
-      businessEmail: user.businessEmail || null,
     };
   } catch (error) {
-    console.error('❌ Error in getConnectionStatus:', error);
+    console.error('Error fetching status:', error);
     return { error: 'Failed to fetch connection status' };
   }
 }
 
+// ✅ 2. Connect/Disconnect Google Business ID (Manual)
 export async function toggleGoogleBusiness(action: 'connect' | 'disconnect') {
   try {
-    console.log(`🔍 toggleGoogleBusiness called with action: ${action}`);
     const session = await getServerSession(authOptions);
-    console.log('🔍 Session in toggleGoogleBusiness:', session);
-
-    if (!session?.user?.id && !session?.user?.email) {
-      console.error('❌ Unauthorized: session null or missing id/email');
+    if (!session?.user?.id) {
       return { error: 'Unauthorized' };
     }
 
-    // ✅ Find user by ID or email
-    const user = await prisma.user.findFirst({
-      where: {
-        OR: [
-          { id: session.user.id },
-          { email: session.user.email }
-        ]
-      },
-      select: { googleBusinessConnected: true, email: true, id: true, businessEmail: true },
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { googleBusinessConnected: true }
     });
 
-    console.log('🔍 User in toggleGoogleBusiness:', user);
-
-    if (action === 'connect') {
-      // ✅ NEW: When connecting, check if user has tokens (means they selected business account)
-      console.log('🔍 Action is connect - will be handled in page component');
-      // This will trigger OAuth flow in the frontend
-      return {
-        success: true,
-        message: 'Ready to connect. Complete OAuth in browser.',
-        googleConnected: false,
-      };
-    }
-
-    if (user?.googleBusinessConnected === true) {
-      console.log('✅ Already connected, disconnecting...');
-      // ✅ When disconnecting, clear tokens and business email
-      const updatedUser = await prisma.user.update({
-        where: { email: user?.email || session.user.email },
-        data: { 
-          googleBusinessConnected: false,
-          businessEmail: null,
-          googleAccessToken: null,
-          googleRefreshToken: null,
-        },
-        select: { googleBusinessConnected: true },
-      });
-
-      return {
-        success: true,
-        message: 'Google Business Disconnected!',
-        googleConnected: updatedUser.googleBusinessConnected,
-      };
-    }
+    // Agar pehle se connected hai aur disconnect kar raha hai -> Allow karo
+    // Agar pehle se disconnected hai aur connect kar raha hai -> Allow karo
+    const updatedUser = await prisma.user.update({
+      where: { id: session.user.id },
+      data: {
+        googleBusinessConnected: action === 'connect',
+      },
+      select: { googleBusinessConnected: true }
+    });
 
     return {
-      success: false,
-      message: 'Not connected',
-      googleConnected: false,
+      success: true,
+      message: action === 'connect' ? 'Google Business Connected!' : 'Google Business Disconnected!',
+      googleConnected: updatedUser.googleBusinessConnected
     };
+
   } catch (error) {
-    console.error('❌ Error in toggleGoogleBusiness:', error);
+    console.error('Error toggling Google:', error);
     return { error: 'Failed to update Google connection' };
   }
 }
 
+// ✅ 3. Connect/Disconnect Gmail (Manual)
 export async function toggleGmail(action: 'connect' | 'disconnect') {
   try {
-    console.log(`🔍 toggleGmail called with action: ${action}`);
     const session = await getServerSession(authOptions);
-    console.log('🔍 Session in toggleGmail:', session);
-
-    if (!session?.user?.id && !session?.user?.email) {
-      console.error('❌ Unauthorized: session null or missing id/email');
+    if (!session?.user?.id) {
       return { error: 'Unauthorized' };
     }
 
-    // ✅ Find user by ID or email
-    const user = await prisma.user.findFirst({
-      where: {
-        OR: [
-          { id: session.user.id },
-          { email: session.user.email }
-        ]
-      },
-      select: { gmailConnected: true, email: true, id: true },
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { gmailConnected: true }
     });
 
-    console.log('🔍 User in toggleGmail:', user);
-
-    if (user?.gmailConnected === true) {
-      console.log('✅ Already connected, disconnecting...');
-      const updatedUser = await prisma.user.update({
-        where: { email: user?.email || session.user.email },
-        data: { gmailConnected: false },
-        select: { gmailConnected: true },
-      });
-
-      return {
-        success: true,
-        message: 'Gmail Disconnected!',
-        gmailConnected: updatedUser.gmailConnected,
-      };
-    }
-
-    console.log('🔍 Proceeding to connect Gmail');
-
+    // Allow manual connect/disconnect
     const updatedUser = await prisma.user.update({
-      where: { email: user?.email || session.user.email },
-      data: { gmailConnected: true },
-      select: { gmailConnected: true },
+      where: { id: session.user.id },
+      data: {
+        gmailConnected: action === 'connect',
+      },
+      select: { gmailConnected: true }
     });
-
-    console.log('✅ Updated user:', updatedUser);
 
     return {
       success: true,
-      message: 'Gmail Connected!',
-      gmailConnected: updatedUser.gmailConnected,
+      message: action === 'connect' ? 'Gmail Connected!' : 'Gmail Disconnected!',
+      gmailConnected: updatedUser.gmailConnected
     };
+
   } catch (error) {
-    console.error('❌ Error in toggleGmail:', error);
+    console.error('Error toggling Gmail:', error);
     return { error: 'Failed to update Gmail connection' };
   }
 }
