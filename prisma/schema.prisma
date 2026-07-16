@@ -26,8 +26,9 @@ model User {
   syncEnabled         Boolean             @default(true)
   monthlyResetDate    DateTime?
   gmailConnected      Boolean             @default(false)
-  // ✅ NEW FIELD ADDED (Kuch nahi hataaya)
   googleBusinessConnected  Boolean        @default(false)
+  googleAccessToken   String?             @db.Text
+  googleRefreshToken  String?             @db.Text
   alertEmailsSent     Int                 @default(0)
   alertEmailsLimit    Int                 @default(100)
   alertMonthlyReset   DateTime?
