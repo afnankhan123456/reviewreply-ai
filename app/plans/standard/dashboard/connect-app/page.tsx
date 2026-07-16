@@ -56,24 +56,6 @@ export default function ConnectAppPage() {
         <p className="text-sm text-gray-400 mt-1">Manage your Gmail connection.</p>
       </header>
 
-      {/* Stats Bar */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-        <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-4">
-          <div className="flex justify-between items-start mb-2">
-            <span className="text-xs text-gray-400">Total Connections</span>
-          </div>
-          <div className="text-2xl font-bold text-white mb-1">1</div>
-        </div>
-        <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-4">
-          <div className="flex justify-between items-start mb-2">
-            <span className="text-xs text-gray-400">Active</span>
-          </div>
-          <div className="text-2xl font-bold text-green-400 mb-1">
-            {isGmailConnected ? 1 : 0}
-          </div>
-        </div>
-      </div>
-
       {/* Gmail Card */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <AppCard 
