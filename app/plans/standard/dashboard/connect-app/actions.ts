@@ -156,3 +156,6 @@ function AppCard({ name, icon, isConnected, lastSync, onToggle, isDisabled }: an
     </div>
   );
 }
+
+
+
