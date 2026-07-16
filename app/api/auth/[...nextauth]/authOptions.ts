@@ -53,8 +53,8 @@ export const authOptions = {
   ],
   session: { strategy: "jwt" as const },
   secret: process.env.NEXTAUTH_SECRET,
-  useSecureCookies: true,     // ✅ ADD THIS
-  trustHost: true,            // ✅ ADD THIS
+  useSecureCookies: true,
+  trustHost: true,
   callbacks: {
     async signIn({ user }: any) {
       try {
@@ -153,7 +153,8 @@ export const authOptions = {
     },
     async redirect({ baseUrl, url }: any) {
       if (url.includes("admin=true")) return `${baseUrl}/admin`;
-      return `${baseUrl}/plans/standard/dashboard`; // ✅ Change from '/plans' to dashboard
+      // ✅ FIX: Login ke baad seedha /plans par jao (plan select karne ke liye)
+      return `${baseUrl}/plans`;
     },
   },
   pages: { signIn: "/login" },
