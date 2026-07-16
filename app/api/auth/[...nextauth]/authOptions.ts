@@ -49,6 +49,11 @@ export const authOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+      authorization: {
+        params: {
+          scope: "openid email profile https://www.googleapis.com/auth/business.manage",
+        },
+      },
     }),
   ],
   session: { strategy: "jwt" as const },
@@ -96,7 +101,6 @@ export const authOptions = {
             await trackReferralSignup(referrerCodeFromCookie);
           }
         } else {
-          // ✅ FIX: Only update lastLogin, don't override googleBusinessConnected
           const updateData: any = {
             lastLogin: new Date(),
           };
@@ -129,7 +133,23 @@ export const authOptions = {
       }
     },
     async jwt({ token, account, user }: any) {
-      if (account?.access_token) token.accessToken = account.access_token;
+      if (account?.access_token) {
+        token.accessToken = account.access_token;
+        // ✅ Store tokens in DB when user logs in
+        if (user?.email) {
+          try {
+            await prisma.user.update({
+              where: { email: user.email },
+              data: {
+                googleAccessToken: account.access_token,
+                googleRefreshToken: account.refresh_token || null,
+              },
+            });
+          } catch (err) {
+            console.error("Error saving tokens:", err);
+          }
+        }
+      }
       if (account?.provider) token.provider = account.provider;
       if (user?.email) token.isAdmin = user.email === adminEmail;
       if (user?.email) {
