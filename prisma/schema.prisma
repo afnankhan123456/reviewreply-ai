@@ -27,6 +27,7 @@ model User {
   monthlyResetDate    DateTime?
   gmailConnected      Boolean             @default(false)
   googleBusinessConnected  Boolean        @default(false)
+  businessEmail       String?
   googleAccessToken   String?             @db.Text
   googleRefreshToken  String?             @db.Text
   alertEmailsSent     Int                 @default(0)
