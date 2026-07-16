@@ -1,68 +1,51 @@
-"use client";
+'use server'
 
-import { useState } from "react";
-import { sendReviewRequestEmail } from "./actions";
+import nodemailer from 'nodemailer';
 
-export default function RequestsPage() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
+export async function sendReviewRequestEmail(name: string, email: string) {
+  if (!email || !name) {
+    return { message: 'Name and Email are required' };
+  }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("");
+  try {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.GMAIL_USER,
+        pass: process.env.GMAIL_APP_PASSWORD,
+      },
+    });
 
-    const result = await sendReviewRequestEmail(name, email);
-    setMessage(result.message);
-    setLoading(false);
-  };
+    const personalizedMessage = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+        <h2 style="color: #4F46E5;">We value your feedback, ${name}!</h2>
+        <p>Dear <strong>${name}</strong>,</p>
+        <p>Thank you for choosing us! We would love to hear about your experience with us.</p>
+        <p>Please take a moment to share your valuable feedback by leaving a review.</p>
+        <p style="margin-top: 20px;">
+          <a href="https://reviewreply-ai-pi.vercel.app/review" 
+             style="background-color: #4F46E5; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
+            Leave a Review
+          </a>
+        </p>
+        <p style="margin-top: 20px; color: #666; font-size: 14px;">
+          Thank you for your time!<br>
+          Best regards,<br>
+          <strong>ReviewMate Team</strong>
+        </p>
+      </div>
+    `;
 
-  return (
-    <div className="p-6 bg-[#0B0E14] min-h-screen text-white">
-      <h1 className="text-2xl font-bold mb-4">Send Review Request</h1>
-      <p className="text-gray-400 mb-6">
-        Enter customer details to send a personalized review request.
-      </p>
+    await transporter.sendMail({
+      from: process.env.GMAIL_USER,
+      to: email,
+      subject: `Review Request for ${name}`,
+      html: personalizedMessage,
+    });
 
-      <form onSubmit={handleSubmit} className="max-w-md space-y-4">
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">Customer Name</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            className="w-full bg-[#181D27] border border-[#2A303C] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-indigo-500"
-            placeholder="John Doe"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">Customer Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full bg-[#181D27] border border-[#2A303C] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-indigo-500"
-            placeholder="customer@example.com"
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 rounded-lg transition disabled:opacity-50"
-        >
-          {loading ? "Sending..." : "Send Review Request"}
-        </button>
-
-        {message && (
-          <p className="text-sm text-green-400 mt-2">{message}</p>
-        )}
-      </form>
-    </div>
-  );
+    return { message: `Personalized review request sent to ${email}` };
+  } catch (error) {
+    console.error('Email error:', error);
+    return { message: 'Failed to send email. Please try again.' };
+  }
 }
