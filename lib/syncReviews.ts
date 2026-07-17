@@ -93,12 +93,11 @@ export async function syncUserReviews(userId: string) {
       user.reviewsUsed++;
       syncedCount++;
 
-    // Low rating alert
+      // Low rating alert
       if (newReview.rating <= 2 && user.gmailConnected) {
         const isStandard = user.plan?.startsWith('standard');
         const now = new Date();
 
-        // Monthly reset (dono counters ek sath reset hote hain)
         if (user.alertMonthlyReset) {
           const daysSinceAlertReset = Math.floor(
             (now.getTime() - new Date(user.alertMonthlyReset).getTime()) / (1000 * 60 * 60 * 24)
@@ -120,7 +119,6 @@ export async function syncUserReviews(userId: string) {
           user.alertMonthlyReset = now;
         }
 
-        // Standard: reserved 50-pool se count. Basic: shared 100-pool se count.
         const count = isStandard ? (user.criticalEmailsSent ?? 0) : (user.alertEmailsSent ?? 0);
         const limit = isStandard ? (user.criticalEmailsLimit ?? 50) : (user.alertEmailsLimit ?? 100);
 
@@ -166,3 +164,8 @@ export async function syncUserReviews(userId: string) {
           }
         }
       }
+    }
+  }
+
+  return { synced: syncedCount };
+}
