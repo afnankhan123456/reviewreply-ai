@@ -32,6 +32,8 @@ model User {
   googleRefreshToken  String?             @db.Text
   alertEmailsSent     Int                 @default(0)
   alertEmailsLimit    Int                 @default(100)
+  criticalEmailsSent  Int                 @default(0)
+  criticalEmailsLimit Int                 @default(0)
   alertMonthlyReset   DateTime?
   // ✅ NEW FIELD ADDED
   googlePlaceId       String?             @map("google_place_id")
