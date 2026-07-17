@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getAllTags, addTagToReview, deleteTag } from "./actions";
-import { getAllTags, addTag, deleteTag } from "./actions";  // ✅ addTagToReview -> addTag
+import { getAllTags, addTag, deleteTag } from "./actions";
 
 export default function TagsCategoriesPage() {
   const [tags, setTags] = useState<any[]>([]);
@@ -25,7 +24,7 @@ export default function TagsCategoriesPage() {
 
   const handleAddTag = async () => {
     if (!newTagName.trim()) return;
-    await addTagToReview(newTagName);
+    await addTag(newTagName);
     setNewTagName("");
     fetchTags();
   };
