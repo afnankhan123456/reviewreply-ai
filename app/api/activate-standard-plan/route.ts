@@ -11,6 +11,10 @@ export async function POST(req: NextRequest) {
     // Plan ke hisaab se alert email limit set hoti hai
     const alertEmailsLimit = planId === "standard" ? 500 : 100;
 
+    // Plan ke hisaab se location limit set hoti hai
+    // basic = 1 location, standard = 2 locations
+    const locationsLimit = planId === "standard" ? 2 : 1;
+
     const user = await prisma.user.update({
       where: { id: userId },
       data: {
@@ -19,6 +23,7 @@ export async function POST(req: NextRequest) {
         subscriptionStart: new Date(),
         subscriptionEnd: subscriptionEnd,
         alertEmailsLimit,
+        locationsLimit,
       },
     });
 
