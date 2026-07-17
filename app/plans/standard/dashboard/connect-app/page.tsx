@@ -1,11 +1,16 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { 
-  CheckCircle, Clock, 
-  ExternalLink, Mail
+import {
+  CheckCircle, Clock,
+  ExternalLink, Mail, Building2
 } from 'lucide-react';
-import { getConnectionStatus, toggleGmail } from './actions';
+import {
+  getConnectionStatus,
+  toggleGmail,
+  getGoogleBusinessLocations,
+  saveSelectedLocation,
+} from './actions';
 
 export default function ConnectAppPage() {
   const [isGmailConnected, setIsGmailConnected] = useState<boolean>(false);
@@ -13,15 +18,22 @@ export default function ConnectAppPage() {
   const [emailsUsed, setEmailsUsed] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
+  const [isGoogleConnected, setIsGoogleConnected] = useState<boolean>(false);
+  const [locations, setLocations] = useState<any[]>([]);
+  const [loadingLocations, setLoadingLocations] = useState(false);
+  const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
+  const [locationError, setLocationError] = useState<string | null>(null);
+
   useEffect(() => {
     const fetchConnectionStatus = async () => {
       setLoading(true);
       const result = await getConnectionStatus();
-      
+
       if (result.success) {
         setIsGmailConnected(result.gmailConnected ?? false);
         setEmailLimit(result.alertEmailsLimit ?? 0);
         setEmailsUsed(result.alertEmailsSent ?? 0);
+        setIsGoogleConnected(result.googleConnected ?? false);
       } else {
         console.error('Failed to fetch status:', result.error);
       }
@@ -42,6 +54,28 @@ export default function ConnectAppPage() {
     }
   };
 
+  const handleConnectGoogleBusiness = async () => {
+    setLoadingLocations(true);
+    setLocationError(null);
+    const result = await getGoogleBusinessLocations();
+    if (result.success) {
+      setLocations(result.locations);
+    } else {
+      setLocationError(result.error || 'Failed to fetch locations');
+    }
+    setLoadingLocations(false);
+  };
+
+  const handleSelectLocation = async (location: any) => {
+    const result = await saveSelectedLocation(location.id, location.title, location.address);
+    if (result.success) {
+      setSelectedLocationId(location.id);
+      setIsGoogleConnected(true);
+    } else {
+      alert(result.error || 'Failed to save location');
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex-1 flex items-center justify-center bg-[#0B0E14] text-gray-400">
@@ -55,23 +89,80 @@ export default function ConnectAppPage() {
 
   return (
     <div className="flex-1 flex flex-col p-6 overflow-y-auto bg-[#0B0E14]">
-      
+
       <header className="mb-8">
         <h1 className="text-2xl font-bold text-white flex items-center gap-2">
           Connect App
         </h1>
-        <p className="text-sm text-gray-400 mt-1">Manage your Gmail connection.</p>
+        <p className="text-sm text-gray-400 mt-1">Manage your Gmail and Google Business connections.</p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <AppCard 
+        <AppCard
           name="Gmail"
           icon={<Mail size={24} />}
           isConnected={isGmailConnected}
           lastSync={isGmailConnected ? "Just now" : "N/A"}
           onToggle={toggleConnection}
-          isDisabled={isGmailConnected === true} 
+          isDisabled={isGmailConnected === true}
         />
+
+        <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-5 hover:border-[#2A303C] transition-colors">
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-[#181D27] rounded-xl flex items-center justify-center border border-[#2A303C]">
+                <Building2 size={24} />
+              </div>
+              <div>
+                <h3 className="text-white font-medium">Google Business</h3>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className={`w-1.5 h-1.5 rounded-full ${isGoogleConnected ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                  <span className={`text-xs ${isGoogleConnected ? 'text-green-400' : 'text-red-400'}`}>
+                    {isGoogleConnected ? 'Connected' : 'Disconnected'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={handleConnectGoogleBusiness}
+              disabled={loadingLocations}
+              className="p-2 rounded border transition-colors text-xs font-medium bg-green-500/10 border-green-500/30 text-green-400 hover:bg-green-500/20 disabled:opacity-50"
+            >
+              {loadingLocations ? 'Loading...' : 'Fetch Locations'}
+            </button>
+          </div>
+
+          {locationError && (
+            <p className="text-xs text-red-400 mb-2">{locationError}</p>
+          )}
+
+          {locations.length > 0 && (
+            <div className="space-y-2 mt-2 max-h-48 overflow-y-auto">
+              {locations.map((loc) => (
+                <div
+                  key={loc.id}
+                  className={`flex items-center justify-between p-2 rounded-lg border text-xs ${
+                    selectedLocationId === loc.id
+                      ? 'border-green-500/40 bg-green-500/10'
+                      : 'border-[#2A303C] bg-[#181D27]'
+                  }`}
+                >
+                  <div>
+                    <p className="text-white">{loc.title}</p>
+                    <p className="text-gray-500">{loc.address}</p>
+                  </div>
+                  <button
+                    onClick={() => handleSelectLocation(loc)}
+                    className="px-2 py-1 rounded bg-indigo-600 text-white text-[10px] hover:bg-indigo-500"
+                  >
+                    {selectedLocationId === loc.id ? 'Selected' : 'Select'}
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {isGmailConnected && (
@@ -119,12 +210,12 @@ function AppCard({ name, icon, isConnected, lastSync, onToggle, isDisabled }: an
             </div>
           </div>
         </div>
-        
-        <button 
+
+        <button
           onClick={onToggle}
           disabled={isDisabled}
           className={`p-2 rounded border transition-colors text-xs font-medium ${
-            isDisabled 
+            isDisabled
               ? 'bg-gray-800 border-gray-700 text-gray-500 cursor-not-allowed opacity-60'
               : isConnected
                 ? 'bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20'
@@ -140,7 +231,7 @@ function AppCard({ name, icon, isConnected, lastSync, onToggle, isDisabled }: an
           <Clock size={12} />
           <span>Last sync: {lastSync}</span>
         </div>
-        
+
         {isConnected ? (
           <div className="flex items-center gap-1 text-[10px] text-green-400">
             <CheckCircle size={12} />
