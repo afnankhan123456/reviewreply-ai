@@ -81,6 +81,7 @@ model Review {
   reviewDate       DateTime
   syncedAt         DateTime @default(now())
   createdAt        DateTime @default(now())
+  tags             Tag[]    @relation("ReviewToTag")  // ✅ NEW RELATION
 }
 
 model Template {
@@ -187,4 +188,17 @@ model ReviewRequest {
   status         String    @default("pending")
   sentAt         DateTime?
   createdAt      DateTime  @default(now())
+}
+
+// ✅ NEW MODEL: Tag
+model Tag {
+  id        String   @id @default(cuid())
+  name      String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  sentiment String   @default("neutral")
+  reviews   Review[] @relation("ReviewToTag")
+  createdAt DateTime @default(now())
+
+  @@unique([userId, name])
 }
