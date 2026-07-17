@@ -9,7 +9,7 @@ export async function GET(req: any, context: any) {
       secret: process.env.NEXTAUTH_SECRET,
     });
 
-    if (!token?.email) {
+    if (!token?.email || !token?.id) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
 
@@ -23,6 +23,11 @@ export async function GET(req: any, context: any) {
 
     if (!report) {
       return NextResponse.json({ success: false, error: "Report not found" }, { status: 404 });
+    }
+
+    // Verify karo ye report isi logged-in user ka hai
+    if (report.userId !== token.id) {
+      return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
     }
 
     // Build a simple CSV
