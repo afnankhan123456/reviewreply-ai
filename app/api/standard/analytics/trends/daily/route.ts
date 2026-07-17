@@ -1,31 +1,37 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { getCachedOrFetch } from '@/app/lib/cache'; // ✅ New import
+import { getCachedOrFetch } from '@/app/lib/cache';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
 
 export async function GET() {
   try {
-    // ✅ 1. Use getCachedOrFetch properly with 3 arguments
+    const session: any = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+    const userId = session.user.id;
+    const cacheKey = `daily-trends-${userId}`;
+
     const responseData = await getCachedOrFetch(
-      'daily-trends',
+      cacheKey,
       async () => {
         const today = new Date();
         const dailyData = [];
 
-        // Last 7 days ka data fetch karo
         for (let i = 6; i >= 0; i--) {
           const date = new Date(today);
           date.setDate(date.getDate() - i);
-          
-          // Start of day (midnight)
+
           const startOfDay = new Date(date);
           startOfDay.setHours(0, 0, 0, 0);
-          
-          // End of day (23:59:59)
+
           const endOfDay = new Date(date);
           endOfDay.setHours(23, 59, 59, 999);
 
           const count = await prisma.review.count({
             where: {
+              userId,
               createdAt: {
                 gte: startOfDay,
                 lte: endOfDay,
@@ -36,13 +42,12 @@ export async function GET() {
           dailyData.push(count);
         }
 
-        // Prepare response
         return {
           success: true,
           data: dailyData,
         };
       },
-      60 // Cache duration in seconds
+      60
     );
 
     console.log('✅ Returning daily trends' + (responseData ? ' (cached or fresh)' : ''));
