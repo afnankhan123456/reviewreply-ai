@@ -72,6 +72,8 @@ export async function GET(req: any) {
             comment: r.comment || null,
             replied: !!r.reviewReply,
             reviewReply: r.reviewReply?.comment || null,
+            reviewDate: r.createTime ? new Date(r.createTime) : new Date(),
+            syncedAt: new Date(),
           },
         });
         savedCount++;
