@@ -49,6 +49,14 @@ export const authOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || "",
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+      authorization: {
+        params: {
+          scope:
+            "openid email profile https://www.googleapis.com/auth/business.manage",
+          access_type: "offline",
+          prompt: "consent",
+        },
+      },
     }),
   ],
   session: { strategy: "jwt" as const },
@@ -144,6 +152,26 @@ export const authOptions = {
           console.log("Error fetching referral code for JWT:", err);
         }
       }
+
+      // Google Business token DB me save karo (cron jobs ko baad me chahiye honge)
+      if (account?.access_token && token?.id) {
+        try {
+          const updateData: any = {
+            googleAccessToken: account.access_token,
+            googleConnected: true,
+          };
+          if (account.refresh_token) {
+            updateData.googleRefreshToken = account.refresh_token;
+          }
+          await prisma.user.update({
+            where: { id: token.id },
+            data: updateData,
+          });
+        } catch (err) {
+          console.log("Error saving Google tokens:", err);
+        }
+      }
+
       return token;
     },
     async session({ session, token }: any) {
