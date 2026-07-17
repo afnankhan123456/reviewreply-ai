@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { getAllTags, addTagToReview, deleteTag } from "./actions";
+import { getAllTags, addTag, deleteTag } from "./actions";  // ✅ addTagToReview -> addTag
 
 export default function TagsCategoriesPage() {
   const [tags, setTags] = useState<any[]>([]);
