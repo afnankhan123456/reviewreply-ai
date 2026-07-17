@@ -35,8 +35,6 @@ model User {
   criticalEmailsSent  Int                 @default(0)
   criticalEmailsLimit Int                 @default(0)
   alertMonthlyReset   DateTime?
-  // ✅ NEW FIELD ADDED
-  googlePlaceId       String?             @map("google_place_id")
   createdAt           DateTime            @default(now())
   lastLogin           DateTime            @default(now())
   referralCode        String              @unique
@@ -49,6 +47,7 @@ model User {
   referralClicks      ReferralClick[]
   referralSignups     ReferralSignup[]
   referralStats       ReferralStats[]
+  reviewRequests      ReviewRequest[]
 }
 
 model BusinessLocation {
@@ -173,4 +172,18 @@ model Withdrawal {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   @@map("withdrawals")
+}
+
+model ReviewRequest {
+  id             String    @id @default(cuid())
+  userId         String
+  user           User      @relation(fields: [userId], references: [id])
+  customerName   String
+  customerEmail  String
+  template       String    @default("standard")
+  sendAfterHours Int       @default(24)
+  scheduledAt    DateTime
+  status         String    @default("pending")
+  sentAt         DateTime?
+  createdAt      DateTime  @default(now())
 }
