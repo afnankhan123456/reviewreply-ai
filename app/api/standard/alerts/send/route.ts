@@ -30,14 +30,11 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, error: "User not found" }, { status: 404 });
     }
 
-    // Gmail connected hona zaroori hai
     if (!user.gmailConnected) {
       return NextResponse.json({ success: false, error: "Gmail is not connected" }, { status: 400 });
     }
 
-    // Monthly limit check + reset agar 30 din ho gaye ho
-    let currentAlertCount = user.alertEmailsSent ?? 0;
-    const alertLimit = user.alertEmailsLimit ?? 100;
+    const isStandard = user.plan?.startsWith('standard');
     const now = new Date();
 
     if (user.alertMonthlyReset) {
@@ -47,9 +44,10 @@ export async function POST(req: Request) {
       if (daysSinceReset >= 30) {
         await prisma.user.update({
           where: { id: user.id },
-          data: { alertEmailsSent: 0, alertMonthlyReset: now },
+          data: { alertEmailsSent: 0, criticalEmailsSent: 0, alertMonthlyReset: now },
         });
-        currentAlertCount = 0;
+        user.alertEmailsSent = 0;
+        user.criticalEmailsSent = 0;
       }
     } else {
       await prisma.user.update({
@@ -58,14 +56,16 @@ export async function POST(req: Request) {
       });
     }
 
-    if (currentAlertCount >= alertLimit) {
+    const currentCount = isStandard ? (user.criticalEmailsSent ?? 0) : (user.alertEmailsSent ?? 0);
+    const limit = isStandard ? (user.criticalEmailsLimit ?? 50) : (user.alertEmailsLimit ?? 100);
+
+    if (currentCount >= limit) {
       return NextResponse.json(
-        { success: false, error: `Monthly alert limit (${alertLimit}) reached.` },
+        { success: false, error: `Critical alert limit (${limit}) reached.` },
         { status: 429 }
       );
     }
 
-    // Request body se real review data lo (dummy nahi)
     const body = await req.json().catch(() => ({}));
     const reviewInfo = {
       reviewerName: body.reviewerName || "Customer",
@@ -91,15 +91,22 @@ export async function POST(req: Request) {
       html: buildAlertEmail("Low Rating Alert", reviewInfo),
     });
 
-    await prisma.user.update({
-      where: { id: user.id },
-      data: { alertEmailsSent: { increment: 1 } },
-    });
+    if (isStandard) {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { criticalEmailsSent: { increment: 1 } },
+      });
+    } else {
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { alertEmailsSent: { increment: 1 } },
+      });
+    }
 
     return NextResponse.json({
       success: true,
       message: "Alert email sent successfully",
-      remaining: alertLimit - (currentAlertCount + 1),
+      remaining: limit - (currentCount + 1),
     });
   } catch (error) {
     console.error("Send alert error:", error);
