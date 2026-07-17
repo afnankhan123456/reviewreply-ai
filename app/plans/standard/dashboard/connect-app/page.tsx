@@ -85,7 +85,6 @@ export default function ConnectAppPage() {
   }
 
   const remaining = Math.max(0, emailLimit - emailsUsed);
-  const availableForUser = Math.max(0, remaining - 50);
 
   return (
     <div className="flex-1 flex flex-col p-6 overflow-y-auto bg-[#0B0E14]">
@@ -178,12 +177,8 @@ export default function ConnectAppPage() {
               <span className="text-white">{emailsUsed}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-400">Remaining (User)</span>
-              <span className="text-white">{availableForUser}</span>
-            </div>
-            <div className="flex justify-between text-sm">
-              <span className="text-gray-400">Reserved for Alerts</span>
-              <span className="text-yellow-400">50</span>
+              <span className="text-gray-400">Remaining</span>
+              <span className="text-white">{remaining}</span>
             </div>
           </div>
         </div>
