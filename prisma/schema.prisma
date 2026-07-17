@@ -49,6 +49,7 @@ model User {
   referralSignups     ReferralSignup[]
   referralStats       ReferralStats[]
   reviewRequests      ReviewRequest[]
+  tags                Tag[]               // ✅ Added relation to Tag
 }
 
 model BusinessLocation {
@@ -81,7 +82,7 @@ model Review {
   reviewDate       DateTime
   syncedAt         DateTime @default(now())
   createdAt        DateTime @default(now())
-  tags             Tag[]    @relation("ReviewToTag")  // ✅ NEW RELATION
+  tags             Tag[]    @relation("ReviewToTag")
 }
 
 model Template {
@@ -190,7 +191,6 @@ model ReviewRequest {
   createdAt      DateTime  @default(now())
 }
 
-// ✅ NEW MODEL: Tag
 model Tag {
   id        String   @id @default(cuid())
   name      String
