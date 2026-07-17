@@ -1,25 +1,31 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { cache } from '@/app/lib/cache';
-import { getCachedOrFetch } from '@/app/lib/cache'; // ✅ New import
+import { getCachedOrFetch } from '@/app/lib/cache';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
 
 export async function GET() {
   try {
-    // ✅ 1. Check cache first (Manually)
-    const cached = cache.get('weekly-trends');
+    const session: any = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+    const userId = session.user.id;
+    const cacheKey = `weekly-trends-${userId}`;
+
+    const cached = cache.get(cacheKey);
     if (cached) {
       console.log('✅ Returning cached weekly trends');
       return NextResponse.json(cached);
     }
 
-    // ✅ 2. Fetch fresh data using getCachedOrFetch (but will skip cache since already checked)
     const responseData = await getCachedOrFetch(
-      'weekly-trends',
+      cacheKey,
       async () => {
         const today = new Date();
         const weeklyData = [];
 
-        // Last 7 weeks ka data fetch karo
         for (let i = 6; i >= 0; i--) {
           const weekStart = new Date(today);
           weekStart.setDate(weekStart.getDate() - (i * 7));
@@ -31,6 +37,7 @@ export async function GET() {
 
           const count = await prisma.review.count({
             where: {
+              userId,
               createdAt: {
                 gte: weekStart,
                 lte: weekEnd,
@@ -46,11 +53,10 @@ export async function GET() {
           data: weeklyData,
         };
       },
-      60 // Cache duration
+      60
     );
 
-    // ✅ 3. Save to cache manually (Extra redundancy)
-    cache.set('weekly-trends', responseData, 60);
+    cache.set(cacheKey, responseData, 60);
 
     return NextResponse.json(responseData);
   } catch (error) {
