@@ -40,7 +40,7 @@ export default function ReviewsPage() {
     try {
       // ✅ PARALLEL FETCHING (Promise.all) - Fast load
       const [reviewsRes, countRes] = await Promise.all([
-        fetch('/api/test/fetch-reviews'),
+        fetch('/api/standard/reviews/list'),
         fetch('/api/standard/reviews/unanswered-count')
       ]);
 
