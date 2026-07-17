@@ -93,12 +93,12 @@ export async function syncUserReviews(userId: string) {
       user.reviewsUsed++;
       syncedCount++;
 
-      // Low rating alert
+    // Low rating alert
       if (newReview.rating <= 2 && user.gmailConnected) {
-        let alertCount = user.alertEmailsSent ?? 0;
-        const alertLimit = user.alertEmailsLimit ?? 100;
+        const isStandard = user.plan?.startsWith('standard');
         const now = new Date();
 
+        // Monthly reset (dono counters ek sath reset hote hain)
         if (user.alertMonthlyReset) {
           const daysSinceAlertReset = Math.floor(
             (now.getTime() - new Date(user.alertMonthlyReset).getTime()) / (1000 * 60 * 60 * 24)
@@ -106,10 +106,10 @@ export async function syncUserReviews(userId: string) {
           if (daysSinceAlertReset >= 30) {
             await prisma.user.update({
               where: { id: user.id },
-              data: { alertEmailsSent: 0, alertMonthlyReset: now },
+              data: { alertEmailsSent: 0, criticalEmailsSent: 0, alertMonthlyReset: now },
             });
-            alertCount = 0;
             user.alertEmailsSent = 0;
+            user.criticalEmailsSent = 0;
             user.alertMonthlyReset = now;
           }
         } else {
@@ -120,7 +120,11 @@ export async function syncUserReviews(userId: string) {
           user.alertMonthlyReset = now;
         }
 
-        if (alertCount < alertLimit) {
+        // Standard: reserved 50-pool se count. Basic: shared 100-pool se count.
+        const count = isStandard ? (user.criticalEmailsSent ?? 0) : (user.alertEmailsSent ?? 0);
+        const limit = isStandard ? (user.criticalEmailsLimit ?? 50) : (user.alertEmailsLimit ?? 100);
+
+        if (count < limit) {
           try {
             const transporter = nodemailer.createTransport({
               host: 'smtp.gmail.com',
@@ -144,18 +148,21 @@ export async function syncUserReviews(userId: string) {
               }),
             });
 
-            await prisma.user.update({
-              where: { id: user.id },
-              data: { alertEmailsSent: { increment: 1 } },
-            });
-            user.alertEmailsSent = (user.alertEmailsSent ?? 0) + 1;
+            if (isStandard) {
+              await prisma.user.update({
+                where: { id: user.id },
+                data: { criticalEmailsSent: { increment: 1 } },
+              });
+              user.criticalEmailsSent = (user.criticalEmailsSent ?? 0) + 1;
+            } else {
+              await prisma.user.update({
+                where: { id: user.id },
+                data: { alertEmailsSent: { increment: 1 } },
+              });
+              user.alertEmailsSent = (user.alertEmailsSent ?? 0) + 1;
+            }
           } catch (emailError) {
             console.error('Failed to send alert email for user', user.email, emailError);
           }
         }
       }
-    }
-  }
-
-  return { synced: syncedCount };
-}
