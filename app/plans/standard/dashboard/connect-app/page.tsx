@@ -3,13 +3,15 @@
 import React, { useState, useEffect } from 'react';
 import {
   CheckCircle, Clock,
-  ExternalLink, Mail, Building2
+  ExternalLink, Mail, Building2, X
 } from 'lucide-react';
 import {
   getConnectionStatus,
   toggleGmail,
   getGoogleBusinessLocations,
+  getSelectedLocations,
   saveSelectedLocation,
+  removeSelectedLocation,
 } from './actions';
 
 export default function ConnectAppPage() {
@@ -21,8 +23,11 @@ export default function ConnectAppPage() {
   const [isGoogleConnected, setIsGoogleConnected] = useState<boolean>(false);
   const [locations, setLocations] = useState<any[]>([]);
   const [loadingLocations, setLoadingLocations] = useState(false);
-  const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
+  const [selectedLocations, setSelectedLocations] = useState<any[]>([]);
   const [locationError, setLocationError] = useState<string | null>(null);
+  const [locationsLimit, setLocationsLimit] = useState<number>(1);
+  const [locationsUsed, setLocationsUsed] = useState<number>(0);
+  const [savingLocationId, setSavingLocationId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchConnectionStatus = async () => {
@@ -34,9 +39,18 @@ export default function ConnectAppPage() {
         setEmailLimit(result.alertEmailsLimit ?? 0);
         setEmailsUsed(result.alertEmailsSent ?? 0);
         setIsGoogleConnected(result.googleConnected ?? false);
+        setLocationsLimit(result.locationsLimit ?? 1);
+        setLocationsUsed(result.locationsUsed ?? 0);
       } else {
         console.error('Failed to fetch status:', result.error);
       }
+
+      // Pehle se selected locations bhi load karo
+      const selectedResult = await getSelectedLocations();
+      if (selectedResult.success) {
+        setSelectedLocations(selectedResult.locations || []);
+      }
+
       setLoading(false);
     };
 
@@ -66,14 +80,44 @@ export default function ConnectAppPage() {
     setLoadingLocations(false);
   };
 
+  const isLimitReached = selectedLocations.length >= locationsLimit;
+
   const handleSelectLocation = async (location: any) => {
-    const result = await saveSelectedLocation(location.id, location.title, location.address);
-    if (result.success) {
-      setSelectedLocationId(location.id);
-      setIsGoogleConnected(true);
-    } else {
-      alert(result.error || 'Failed to save location');
+    if (isLimitReached) {
+      setLocationError(`You can only connect ${locationsLimit} location(s) on your current plan.`);
+      return;
     }
+
+    setSavingLocationId(location.id);
+    setLocationError(null);
+
+    const result = await saveSelectedLocation(location.id, location.title, location.address);
+
+    if (result.success) {
+      setSelectedLocations((prev) => [...prev, location]);
+      setIsGoogleConnected(true);
+      setLocationsUsed(result.locationsUsed ?? selectedLocations.length + 1);
+    } else {
+      setLocationError(result.error || 'Failed to save location');
+    }
+
+    setSavingLocationId(null);
+  };
+
+  const handleRemoveLocation = async (locationId: string) => {
+    setSavingLocationId(locationId);
+    const result = await removeSelectedLocation(locationId);
+
+    if (result.success) {
+      setSelectedLocations((prev) => prev.filter((loc) => loc.id !== locationId));
+      setLocationsUsed(result.locationsUsed ?? Math.max(0, selectedLocations.length - 1));
+      if (selectedLocations.length - 1 === 0) {
+        setIsGoogleConnected(false);
+      }
+    } else {
+      alert(result.error || 'Failed to remove location');
+    }
+    setSavingLocationId(null);
   };
 
   if (loading) {
@@ -132,33 +176,74 @@ export default function ConnectAppPage() {
             </button>
           </div>
 
+          {/* Plan limit indicator */}
+          <div className="flex items-center justify-between mb-3 px-1">
+            <span className="text-xs text-gray-400">Locations connected</span>
+            <span className={`text-xs font-medium ${isLimitReached ? 'text-yellow-400' : 'text-gray-300'}`}>
+              {selectedLocations.length} / {locationsLimit}
+            </span>
+          </div>
+
           {locationError && (
             <p className="text-xs text-red-400 mb-2">{locationError}</p>
           )}
 
-          {locations.length > 0 && (
-            <div className="space-y-2 mt-2 max-h-48 overflow-y-auto">
-              {locations.map((loc) => (
+          {/* Already selected locations */}
+          {selectedLocations.length > 0 && (
+            <div className="space-y-2 mb-3">
+              {selectedLocations.map((loc) => (
                 <div
                   key={loc.id}
-                  className={`flex items-center justify-between p-2 rounded-lg border text-xs ${
-                    selectedLocationId === loc.id
-                      ? 'border-green-500/40 bg-green-500/10'
-                      : 'border-[#2A303C] bg-[#181D27]'
-                  }`}
+                  className="flex items-center justify-between p-2 rounded-lg border border-green-500/40 bg-green-500/10 text-xs"
                 >
                   <div>
                     <p className="text-white">{loc.title}</p>
                     <p className="text-gray-500">{loc.address}</p>
                   </div>
                   <button
-                    onClick={() => handleSelectLocation(loc)}
-                    className="px-2 py-1 rounded bg-indigo-600 text-white text-[10px] hover:bg-indigo-500"
+                    onClick={() => handleRemoveLocation(loc.id)}
+                    disabled={savingLocationId === loc.id}
+                    className="p-1.5 rounded bg-red-600/20 text-red-400 hover:bg-red-600/30 disabled:opacity-50"
+                    title="Remove location"
                   >
-                    {selectedLocationId === loc.id ? 'Selected' : 'Select'}
+                    <X size={12} />
                   </button>
                 </div>
               ))}
+            </div>
+          )}
+
+          {/* Fetched locations list to pick from */}
+          {locations.length > 0 && (
+            <div className="space-y-2 mt-2 max-h-48 overflow-y-auto">
+              {locations
+                .filter((loc) => !selectedLocations.some((sel) => sel.id === loc.id))
+                .map((loc) => (
+                  <div
+                    key={loc.id}
+                    className="flex items-center justify-between p-2 rounded-lg border border-[#2A303C] bg-[#181D27] text-xs"
+                  >
+                    <div>
+                      <p className="text-white">{loc.title}</p>
+                      <p className="text-gray-500">{loc.address}</p>
+                    </div>
+                    <button
+                      onClick={() => handleSelectLocation(loc)}
+                      disabled={isLimitReached || savingLocationId === loc.id}
+                      className={`px-2 py-1 rounded text-[10px] transition ${
+                        isLimitReached
+                          ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
+                          : 'bg-indigo-600 text-white hover:bg-indigo-500'
+                      }`}
+                    >
+                      {savingLocationId === loc.id
+                        ? 'Saving...'
+                        : isLimitReached
+                          ? 'Limit reached'
+                          : 'Select'}
+                    </button>
+                  </div>
+                ))}
             </div>
           )}
         </div>
