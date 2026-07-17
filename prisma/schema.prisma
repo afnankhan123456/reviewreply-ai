@@ -30,6 +30,7 @@ model User {
   businessEmail       String?
   googleAccessToken   String?             @db.Text
   googleRefreshToken  String?             @db.Text
+  googlePlaceId       String?
   alertEmailsSent     Int                 @default(0)
   alertEmailsLimit    Int                 @default(100)
   criticalEmailsSent  Int                 @default(0)
