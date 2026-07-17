@@ -1,8 +1,15 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
 
 export async function POST(request: Request) {
   try {
+    const session: any = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
+    }
+
     const body = await request.json();
     const { reviewId, replyText } = body;
 
@@ -13,7 +20,19 @@ export async function POST(request: Request) {
       );
     }
 
-    // 1. Database mein reply update karo
+    // Pehle check karo ye review isi user ka hai ya nahi
+    const existingReview = await prisma.review.findUnique({
+      where: { id: reviewId },
+    });
+
+    if (!existingReview) {
+      return NextResponse.json({ success: false, message: 'Review not found' }, { status: 404 });
+    }
+
+    if (existingReview.userId !== session.user.id) {
+      return NextResponse.json({ success: false, message: 'Forbidden' }, { status: 403 });
+    }
+
     const updatedReview = await prisma.review.update({
       where: { id: reviewId },
       data: {
@@ -22,7 +41,6 @@ export async function POST(request: Request) {
       },
     });
 
-    // 2. Agar review Google ka hai, toh Google API par bhi bhejo
     if (updatedReview.source === 'google' && updatedReview.googleReviewId) {
       try {
         const googleResponse = await fetch(
