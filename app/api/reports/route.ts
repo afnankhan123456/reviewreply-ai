@@ -54,6 +54,10 @@ export async function POST(req: any) {
       return NextResponse.json({ success: false, error: "User not found" }, { status: 404 });
     }
 
+    if (user.subscriptionEnd && new Date(user.subscriptionEnd) < new Date()) {
+      return NextResponse.json({ success: false, error: "Subscription expired. Please renew your plan." }, { status: 403 });
+    }
+
     const now = new Date();
     const periodStart = user.monthlyResetDate || user.createdAt;
     const periodEnd = now;
