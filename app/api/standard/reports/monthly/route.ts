@@ -24,63 +24,75 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const format = searchParams.get('format') || 'pdf';
-    const cacheKey = `monthly-report-${userId}`;
+    const cacheKey = `weekly-report-${userId}`;
 
     const responseData = await getCachedOrFetch(
       cacheKey,
       async () => {
         const now = new Date();
+        const startOfWeek = new Date(now);
+        startOfWeek.setDate(now.getDate() - now.getDay());
+        startOfWeek.setHours(0, 0, 0, 0);
 
-        const user = await prisma.user.findUnique({
-          where: { id: userId },
-          select: { monthlyResetDate: true, createdAt: true },
-        });
-
-        const cycleStart = user?.monthlyResetDate || user?.createdAt || now;
-        const cycleEnd = now;
+        const endOfWeek = new Date(now);
+        endOfWeek.setHours(23, 59, 59, 999);
 
         const totalReviews = await prisma.review.count({
-          where: { userId, createdAt: { gte: cycleStart, lte: cycleEnd } },
+          where: { userId, createdAt: { gte: startOfWeek, lte: endOfWeek } },
         });
 
-        const avgRating = await prisma.review.aggregate({
-          where: { userId, createdAt: { gte: cycleStart, lte: cycleEnd } },
-          _avg: { rating: true },
-        });
-
-        const positiveReviews = await prisma.review.count({
-          where: { userId, rating: { gte: 4 }, createdAt: { gte: cycleStart, lte: cycleEnd } },
-        });
-
-        const negativeReviews = await prisma.review.count({
-          where: { userId, rating: { lte: 2 }, createdAt: { gte: cycleStart, lte: cycleEnd } },
-        });
+        const newReviews = totalReviews;
 
         const repliedReviews = await prisma.review.count({
-          where: { userId, replied: true, createdAt: { gte: cycleStart, lte: cycleEnd } },
+          where: { userId, replied: true, createdAt: { gte: startOfWeek, lte: endOfWeek } },
         });
 
         const responseRate = totalReviews > 0
           ? Math.round((repliedReviews / totalReviews) * 100)
           : 0;
 
+        const positiveReviews = await prisma.review.count({
+          where: { userId, rating: { gte: 4 }, createdAt: { gte: startOfWeek, lte: endOfWeek } },
+        });
+
+        const negativeReviews = await prisma.review.count({
+          where: { userId, rating: { lte: 2 }, createdAt: { gte: startOfWeek, lte: endOfWeek } },
+        });
+
+        const dailyData = [];
+        for (let i = 6; i >= 0; i--) {
+          const date = new Date(now);
+          date.setDate(date.getDate() - i);
+          const startOfDay = new Date(date);
+          startOfDay.setHours(0, 0, 0, 0);
+          const endOfDay = new Date(date);
+          endOfDay.setHours(23, 59, 59, 999);
+
+          const count = await prisma.review.count({
+            where: { userId, createdAt: { gte: startOfDay, lte: endOfDay } },
+          });
+          dailyData.push(count);
+        }
+
         const reviews = await prisma.review.findMany({
-          where: { userId, createdAt: { gte: cycleStart, lte: cycleEnd } },
+          where: { userId, createdAt: { gte: startOfWeek, lte: endOfWeek } },
           take: 500,
           orderBy: { createdAt: 'desc' },
         });
 
-        const monthLabel = `${cycleStart.toLocaleDateString()} - ${cycleEnd.toLocaleDateString()}`;
+        const weekNumber = Math.ceil((now.getDate() + new Date(now.getFullYear(), now.getMonth(), 1).getDay()) / 7);
 
         return {
           success: true,
           data: {
-            month: monthLabel,
+            week: `Week ${weekNumber}`,
+            year: now.getFullYear(),
+            newReviews,
             totalReviews,
-            avgRating: avgRating._avg.rating || 0,
+            responseRate,
             positiveReviews,
             negativeReviews,
-            responseRate,
+            dailyTrend: dailyData,
             reviews,
             generatedAt: now.toISOString(),
           },
@@ -111,7 +123,7 @@ export async function GET(request: Request) {
       return new NextResponse(csvString, {
         headers: {
           'Content-Type': 'text/csv',
-          'Content-Disposition': `attachment; filename="monthly-report-${data.month.replace(/ /g, '-')}.csv"`,
+          'Content-Disposition': `attachment; filename="weekly-report-week-${data.week.replace(/ /g, '-')}-${data.year}.csv"`,
         },
       });
     }
@@ -121,14 +133,29 @@ export async function GET(request: Request) {
       const doc = new jsPDF();
 
       doc.setFontSize(20);
-      doc.text(`Monthly Report - ${data.month}`, 105, 20, { align: 'center' });
+      doc.text(`Weekly Report - ${data.week} ${data.year}`, 105, 20, { align: 'center' });
 
       doc.setFontSize(12);
-      doc.text(`Total Reviews: ${data.totalReviews}`, 20, 40);
-      doc.text(`Avg Rating: ${data.avgRating.toFixed(1)} ★`, 20, 50);
+      doc.text(`New Reviews: ${data.newReviews}`, 20, 40);
+      doc.text(`Total Reviews: ${data.totalReviews}`, 20, 50);
       doc.text(`Response Rate: ${data.responseRate}%`, 20, 60);
       doc.text(`Positive: ${data.positiveReviews}`, 20, 70);
       doc.text(`Negative: ${data.negativeReviews}`, 20, 80);
+
+      doc.text('Daily Trend:', 20, 95);
+      const trendData = data.dailyTrend.map((count: number, index: number) => {
+        const date = new Date();
+        date.setDate(date.getDate() - (6 - index));
+        return [date.toLocaleDateString(), count.toString()];
+      });
+
+      autoTable(doc, {
+        head: [['Date', 'Reviews']],
+        body: trendData,
+        startY: 100,
+        styles: { fontSize: 8 },
+        headStyles: { fillColor: [168, 85, 247] },
+      });
 
       const tableData = data.reviews.map((review: any) => [
         review.id.slice(0, 8) + '...',
@@ -141,9 +168,9 @@ export async function GET(request: Request) {
       autoTable(doc, {
         head: [['ID', 'Rating', 'Comment', 'Replied', 'Date']],
         body: tableData,
-        startY: 90,
+        startY: (doc as any).lastAutoTable.finalY + 10,
         styles: { fontSize: 8 },
-        headStyles: { fillColor: [79, 70, 229] },
+        headStyles: { fillColor: [168, 85, 247] },
       });
 
       const pdfBuffer = doc.output('arraybuffer');
@@ -151,14 +178,14 @@ export async function GET(request: Request) {
       return new NextResponse(pdfBuffer, {
         headers: {
           'Content-Type': 'application/pdf',
-          'Content-Disposition': `attachment; filename="monthly-report-${data.month.replace(/ /g, '-')}.pdf"`,
+          'Content-Disposition': `attachment; filename="weekly-report-${data.week.replace(/ /g, '-')}-${data.year}.pdf"`,
         },
       });
     }
 
     return NextResponse.json(responseData);
   } catch (error) {
-    console.error('Monthly Report Error:', error);
+    console.error('Weekly Report Error:', error);
     return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
   }
 }
