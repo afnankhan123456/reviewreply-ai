@@ -1,5 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import Sidebar from "./components/Sidebar";
 
 export default function DashboardLayout({
@@ -7,6 +10,25 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const { status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.replace("/login");
+    }
+  }, [status, router]);
+
+  // Jab tak session check ho nahi jaata, ya user login nahi hai,
+  // tab tak koi bhi dashboard content (sidebar, data, kuch bhi) render nahi hoga.
+  if (status === "loading" || status === "unauthenticated") {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-[#0F172A]">
+        <p className="text-zinc-500 dark:text-zinc-400 text-sm">Checking your session...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="relative flex min-h-screen bg-white dark:bg-[#0F172A] transition-colors duration-300">
 
