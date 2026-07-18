@@ -16,8 +16,11 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const { status } = useSession();
+  const { data: authSession, status } = useSession();
   const router = useRouter();
+
+  const teamRole = (authSession?.user as any)?.teamRole || "OWNER";
+  const isOwner = teamRole === "OWNER";
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -131,14 +134,16 @@ export default function DashboardLayout({
             onClick={() => setActiveItem('Alerts')}
           />
           
-          {/* ✅ CHANGED: Integrations -> Connect App */}
-          <NavItem 
-            icon={<PlugZap size={20} />} 
-            label="Connect App" 
-            href="/plans/standard/dashboard/connect-app" 
-            isActive={activeItem === 'Connect App'}
-            onClick={() => setActiveItem('Connect App')}
-          />
+          {/* ✅ Sirf Owner ko Connect App dikhega */}
+          {isOwner && (
+            <NavItem 
+              icon={<PlugZap size={20} />} 
+              label="Connect App" 
+              href="/plans/standard/dashboard/connect-app" 
+              isActive={activeItem === 'Connect App'}
+              onClick={() => setActiveItem('Connect App')}
+            />
+          )}
           
           <NavItem 
             icon={<ShieldCheck size={20} />} 
@@ -147,20 +152,28 @@ export default function DashboardLayout({
             isActive={activeItem === 'Competitors'}
             onClick={() => setActiveItem('Competitors')}
           />
-          <NavItem 
-            icon={<Users size={20} />} 
-            label="Team" 
-            href="/plans/standard/dashboard/team" 
-            isActive={activeItem === 'Team'}
-            onClick={() => setActiveItem('Team')}
-          />
-          <NavItem 
-            icon={<Settings size={20} />} 
-            label="Settings" 
-            href="/plans/standard/dashboard/settings" 
-            isActive={activeItem === 'Settings'}
-            onClick={() => setActiveItem('Settings')}
-          />
+
+          {/* ✅ Sirf Owner ko Team dikhega */}
+          {isOwner && (
+            <NavItem 
+              icon={<Users size={20} />} 
+              label="Team" 
+              href="/plans/standard/dashboard/team" 
+              isActive={activeItem === 'Team'}
+              onClick={() => setActiveItem('Team')}
+            />
+          )}
+
+          {/* ✅ Sirf Owner ko Settings dikhega */}
+          {isOwner && (
+            <NavItem 
+              icon={<Settings size={20} />} 
+              label="Settings" 
+              href="/plans/standard/dashboard/settings" 
+              isActive={activeItem === 'Settings'}
+              onClick={() => setActiveItem('Settings')}
+            />
+          )}
         </nav>
 
         {/* Bottom Card */}
