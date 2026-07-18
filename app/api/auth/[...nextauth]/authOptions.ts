@@ -1,6 +1,7 @@
 import GoogleProvider from "next-auth/providers/google";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
+import { resolveOwnerAndRole } from "@/lib/getEffectiveOwner";
 
 const adminEmail = process.env.ADMIN_EMAIL;
 
@@ -147,6 +148,11 @@ export const authOptions = {
           if (dbUser) {
             token.id = dbUser.id;
             token.referralCode = dbUser.referralCode;
+
+            // Team member info: kaunsa business dikhega aur kya access hai
+            const { ownerId, role } = await resolveOwnerAndRole(dbUser.id);
+            token.ownerId = ownerId;
+            token.teamRole = role;
           }
         } catch (err) {
           console.log("Error fetching referral code for JWT:", err);
@@ -180,6 +186,8 @@ export const authOptions = {
       session.referralCode = token.referralCode;
       if (session.user) {
         session.user.id = token.id;
+        session.user.ownerId = token.ownerId || token.id;
+        session.user.teamRole = token.teamRole || "OWNER";
       }
       return session;
     },
