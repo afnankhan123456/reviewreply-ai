@@ -3,6 +3,7 @@
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
+import { resolveOwnerAndRole } from '@/lib/getEffectiveOwner';
 
 export async function getConnectionStatus() {
   try {
@@ -11,8 +12,14 @@ export async function getConnectionStatus() {
       return { error: 'Unauthorized' };
     }
 
+    const { ownerId, role } = await resolveOwnerAndRole(session.user.id);
+
+    if (role !== 'OWNER') {
+      return { error: 'Only the account owner can manage connections.' };
+    }
+
     const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
+      where: { id: ownerId },
       select: {
         gmailConnected: true,
         alertEmailsLimit: true,
@@ -49,8 +56,14 @@ export async function toggleGmail(action: 'connect' | 'disconnect') {
       return { error: 'Unauthorized' };
     }
 
+    const { ownerId, role } = await resolveOwnerAndRole(session.user.id);
+
+    if (role !== 'OWNER') {
+      return { error: 'Only the account owner can manage connections.' };
+    }
+
     const currentUser = await prisma.user.findUnique({
-      where: { id: session.user.id },
+      where: { id: ownerId },
       select: { gmailConnected: true, plan: true }
     });
 
@@ -64,7 +77,7 @@ export async function toggleGmail(action: 'connect' | 'disconnect') {
     const criticalLimit = isStandard ? 50 : 0;
 
     const updatedUser = await prisma.user.update({
-      where: { id: session.user.id },
+      where: { id: ownerId },
       data: {
         gmailConnected: action === 'connect',
         alertEmailsLimit: action === 'connect' ? alertLimit : 0,
@@ -90,6 +103,12 @@ export async function getGoogleBusinessLocations() {
     const session: any = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return { error: 'Unauthorized' };
+    }
+
+    const { role } = await resolveOwnerAndRole(session.user.id);
+
+    if (role !== 'OWNER') {
+      return { error: 'Only the account owner can manage connections.' };
     }
 
     if (!session.accessToken) {
@@ -137,8 +156,14 @@ export async function getSelectedLocations() {
       return { error: 'Unauthorized' };
     }
 
+    const { ownerId, role } = await resolveOwnerAndRole(session.user.id);
+
+    if (role !== 'OWNER') {
+      return { error: 'Only the account owner can manage connections.' };
+    }
+
     const locations = await prisma.businessLocation.findMany({
-      where: { userId: session.user.id },
+      where: { userId: ownerId },
       select: { googleLocationId: true, businessName: true, address: true },
       orderBy: { createdAt: 'asc' },
     });
@@ -164,7 +189,13 @@ export async function saveSelectedLocation(locationId: string, businessName: str
       return { error: 'Unauthorized' };
     }
 
-    const userId = session.user.id;
+    const { ownerId, role } = await resolveOwnerAndRole(session.user.id);
+
+    if (role !== 'OWNER') {
+      return { error: 'Only the account owner can manage connections.' };
+    }
+
+    const userId = ownerId;
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -231,7 +262,13 @@ export async function removeSelectedLocation(locationId: string) {
       return { error: 'Unauthorized' };
     }
 
-    const userId = session.user.id;
+    const { ownerId, role } = await resolveOwnerAndRole(session.user.id);
+
+    if (role !== 'OWNER') {
+      return { error: 'Only the account owner can manage connections.' };
+    }
+
+    const userId = ownerId;
 
     const location = await prisma.businessLocation.findUnique({
       where: { googleLocationId: locationId },
