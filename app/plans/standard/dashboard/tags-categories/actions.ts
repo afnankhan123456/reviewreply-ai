@@ -7,6 +7,14 @@ import { getAllPossibleTags } from '@/lib/autoTag';
 
 const PAGE_SIZE = 20;
 
+async function getCycleStart(userId: string) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { monthlyResetDate: true, createdAt: true },
+  });
+  return user?.monthlyResetDate || user?.createdAt || new Date(0);
+}
+
 export async function getTagSummary() {
   try {
     const session = await getServerSession(authOptions);
@@ -14,24 +22,27 @@ export async function getTagSummary() {
       return { error: 'Unauthorized' };
     }
 
+    const cycleStart = await getCycleStart(session.user.id);
     const allTags = getAllPossibleTags();
     const summary: { tag: string; count: number }[] = [];
 
     for (const tag of allTags) {
       const count = await prisma.review.count({
-        where: { userId: session.user.id, tags: { has: tag } },
+        where: { userId: session.user.id, tags: { has: tag }, createdAt: { gte: cycleStart } },
       });
       if (count > 0) {
         summary.push({ tag, count });
       }
     }
 
-    const totalCount = await prisma.review.count({ where: { userId: session.user.id } });
+    const totalCount = await prisma.review.count({
+      where: { userId: session.user.id, createdAt: { gte: cycleStart } },
+    });
     const untaggedCount = await prisma.review.count({
-      where: { userId: session.user.id, tags: { equals: [] } },
+      where: { userId: session.user.id, tags: { equals: [] }, createdAt: { gte: cycleStart } },
     });
 
-    return { success: true, summary, totalCount, untaggedCount };
+    return { success: true, summary, totalCount, untaggedCount, cycleStart };
   } catch (error) {
     console.error('Error fetching tag summary:', error);
     return { error: 'Failed to fetch tag summary' };
@@ -45,7 +56,8 @@ export async function getReviewsByTag(tag: string | null, page: number = 1) {
       return { error: 'Unauthorized' };
     }
 
-    const where: any = { userId: session.user.id };
+    const cycleStart = await getCycleStart(session.user.id);
+    const where: any = { userId: session.user.id, createdAt: { gte: cycleStart } };
     if (tag === '__untagged__') {
       where.tags = { equals: [] };
     } else if (tag) {
@@ -57,24 +69,12 @@ export async function getReviewsByTag(tag: string | null, page: number = 1) {
       orderBy: { createdAt: 'desc' },
       skip: (page - 1) * PAGE_SIZE,
       take: PAGE_SIZE,
-      select: {
-        id: true,
-        reviewerName: true,
-        comment: true,
-        rating: true,
-        tags: true,
-        createdAt: true,
-      },
+      select: { id: true, reviewerName: true, comment: true, rating: true, tags: true, createdAt: true },
     });
 
     const totalCount = await prisma.review.count({ where });
 
-    return {
-      success: true,
-      reviews,
-      hasMore: page * PAGE_SIZE < totalCount,
-      totalCount,
-    };
+    return { success: true, reviews, hasMore: page * PAGE_SIZE < totalCount, totalCount };
   } catch (error) {
     console.error('Error fetching reviews by tag:', error);
     return { error: 'Failed to fetch reviews' };
@@ -84,9 +84,7 @@ export async function getReviewsByTag(tag: string | null, page: number = 1) {
 export async function addTag(reviewId: string, tag: string) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return { error: 'Unauthorized' };
-    }
+    if (!session?.user?.id) return { error: 'Unauthorized' };
 
     const review = await prisma.review.findUnique({ where: { id: reviewId } });
     if (!review) return { error: 'Review not found' };
@@ -111,24 +109,35 @@ export async function addTag(reviewId: string, tag: string) {
 export async function removeTag(reviewId: string, tag: string) {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id) {
-      return { error: 'Unauthorized' };
-    }
+    if (!session?.user?.id) return { error: 'Unauthorized' };
 
     const review = await prisma.review.findUnique({ where: { id: reviewId } });
     if (!review) return { error: 'Review not found' };
     if (review.userId !== session.user.id) return { error: 'Forbidden' };
 
     const newTags = review.tags.filter((t) => t !== tag);
-
-    const updated = await prisma.review.update({
-      where: { id: reviewId },
-      data: { tags: newTags },
-    });
+    const updated = await prisma.review.update({ where: { id: reviewId }, data: { tags: newTags } });
 
     return { success: true, tags: updated.tags };
   } catch (error) {
     console.error('Error removing tag:', error);
     return { error: 'Failed to remove tag' };
+  }
+}
+
+export async function getCycleHistory() {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) return { error: 'Unauthorized' };
+
+    const cycles = await prisma.tagCycle.findMany({
+      where: { userId: session.user.id },
+      orderBy: { cycleStart: 'desc' },
+    });
+
+    return { success: true, cycles };
+  } catch (error) {
+    console.error('Error fetching cycle history:', error);
+    return { error: 'Failed to fetch history' };
   }
 }
