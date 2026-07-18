@@ -28,17 +28,20 @@ export async function syncUserReviews(userId: string) {
   });
 
   if (!user) return { synced: 0, error: 'User not found' };
+
+  if (user.subscriptionEnd && new Date(user.subscriptionEnd) < new Date()) {
+    return { synced: 0, error: 'Subscription expired. Please renew your plan.' };
+  }
+
   if (!user.googleAccessToken) return { synced: 0, error: 'No Google access token' };
   if (!user.businessLocations.length) return { synced: 0, error: 'No business location connected' };
 
-  // Monthly review-sync limit reset (+ cycle history save)
   if (user.monthlyResetDate) {
     const now = new Date();
     const daysSinceReset = Math.floor(
       (now.getTime() - new Date(user.monthlyResetDate).getTime()) / (1000 * 60 * 60 * 24)
     );
     if (daysSinceReset >= 30) {
-      // Purana cycle history me save karo, reset hone se pehle
       await prisma.tagCycle.create({
         data: {
           userId: user.id,
@@ -55,7 +58,6 @@ export async function syncUserReviews(userId: string) {
       user.monthlyResetDate = now;
     }
   } else {
-    // Pehli baar — cycle abhi se shuru
     const now = new Date();
     await prisma.user.update({
       where: { id: user.id },
@@ -114,7 +116,6 @@ export async function syncUserReviews(userId: string) {
       user.reviewsUsed++;
       syncedCount++;
 
-      // Low rating alert
       if (newReview.rating <= 2 && user.gmailConnected) {
         const isStandard = user.plan?.startsWith('standard');
         const now = new Date();
