@@ -12,6 +12,13 @@ export const viewport = {
   initialScale: 1.0,
 };
 
+// Poore app ko dynamic rakhte hain taaki koi bhi page
+// (dashboard, admin, pricing, etc.) kabhi cache na ho aur
+// har request pe fresh, per-user data serve ho — is se
+// ek user ka data/session doosre user ko cached form me
+// kabhi nahi dikhega.
+export const dynamic = "force-dynamic";
+
 export default function RootLayout({
   children,
 }: {
