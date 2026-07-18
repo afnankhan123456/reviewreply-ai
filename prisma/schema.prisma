@@ -49,6 +49,7 @@ model User {
   referralSignups     ReferralSignup[]
   referralStats       ReferralStats[]
   reviewRequests      ReviewRequest[]
+  tagCycles           TagCycle[]
 }
 
 model BusinessLocation {
@@ -188,4 +189,13 @@ model ReviewRequest {
   status         String    @default("pending")
   sentAt         DateTime?
   createdAt      DateTime  @default(now())
+}
+
+model TagCycle {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  cycleStart DateTime
+  cycleEnd   DateTime
+  createdAt  DateTime @default(now())
 }
