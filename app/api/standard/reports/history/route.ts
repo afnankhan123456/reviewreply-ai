@@ -12,6 +12,15 @@ export async function GET() {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
     const userId = session.user.id;
+
+    const userCheck = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { subscriptionEnd: true },
+    });
+    if (userCheck?.subscriptionEnd && new Date(userCheck.subscriptionEnd) < new Date()) {
+      return NextResponse.json({ success: false, error: 'Subscription expired. Please renew your plan.' }, { status: 403 });
+    }
+
     const cacheKey = `history-report-${userId}`;
 
     const responseData = await getCachedOrFetch(
@@ -22,7 +31,6 @@ export async function GET() {
           select: { createdAt: true },
         });
 
-        // Purane completed cycles (TagCycle) + current chalu cycle, latest 6
         const pastCycles = await prisma.tagCycle.findMany({
           where: { userId },
           orderBy: { cycleStart: 'desc' },
