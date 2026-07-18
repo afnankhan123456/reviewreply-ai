@@ -3,17 +3,60 @@
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
+import { getAllPossibleTags } from '@/lib/autoTag';
 
-export async function getTaggedReviews() {
+const PAGE_SIZE = 20;
+
+export async function getTagSummary() {
   try {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return { error: 'Unauthorized' };
     }
 
+    const allTags = getAllPossibleTags();
+    const summary: { tag: string; count: number }[] = [];
+
+    for (const tag of allTags) {
+      const count = await prisma.review.count({
+        where: { userId: session.user.id, tags: { has: tag } },
+      });
+      if (count > 0) {
+        summary.push({ tag, count });
+      }
+    }
+
+    const totalCount = await prisma.review.count({ where: { userId: session.user.id } });
+    const untaggedCount = await prisma.review.count({
+      where: { userId: session.user.id, tags: { equals: [] } },
+    });
+
+    return { success: true, summary, totalCount, untaggedCount };
+  } catch (error) {
+    console.error('Error fetching tag summary:', error);
+    return { error: 'Failed to fetch tag summary' };
+  }
+}
+
+export async function getReviewsByTag(tag: string | null, page: number = 1) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return { error: 'Unauthorized' };
+    }
+
+    const where: any = { userId: session.user.id };
+    if (tag === '__untagged__') {
+      where.tags = { equals: [] };
+    } else if (tag) {
+      where.tags = { has: tag };
+    }
+
     const reviews = await prisma.review.findMany({
-      where: { userId: session.user.id },
+      where,
       orderBy: { createdAt: 'desc' },
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
       select: {
         id: true,
         reviewerName: true,
@@ -24,9 +67,16 @@ export async function getTaggedReviews() {
       },
     });
 
-    return { success: true, reviews };
+    const totalCount = await prisma.review.count({ where });
+
+    return {
+      success: true,
+      reviews,
+      hasMore: page * PAGE_SIZE < totalCount,
+      totalCount,
+    };
   } catch (error) {
-    console.error('Error fetching tagged reviews:', error);
+    console.error('Error fetching reviews by tag:', error);
     return { error: 'Failed to fetch reviews' };
   }
 }
