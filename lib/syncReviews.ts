@@ -1,5 +1,6 @@
 import { prisma } from './prisma';
 import nodemailer from 'nodemailer';
+import { autoTagReview } from './autoTag';
 
 const STAR_MAP: Record<string, number> = {
   STAR_RATING_UNSPECIFIED: 0,
@@ -30,7 +31,6 @@ export async function syncUserReviews(userId: string) {
   if (!user.googleAccessToken) return { synced: 0, error: 'No Google access token' };
   if (!user.businessLocations.length) return { synced: 0, error: 'No business location connected' };
 
-  // Monthly review-sync limit reset
   if (user.monthlyResetDate) {
     const now = new Date();
     const daysSinceReset = Math.floor(
@@ -69,6 +69,8 @@ export async function syncUserReviews(userId: string) {
       if (existingReview) continue;
 
       const rating = STAR_MAP[review.starRating] ?? 0;
+      const comment = review.comment || '';
+      const tags = autoTagReview(comment);
 
       const newReview = await prisma.review.create({
         data: {
@@ -77,12 +79,13 @@ export async function syncUserReviews(userId: string) {
           googleReviewId: review.reviewId,
           reviewerName: review.reviewer?.displayName || 'Anonymous',
           rating,
-          comment: review.comment || '',
+          comment,
           reviewReply: review.reviewReply?.comment || '',
           replied: !!review.reviewReply,
           reviewDate: new Date(review.createTime),
           syncedAt: new Date(),
           source: 'google',
+          tags,
         },
       });
 
@@ -93,7 +96,6 @@ export async function syncUserReviews(userId: string) {
       user.reviewsUsed++;
       syncedCount++;
 
-      // Low rating alert
       if (newReview.rating <= 2 && user.gmailConnected) {
         const isStandard = user.plan?.startsWith('standard');
         const now = new Date();
