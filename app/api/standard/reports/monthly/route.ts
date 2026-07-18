@@ -14,6 +14,14 @@ export async function GET(request: Request) {
     }
     const userId = session.user.id;
 
+    const userCheck = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { subscriptionEnd: true },
+    });
+    if (userCheck?.subscriptionEnd && new Date(userCheck.subscriptionEnd) < new Date()) {
+      return NextResponse.json({ success: false, error: 'Subscription expired. Please renew your plan.' }, { status: 403 });
+    }
+
     const { searchParams } = new URL(request.url);
     const format = searchParams.get('format') || 'pdf';
     const cacheKey = `monthly-report-${userId}`;
@@ -28,7 +36,6 @@ export async function GET(request: Request) {
           select: { monthlyResetDate: true, createdAt: true },
         });
 
-        // Rolling window: jab se plan liya (ya monthlyResetDate) tab se ab tak
         const cycleStart = user?.monthlyResetDate || user?.createdAt || now;
         const cycleEnd = now;
 
