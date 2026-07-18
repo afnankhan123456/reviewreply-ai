@@ -2,13 +2,11 @@
   "name": "reviewreply-ai",
   "version": "1.0.0",
   "private": true,
-
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && prisma db push && next build",
+    "build": "prisma generate && next build",
     "start": "next start"
   },
-
   "dependencies": {
     "next": "^15.4.6",
     "react": "18.3.1",
@@ -24,7 +22,6 @@
     "jspdf": "^2.5.1",
     "jspdf-autotable": "^3.5.31"
   },
-
   "devDependencies": {
     "typescript": "^5.0.0",
     "@types/react": "^18.3.3",
