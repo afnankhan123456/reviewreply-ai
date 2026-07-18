@@ -21,6 +21,7 @@ model User {
   reviewsLimit        Int                 @default(100)
   locationsUsed       Int                 @default(0)
   locationsLimit      Int                 @default(1)
+  teamMembersLimit    Int                 @default(2)
   googleConnected     Boolean             @default(false)
   lastReviewSync      DateTime?
   syncEnabled         Boolean             @default(true)
@@ -50,6 +51,8 @@ model User {
   referralStats       ReferralStats[]
   reviewRequests      ReviewRequest[]
   tagCycles           TagCycle[]
+  teamMembersOwned    TeamMember[]        @relation("TeamOwner")
+  teamMembershipOf    TeamMember[]        @relation("TeamMembership")
 }
 
 model BusinessLocation {
@@ -200,4 +203,20 @@ model TagCycle {
   cycleStart DateTime
   cycleEnd   DateTime
   createdAt  DateTime @default(now())
+}
+
+model TeamMember {
+  id           String    @id @default(cuid())
+  ownerId      String
+  owner        User      @relation("TeamOwner", fields: [ownerId], references: [id])
+  email        String
+  accessLevel  String    @default("VIEW_ONLY") // "FULL_ACCESS" | "VIEW_ONLY"
+  status       String    @default("PENDING")   // "PENDING" | "ACCEPTED"
+  memberUserId String?
+  member       User?     @relation("TeamMembership", fields: [memberUserId], references: [id])
+  inviteToken  String?   @unique
+  invitedAt    DateTime  @default(now())
+  acceptedAt   DateTime?
+
+  @@unique([ownerId, email])
 }
