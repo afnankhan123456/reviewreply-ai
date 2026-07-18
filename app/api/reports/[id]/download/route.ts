@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { prisma } from "../../../../../lib/prisma";   // 5 levels up
+import { prisma } from "../../../../../lib/prisma";
 import { getToken } from "next-auth/jwt";
 
 export async function GET(req: any, context: any) {
@@ -16,22 +16,27 @@ export async function GET(req: any, context: any) {
     const reportId = context.params.id;
     const report = await prisma.report.findUnique({
       where: { id: reportId },
-      include: {
-        user: { include: { reviews: true } },
-      },
     });
 
     if (!report) {
       return NextResponse.json({ success: false, error: "Report not found" }, { status: 404 });
     }
 
-    // Verify karo ye report isi logged-in user ka hai
     if (report.userId !== token.id) {
       return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
     }
 
-    // Build a simple CSV
-    const reviews = report.user.reviews || [];
+    const reviews = await prisma.review.findMany({
+      where: {
+        userId: report.userId,
+        createdAt: {
+          gte: report.periodStart ?? undefined,
+          lte: report.periodEnd ?? undefined,
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+    });
+
     const csvRows = ["Reviewer Name,Rating,Comment,Date"];
     reviews.forEach((r) => {
       csvRows.push(
