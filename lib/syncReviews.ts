@@ -31,12 +31,22 @@ export async function syncUserReviews(userId: string) {
   if (!user.googleAccessToken) return { synced: 0, error: 'No Google access token' };
   if (!user.businessLocations.length) return { synced: 0, error: 'No business location connected' };
 
+  // Monthly review-sync limit reset (+ cycle history save)
   if (user.monthlyResetDate) {
     const now = new Date();
     const daysSinceReset = Math.floor(
       (now.getTime() - new Date(user.monthlyResetDate).getTime()) / (1000 * 60 * 60 * 24)
     );
     if (daysSinceReset >= 30) {
+      // Purana cycle history me save karo, reset hone se pehle
+      await prisma.tagCycle.create({
+        data: {
+          userId: user.id,
+          cycleStart: user.monthlyResetDate,
+          cycleEnd: now,
+        },
+      });
+
       await prisma.user.update({
         where: { id: user.id },
         data: { reviewsUsed: 0, monthlyResetDate: now },
@@ -44,6 +54,14 @@ export async function syncUserReviews(userId: string) {
       user.reviewsUsed = 0;
       user.monthlyResetDate = now;
     }
+  } else {
+    // Pehli baar — cycle abhi se shuru
+    const now = new Date();
+    await prisma.user.update({
+      where: { id: user.id },
+      data: { monthlyResetDate: now },
+    });
+    user.monthlyResetDate = now;
   }
 
   if (user.reviewsUsed >= user.reviewsLimit) {
@@ -96,6 +114,7 @@ export async function syncUserReviews(userId: string) {
       user.reviewsUsed++;
       syncedCount++;
 
+      // Low rating alert
       if (newReview.rating <= 2 && user.gmailConnected) {
         const isStandard = user.plan?.startsWith('standard');
         const now = new Date();
