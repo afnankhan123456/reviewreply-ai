@@ -1,89 +1,102 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getCachedOrFetch } from '@/app/lib/cache';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
+import { getAllPossibleTags } from '@/lib/autoTag';
 
 export async function GET() {
   try {
+    const session: any = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+    const userId = session.user.id;
+    const cacheKey = `history-report-${userId}`;
+
     const responseData = await getCachedOrFetch(
-      'history-report',
+      cacheKey,
       async () => {
+        const user = await prisma.user.findUnique({
+          where: { id: userId },
+          select: { createdAt: true },
+        });
+
+        // Purane completed cycles (TagCycle) + current chalu cycle, latest 6
+        const pastCycles = await prisma.tagCycle.findMany({
+          where: { userId },
+          orderBy: { cycleStart: 'desc' },
+          take: 5,
+        });
+
+        const currentUser = await prisma.user.findUnique({
+          where: { id: userId },
+          select: { monthlyResetDate: true },
+        });
+
         const now = new Date();
-        
-        // ✅ Rolling 6-month window: Current month + previous 5 months
-        const sixMonthsAgo = new Date(now);
-        sixMonthsAgo.setMonth(now.getMonth() - 6);
+        const currentCycleStart = currentUser?.monthlyResetDate || user?.createdAt || now;
 
-        // Monthly breakdown (rolling window)
+        const allCycles = [
+          { cycleStart: currentCycleStart, cycleEnd: now, label: 'Current Cycle' },
+          ...pastCycles.map((c, i) => ({
+            cycleStart: c.cycleStart,
+            cycleEnd: c.cycleEnd,
+            label: `Cycle ${pastCycles.length - i}`,
+          })),
+        ].slice(0, 6);
+
+        const allTags = getAllPossibleTags();
         const monthlyData = [];
-        for (let i = 0; i < 6; i++) {
-          const monthStart = new Date(now.getFullYear(), now.getMonth() - i, 1);
-          const monthEnd = new Date(now.getFullYear(), now.getMonth() - i + 1, 1);
 
-          // Check if this month has any data
+        for (const cycle of allCycles) {
           const count = await prisma.review.count({
-            where: {
-              createdAt: {
-                gte: monthStart,
-                lt: monthEnd,
-              },
-            },
+            where: { userId, createdAt: { gte: cycle.cycleStart, lt: cycle.cycleEnd } },
           });
 
-          // If count > 0, calculate average rating
-          let avgRating = 0;
-          let responseRate = 0;
-          
-          if (count > 0) {
-            const avgRatingResult = await prisma.review.aggregate({
-              where: {
-                createdAt: {
-                  gte: monthStart,
-                  lt: monthEnd,
-                },
-              },
-              _avg: {
-                rating: true,
-              },
-            });
-            avgRating = avgRatingResult._avg.rating || 0;
+          if (count === 0) continue;
 
-            // Response rate for this month
-            const repliedCount = await prisma.review.count({
+          const avgRatingResult = await prisma.review.aggregate({
+            where: { userId, createdAt: { gte: cycle.cycleStart, lt: cycle.cycleEnd } },
+            _avg: { rating: true },
+          });
+
+          const repliedCount = await prisma.review.count({
+            where: { userId, replied: true, createdAt: { gte: cycle.cycleStart, lt: cycle.cycleEnd } },
+          });
+
+          const tagBreakdown: { tag: string; count: number }[] = [];
+          for (const tag of allTags) {
+            const tagCount = await prisma.review.count({
               where: {
-                replied: true,
-                createdAt: {
-                  gte: monthStart,
-                  lt: monthEnd,
-                },
+                userId,
+                tags: { has: tag },
+                createdAt: { gte: cycle.cycleStart, lt: cycle.cycleEnd },
               },
             });
-            responseRate = Math.round((repliedCount / count) * 100);
+            if (tagCount > 0) tagBreakdown.push({ tag, count: tagCount });
           }
 
           monthlyData.push({
-            month: monthStart.toLocaleString('default', { month: 'short', year: 'numeric' }),
+            month: cycle.label,
+            periodStart: cycle.cycleStart,
+            periodEnd: cycle.cycleEnd,
             count,
-            avgRating: Number(avgRating.toFixed(1)),
-            responseRate,
+            avgRating: Number((avgRatingResult._avg.rating || 0).toFixed(1)),
+            responseRate: Math.round((repliedCount / count) * 100),
+            tagBreakdown,
           });
         }
-
-        // Filter out months with no data
-        const filteredMonthlyData = monthlyData.filter(m => m.count > 0);
 
         return {
           success: true,
           data: {
-            dateRange: {
-              start: sixMonthsAgo.toISOString(),
-              end: now.toISOString(),
-            },
-            monthlyData: filteredMonthlyData,
+            monthlyData,
             generatedAt: now.toISOString(),
           },
         };
       },
-      3600 // 1 hour cache
+      300
     );
 
     return NextResponse.json(responseData);
