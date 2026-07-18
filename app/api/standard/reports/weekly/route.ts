@@ -1,16 +1,25 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getCachedOrFetch } from '@/app/lib/cache';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
 export async function GET(request: Request) {
   try {
+    const session: any = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+    const userId = session.user.id;
+
     const { searchParams } = new URL(request.url);
     const format = searchParams.get('format') || 'pdf';
+    const cacheKey = `weekly-report-${userId}`;
 
     const responseData = await getCachedOrFetch(
-      'weekly-report',
+      cacheKey,
       async () => {
         const now = new Date();
         const startOfWeek = new Date(now);
@@ -20,32 +29,14 @@ export async function GET(request: Request) {
         const endOfWeek = new Date(now);
         endOfWeek.setHours(23, 59, 59, 999);
 
-        const newReviews = await prisma.review.count({
-          where: {
-            createdAt: {
-              gte: startOfWeek,
-              lte: endOfWeek,
-            },
-          },
+        const totalReviews = await prisma.review.count({
+          where: { userId, createdAt: { gte: startOfWeek, lte: endOfWeek } },
         });
 
-        const totalReviews = await prisma.review.count({
-          where: {
-            createdAt: {
-              gte: startOfWeek,
-              lte: endOfWeek,
-            },
-          },
-        });
+        const newReviews = totalReviews;
 
         const repliedReviews = await prisma.review.count({
-          where: {
-            replied: true,
-            createdAt: {
-              gte: startOfWeek,
-              lte: endOfWeek,
-            },
-          },
+          where: { userId, replied: true, createdAt: { gte: startOfWeek, lte: endOfWeek } },
         });
 
         const responseRate = totalReviews > 0
@@ -53,23 +44,11 @@ export async function GET(request: Request) {
           : 0;
 
         const positiveReviews = await prisma.review.count({
-          where: {
-            rating: { gte: 4 },
-            createdAt: {
-              gte: startOfWeek,
-              lte: endOfWeek,
-            },
-          },
+          where: { userId, rating: { gte: 4 }, createdAt: { gte: startOfWeek, lte: endOfWeek } },
         });
 
         const negativeReviews = await prisma.review.count({
-          where: {
-            rating: { lte: 2 },
-            createdAt: {
-              gte: startOfWeek,
-              lte: endOfWeek,
-            },
-          },
+          where: { userId, rating: { lte: 2 }, createdAt: { gte: startOfWeek, lte: endOfWeek } },
         });
 
         const dailyData = [];
@@ -82,25 +61,14 @@ export async function GET(request: Request) {
           endOfDay.setHours(23, 59, 59, 999);
 
           const count = await prisma.review.count({
-            where: {
-              createdAt: {
-                gte: startOfDay,
-                lte: endOfDay,
-              },
-            },
+            where: { userId, createdAt: { gte: startOfDay, lte: endOfDay } },
           });
           dailyData.push(count);
         }
 
-        // ✅ FIX: Sirf 50 reviews fetch karo (timeout fix)
         const reviews = await prisma.review.findMany({
-          where: {
-            createdAt: {
-              gte: startOfWeek,
-              lte: endOfWeek,
-            },
-          },
-          take: 500,  
+          where: { userId, createdAt: { gte: startOfWeek, lte: endOfWeek } },
+          take: 500,
           orderBy: { createdAt: 'desc' },
         });
 
@@ -123,10 +91,9 @@ export async function GET(request: Request) {
           format,
         };
       },
-      3600
+      300
     );
 
-    // ✅ CSV format
     if (format === 'csv') {
       const { data } = responseData;
       const rows = data.reviews.map((review: any) => ({
@@ -141,7 +108,7 @@ export async function GET(request: Request) {
       const headers = Object.keys(rows[0] || {});
       const csvRows = [
         headers.join(','),
-        ...rows.map(row => headers.map(h => `"${row[h]}"`).join(','))
+        ...rows.map((row: any) => headers.map((h) => `"${row[h]}"`).join(',')),
       ];
       const csvString = csvRows.join('\n');
 
@@ -153,21 +120,20 @@ export async function GET(request: Request) {
       });
     }
 
-    // ✅ PDF format
     if (format === 'pdf') {
       const { data } = responseData;
       const doc = new jsPDF();
-      
+
       doc.setFontSize(20);
       doc.text(`Weekly Report - ${data.week} ${data.year}`, 105, 20, { align: 'center' });
-      
+
       doc.setFontSize(12);
       doc.text(`New Reviews: ${data.newReviews}`, 20, 40);
       doc.text(`Total Reviews: ${data.totalReviews}`, 20, 50);
       doc.text(`Response Rate: ${data.responseRate}%`, 20, 60);
       doc.text(`Positive: ${data.positiveReviews}`, 20, 70);
       doc.text(`Negative: ${data.negativeReviews}`, 20, 80);
-      
+
       doc.text('Daily Trend:', 20, 95);
       const trendData = data.dailyTrend.map((count: number, index: number) => {
         const date = new Date();
