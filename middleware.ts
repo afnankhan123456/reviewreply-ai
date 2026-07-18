@@ -12,10 +12,12 @@ export async function middleware(request: NextRequest) {
 
   const isAdmin = token?.email === process.env.ADMIN_EMAIL;
 
-  // Protect admin and plans routes
+  // Protect admin, plans, and reviews routes
   if (
     !token &&
-    (pathname.startsWith("/admin") || pathname.startsWith("/plans"))
+    (pathname.startsWith("/admin") ||
+      pathname.startsWith("/plans") ||
+      pathname.startsWith("/reviews"))
   ) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
@@ -34,7 +36,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/plans/:path*"],
+  matcher: ["/admin/:path*", "/plans/:path*", "/reviews/:path*"],
 };
-
-
