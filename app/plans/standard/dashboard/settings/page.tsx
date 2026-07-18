@@ -1,9 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 import { saveGooglePlaceId, getGooglePlaceId } from "./actions";
 
 export default function SettingsPage() {
+  const { data: authSession } = useSession();
+  const isOwner = (authSession?.user as any)?.teamRole === "OWNER";
+
   const [placeId, setPlaceId] = useState("");
   const [message, setMessage] = useState("");
   const [isSaved, setIsSaved] = useState(false);
@@ -11,6 +15,8 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
+    if (!isOwner) return;
+
     const fetchPlaceId = async () => {
       const result = await getGooglePlaceId();
 
@@ -21,7 +27,7 @@ export default function SettingsPage() {
     };
 
     fetchPlaceId();
-  }, []);
+  }, [isOwner]);
 
   const handleSave = async () => {
     if (!placeId.trim()) {
@@ -41,6 +47,20 @@ export default function SettingsPage() {
 
     setLoading(false);
   };
+
+  // Team member (Owner nahi) is page ko access nahi kar sakta
+  if (!isOwner) {
+    return (
+      <div className="min-h-screen bg-[#0B0E14] text-white p-6 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-lg font-medium">Access Denied</h2>
+          <p className="text-gray-400 text-sm mt-1">
+            Only the account owner can access settings.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#0B0E14] text-white p-6">
