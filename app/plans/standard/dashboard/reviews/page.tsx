@@ -1,12 +1,17 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import { 
   Search, Filter, RefreshCw, CheckCircle, XCircle, 
   Star, ThumbsUp, ThumbsDown, MoreHorizontal
 } from 'lucide-react';
 
 export default function ReviewsPage() {
+  const { data: authSession } = useSession();
+  const teamRole = (authSession?.user as any)?.teamRole || 'OWNER';
+  const canReply = teamRole !== 'VIEW_ONLY'; // Owner aur Full Access dono reply kar sakte hain
+
   const [searchTerm, setSearchTerm] = useState('');
   const [filterSentiment, setFilterSentiment] = useState('All');
   const [lastSynced, setLastSynced] = useState('Loading...');
@@ -75,7 +80,7 @@ export default function ReviewsPage() {
   };
 
   const handleReplySubmit = async () => {
-    if (!selectedReviewId || !replyText.trim()) return;
+    if (!canReply || !selectedReviewId || !replyText.trim()) return;
 
     try {
       const res = await fetch('/api/standard/reviews/reply', {
@@ -233,9 +238,11 @@ export default function ReviewsPage() {
               <span className="w-1.5 h-1.5 bg-yellow-400 rounded-full"></span> Awaiting Reply
             </div>
           </div>
-          <button className="w-full mt-3 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-400 text-xs py-1.5 rounded-lg transition-colors">
-            Reply Now →
-          </button>
+          {canReply && (
+            <button className="w-full mt-3 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-400 text-xs py-1.5 rounded-lg transition-colors">
+              Reply Now →
+            </button>
+          )}
         </div>
 
         {/* Card 3: Google Review Sync */}
@@ -278,6 +285,7 @@ export default function ReviewsPage() {
                 sentiment={review.rating >= 4 ? 'Positive' : review.rating >= 3 ? 'Neutral' : 'Negative'}
                 source={review.source}
                 status={review.replied ? 'Replied' : 'Unanswered'}
+                canReply={canReply}
                 onReplyClick={(id, text) => {
                   setSelectedReviewId(id);
                   setSelectedReviewText(text);
@@ -301,7 +309,7 @@ export default function ReviewsPage() {
       </div>
 
       {/* Reply Modal */}
-      {showReplyModal && (
+      {showReplyModal && canReply && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
           <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-6 w-[600px] shadow-2xl">
             <h3 className="text-white text-lg font-medium mb-3">Reply to Review</h3>
@@ -345,7 +353,7 @@ export default function ReviewsPage() {
   );
 }
 
-function ReviewRow({ reviewId, reviewText, name, text, rating, sentiment, source, status, onReplyClick }: any) {
+function ReviewRow({ reviewId, reviewText, name, text, rating, sentiment, source, status, canReply, onReplyClick }: any) {
   return (
     <div className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-[#181D27] transition-colors">
       <div className="col-span-4 flex flex-col gap-1">
@@ -387,7 +395,7 @@ function ReviewRow({ reviewId, reviewText, name, text, rating, sentiment, source
         }`}>
           {status}
         </span>
-        {status === 'Unanswered' && (
+        {status === 'Unanswered' && canReply && (
           <button 
             className="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-0.5 rounded"
             onClick={() => onReplyClick(reviewId, reviewText)}
