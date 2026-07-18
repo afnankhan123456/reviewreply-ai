@@ -49,7 +49,6 @@ model User {
   referralSignups     ReferralSignup[]
   referralStats       ReferralStats[]
   reviewRequests      ReviewRequest[]
-  tags                Tag[]               // ✅ Added relation to Tag
 }
 
 model BusinessLocation {
@@ -82,7 +81,7 @@ model Review {
   reviewDate       DateTime
   syncedAt         DateTime @default(now())
   createdAt        DateTime @default(now())
-  tags             Tag[]    @relation("ReviewToTag")
+  tags             String[] @default([])
 }
 
 model Template {
@@ -189,16 +188,4 @@ model ReviewRequest {
   status         String    @default("pending")
   sentAt         DateTime?
   createdAt      DateTime  @default(now())
-}
-
-model Tag {
-  id        String   @id @default(cuid())
-  name      String
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  sentiment String   @default("neutral")
-  reviews   Review[] @relation("ReviewToTag")
-  createdAt DateTime @default(now())
-
-  @@unique([userId, name])
 }
