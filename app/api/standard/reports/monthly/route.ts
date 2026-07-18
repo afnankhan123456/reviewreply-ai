@@ -1,93 +1,74 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getCachedOrFetch } from '@/app/lib/cache';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
 export async function GET(request: Request) {
   try {
+    const session: any = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+    const userId = session.user.id;
+
     const { searchParams } = new URL(request.url);
     const format = searchParams.get('format') || 'pdf';
+    const cacheKey = `monthly-report-${userId}`;
 
     const responseData = await getCachedOrFetch(
-      'monthly-report',
+      cacheKey,
       async () => {
         const now = new Date();
-        const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-        const endOfMonth = new Date(now);
-        endOfMonth.setHours(23, 59, 59, 999);
+
+        const user = await prisma.user.findUnique({
+          where: { id: userId },
+          select: { monthlyResetDate: true, createdAt: true },
+        });
+
+        // Rolling window: jab se plan liya (ya monthlyResetDate) tab se ab tak
+        const cycleStart = user?.monthlyResetDate || user?.createdAt || now;
+        const cycleEnd = now;
 
         const totalReviews = await prisma.review.count({
-          where: {
-            createdAt: {
-              gte: startOfMonth,
-              lte: endOfMonth,
-            },
-          },
+          where: { userId, createdAt: { gte: cycleStart, lte: cycleEnd } },
         });
 
         const avgRating = await prisma.review.aggregate({
-          where: {
-            createdAt: {
-              gte: startOfMonth,
-              lte: endOfMonth,
-            },
-          },
+          where: { userId, createdAt: { gte: cycleStart, lte: cycleEnd } },
           _avg: { rating: true },
         });
 
         const positiveReviews = await prisma.review.count({
-          where: {
-            rating: { gte: 4 },
-            createdAt: {
-              gte: startOfMonth,
-              lte: endOfMonth,
-            },
-          },
+          where: { userId, rating: { gte: 4 }, createdAt: { gte: cycleStart, lte: cycleEnd } },
         });
 
         const negativeReviews = await prisma.review.count({
-          where: {
-            rating: { lte: 2 },
-            createdAt: {
-              gte: startOfMonth,
-              lte: endOfMonth,
-            },
-          },
+          where: { userId, rating: { lte: 2 }, createdAt: { gte: cycleStart, lte: cycleEnd } },
         });
 
         const repliedReviews = await prisma.review.count({
-          where: {
-            replied: true,
-            createdAt: {
-              gte: startOfMonth,
-              lte: endOfMonth,
-            },
-          },
+          where: { userId, replied: true, createdAt: { gte: cycleStart, lte: cycleEnd } },
         });
 
         const responseRate = totalReviews > 0
           ? Math.round((repliedReviews / totalReviews) * 100)
           : 0;
 
-        // ✅ FIX: Sirf 50 reviews fetch karo (timeout fix)
         const reviews = await prisma.review.findMany({
-          where: {
-            createdAt: {
-              gte: startOfMonth,
-              lte: endOfMonth,
-            },
-          },
-          take: 500,  
+          where: { userId, createdAt: { gte: cycleStart, lte: cycleEnd } },
+          take: 500,
           orderBy: { createdAt: 'desc' },
         });
 
-        const monthName = now.toLocaleString('default', { month: 'long', year: 'numeric' });
+        const monthLabel = `${cycleStart.toLocaleDateString()} - ${cycleEnd.toLocaleDateString()}`;
 
         return {
           success: true,
           data: {
-            month: monthName,
+            month: monthLabel,
             totalReviews,
             avgRating: avgRating._avg.rating || 0,
             positiveReviews,
@@ -99,10 +80,9 @@ export async function GET(request: Request) {
           format,
         };
       },
-      3600
+      300
     );
 
-    // ✅ CSV format
     if (format === 'csv') {
       const { data } = responseData;
       const rows = data.reviews.map((review: any) => ({
@@ -117,7 +97,7 @@ export async function GET(request: Request) {
       const headers = Object.keys(rows[0] || {});
       const csvRows = [
         headers.join(','),
-        ...rows.map(row => headers.map(h => `"${row[h]}"`).join(','))
+        ...rows.map((row: any) => headers.map((h) => `"${row[h]}"`).join(',')),
       ];
       const csvString = csvRows.join('\n');
 
@@ -129,21 +109,20 @@ export async function GET(request: Request) {
       });
     }
 
-    // ✅ PDF format
     if (format === 'pdf') {
       const { data } = responseData;
       const doc = new jsPDF();
-      
+
       doc.setFontSize(20);
       doc.text(`Monthly Report - ${data.month}`, 105, 20, { align: 'center' });
-      
+
       doc.setFontSize(12);
       doc.text(`Total Reviews: ${data.totalReviews}`, 20, 40);
       doc.text(`Avg Rating: ${data.avgRating.toFixed(1)} ★`, 20, 50);
       doc.text(`Response Rate: ${data.responseRate}%`, 20, 60);
       doc.text(`Positive: ${data.positiveReviews}`, 20, 70);
       doc.text(`Negative: ${data.negativeReviews}`, 20, 80);
-      
+
       const tableData = data.reviews.map((review: any) => [
         review.id.slice(0, 8) + '...',
         review.rating.toString(),
