@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import {
   CheckCircle, Clock,
-  ExternalLink, Mail, Building2, X
+  ExternalLink, Mail, Building2, X, PlugZap
 } from 'lucide-react';
 import {
   getConnectionStatus,
@@ -15,6 +16,9 @@ import {
 } from './actions';
 
 export default function ConnectAppPage() {
+  const { data: authSession } = useSession();
+  const isOwner = (authSession?.user as any)?.teamRole === 'OWNER';
+
   const [isGmailConnected, setIsGmailConnected] = useState<boolean>(false);
   const [emailLimit, setEmailLimit] = useState<number>(0);
   const [emailsUsed, setEmailsUsed] = useState<number>(0);
@@ -30,6 +34,11 @@ export default function ConnectAppPage() {
   const [savingLocationId, setSavingLocationId] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!isOwner) {
+      setLoading(false);
+      return;
+    }
+
     const fetchConnectionStatus = async () => {
       setLoading(true);
       const result = await getConnectionStatus();
@@ -55,7 +64,7 @@ export default function ConnectAppPage() {
     };
 
     fetchConnectionStatus();
-  }, []);
+  }, [isOwner]);
 
   const toggleConnection = async () => {
     const action = isGmailConnected ? 'disconnect' : 'connect';
@@ -124,6 +133,19 @@ export default function ConnectAppPage() {
     return (
       <div className="flex-1 flex items-center justify-center bg-[#0B0E14] text-gray-400">
         Loading connection status...
+      </div>
+    );
+  }
+
+  // Team member (Owner nahi) is page ko access nahi kar sakta
+  if (!isOwner) {
+    return (
+      <div className="flex-1 flex flex-col items-center justify-center bg-[#0B0E14] text-center p-6">
+        <PlugZap size={40} className="text-gray-600 mb-3" />
+        <h2 className="text-white text-lg font-medium">Access Denied</h2>
+        <p className="text-gray-400 text-sm mt-1">
+          Only the account owner can manage app connections.
+        </p>
       </div>
     );
   }
