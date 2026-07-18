@@ -198,7 +198,8 @@ export default function UnansweredPage() {
           </div>
         </div>
 
-        <div className="space-y-5">
+        {/* SCROLLABLE LIST WRAPPER — isi se page lamba hona band hoga */}
+        <div className="space-y-5 max-h-[600px] overflow-y-auto pr-2">
           {loading ? (
             <p className="text-zinc-500 text-center py-8">Loading reviews...</p>
           ) : filteredReviews.length === 0 ? (
