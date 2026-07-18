@@ -98,15 +98,17 @@ model Template {
 }
 
 model Report {
-  id             String   @id @default(cuid())
+  id             String    @id @default(cuid())
   userId         String
-  user           User     @relation(fields: [userId], references: [id])
+  user           User      @relation(fields: [userId], references: [id])
   title          String
-  type           String   @default("monthly")
+  type           String    @default("monthly")
   averageRating  Float?
   totalReviews   Int?
   fileUrl        String?
-  createdAt      DateTime @default(now())
+  periodStart    DateTime?
+  periodEnd      DateTime?
+  createdAt      DateTime  @default(now())
 }
 
 model Export {
