@@ -1,9 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import { getLowRatingAlerts, getRatingStats } from "./actions";
 
 export default function AlertsDashboard() {
+  const { data: authSession } = useSession();
+  const teamRole = (authSession?.user as any)?.teamRole || 'OWNER';
+  const canReply = teamRole !== 'VIEW_ONLY';
+
   const [lowRatingAlerts, setLowRatingAlerts] = useState<any[]>([]);
   const [ratingStats, setRatingStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -132,10 +137,12 @@ export default function AlertsDashboard() {
                     <p className="text-gray-400 text-xs mb-2">{alert.comment || 'No comment'}</p>
                     <div className="flex items-center justify-between">
                       <span className="text-gray-600 text-[10px]">{alert.source || 'Unknown'} • {new Date(alert.reviewDate).toLocaleDateString()}</span>
-                      <div className="flex gap-1">
-                        <button className="px-2 py-0.5 bg-red-600/20 text-red-400 rounded text-[10px] hover:bg-red-600/30 transition">Respond</button>
-                        <button className="px-2 py-0.5 bg-gray-800 text-gray-500 rounded text-[10px] hover:bg-gray-700 transition">🗑</button>
-                      </div>
+                      {canReply && (
+                        <div className="flex gap-1">
+                          <button className="px-2 py-0.5 bg-red-600/20 text-red-400 rounded text-[10px] hover:bg-red-600/30 transition">Respond</button>
+                          <button className="px-2 py-0.5 bg-gray-800 text-gray-500 rounded text-[10px] hover:bg-gray-700 transition">🗑</button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))
