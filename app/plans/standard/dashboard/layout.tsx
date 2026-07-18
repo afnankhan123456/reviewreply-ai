@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useSession } from "next-auth/react";
 import { 
   LayoutDashboard, Star, Sparkles, BarChart3, FileText, 
   Send, Bell, ShieldCheck, Users, Settings, Gift,
@@ -15,6 +16,14 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const { status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.replace("/login");
+    }
+  }, [status, router]);
 
   // ✅ Automatically detect active item from URL path
   const [activeItem, setActiveItem] = useState(() => {
@@ -37,6 +46,16 @@ export default function DashboardLayout({
 
     return segmentToLabel[lastSegment] || 'Overview';
   });
+
+  // Jab tak session check ho nahi jaata, ya user login nahi hai,
+  // tab tak koi bhi dashboard content (sidebar, data, kuch bhi) render nahi hoga.
+  if (status === "loading" || status === "unauthenticated") {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-[#0B0E14] text-gray-200">
+        <p className="text-sm text-gray-400">Checking your session...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen w-full bg-[#0B0E14] text-gray-200 font-sans overflow-hidden">
