@@ -1,5 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+"use client";
+
+import { useState } from "react";
+import { ChevronDown } from "lucide-react";
 
 const faqs = [
   { question: "How do I reset my password?", answer: "Go to Settings → Security and click 'Change Password'." },
@@ -9,25 +11,35 @@ const faqs = [
 ];
 
 export function FAQ() {
+  const [openItem, setOpenItem] = useState<string | null>(null);
+
+  const toggleItem = (index: string) => {
+    setOpenItem(openItem === index ? null : index);
+  };
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Frequently Asked Questions</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <Accordion type="single" collapsible className="w-full">
-          {faqs.map((faq, idx) => (
-            <AccordionItem key={idx} value={`faq-${idx}`}>
-              <AccordionTrigger className="text-left">
-                {faq.question}
-              </AccordionTrigger>
-              <AccordionContent className="text-sm text-muted-foreground">
+    <div>
+      <h3 className="text-lg font-semibold mb-2">Frequently Asked Questions</h3>
+      <div className="divide-y divide-gray-200 dark:divide-gray-700 border rounded-lg">
+        {faqs.map((faq, idx) => (
+          <div key={idx}>
+            <button
+              onClick={() => toggleItem(`faq-${idx}`)}
+              className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+            >
+              {faq.question}
+              <ChevronDown
+                className={`h-4 w-4 transition-transform ${openItem === `faq-${idx}` ? "rotate-180" : ""}`}
+              />
+            </button>
+            {openItem === `faq-${idx}` && (
+              <div className="px-4 pb-3 text-sm text-gray-500 dark:text-gray-400">
                 {faq.answer}
-              </AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
-      </CardContent>
-    </Card>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
