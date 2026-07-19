@@ -1,6 +1,8 @@
 "use client";
 
+import { Suspense } from "react";
 import { signIn } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import {
   ShieldCheck,
   BarChart3,
@@ -13,10 +15,18 @@ import {
   Users,
 } from "lucide-react";
 
-export default function LoginPage() {
+function LoginPageContent() {
+  const searchParams = useSearchParams();
+
   const handleLogin = async () => {
+    // Agar koi specific callbackUrl diya gaya hai (jaise team invite link),
+    // usi pe wapas bhejo. Warna default pricing page pe.
+    const rawCallback = searchParams.get("callbackUrl");
+    const safeCallback =
+      rawCallback && rawCallback.startsWith("/") ? rawCallback : "/plans/basic/pricing";
+
     await signIn("google", {
-      callbackUrl: "/plans/basic/pricing",
+      callbackUrl: safeCallback,
     });
   };
 
@@ -284,5 +294,13 @@ export default function LoginPage() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginPageContent />
+    </Suspense>
   );
 }
