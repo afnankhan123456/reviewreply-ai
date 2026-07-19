@@ -41,7 +41,7 @@ export default function DashboardLayout({
       'tags-categories': 'Tags & Categories',
       'requests': 'Requests',
       'alerts': 'Alerts',
-      'competitors': 'Competitors',
+      'support': 'support',
       'team': 'Team',
       'settings': 'Settings',
       'connect-app': 'Connect App' // ✅ Changed from 'integrations'
