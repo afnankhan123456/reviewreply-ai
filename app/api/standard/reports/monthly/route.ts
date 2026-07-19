@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { getCachedOrFetch } from '@/app/lib/cache';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
+import { resolveOwnerAndRole } from '@/lib/getEffectiveOwner';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
@@ -12,7 +13,10 @@ export async function GET(request: Request) {
     if (!session?.user?.id) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
-    const userId = session.user.id;
+
+    // Team member ho to Owner ka data dikhega, warna apna hi data
+    const { ownerId } = await resolveOwnerAndRole(session.user.id);
+    const userId = ownerId;
 
     const userCheck = await prisma.user.findUnique({
       where: { id: userId },
