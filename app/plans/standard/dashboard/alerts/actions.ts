@@ -3,6 +3,7 @@
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
+import { resolveOwnerAndRole } from '@/lib/getEffectiveOwner';
 
 export async function getRatingStats() {
   try {
@@ -11,8 +12,11 @@ export async function getRatingStats() {
       return { success: false, error: 'Unauthorized' };
     }
 
+    // Team member ho to Owner ka data dikhega, warna apna hi data
+    const { ownerId } = await resolveOwnerAndRole(session.user.id);
+
     const reviews = await prisma.review.findMany({
-      where: { userId: session.user.id },
+      where: { userId: ownerId },
       select: { rating: true },
     });
 
@@ -55,9 +59,12 @@ export async function getLowRatingAlerts() {
       return { success: false, error: 'Unauthorized' };
     }
 
+    // Team member ho to Owner ka data dikhega, warna apna hi data
+    const { ownerId } = await resolveOwnerAndRole(session.user.id);
+
     const reviews = await prisma.review.findMany({
       where: {
-        userId: session.user.id,
+        userId: ownerId,
         rating: { lte: 2 },
       },
       orderBy: { createdAt: 'desc' },
