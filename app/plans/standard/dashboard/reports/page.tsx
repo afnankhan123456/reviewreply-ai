@@ -1,12 +1,17 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import { 
   FileText, Download, Calendar, Clock, 
   Loader2, ChevronDown, Database, TrendingUp, TrendingDown, Star, BarChart3
 } from 'lucide-react';
 
 export default function ReportsPage() {
+  const { data: authSession } = useSession();
+  const teamRole = (authSession?.user as any)?.teamRole || 'OWNER';
+  const canDownload = teamRole !== 'VIEW_ONLY'; // View Only sirf dekh sakta hai, download nahi
+
   const [isGeneratingMonthly, setIsGeneratingMonthly] = useState(false);
   const [isGeneratingWeekly, setIsGeneratingWeekly] = useState(false);
   const [isGeneratingHistory, setIsGeneratingHistory] = useState(false);
@@ -27,6 +32,7 @@ export default function ReportsPage() {
   const loading = false;
 
   const handleDownloadMonthly = async (format: 'pdf' | 'csv') => {
+    if (!canDownload) return;
     setIsGeneratingMonthly(true);
     setShowMonthlyMenu(false);
     try {
@@ -58,6 +64,7 @@ export default function ReportsPage() {
   };
 
   const handleDownloadWeekly = async (format: 'pdf' | 'csv') => {
+    if (!canDownload) return;
     setIsGeneratingWeekly(true);
     setShowWeeklyMenu(false);
     try {
@@ -88,7 +95,7 @@ export default function ReportsPage() {
     }
   };
 
-  // ✅ View History - Direct fetch (no queue)
+  // ✅ View History - Direct fetch (no queue) — sirf viewing hai, View Only bhi kar sakta hai
   const handleViewHistory = async () => {
     setIsGeneratingHistory(true);
     setHistoryLoading(true);
@@ -116,6 +123,7 @@ export default function ReportsPage() {
 
   // ✅ Download specific month - Direct (no queue)
   const handleDownloadMonth = async (month: string) => {
+    if (!canDownload) return;
     try {
       const res = await fetch(`/api/standard/reports/monthly?format=csv&month=${month}`);
       const blob = await res.blob();
@@ -141,6 +149,12 @@ export default function ReportsPage() {
           <p className="text-sm text-gray-400">Download detailed performance reports in PDF or CSV format.</p>
         </div>
       </div>
+
+      {!canDownload && (
+        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 mb-6 text-sm text-yellow-400">
+          You have view-only access. Only the account owner or a Full Access member can download reports.
+        </div>
+      )}
 
       {/* Reports Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -168,7 +182,7 @@ export default function ReportsPage() {
             <div className="relative">
               <button
                 onClick={() => setShowMonthlyMenu(!showMonthlyMenu)}
-                disabled={isGeneratingMonthly}
+                disabled={isGeneratingMonthly || !canDownload}
                 className="w-full flex items-center justify-between gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span className="flex items-center gap-2">
@@ -187,7 +201,7 @@ export default function ReportsPage() {
                 <ChevronDown className="w-4 h-4" />
               </button>
               
-              {showMonthlyMenu && (
+              {showMonthlyMenu && canDownload && (
                 <div className="absolute bottom-full left-0 w-full mb-2 bg-[#1A1F2E] border border-[#2A303C] rounded-lg shadow-lg overflow-hidden z-10">
                   <button
                     onClick={() => handleDownloadMonthly('pdf')}
@@ -232,7 +246,7 @@ export default function ReportsPage() {
             <div className="relative">
               <button
                 onClick={() => setShowWeeklyMenu(!showWeeklyMenu)}
-                disabled={isGeneratingWeekly}
+                disabled={isGeneratingWeekly || !canDownload}
                 className="w-full flex items-center justify-between gap-2 bg-purple-600 hover:bg-purple-500 text-white font-medium py-2.5 px-4 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <span className="flex items-center gap-2">
@@ -251,7 +265,7 @@ export default function ReportsPage() {
                 <ChevronDown className="w-4 h-4" />
               </button>
               
-              {showWeeklyMenu && (
+              {showWeeklyMenu && canDownload && (
                 <div className="absolute bottom-full left-0 w-full mb-2 bg-[#1A1F2E] border border-[#2A303C] rounded-lg shadow-lg overflow-hidden z-10">
                   <button
                     onClick={() => handleDownloadWeekly('pdf')}
@@ -344,12 +358,14 @@ export default function ReportsPage() {
                           <p>Response: {item.responseRate || 0}%</p>
                         </div>
                       </div>
-                      <button
-                        onClick={() => handleDownloadMonth(item.month)}
-                        className="p-2 bg-amber-600 hover:bg-amber-500 rounded-lg transition-colors"
-                      >
-                        <Download className="w-4 h-4 text-white" />
-                      </button>
+                      {canDownload && (
+                        <button
+                          onClick={() => handleDownloadMonth(item.month)}
+                          className="p-2 bg-amber-600 hover:bg-amber-500 rounded-lg transition-colors"
+                        >
+                          <Download className="w-4 h-4 text-white" />
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))}
