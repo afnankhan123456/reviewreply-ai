@@ -38,16 +38,10 @@ export default function RequestsPage() {
         </div>
       )}
 
-      {/* ✅ Info Message for Place ID */}
       <div className="bg-[#181D27] border border-[#2A303C] rounded-lg p-4 mb-6 text-sm">
         <p className="text-gray-300">
           💡 <span className="font-medium">Tip:</span> Please save your{" "}
-          
-            href="/plans/standard/dashboard/settings"
-            className="text-indigo-400 hover:underline"
-          >
-            Google Place ID in Settings
-          </a>{" "}
+          <a href="/plans/standard/dashboard/settings" className="text-indigo-400 hover:underline">Google Place ID in Settings</a>{" "}
           to include a review link in the email.
         </p>
         <p className="text-xs text-gray-500 mt-1">
