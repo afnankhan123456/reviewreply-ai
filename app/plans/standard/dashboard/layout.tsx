@@ -21,12 +21,22 @@ export default function DashboardLayout({
 
   const teamRole = (authSession?.user as any)?.teamRole || "OWNER";
   const isOwner = teamRole === "OWNER";
+  const plan = (authSession?.user as any)?.plan || "basic";
+  const hasStandardAccess = plan?.startsWith("standard");
 
   useEffect(() => {
     if (status === "unauthenticated") {
       router.replace("/login");
     }
   }, [status, router]);
+
+  useEffect(() => {
+    // Agar (removed member ki tarah) is user ka access ab Standard plan se
+    // link nahi hai, to Standard dashboard turant chhod dena hoga.
+    if (status === "authenticated" && !hasStandardAccess) {
+      router.replace("/plans");
+    }
+  }, [status, hasStandardAccess, router]);
 
   const [activeItem, setActiveItem] = useState(() => {
     const lastSegment = pathname.split('/').pop() || '';
@@ -50,7 +60,7 @@ export default function DashboardLayout({
     return segmentToLabel[lastSegment] || 'Overview';
   });
 
-  if (status === "loading" || status === "unauthenticated") {
+  if (status === "loading" || status === "unauthenticated" || !hasStandardAccess) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-[#0B0E14] text-gray-200">
         <p className="text-sm text-gray-400">Checking your session...</p>
