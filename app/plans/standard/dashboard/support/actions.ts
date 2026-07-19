@@ -2,7 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 
-// ---------- Types ----------
 export type TicketStatus = "open" | "in_progress" | "resolved" | "closed";
 export type TicketPriority = "low" | "medium" | "high" | "urgent";
 
@@ -16,7 +15,6 @@ export interface Ticket {
   updatedAt: string;
 }
 
-// ---------- Mock Database ----------
 let tickets: Ticket[] = [
   {
     id: "TKT-001",
@@ -38,24 +36,17 @@ let tickets: Ticket[] = [
   },
 ];
 
-// ---------- Server Actions ----------
-
 export async function getTickets(): Promise<Ticket[]> {
-  // Simulate network delay
   await new Promise((resolve) => setTimeout(resolve, 500));
   return tickets;
 }
 
-export async function getTicketById(
-  id: string
-): Promise<Ticket | undefined> {
+export async function getTicketById(id: string): Promise<Ticket | undefined> {
   await new Promise((resolve) => setTimeout(resolve, 300));
   return tickets.find((t) => t.id === id);
 }
 
-export async function createTicket(
-  formData: FormData
-): Promise<{ success: boolean; message: string; ticket?: Ticket }> {
+export async function createTicket(formData: FormData): Promise<{ success: boolean; message: string; ticket?: Ticket }> {
   const subject = formData.get("subject") as string;
   const description = formData.get("description") as string;
   const priority = (formData.get("priority") as TicketPriority) || "medium";
@@ -79,9 +70,7 @@ export async function createTicket(
   return { success: true, message: "Ticket created successfully.", ticket: newTicket };
 }
 
-export async function submitBugReport(
-  formData: FormData
-): Promise<{ success: boolean; message: string }> {
+export async function submitBugReport(formData: FormData): Promise<{ success: boolean; message: string }> {
   const title = formData.get("title") as string;
   const steps = formData.get("steps") as string;
   const severity = formData.get("severity") as string;
@@ -90,16 +79,13 @@ export async function submitBugReport(
     return { success: false, message: "Title and steps to reproduce are required." };
   }
 
-  // In a real app you'd store this in a DB, integrate with Sentry, etc.
   console.log("Bug reported:", { title, steps, severity });
   await new Promise((resolve) => setTimeout(resolve, 800));
   revalidatePath("/plans/standard/dashboard/support");
   return { success: true, message: "Bug report submitted. Thank you!" };
 }
 
-export async function sendContactMessage(
-  formData: FormData
-): Promise<{ success: boolean; message: string }> {
+export async function sendContactMessage(formData: FormData): Promise<{ success: boolean; message: string }> {
   const email = formData.get("email") as string;
   const message = formData.get("message") as string;
 
@@ -107,7 +93,6 @@ export async function sendContactMessage(
     return { success: false, message: "Email and message are required." };
   }
 
-  // Simulate sending email
   await new Promise((resolve) => setTimeout(resolve, 600));
   return { success: true, message: "Message sent. We'll get back to you soon." };
 }
