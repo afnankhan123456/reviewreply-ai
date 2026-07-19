@@ -155,12 +155,20 @@ export const authOptions = {
       }
 
       // Team role/owner ko HAR request pe fresh check karo (sirf login ke waqt nahi),
-      // taaki invite accept hote hi turant sahi access mile, dobara login na karna pade.
+      // taaki invite accept hote hi (ya remove hote hi) turant sahi access mile.
       if (token?.id) {
         try {
           const { ownerId, role } = await resolveOwnerAndRole(token.id);
           token.ownerId = ownerId;
           token.teamRole = role;
+
+          // Owner ka plan bhi fetch karo — taaki removed member Standard dashboard
+          // me na ghus sake agar uska apna account Basic plan ka hai.
+          const ownerRecord = await prisma.user.findUnique({
+            where: { id: ownerId },
+            select: { plan: true },
+          });
+          token.plan = ownerRecord?.plan || "basic";
         } catch (err) {
           console.log("Error resolving team role for JWT:", err);
         }
@@ -195,6 +203,7 @@ export const authOptions = {
         session.user.id = token.id;
         session.user.ownerId = token.ownerId || token.id;
         session.user.teamRole = token.teamRole || "OWNER";
+        session.user.plan = token.plan || "basic";
       }
       return session;
     },
