@@ -4,6 +4,7 @@ import nodemailer from 'nodemailer';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
+import { resolveOwnerAndRole } from '@/lib/getEffectiveOwner';
 
 export async function sendReviewRequestEmail(name: string, email: string) {
   if (!email || !name) {
@@ -16,9 +17,16 @@ export async function sendReviewRequestEmail(name: string, email: string) {
       return { message: 'User not authenticated' };
     }
 
-    // User ka googlePlaceId fetch karo
+    // Team member ho to Owner ka data use hoga; View Only ko email bhejne nahi denge
+    const { ownerId, role } = await resolveOwnerAndRole(session.user.id);
+
+    if (role === 'VIEW_ONLY') {
+      return { message: 'You have view-only access and cannot send review requests.' };
+    }
+
+    // Owner ka googlePlaceId fetch karo
     const user = await prisma.user.findUnique({
-      where: { id: session.user.id },
+      where: { id: ownerId },
       select: { googlePlaceId: true },
     });
 
