@@ -1,12 +1,22 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
+import { resolveOwnerAndRole } from '@/lib/getEffectiveOwner';
 
 export async function POST(request: Request) {
   try {
     const session: any = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // View Only member ko AI reply generate karne nahi denge (ye ek action hai)
+    const { role } = await resolveOwnerAndRole(session.user.id);
+    if (role === 'VIEW_ONLY') {
+      return NextResponse.json(
+        { success: false, error: 'You have view-only access and cannot generate AI replies.' },
+        { status: 403 }
+      );
     }
 
     const { template } = await request.json();
