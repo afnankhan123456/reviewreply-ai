@@ -2,12 +2,23 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
+import { resolveOwnerAndRole } from '@/lib/getEffectiveOwner';
 
 export async function POST(request: Request) {
   try {
     const session: any = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
+    }
+
+    // Team member ho to Owner ka data check hoga; View Only member ko reply karne nahi denge
+    const { ownerId, role } = await resolveOwnerAndRole(session.user.id);
+
+    if (role === 'VIEW_ONLY') {
+      return NextResponse.json(
+        { success: false, message: 'You have view-only access and cannot reply to reviews.' },
+        { status: 403 }
+      );
     }
 
     const body = await request.json();
@@ -20,7 +31,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // Pehle check karo ye review isi user ka hai ya nahi
+    // Pehle check karo ye review isi (Owner ke) business ka hai ya nahi
     const existingReview = await prisma.review.findUnique({
       where: { id: reviewId },
     });
@@ -29,7 +40,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, message: 'Review not found' }, { status: 404 });
     }
 
-    if (existingReview.userId !== session.user.id) {
+    if (existingReview.userId !== ownerId) {
       return NextResponse.json({ success: false, message: 'Forbidden' }, { status: 403 });
     }
 
