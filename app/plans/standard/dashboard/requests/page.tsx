@@ -1,9 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 import { sendReviewRequestEmail } from "./actions";
 
 export default function RequestsPage() {
+  const { data: authSession } = useSession();
+  const teamRole = (authSession?.user as any)?.teamRole || "OWNER";
+  const canSend = teamRole !== "VIEW_ONLY";
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
@@ -11,9 +16,10 @@ export default function RequestsPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canSend) return;
+
     setLoading(true);
     setMessage("");
-
     const result = await sendReviewRequestEmail(name, email);
     setMessage(result.message);
     setLoading(false);
@@ -26,11 +32,17 @@ export default function RequestsPage() {
         Enter customer details to send a review request.
       </p>
 
+      {!canSend && (
+        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 mb-6 text-sm text-yellow-400">
+          You have view-only access. Only the account owner or a Full Access member can send review requests.
+        </div>
+      )}
+
       {/* ✅ Info Message for Place ID */}
       <div className="bg-[#181D27] border border-[#2A303C] rounded-lg p-4 mb-6 text-sm">
         <p className="text-gray-300">
           💡 <span className="font-medium">Tip:</span> Please save your{" "}
-          <a
+          
             href="/plans/standard/dashboard/settings"
             className="text-indigo-400 hover:underline"
           >
@@ -43,43 +55,45 @@ export default function RequestsPage() {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="max-w-md space-y-4">
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">Customer Name</label>
-          <input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-            className="w-full bg-[#181D27] border border-[#2A303C] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-indigo-500"
-            placeholder="John Doe"
-          />
-        </div>
+      <fieldset disabled={!canSend} className="max-w-md space-y-4 disabled:opacity-50">
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Customer Name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+              className="w-full bg-[#181D27] border border-[#2A303C] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-indigo-500"
+              placeholder="John Doe"
+            />
+          </div>
 
-        <div>
-          <label className="block text-sm text-gray-400 mb-1">Customer Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full bg-[#181D27] border border-[#2A303C] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-indigo-500"
-            placeholder="customer@example.com"
-          />
-        </div>
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Customer Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="w-full bg-[#181D27] border border-[#2A303C] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-indigo-500"
+              placeholder="customer@example.com"
+            />
+          </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 rounded-lg transition disabled:opacity-50"
-        >
-          {loading ? "Sending..." : "Send Review Request"}
-        </button>
+          <button
+            type="submit"
+            disabled={loading || !canSend}
+            className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 rounded-lg transition disabled:opacity-50"
+          >
+            {loading ? "Sending..." : "Send Review Request"}
+          </button>
 
-        {message && (
-          <p className="text-sm text-green-400 mt-2">{message}</p>
-        )}
-      </form>
+          {message && (
+            <p className="text-sm text-green-400 mt-2">{message}</p>
+          )}
+        </form>
+      </fieldset>
     </div>
   );
 }
