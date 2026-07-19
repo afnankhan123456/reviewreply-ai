@@ -148,14 +148,21 @@ export const authOptions = {
           if (dbUser) {
             token.id = dbUser.id;
             token.referralCode = dbUser.referralCode;
-
-            // Team member info: kaunsa business dikhega aur kya access hai
-            const { ownerId, role } = await resolveOwnerAndRole(dbUser.id);
-            token.ownerId = ownerId;
-            token.teamRole = role;
           }
         } catch (err) {
           console.log("Error fetching referral code for JWT:", err);
+        }
+      }
+
+      // Team role/owner ko HAR request pe fresh check karo (sirf login ke waqt nahi),
+      // taaki invite accept hote hi turant sahi access mile, dobara login na karna pade.
+      if (token?.id) {
+        try {
+          const { ownerId, role } = await resolveOwnerAndRole(token.id);
+          token.ownerId = ownerId;
+          token.teamRole = role;
+        } catch (err) {
+          console.log("Error resolving team role for JWT:", err);
         }
       }
 
@@ -192,6 +199,10 @@ export const authOptions = {
       return session;
     },
     async redirect({ baseUrl, url }: any) {
+      // Team invite accept link ko wapas usi jagah bhejo (dashboard tak khud pahunch jayega)
+      if (url.startsWith(`${baseUrl}/api/team/accept`) || url.includes("/api/team/accept")) {
+        return url.startsWith(baseUrl) ? url : `${baseUrl}${url.startsWith("/") ? url : `/${url}`}`;
+      }
       if (url.includes("admin=true")) return `${baseUrl}/admin`;
       return `${baseUrl}/plans`;
     },
