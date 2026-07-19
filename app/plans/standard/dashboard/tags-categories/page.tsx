@@ -1,10 +1,15 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import { useSession } from 'next-auth/react';
 import { Tag, X, Plus, ArrowLeft, RefreshCw } from 'lucide-react';
 import { getTagSummary, getReviewsByTag, addTag, removeTag } from './actions';
 
 export default function TagsCategoriesPage() {
+  const { data: authSession } = useSession();
+  const teamRole = (authSession?.user as any)?.teamRole || 'OWNER';
+  const canEditTags = teamRole !== 'VIEW_ONLY'; // View Only sirf dekh sakta hai, tag add/remove nahi
+
   const [summary, setSummary] = useState<{ tag: string; count: number }[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [untaggedCount, setUntaggedCount] = useState(0);
@@ -59,6 +64,7 @@ export default function TagsCategoriesPage() {
   };
 
   const handleAddTag = async (reviewId: string) => {
+    if (!canEditTags) return;
     const tagValue = newTagInput[reviewId];
     if (!tagValue || !tagValue.trim()) return;
     const result = await addTag(reviewId, tagValue);
@@ -70,6 +76,7 @@ export default function TagsCategoriesPage() {
   };
 
   const handleRemoveTag = async (reviewId: string, tag: string) => {
+    if (!canEditTags) return;
     const result = await removeTag(reviewId, tag);
     if (result.success) {
       setReviews((prev) => prev.map((r) => (r.id === reviewId ? { ...r, tags: result.tags } : r)));
@@ -166,25 +173,29 @@ export default function TagsCategoriesPage() {
                   className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"
                 >
                   {tag}
-                  <button onClick={() => handleRemoveTag(review.id, tag)}>
-                    <X size={10} className="hover:text-red-400" />
-                  </button>
+                  {canEditTags && (
+                    <button onClick={() => handleRemoveTag(review.id, tag)}>
+                      <X size={10} className="hover:text-red-400" />
+                    </button>
+                  )}
                 </span>
               ))}
 
-              <div className="flex items-center gap-1">
-                <input
-                  type="text"
-                  placeholder="Add tag..."
-                  value={newTagInput[review.id] || ''}
-                  onChange={(e) => setNewTagInput((prev) => ({ ...prev, [review.id]: e.target.value }))}
-                  onKeyDown={(e) => { if (e.key === 'Enter') handleAddTag(review.id); }}
-                  className="text-[10px] bg-[#181D27] border border-[#2A303C] rounded-full px-2 py-1 text-gray-300 w-24 outline-none focus:border-indigo-500"
-                />
-                <button onClick={() => handleAddTag(review.id)} className="p-1 rounded-full bg-[#1F2430] hover:bg-[#2A303C] text-gray-400">
-                  <Plus size={12} />
-                </button>
-              </div>
+              {canEditTags && (
+                <div className="flex items-center gap-1">
+                  <input
+                    type="text"
+                    placeholder="Add tag..."
+                    value={newTagInput[review.id] || ''}
+                    onChange={(e) => setNewTagInput((prev) => ({ ...prev, [review.id]: e.target.value }))}
+                    onKeyDown={(e) => { if (e.key === 'Enter') handleAddTag(review.id); }}
+                    className="text-[10px] bg-[#181D27] border border-[#2A303C] rounded-full px-2 py-1 text-gray-300 w-24 outline-none focus:border-indigo-500"
+                  />
+                  <button onClick={() => handleAddTag(review.id)} className="p-1 rounded-full bg-[#1F2430] hover:bg-[#2A303C] text-gray-400">
+                    <Plus size={12} />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         ))}
