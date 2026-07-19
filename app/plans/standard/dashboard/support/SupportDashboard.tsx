@@ -33,8 +33,8 @@ export function SupportDashboard() {
         <div className="lg:col-span-2 space-y-6">
           <PrioritySupport />
 
-          {/* Simple tab bar */}
-          <div className="rounded-lg border bg-card text-card-foreground shadow-sm">
+          {/* Tabbed section */}
+          <div className="rounded-lg border bg-white dark:bg-gray-950 shadow-sm">
             <div className="flex border-b">
               {tabs.map((tab) => (
                 <button
@@ -42,8 +42,8 @@ export function SupportDashboard() {
                   onClick={() => setActiveTab(tab.id)}
                   className={`px-4 py-2 text-sm font-medium transition-colors ${
                     activeTab === tab.id
-                      ? "border-b-2 border-primary text-primary"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "border-b-2 border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400"
+                      : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
                   }`}
                 >
                   {tab.label}
