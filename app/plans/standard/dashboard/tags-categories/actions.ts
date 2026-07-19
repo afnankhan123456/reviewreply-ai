@@ -3,6 +3,7 @@
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
+import { resolveOwnerAndRole } from '@/lib/getEffectiveOwner';
 import { getAllPossibleTags } from '@/lib/autoTag';
 
 const PAGE_SIZE = 20;
@@ -22,13 +23,16 @@ export async function getTagSummary() {
       return { error: 'Unauthorized' };
     }
 
-    const cycleStart = await getCycleStart(session.user.id);
+    // Team member ho to Owner ka data dikhega, warna apna hi data
+    const { ownerId } = await resolveOwnerAndRole(session.user.id);
+
+    const cycleStart = await getCycleStart(ownerId);
     const allTags = getAllPossibleTags();
     const summary: { tag: string; count: number }[] = [];
 
     for (const tag of allTags) {
       const count = await prisma.review.count({
-        where: { userId: session.user.id, tags: { has: tag }, createdAt: { gte: cycleStart } },
+        where: { userId: ownerId, tags: { has: tag }, createdAt: { gte: cycleStart } },
       });
       if (count > 0) {
         summary.push({ tag, count });
@@ -36,10 +40,10 @@ export async function getTagSummary() {
     }
 
     const totalCount = await prisma.review.count({
-      where: { userId: session.user.id, createdAt: { gte: cycleStart } },
+      where: { userId: ownerId, createdAt: { gte: cycleStart } },
     });
     const untaggedCount = await prisma.review.count({
-      where: { userId: session.user.id, tags: { equals: [] }, createdAt: { gte: cycleStart } },
+      where: { userId: ownerId, tags: { equals: [] }, createdAt: { gte: cycleStart } },
     });
 
     return { success: true, summary, totalCount, untaggedCount, cycleStart };
@@ -56,8 +60,11 @@ export async function getReviewsByTag(tag: string | null, page: number = 1) {
       return { error: 'Unauthorized' };
     }
 
-    const cycleStart = await getCycleStart(session.user.id);
-    const where: any = { userId: session.user.id, createdAt: { gte: cycleStart } };
+    // Team member ho to Owner ka data dikhega, warna apna hi data
+    const { ownerId } = await resolveOwnerAndRole(session.user.id);
+
+    const cycleStart = await getCycleStart(ownerId);
+    const where: any = { userId: ownerId, createdAt: { gte: cycleStart } };
     if (tag === '__untagged__') {
       where.tags = { equals: [] };
     } else if (tag) {
@@ -86,9 +93,15 @@ export async function addTag(reviewId: string, tag: string) {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) return { error: 'Unauthorized' };
 
+    // View Only member ko tag add karne nahi denge (ye data-modifying action hai)
+    const { ownerId, role } = await resolveOwnerAndRole(session.user.id);
+    if (role === 'VIEW_ONLY') {
+      return { error: 'You have view-only access and cannot add tags.' };
+    }
+
     const review = await prisma.review.findUnique({ where: { id: reviewId } });
     if (!review) return { error: 'Review not found' };
-    if (review.userId !== session.user.id) return { error: 'Forbidden' };
+    if (review.userId !== ownerId) return { error: 'Forbidden' };
 
     const cleanTag = tag.trim();
     if (!cleanTag) return { error: 'Tag cannot be empty' };
@@ -111,9 +124,15 @@ export async function removeTag(reviewId: string, tag: string) {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) return { error: 'Unauthorized' };
 
+    // View Only member ko tag remove karne nahi denge (ye data-modifying action hai)
+    const { ownerId, role } = await resolveOwnerAndRole(session.user.id);
+    if (role === 'VIEW_ONLY') {
+      return { error: 'You have view-only access and cannot remove tags.' };
+    }
+
     const review = await prisma.review.findUnique({ where: { id: reviewId } });
     if (!review) return { error: 'Review not found' };
-    if (review.userId !== session.user.id) return { error: 'Forbidden' };
+    if (review.userId !== ownerId) return { error: 'Forbidden' };
 
     const newTags = review.tags.filter((t) => t !== tag);
     const updated = await prisma.review.update({ where: { id: reviewId }, data: { tags: newTags } });
@@ -130,8 +149,11 @@ export async function getCycleHistory() {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id) return { error: 'Unauthorized' };
 
+    // Team member ho to Owner ka data dikhega, warna apna hi data
+    const { ownerId } = await resolveOwnerAndRole(session.user.id);
+
     const cycles = await prisma.tagCycle.findMany({
-      where: { userId: session.user.id },
+      where: { userId: ownerId },
       orderBy: { cycleStart: 'desc' },
     });
 
