@@ -1,20 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import { getTicketById, type Ticket } from "./actions";
 import { X } from "lucide-react";
 
-export function TicketDetails({
-  ticketId,
-  onClose,
-}: {
-  ticketId: string;
-  onClose: () => void;
-}) {
+export function TicketDetails({ ticketId, onClose }: { ticketId: string; onClose: () => void }) {
   const [ticket, setTicket] = useState<Ticket | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -27,69 +17,76 @@ export function TicketDetails({
 
   if (loading) {
     return (
-      <Card>
-        <CardHeader className="flex-row items-center justify-between">
-          <Skeleton className="h-6 w-28" />
-          <Skeleton className="h-8 w-8 rounded-full" />
-        </CardHeader>
-        <CardContent className="space-y-2">
-          <Skeleton className="h-4 w-full" />
-          <Skeleton className="h-4 w-3/4" />
-          <Skeleton className="h-20 w-full" />
-        </CardContent>
-      </Card>
+      <div className="rounded-lg border bg-white dark:bg-gray-950 shadow-sm p-6">
+        <div className="flex items-center justify-between mb-4">
+          <div className="h-6 w-28 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+          <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
+        </div>
+        <div className="space-y-2">
+          <div className="h-4 w-full bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+          <div className="h-4 w-3/4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+          <div className="h-20 w-full bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
+        </div>
+      </div>
     );
   }
 
   if (!ticket) {
     return (
-      <Card>
-        <CardHeader className="flex-row items-center justify-between">
-          <CardTitle>Ticket Not Found</CardTitle>
-          <Button variant="ghost" size="icon" onClick={onClose}>
-            <X className="h-4 w-4" />
-          </Button>
-        </CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground">
-            The requested ticket could not be found.
-          </p>
-        </CardContent>
-      </Card>
+      <div className="rounded-lg border bg-white dark:bg-gray-950 shadow-sm p-6">
+        <div className="flex items-center justify-between mb-2">
+          <h3 className="text-lg font-semibold">Ticket Not Found</h3>
+          <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+            <X className="h-5 w-5" />
+          </button>
+        </div>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          The requested ticket could not be found.
+        </p>
+      </div>
     );
   }
 
+  const statusColor = {
+    open: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+    in_progress: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
+    resolved: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+    closed: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
+  }[ticket.status];
+
   return (
-    <Card>
-      <CardHeader className="flex-row items-start justify-between">
+    <div className="rounded-lg border bg-white dark:bg-gray-950 shadow-sm p-6">
+      <div className="flex items-start justify-between mb-2">
         <div>
-          <CardTitle className="flex items-center gap-2">
-            {ticket.id}
-            <Badge variant="outline">{ticket.priority}</Badge>
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">
-            {ticket.subject}
-          </p>
+          <div className="flex items-center gap-2 mb-1">
+            <span className="font-mono text-sm text-gray-500 dark:text-gray-400">{ticket.id}</span>
+            <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold text-gray-700 dark:text-gray-300">
+              {ticket.priority}
+            </span>
+          </div>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{ticket.subject}</h3>
         </div>
-        <Button variant="ghost" size="icon" onClick={onClose}>
-          <X className="h-4 w-4" />
-        </Button>
-      </CardHeader>
-      <CardContent className="space-y-3">
+        <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+          <X className="h-5 w-5" />
+        </button>
+      </div>
+      <div className="space-y-3">
         <div>
           <span className="text-sm font-medium">Status: </span>
-          <Badge className="capitalize">{ticket.status.replace("_", " ")}</Badge>
+          <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${statusColor}`}>
+            {ticket.status.replace("_", " ")}
+          </span>
         </div>
         <div>
           <span className="text-sm font-medium">Description:</span>
-          <p className="text-sm text-muted-foreground mt-1">{ticket.description}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{ticket.description}</p>
         </div>
-        <div className="text-xs text-muted-foreground">
+        <div className="text-xs text-gray-500 dark:text-gray-400">
           Created: {new Date(ticket.createdAt).toLocaleString()}
           <br />
           Last updated: {new Date(ticket.updatedAt).toLocaleString()}
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }
