@@ -1,4 +1,4 @@
-import { Clock, AlertCircle } from "lucide-react";
+import { Clock, Headphones, Mail, AlertCircle } from "lucide-react";
 
 export function PrioritySupport() {
   return (
@@ -15,6 +15,28 @@ export function PrioritySupport() {
           <Clock className="h-4 w-4 text-gray-500 dark:text-gray-400" />
           <span className="font-medium text-gray-800 dark:text-gray-200">First Response Time:</span>
           <span>Within 4 Business Hours</span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Headphones className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+          <span className="font-medium text-gray-800 dark:text-gray-200">Support Channels:</span>
+          <span>In-App Chat &amp; Email</span>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <Mail className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+          <span className="font-medium text-gray-800 dark:text-gray-200">Support Email:</span>
+          <a href="mailto:afnank@gmail.com" className="text-blue-600 dark:text-blue-400 hover:underline">
+            afnank@gmail.com
+          </a>
+        </div>
+
+        {/* Only this line removed: Support Phone */}
+
+        <div className="flex items-center gap-2">
+          <Clock className="h-4 w-4 text-gray-500 dark:text-gray-400" />
+          <span className="font-medium text-gray-800 dark:text-gray-200">Support Hours:</span>
+          <span>Monday–Friday (Business Hours)</span>
         </div>
       </div>
 
