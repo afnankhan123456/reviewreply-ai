@@ -61,7 +61,6 @@ export function SupportDashboard() {
         </div>
 
         <div className="space-y-6">
-          <ContactSupport />
           {selectedTicketId && (
             <TicketDetails
               ticketId={selectedTicketId}
