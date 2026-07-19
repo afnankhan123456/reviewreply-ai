@@ -8,7 +8,6 @@ import { MyTickets } from "./MyTickets";
 import { KnowledgeBase } from "./KnowledgeBase";
 import { FAQ } from "./FAQ";
 import { QuickActions } from "./QuickActions";
-import { ContactSupport } from "./ContactSupport";
 import { TicketDetails } from "./TicketDetails";
 
 export function SupportDashboard() {
