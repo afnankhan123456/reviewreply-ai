@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import { 
   LayoutDashboard, Star, Sparkles, BarChart3, FileText, 
   Send, Bell, ShieldCheck, Users, Settings, Gift,
-  Tag, PlugZap // ✅ Changed icon for Connect App
+  Tag, PlugZap, LifeBuoy
 } from 'lucide-react';
 
 export default function DashboardLayout({
@@ -28,7 +28,6 @@ export default function DashboardLayout({
     }
   }, [status, router]);
 
-  // ✅ Automatically detect active item from URL path
   const [activeItem, setActiveItem] = useState(() => {
     const lastSegment = pathname.split('/').pop() || '';
     
@@ -41,17 +40,16 @@ export default function DashboardLayout({
       'tags-categories': 'Tags & Categories',
       'requests': 'Requests',
       'alerts': 'Alerts',
-      'support': 'support',
+      'support': 'Support',
       'team': 'Team',
       'settings': 'Settings',
-      'connect-app': 'Connect App' // ✅ Changed from 'integrations'
+      'connect-app': 'Connect App',
+      'competitors': 'Competitors'
     };
 
     return segmentToLabel[lastSegment] || 'Overview';
   });
 
-  // Jab tak session check ho nahi jaata, ya user login nahi hai,
-  // tab tak koi bhi dashboard content (sidebar, data, kuch bhi) render nahi hoga.
   if (status === "loading" || status === "unauthenticated") {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-[#0B0E14] text-gray-200">
@@ -63,7 +61,6 @@ export default function DashboardLayout({
   return (
     <div className="flex h-screen w-full bg-[#0B0E14] text-gray-200 font-sans overflow-hidden">
       
-      {/* Sidebar - Left Panel */}
       <aside className="w-64 bg-[#11141C] border-r border-[#1F2430] flex flex-col p-4 overflow-y-auto">
         <div className="flex items-center gap-2 mb-10 px-2">
           <div className="bg-indigo-500 p-1.5 rounded-lg">
@@ -73,110 +70,38 @@ export default function DashboardLayout({
         </div>
 
         <nav className="space-y-1 flex-1">
-          <NavItem 
-            icon={<LayoutDashboard size={20} />} 
-            label="Overview" 
-            href="/plans/standard/dashboard" 
-            isActive={activeItem === 'Overview'}
-            onClick={() => setActiveItem('Overview')}
-          />
+          <NavItem icon={<LayoutDashboard size={20} />} label="Overview" href="/plans/standard/dashboard" isActive={activeItem === 'Overview'} onClick={() => setActiveItem('Overview')} />
+          <NavItem icon={<Star size={20} />} label="Reviews" href="/plans/standard/dashboard/reviews" isActive={activeItem === 'Reviews'} onClick={() => setActiveItem('Reviews')} />
+          <NavItem icon={<Sparkles size={20} />} label="AI Reply Center" href="/plans/standard/dashboard/ai-reply-center" isActive={activeItem === 'AI Reply Center'} onClick={() => setActiveItem('AI Reply Center')} />
+          <NavItem icon={<BarChart3 size={20} />} label="Analytics" href="/plans/standard/dashboard/analytics" isActive={activeItem === 'Analytics'} onClick={() => setActiveItem('Analytics')} />
+          <NavItem icon={<FileText size={20} />} label="Reports" href="/plans/standard/dashboard/reports" isActive={activeItem === 'Reports'} onClick={() => setActiveItem('Reports')} />
+          <NavItem icon={<Tag size={20} />} label="Tags & Categories" href="/plans/standard/dashboard/tags-categories" isActive={activeItem === 'Tags & Categories'} onClick={() => setActiveItem('Tags & Categories')} />
+          <NavItem icon={<Send size={20} />} label="Requests" href="/plans/standard/dashboard/requests" isActive={activeItem === 'Requests'} onClick={() => setActiveItem('Requests')} />
+          <NavItem icon={<Bell size={20} />} label="Alerts" href="/plans/standard/dashboard/alerts" isActive={activeItem === 'Alerts'} onClick={() => setActiveItem('Alerts')} />
           
-          <NavItem 
-            icon={<Star size={20} />} 
-            label="Reviews" 
-            href="/plans/standard/dashboard/reviews" 
-            isActive={activeItem === 'Reviews'}
-            onClick={() => setActiveItem('Reviews')}
-          />
-          
-          <NavItem 
-            icon={<Sparkles size={20} />} 
-            label="AI Reply Center" 
-            href="/plans/standard/dashboard/ai-reply-center" 
-            isActive={activeItem === 'AI Reply Center'}
-            onClick={() => setActiveItem('AI Reply Center')}
-          />
-          
-          <NavItem 
-            icon={<BarChart3 size={20} />} 
-            label="Analytics" 
-            href="/plans/standard/dashboard/analytics" 
-            isActive={activeItem === 'Analytics'}
-            onClick={() => setActiveItem('Analytics')}
-          />
-          
-          <NavItem 
-            icon={<FileText size={20} />} 
-            label="Reports" 
-            href="/plans/standard/dashboard/reports" 
-            isActive={activeItem === 'Reports'}
-            onClick={() => setActiveItem('Reports')}
-          />
-          <NavItem 
-            icon={<Tag size={20} />} 
-            label="Tags & Categories" 
-            href="/plans/standard/dashboard/tags-categories" 
-            isActive={activeItem === 'Tags & Categories'}
-            onClick={() => setActiveItem('Tags & Categories')}
-          />
-          <NavItem 
-            icon={<Send size={20} />} 
-            label="Requests" 
-            href="/plans/standard/dashboard/requests" 
-            isActive={activeItem === 'Requests'}
-            onClick={() => setActiveItem('Requests')}
-          />
-          <NavItem 
-            icon={<Bell size={20} />} 
-            label="Alerts" 
-            href="/plans/standard/dashboard/alerts" 
-            isActive={activeItem === 'Alerts'}
-            onClick={() => setActiveItem('Alerts')}
-          />
-          
-          {/* ✅ Sirf Owner ko Connect App dikhega */}
           {isOwner && (
-            <NavItem 
-              icon={<PlugZap size={20} />} 
-              label="Connect App" 
-              href="/plans/standard/dashboard/connect-app" 
-              isActive={activeItem === 'Connect App'}
-              onClick={() => setActiveItem('Connect App')}
-            />
+            <NavItem icon={<PlugZap size={20} />} label="Connect App" href="/plans/standard/dashboard/connect-app" isActive={activeItem === 'Connect App'} onClick={() => setActiveItem('Connect App')} />
           )}
           
-          <NavItem 
-            icon={<ShieldCheck size={20} />} 
-            label="Competitors" 
-            href="/plans/standard/dashboard/competitors" 
-            isActive={activeItem === 'Competitors'}
-            onClick={() => setActiveItem('Competitors')}
-          />
+          <NavItem icon={<ShieldCheck size={20} />} label="Competitors" href="/plans/standard/dashboard/competitors" isActive={activeItem === 'Competitors'} onClick={() => setActiveItem('Competitors')} />
 
-          {/* ✅ Sirf Owner ko Team dikhega */}
           {isOwner && (
-            <NavItem 
-              icon={<Users size={20} />} 
-              label="Team" 
-              href="/plans/standard/dashboard/team" 
-              isActive={activeItem === 'Team'}
-              onClick={() => setActiveItem('Team')}
-            />
+            <NavItem icon={<Users size={20} />} label="Team" href="/plans/standard/dashboard/team" isActive={activeItem === 'Team'} onClick={() => setActiveItem('Team')} />
+          )}
+          {isOwner && (
+            <NavItem icon={<Settings size={20} />} label="Settings" href="/plans/standard/dashboard/settings" isActive={activeItem === 'Settings'} onClick={() => setActiveItem('Settings')} />
           )}
 
-          {/* ✅ Sirf Owner ko Settings dikhega */}
-          {isOwner && (
-            <NavItem 
-              icon={<Settings size={20} />} 
-              label="Settings" 
-              href="/plans/standard/dashboard/settings" 
-              isActive={activeItem === 'Settings'}
-              onClick={() => setActiveItem('Settings')}
-            />
-          )}
+          {/* Support – at the bottom, visible to all */}
+          <NavItem 
+            icon={<LifeBuoy size={20} />} 
+            label="Support" 
+            href="/plans/standard/dashboard/support" 
+            isActive={activeItem === 'Support'} 
+            onClick={() => setActiveItem('Support')} 
+          />
         </nav>
 
-        {/* Bottom Card */}
         <div className="mt-auto pt-6 border-t border-[#1F2430]">
           <div className="flex items-center gap-3 px-2 py-3 bg-[#1A1D27] rounded-lg cursor-pointer hover:bg-[#222633] transition-colors">
             <div className="bg-gradient-to-r from-pink-500 to-purple-500 p-1.5 rounded-md">
@@ -190,7 +115,6 @@ export default function DashboardLayout({
         </div>
       </aside>
 
-      {/* Main Content Area */}
       <div className="flex-1 flex flex-col h-screen overflow-hidden relative">
         {children}
       </div>
@@ -198,8 +122,7 @@ export default function DashboardLayout({
   );
 }
 
-// Reusable Sidebar Item Component
-function NavItem({ icon, label, href, isActive, onClick }: { icon: React.ReactNode, label: string, href: string, isActive: boolean, onClick: () => void }) {
+function NavItem({ icon, label, href, isActive, onClick }: { icon: React.ReactNode; label: string; href: string; isActive: boolean; onClick: () => void }) {
   return (
     <Link 
       href={href} 
