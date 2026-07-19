@@ -23,42 +23,20 @@ export function SupportDashboard() {
 
   return (
     <div className="flex flex-col gap-8 p-6">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">Support Center</h1>
         <QuickActions />
       </div>
 
+      {/* First row: two columns */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Left column (2/3 width) */}
-        <div className="lg:col-span-2 space-y-6">
+        {/* Left column – Priority Support only */}
+        <div className="lg:col-span-2">
           <PrioritySupport />
-
-          <div className="rounded-lg border bg-white dark:bg-gray-950 shadow-sm">
-            <div className="flex border-b">
-              {tabs.map((tab) => (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`px-4 py-2 text-sm font-medium transition-colors ${
-                    activeTab === tab.id
-                      ? "border-b-2 border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400"
-                      : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              ))}
-            </div>
-            <div className="p-4">
-              {activeTab === "tickets" && <MyTickets onSelectTicket={setSelectedTicketId} />}
-              {activeTab === "bug" && <BugReport />}
-              {activeTab === "kb" && <KnowledgeBase />}
-              {activeTab === "faq" && <FAQ />}
-            </div>
-          </div>
         </div>
 
-        {/* Right column (1/3 width) – HelpCenter yahan hai */}
+        {/* Right column – Help Center + optional Ticket Details */}
         <div className="space-y-6">
           <HelpCenter />
           {selectedTicketId && (
@@ -67,6 +45,31 @@ export function SupportDashboard() {
               onClose={() => setSelectedTicketId(null)}
             />
           )}
+        </div>
+      </div>
+
+      {/* Second row: full‑width tabbed section */}
+      <div className="rounded-lg border bg-white dark:bg-gray-950 shadow-sm">
+        <div className="flex border-b">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`px-4 py-2 text-sm font-medium transition-colors ${
+                activeTab === tab.id
+                  ? "border-b-2 border-blue-600 text-blue-600 dark:border-blue-400 dark:text-blue-400"
+                  : "text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="p-4">
+          {activeTab === "tickets" && <MyTickets onSelectTicket={setSelectedTicketId} />}
+          {activeTab === "bug" && <BugReport />}
+          {activeTab === "kb" && <KnowledgeBase />}
+          {activeTab === "faq" && <FAQ />}
         </div>
       </div>
     </div>
