@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
+import { resolveOwnerAndRole } from '@/lib/getEffectiveOwner';
 
 export async function GET() {
   try {
@@ -10,8 +11,11 @@ export async function GET() {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Team member ho to Owner ka data dikhega, warna apna hi data
+    const { ownerId } = await resolveOwnerAndRole(session.user.id);
+
     const reviews = await prisma.review.findMany({
-      where: { userId: session.user.id },
+      where: { userId: ownerId },
       orderBy: { createdAt: 'desc' },
     });
 
