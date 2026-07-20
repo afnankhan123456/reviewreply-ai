@@ -68,15 +68,15 @@ export function BugReport() {
   }
 
   return (
-    <div className="rounded-lg border bg-white dark:bg-gray-950 shadow-sm p-6">
-      <h3 className="text-lg font-semibold mb-1">Report a Bug</h3>
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+    <div className="rounded-lg border border-gray-700 bg-gray-800 shadow-sm p-6">
+      <h3 className="text-lg font-semibold text-white mb-1">Report a Bug</h3>
+      <p className="text-sm text-gray-400 mb-4">
         Found something not working? Let us know and we'll fix it.
       </p>
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Feature dropdown */}
         <div>
-          <label htmlFor="feature" className="block text-sm font-medium mb-1">
+          <label htmlFor="feature" className="block text-sm font-medium text-gray-300 mb-1">
             Which feature has the issue?
           </label>
           <select
@@ -87,7 +87,7 @@ export function BugReport() {
               if (e.target.value !== "Other") setCustomFeature("");
             }}
             required
-            className="w-full rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+            className="w-full rounded-md border border-gray-600 bg-gray-900 text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">-- Select feature --</option>
             {FEATURE_OPTIONS.map((opt) => (
@@ -104,13 +104,13 @@ export function BugReport() {
             placeholder="Enter feature name"
             value={customFeature}
             onChange={(e) => setCustomFeature(e.target.value)}
-            className="w-full rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+            className="w-full rounded-md border border-gray-600 bg-gray-900 text-white px-3 py-2 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         )}
 
         {/* Issue type dropdown */}
         <div>
-          <label htmlFor="issueType" className="block text-sm font-medium mb-1">
+          <label htmlFor="issueType" className="block text-sm font-medium text-gray-300 mb-1">
             What type of problem is it?
           </label>
           <select
@@ -121,7 +121,7 @@ export function BugReport() {
               if (e.target.value !== "Other") setCustomIssueType("");
             }}
             required
-            className="w-full rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+            className="w-full rounded-md border border-gray-600 bg-gray-900 text-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">-- Select issue type --</option>
             {ISSUE_TYPE_OPTIONS.map((opt) => (
@@ -138,13 +138,13 @@ export function BugReport() {
             placeholder="Enter problem type"
             value={customIssueType}
             onChange={(e) => setCustomIssueType(e.target.value)}
-            className="w-full rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+            className="w-full rounded-md border border-gray-600 bg-gray-900 text-white px-3 py-2 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         )}
 
         {/* Description */}
         <div>
-          <label htmlFor="description" className="block text-sm font-medium mb-1">
+          <label htmlFor="description" className="block text-sm font-medium text-gray-300 mb-1">
             Description
           </label>
           <textarea
@@ -154,7 +154,7 @@ export function BugReport() {
             placeholder="Describe the issue..."
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+            className="w-full rounded-md border border-gray-600 bg-gray-900 text-white px-3 py-2 text-sm placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -162,8 +162,8 @@ export function BugReport() {
           <div
             className={`p-3 rounded-md text-sm ${
               feedback.type === "success"
-                ? "bg-green-50 text-green-800 border border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-800"
-                : "bg-red-50 text-red-800 border border-red-200 dark:bg-red-900/20 dark:text-red-300 dark:border-red-800"
+                ? "bg-green-900/30 text-green-300 border border-green-700"
+                : "bg-red-900/30 text-red-300 border border-red-700"
             }`}
           >
             {feedback.message}
@@ -173,7 +173,7 @@ export function BugReport() {
         <button
           type="submit"
           disabled={isPending || !canSubmit}
-          className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           {isPending ? "Submitting..." : "Submit Bug Report"}
         </button>
