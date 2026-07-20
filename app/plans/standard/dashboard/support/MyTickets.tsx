@@ -5,7 +5,9 @@ import { getTickets, type Ticket } from "./actions";
 
 const statusColors: Record<Ticket["status"], string> = {
   open: "bg-blue-900/30 text-blue-300",
+  in_progress: "bg-yellow-900/30 text-yellow-300",
   resolved: "bg-green-900/30 text-green-300",
+  closed: "bg-gray-700/30 text-gray-400",
 };
 
 export function MyTickets({ onSelectTicket }: { onSelectTicket: (id: string) => void }) {
