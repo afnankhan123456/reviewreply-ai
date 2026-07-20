@@ -19,21 +19,21 @@ export function FAQ() {
 
   return (
     <div>
-      <h3 className="text-lg font-semibold mb-2">Frequently Asked Questions</h3>
-      <div className="divide-y divide-gray-200 dark:divide-gray-700 border rounded-lg">
+      <h3 className="text-lg font-semibold text-white mb-2">Frequently Asked Questions</h3>
+      <div className="divide-y divide-gray-700 border border-gray-700 rounded-lg">
         {faqs.map((faq, idx) => (
           <div key={idx}>
             <button
               onClick={() => toggleItem(`faq-${idx}`)}
-              className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+              className="flex w-full items-center justify-between px-4 py-3 text-left text-sm font-medium text-white hover:bg-gray-700/50 transition-colors"
             >
               {faq.question}
               <ChevronDown
-                className={`h-4 w-4 transition-transform ${openItem === `faq-${idx}` ? "rotate-180" : ""}`}
+                className={`h-4 w-4 text-gray-400 transition-transform ${openItem === `faq-${idx}` ? "rotate-180" : ""}`}
               />
             </button>
             {openItem === `faq-${idx}` && (
-              <div className="px-4 pb-3 text-sm text-gray-500 dark:text-gray-400">
+              <div className="px-4 pb-3 text-sm text-gray-400">
                 {faq.answer}
               </div>
             )}
