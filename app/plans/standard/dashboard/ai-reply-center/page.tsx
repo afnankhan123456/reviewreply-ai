@@ -22,6 +22,16 @@ export default function AIReplyCenterPage() {
 
   const [filterCategory, setFilterCategory] = useState('All');
 
+  // ✅ Theme state
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
+
+  useEffect(() => {
+    const saved = localStorage.getItem("theme");
+    if (saved === "light" || saved === "dark") {
+      setTheme(saved);
+    }
+  }, []);
+
   useEffect(() => {
     fetchDashboardData();
   }, []);
@@ -86,7 +96,12 @@ export default function AIReplyCenterPage() {
   }
 
   return (
-    <div className="flex-1 flex flex-col p-6 overflow-y-auto bg-[#0B0E14] text-gray-200">
+    // ✅ Theme-aware container (replaced line)
+    <div className={`flex-1 flex flex-col p-6 overflow-y-auto transition-colors duration-300 ${
+      theme === "light"
+        ? "bg-gray-50 text-gray-900"
+        : "bg-[#0B0E14] text-gray-200"
+    }`}>
       
       {/* Page Header */}
       <div className="flex justify-between items-center mb-6">
