@@ -53,6 +53,7 @@ model User {
   tagCycles           TagCycle[]
   teamMembersOwned    TeamMember[]        @relation("TeamOwner")
   teamMembershipOf    TeamMember[]        @relation("TeamMembership")
+  articleFeedback     ArticleFeedback[]
 }
 
 model BusinessLocation {
@@ -210,8 +211,8 @@ model TeamMember {
   ownerId      String
   owner        User      @relation("TeamOwner", fields: [ownerId], references: [id])
   email        String
-  accessLevel  String    @default("VIEW_ONLY") // "FULL_ACCESS" | "VIEW_ONLY"
-  status       String    @default("PENDING")   // "PENDING" | "ACCEPTED"
+  accessLevel  String    @default("VIEW_ONLY")
+  status       String    @default("PENDING")
   memberUserId String?
   member       User?     @relation("TeamMembership", fields: [memberUserId], references: [id])
   inviteToken  String?   @unique
@@ -219,4 +220,26 @@ model TeamMember {
   acceptedAt   DateTime?
 
   @@unique([ownerId, email])
+}
+
+model KnowledgeArticle {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  category  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  feedback  ArticleFeedback[]
+}
+
+model ArticleFeedback {
+  id        String           @id @default(cuid())
+  articleId String
+  article   KnowledgeArticle @relation(fields: [articleId], references: [id])
+  userId    String
+  user      User             @relation(fields: [userId], references: [id])
+  helpful   Boolean
+  createdAt DateTime         @default(now())
+
+  @@unique([articleId, userId])
 }
