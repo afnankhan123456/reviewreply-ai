@@ -86,35 +86,34 @@ export async function createTicket(
   return { success: true, message: "Ticket created successfully.", ticket: toTicket(bug) };
 }
 
-// Bug report ko REAL database me save karta hai (pehle sirf console.log hota tha)
+// Bug report ko REAL database me save karta hai — feature/issueType/description
+// (Basic plan wale flow jaisa hi: dropdown + "Other" ke case me custom value)
 export async function submitBugReport(
-  formData: FormData
+  feature: string,
+  issueType: string,
+  description: string
 ): Promise<{ success: boolean; message: string }> {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id) {
     return { success: false, message: "You must be logged in." };
   }
 
-  const title = formData.get("title") as string;
-  const steps = formData.get("steps") as string;
-  const severity = (formData.get("severity") as string) || "medium";
-
-  if (!title || !steps) {
-    return { success: false, message: "Title and steps to reproduce are required." };
+  if (!feature.trim() || !issueType.trim() || !description.trim()) {
+    return { success: false, message: "Please fill all required fields." };
   }
 
   await prisma.bugReport.create({
     data: {
       userId: session.user.id,
-      feature: title,
-      issueType: severity,
-      description: steps,
+      feature: feature.trim(),
+      issueType: issueType.trim(),
+      description: description.trim(),
       status: "Open",
     },
   });
 
   revalidatePath("/plans/standard/dashboard/support");
-  return { success: true, message: "Bug report submitted. Thank you!" };
+  return { success: true, message: "Bug report submitted successfully. Thank you!" };
 }
 
 export async function sendContactMessage(
@@ -127,8 +126,6 @@ export async function sendContactMessage(
     return { success: false, message: "Email and message are required." };
   }
 
-  // Contact form abhi bhi sirf simulate hota hai — koi DB table isके liye nahi hai,
-  // future me chahiye to isko bhi BugReport jaisa real bana sakte hain.
   await new Promise((resolve) => setTimeout(resolve, 600));
   return { success: true, message: "Message sent. We'll get back to you soon." };
 }
