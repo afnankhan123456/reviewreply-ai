@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { PrioritySupport } from "./PrioritySupport";
-import { HelpCenter } from "./HelpCenter";
 import { BugReport } from "./BugReport";
 import { MyTickets } from "./MyTickets";
 import { KnowledgeBase } from "./KnowledgeBase";
@@ -24,7 +23,9 @@ export function SupportDashboard() {
     <div className="flex flex-col gap-3 p-3 bg-gray-900 min-h-screen">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight text-white">Support Center</h1>
+        <h1 className="text-3xl font-bold tracking-tight text-white">
+          Support Center
+        </h1>
       </div>
 
       {/* First row: two columns */}
@@ -34,9 +35,8 @@ export function SupportDashboard() {
           <PrioritySupport />
         </div>
 
-        {/* Right column – Help Center + optional Ticket Details */}
+        {/* Right column – Ticket Details only */}
         <div className="space-y-3">
-          <HelpCenter />
           {selectedTicketId && (
             <TicketDetails
               ticketId={selectedTicketId}
@@ -46,7 +46,7 @@ export function SupportDashboard() {
         </div>
       </div>
 
-      {/* Second row: full‑width tabbed section – height now 340px */}
+      {/* Second row: full-width tabbed section */}
       <div className="rounded-lg border border-gray-700 bg-gray-800 shadow-sm h-[340px] overflow-y-auto">
         <div className="flex border-b border-gray-700">
           {tabs.map((tab) => (
@@ -63,8 +63,11 @@ export function SupportDashboard() {
             </button>
           ))}
         </div>
+
         <div className="p-4 text-gray-200">
-          {activeTab === "tickets" && <MyTickets onSelectTicket={setSelectedTicketId} />}
+          {activeTab === "tickets" && (
+            <MyTickets onSelectTicket={setSelectedTicketId} />
+          )}
           {activeTab === "bug" && <BugReport />}
           {activeTab === "kb" && <KnowledgeBase />}
           {activeTab === "faq" && <FAQ />}
