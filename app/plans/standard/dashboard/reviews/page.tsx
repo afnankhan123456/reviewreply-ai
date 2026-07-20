@@ -10,7 +10,7 @@ import {
 export default function ReviewsPage() {
   const { data: authSession } = useSession();
   const teamRole = (authSession?.user as any)?.teamRole || 'OWNER';
-  const canReply = teamRole !== 'VIEW_ONLY'; // Owner aur Full Access dono reply kar sakte hain
+  const canReply = teamRole !== 'VIEW_ONLY';
 
   const [searchTerm, setSearchTerm] = useState('');
   const [filterSentiment, setFilterSentiment] = useState('All');
@@ -24,35 +24,38 @@ export default function ReviewsPage() {
   const [selectedReviewText, setSelectedReviewText] = useState('');
   const [replyText, setReplyText] = useState('');
 
-  // ✅ Toast State
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+
+  // ✅ Theme state
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
+
+  useEffect(() => {
+    const saved = localStorage.getItem("theme");
+    if (saved === "light" || saved === "dark") {
+      setTheme(saved);
+    }
+  }, []);
 
   useEffect(() => {
     fetchDashboardData();
   }, []);
 
-  // ✅ Auto-hide toast after 2 seconds
   useEffect(() => {
     if (toast) {
-      const timer = setTimeout(() => {
-        setToast(null);
-      }, 2000);
+      const timer = setTimeout(() => setToast(null), 2000);
       return () => clearTimeout(timer);
     }
   }, [toast]);
 
   const fetchDashboardData = async () => {
     try {
-      // ✅ PARALLEL FETCHING (Promise.all) - Fast load
       const [reviewsRes, countRes] = await Promise.all([
         fetch('/api/standard/reviews/list'),
         fetch('/api/standard/reviews/unanswered-count')
       ]);
 
       const reviewsData = await reviewsRes.json();
-      if (reviewsData.success) {
-        setReviews(reviewsData.reviews);
-      }
+      if (reviewsData.success) setReviews(reviewsData.reviews);
 
       const countData = await countRes.json();
       setUnansweredCount(countData.count || 0);
@@ -109,37 +112,45 @@ export default function ReviewsPage() {
     }
   };
 
-  // ✅ Filter Logic
   const filteredReviews = reviews.filter((review) => {
     const name = review.author || review.reviewerName || '';
     const text = review.text || review.comment || '';
     const source = review.source || '';
     const rating = review.rating || 0;
 
-    // Search filter (name ya text)
     const matchesSearch =
       name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       text.toLowerCase().includes(searchTerm.toLowerCase());
 
-    // Sentiment filter
     let matchesSentiment = true;
-    if (filterSentiment === 'Positive') {
-      matchesSentiment = rating >= 4;
-    } else if (filterSentiment === 'Negative') {
-      matchesSentiment = rating <= 2;
-    } else if (filterSentiment === 'Neutral') {
-      matchesSentiment = rating === 3;
-    } else if (filterSentiment === 'Google') {
-      matchesSentiment = source.toLowerCase() === 'google';
-    } else if (filterSentiment === 'Facebook') {
-      matchesSentiment = source.toLowerCase() === 'facebook';
-    }
+    if (filterSentiment === 'Positive') matchesSentiment = rating >= 4;
+    else if (filterSentiment === 'Negative') matchesSentiment = rating <= 2;
+    else if (filterSentiment === 'Neutral') matchesSentiment = rating === 3;
+    else if (filterSentiment === 'Google') matchesSentiment = source.toLowerCase() === 'google';
+    else if (filterSentiment === 'Facebook') matchesSentiment = source.toLowerCase() === 'facebook';
 
     return matchesSearch && matchesSentiment;
   });
 
+  // ✅ Common theme classes
+  const bgMain = theme === "light" ? "bg-gray-50" : "bg-[#0B0E14]";
+  const textMain = theme === "light" ? "text-gray-900" : "text-gray-200";
+  const bgCard = theme === "light" ? "bg-white border-gray-200" : "bg-[#11141C] border-[#1F2430]";
+  const bgSubCard = theme === "light" ? "bg-gray-50 border-gray-200" : "bg-[#181D27] border-[#2A303C]";
+  const textPrimary = theme === "light" ? "text-gray-900" : "text-white";
+  const textSecondary = theme === "light" ? "text-gray-600" : "text-gray-400";
+  const textMuted = theme === "light" ? "text-gray-400" : "text-gray-500";
+  const inputBg = theme === "light" ? "bg-white border-gray-300 text-gray-900 placeholder-gray-400" : "bg-[#181D27] border-[#2A303C] text-gray-300 placeholder-gray-500";
+  const buttonBg = theme === "light" ? "bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200" : "bg-[#181D27] border-[#2A303C] text-gray-400 hover:text-white hover:bg-[#222633]";
+  const pillInactive = theme === "light" ? "bg-gray-100 text-gray-600 border-gray-300" : "bg-[#1F2430] text-gray-400 border-[#2A303C]";
+  const tableHeaderBg = theme === "light" ? "bg-gray-50/50" : "bg-[#181D27]/50";
+  const rowHover = theme === "light" ? "hover:bg-gray-100" : "hover:bg-[#181D27]";
+  const borderLight = theme === "light" ? "border-gray-200" : "border-[#1F2430]";
+  const divider = theme === "light" ? "divide-gray-200" : "divide-[#1F2430]";
+  const modalBg = theme === "light" ? "bg-white border-gray-200" : "bg-[#11141C] border-[#1F2430]";
+
   return (
-    <div className="flex-1 flex flex-col p-6 overflow-y-auto bg-[#0B0E14] text-gray-200">
+    <div className={`flex-1 flex flex-col p-6 overflow-y-auto transition-colors duration-300 ${bgMain} ${textMain}`}>
       
       {/* Toast Notification */}
       {toast && (
@@ -155,8 +166,8 @@ export default function ReviewsPage() {
       {/* Page Header */}
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-white">Reviews</h1>
-          <p className="text-sm text-gray-400">Manage, filter, and sync all your customer reviews.</p>
+          <h1 className={`text-2xl font-bold ${textPrimary}`}>Reviews</h1>
+          <p className={`text-sm ${textSecondary}`}>Manage, filter, and sync all your customer reviews.</p>
         </div>
       </div>
 
@@ -164,76 +175,52 @@ export default function ReviewsPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-6">
         
         {/* Card 1: Search & Filter */}
-        <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-4 flex flex-col gap-3">
-          <div className="flex items-center gap-2 text-gray-400 text-xs font-medium">
+        <div className={`${bgCard} border rounded-xl p-4 flex flex-col gap-3`}>
+          <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium`}>
             <Search size={14} /> Review Search & Filter
           </div>
           <div className="flex gap-2">
-            <div className="flex-1 bg-[#181D27] border border-[#2A303C] rounded-lg flex items-center px-3 py-2">
-              <Search size={16} className="text-gray-500 mr-2" />
+            <div className={`flex-1 border rounded-lg flex items-center px-3 py-2 ${inputBg}`}>
+              <Search size={16} className={`${textMuted} mr-2`} />
               <input 
                 type="text" 
                 placeholder="Search reviews..." 
-                className="bg-transparent border-none outline-none text-sm text-gray-300 w-full placeholder-gray-500"
+                className="bg-transparent border-none outline-none text-sm w-full"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <button className="bg-[#181D27] border border-[#2A303C] rounded-lg px-3 py-2 text-gray-400 hover:text-white">
+            <button className={`${buttonBg} border rounded-lg px-3 py-2`}>
               <Filter size={16} />
             </button>
           </div>
           <div className="flex flex-wrap gap-1.5">
-            <span 
-              className={`text-[10px] px-2 py-0.5 rounded-full cursor-pointer transition-colors ${
-                filterSentiment === 'Positive' 
-                  ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
-                  : 'bg-[#1F2430] text-gray-400 hover:bg-[#2A303C]'
-              }`}
-              onClick={() => setFilterSentiment('Positive')}
-            >
-              Positive
-            </span>
-            <span 
-              className={`text-[10px] px-2 py-0.5 rounded-full cursor-pointer transition-colors ${
-                filterSentiment === 'Negative' 
-                  ? 'bg-red-500/20 text-red-400 border border-red-500/30' 
-                  : 'bg-[#1F2430] text-gray-400 hover:bg-[#2A303C]'
-              }`}
-              onClick={() => setFilterSentiment('Negative')}
-            >
-              Negative
-            </span>
-            <span 
-              className={`text-[10px] px-2 py-0.5 rounded-full cursor-pointer transition-colors ${
-                filterSentiment === 'Google' 
-                  ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' 
-                  : 'bg-[#1F2430] text-gray-400 hover:bg-[#2A303C]'
-              }`}
-              onClick={() => setFilterSentiment('Google')}
-            >
-              Google
-            </span>
-            <span 
-              className={`text-[10px] px-2 py-0.5 rounded-full cursor-pointer transition-colors ${
-                filterSentiment === 'All' 
-                  ? 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30' 
-                  : 'bg-[#1F2430] text-gray-400 hover:bg-[#2A303C]'
-              }`}
-              onClick={() => setFilterSentiment('All')}
-            >
-              All
-            </span>
+            {['Positive', 'Negative', 'Google', 'All'].map((sentiment) => (
+              <span 
+                key={sentiment}
+                className={`text-[10px] px-2 py-0.5 rounded-full cursor-pointer transition-colors ${
+                  filterSentiment === sentiment 
+                    ? sentiment === 'Positive' ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                    : sentiment === 'Negative' ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+                    : sentiment === 'Google' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                    : 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30'
+                    : pillInactive
+                }`}
+                onClick={() => setFilterSentiment(sentiment)}
+              >
+                {sentiment}
+              </span>
+            ))}
           </div>
         </div>
 
         {/* Card 2: Unanswered Reviews */}
-        <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-4 flex flex-col justify-between">
-          <div className="flex items-center gap-2 text-gray-400 text-xs font-medium">
+        <div className={`${bgCard} border rounded-xl p-4 flex flex-col justify-between`}>
+          <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium`}>
             <XCircle size={14} /> Unanswered Reviews
           </div>
           <div className="flex items-end justify-between mt-2">
-            <div className="text-4xl font-bold text-white">{unansweredCount}</div>
+            <div className={`text-4xl font-bold ${textPrimary}`}>{unansweredCount}</div>
             <div className="text-[10px] text-yellow-400 flex items-center gap-1">
               <span className="w-1.5 h-1.5 bg-yellow-400 rounded-full"></span> Awaiting Reply
             </div>
@@ -246,25 +233,25 @@ export default function ReviewsPage() {
         </div>
 
         {/* Card 3: Google Review Sync */}
-        <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-4 flex flex-col justify-between">
+        <div className={`${bgCard} border rounded-xl p-4 flex flex-col justify-between`}>
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-gray-400 text-xs font-medium">
+            <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium`}>
               <RefreshCw size={14} /> Google Review Sync
             </div>
             <span className="bg-blue-500/20 text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-500/30">
               500
             </span>
           </div>
-          <div className="text-[10px] text-gray-500 mt-2">Last synced: {lastSynced}</div>
+          <div className={`text-[10px] ${textMuted} mt-2`}>Last synced: {lastSynced}</div>
         </div>
 
       </div>
 
-      {/* Reviews Table with Thin Scroll */}
-      <div className="bg-[#11141C] border border-[#1F2430] rounded-xl overflow-hidden flex flex-col">
+      {/* Reviews Table */}
+      <div className={`${bgCard} border rounded-xl overflow-hidden flex flex-col`}>
         
         {/* Header */}
-        <div className="grid grid-cols-12 gap-4 px-6 py-3 border-b border-[#1F2430] bg-[#181D27]/50 text-[10px] text-gray-400 font-medium uppercase tracking-wider shrink-0">
+        <div className={`grid grid-cols-12 gap-4 px-6 py-3 border-b ${borderLight} ${tableHeaderBg} text-[10px] text-gray-400 font-medium uppercase tracking-wider shrink-0`}>
           <div className="col-span-4">Customer & Review</div>
           <div className="col-span-2 text-center">Rating</div>
           <div className="col-span-2 text-center">Sentiment</div>
@@ -272,7 +259,7 @@ export default function ReviewsPage() {
           <div className="col-span-2 text-center">Status / Action</div>
         </div>
 
-        <div className="h-[600px] overflow-y-auto custom-scroll divide-y divide-[#1F2430]">
+        <div className={`h-[600px] overflow-y-auto custom-scroll ${divider}`}>
           {filteredReviews.length > 0 ? (
             filteredReviews.map((review, index) => (
               <ReviewRow 
@@ -291,18 +278,19 @@ export default function ReviewsPage() {
                   setSelectedReviewText(text);
                   setShowReplyModal(true);
                 }}
+                theme={theme}
               />
             ))
           ) : (
-            <div className="p-6 text-center text-gray-500 text-sm">No matching reviews found.</div>
+            <div className={`p-6 text-center ${textMuted} text-sm`}>No matching reviews found.</div>
           )}
         </div>
 
-        <div className="flex justify-between items-center px-6 py-4 border-t border-[#1F2430] text-[10px] text-gray-500 shrink-0">
+        <div className={`flex justify-between items-center px-6 py-4 border-t ${borderLight} text-[10px] ${textMuted} shrink-0`}>
           <span>Showing {filteredReviews.length} reviews</span>
           <div className="flex gap-2">
-            <button className="px-3 py-1 bg-[#1F2430] rounded hover:bg-[#2A303C]">Previous</button>
-            <button className="px-3 py-1 bg-[#1F2430] rounded hover:bg-[#2A303C]">Next</button>
+            <button className={`px-3 py-1 rounded ${theme === "light" ? "bg-gray-200 text-gray-700 hover:bg-gray-300" : "bg-[#1F2430] hover:bg-[#2A303C] text-gray-400"}`}>Previous</button>
+            <button className={`px-3 py-1 rounded ${theme === "light" ? "bg-gray-200 text-gray-700 hover:bg-gray-300" : "bg-[#1F2430] hover:bg-[#2A303C] text-gray-400"}`}>Next</button>
           </div>
         </div>
 
@@ -311,16 +299,16 @@ export default function ReviewsPage() {
       {/* Reply Modal */}
       {showReplyModal && canReply && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
-          <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-6 w-[600px] shadow-2xl">
-            <h3 className="text-white text-lg font-medium mb-3">Reply to Review</h3>
+          <div className={`${modalBg} border rounded-xl p-6 w-[600px] shadow-2xl`}>
+            <h3 className={`text-lg font-medium ${textPrimary} mb-3`}>Reply to Review</h3>
             
-            <div className="bg-[#181D27] border border-[#2A303C] rounded-lg p-3 mb-4">
-              <p className="text-xs text-gray-400 mb-1">Original Review:</p>
-              <p className="text-sm text-gray-200">{selectedReviewText}</p>
+            <div className={`${bgSubCard} border rounded-lg p-3 mb-4`}>
+              <p className={`text-xs ${textSecondary} mb-1`}>Original Review:</p>
+              <p className={`text-sm ${textPrimary}`}>{selectedReviewText}</p>
             </div>
 
             <textarea
-              className="w-full bg-[#181D27] border border-[#2A303C] rounded-lg p-3 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-indigo-500 resize-none"
+              className={`w-full border rounded-lg p-3 text-sm focus:outline-none focus:border-indigo-500 resize-none ${inputBg}`}
               rows={4}
               placeholder="Write your professional reply here..."
               value={replyText}
@@ -328,7 +316,11 @@ export default function ReviewsPage() {
             />
             <div className="flex justify-end gap-3 mt-4">
               <button
-                className="px-4 py-2 bg-[#1F2430] text-gray-400 rounded-lg hover:bg-[#2A303C] transition-colors"
+                className={`px-4 py-2 rounded-lg transition-colors ${
+                  theme === "light" 
+                    ? "bg-gray-200 text-gray-700 hover:bg-gray-300" 
+                    : "bg-[#1F2430] text-gray-400 hover:bg-[#2A303C]"
+                }`}
                 onClick={() => {
                   setShowReplyModal(false);
                   setReplyText('');
@@ -353,17 +345,22 @@ export default function ReviewsPage() {
   );
 }
 
-function ReviewRow({ reviewId, reviewText, name, text, rating, sentiment, source, status, canReply, onReplyClick }: any) {
+function ReviewRow({ reviewId, reviewText, name, text, rating, sentiment, source, status, canReply, onReplyClick, theme }: any) {
+  const rowBg = theme === "light" ? "hover:bg-gray-100" : "hover:bg-[#181D27]";
+  const nameColor = theme === "light" ? "text-gray-900" : "text-white";
+  const textColor = theme === "light" ? "text-gray-600" : "text-gray-400";
+  const avatarBg = "bg-blue-900 text-blue-300"; // keep accent
+
   return (
-    <div className="grid grid-cols-12 gap-4 px-6 py-4 hover:bg-[#181D27] transition-colors">
+    <div className={`grid grid-cols-12 gap-4 px-6 py-4 transition-colors ${rowBg}`}>
       <div className="col-span-4 flex flex-col gap-1">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-full bg-blue-900 text-blue-300 flex items-center justify-center text-[10px] font-bold">
+          <div className={`w-6 h-6 rounded-full ${avatarBg} flex items-center justify-center text-[10px] font-bold`}>
             {name.split(' ').map((n: string) => n[0]).join('')}
           </div>
-          <span className="text-xs text-white font-medium">{name}</span>
+          <span className={`text-xs font-medium ${nameColor}`}>{name}</span>
         </div>
-        <div className="text-[11px] text-gray-400 line-clamp-2">{text}</div>
+        <div className={`text-[11px] ${textColor} line-clamp-2`}>{text}</div>
       </div>
       <div className="col-span-2 flex items-center justify-center gap-1">
         <div className="flex text-[10px] text-yellow-500">
