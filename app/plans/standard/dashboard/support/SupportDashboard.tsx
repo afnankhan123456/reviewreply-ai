@@ -7,7 +7,6 @@ import { BugReport } from "./BugReport";
 import { MyTickets } from "./MyTickets";
 import { KnowledgeBase } from "./KnowledgeBase";
 import { FAQ } from "./FAQ";
-import { QuickActions } from "./QuickActions";
 import { TicketDetails } from "./TicketDetails";
 
 export function SupportDashboard() {
@@ -26,7 +25,6 @@ export function SupportDashboard() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">Support Center</h1>
-        <QuickActions />
       </div>
 
       {/* First row: two columns */}
