@@ -1,9 +1,12 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { prisma } from "@/lib/prisma";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 
-export type TicketStatus = "open" | "in_progress" | "resolved" | "closed";
-export type TicketPriority = "low" | "medium" | "high" | "urgent";
+export type TicketStatus = "open" | "resolved";
+export type TicketPriority = "low" | "medium" | "high" | "critical";
 
 export interface Ticket {
   id: string;
@@ -15,38 +18,52 @@ export interface Ticket {
   updatedAt: string;
 }
 
-let tickets: Ticket[] = [
-  {
-    id: "TKT-001",
-    subject: "Cannot access billing page",
-    description: "Getting 403 error when trying to view invoices.",
-    status: "open",
-    priority: "high",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "TKT-002",
-    subject: "Feature request: Dark mode",
-    description: "Please add dark mode support to the dashboard.",
-    status: "in_progress",
-    priority: "medium",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
+// BugReport (database) ke record ko Ticket shape me convert karta hai
+function toTicket(bug: any): Ticket {
+  return {
+    id: bug.id,
+    subject: bug.feature,
+    description: bug.description,
+    status: bug.status === "Resolved" ? "resolved" : "open",
+    priority: (bug.issueType as TicketPriority) || "medium",
+    createdAt: bug.createdAt.toISOString(),
+    updatedAt: bug.createdAt.toISOString(),
+  };
+}
 
+// Logged-in user ke apne saare tickets/bug-reports laata hai (real DB se)
 export async function getTickets(): Promise<Ticket[]> {
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  return tickets;
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) return [];
+
+  const bugs = await prisma.bugReport.findMany({
+    where: { userId: session.user.id },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return bugs.map(toTicket);
 }
 
+// Ek specific ticket ka detail laata hai — sirf agar wo isi user ka ho
 export async function getTicketById(id: string): Promise<Ticket | undefined> {
-  await new Promise((resolve) => setTimeout(resolve, 300));
-  return tickets.find((t) => t.id === id);
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) return undefined;
+
+  const bug = await prisma.bugReport.findUnique({ where: { id } });
+  if (!bug || bug.userId !== session.user.id) return undefined;
+
+  return toTicket(bug);
 }
 
-export async function createTicket(formData: FormData): Promise<{ success: boolean; message: string; ticket?: Ticket }> {
+// Naya ticket create karta hai (future me agar UI se "New Ticket" button add ho)
+export async function createTicket(
+  formData: FormData
+): Promise<{ success: boolean; message: string; ticket?: Ticket }> {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    return { success: false, message: "You must be logged in." };
+  }
+
   const subject = formData.get("subject") as string;
   const description = formData.get("description") as string;
   const priority = (formData.get("priority") as TicketPriority) || "medium";
@@ -55,37 +72,54 @@ export async function createTicket(formData: FormData): Promise<{ success: boole
     return { success: false, message: "Subject and description are required." };
   }
 
-  const newTicket: Ticket = {
-    id: `TKT-${String(tickets.length + 1).padStart(3, "0")}`,
-    subject,
-    description,
-    status: "open",
-    priority,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
+  const bug = await prisma.bugReport.create({
+    data: {
+      userId: session.user.id,
+      feature: subject,
+      issueType: priority,
+      description,
+      status: "Open",
+    },
+  });
 
-  tickets.push(newTicket);
   revalidatePath("/plans/standard/dashboard/support");
-  return { success: true, message: "Ticket created successfully.", ticket: newTicket };
+  return { success: true, message: "Ticket created successfully.", ticket: toTicket(bug) };
 }
 
-export async function submitBugReport(formData: FormData): Promise<{ success: boolean; message: string }> {
+// Bug report ko REAL database me save karta hai (pehle sirf console.log hota tha)
+export async function submitBugReport(
+  formData: FormData
+): Promise<{ success: boolean; message: string }> {
+  const session = await getServerSession(authOptions);
+  if (!session?.user?.id) {
+    return { success: false, message: "You must be logged in." };
+  }
+
   const title = formData.get("title") as string;
   const steps = formData.get("steps") as string;
-  const severity = formData.get("severity") as string;
+  const severity = (formData.get("severity") as string) || "medium";
 
   if (!title || !steps) {
     return { success: false, message: "Title and steps to reproduce are required." };
   }
 
-  console.log("Bug reported:", { title, steps, severity });
-  await new Promise((resolve) => setTimeout(resolve, 800));
+  await prisma.bugReport.create({
+    data: {
+      userId: session.user.id,
+      feature: title,
+      issueType: severity,
+      description: steps,
+      status: "Open",
+    },
+  });
+
   revalidatePath("/plans/standard/dashboard/support");
   return { success: true, message: "Bug report submitted. Thank you!" };
 }
 
-export async function sendContactMessage(formData: FormData): Promise<{ success: boolean; message: string }> {
+export async function sendContactMessage(
+  formData: FormData
+): Promise<{ success: boolean; message: string }> {
   const email = formData.get("email") as string;
   const message = formData.get("message") as string;
 
@@ -93,6 +127,8 @@ export async function sendContactMessage(formData: FormData): Promise<{ success:
     return { success: false, message: "Email and message are required." };
   }
 
+  // Contact form abhi bhi sirf simulate hota hai — koi DB table isके liye nahi hai,
+  // future me chahiye to isko bhi BugReport jaisa real bana sakte hain.
   await new Promise((resolve) => setTimeout(resolve, 600));
   return { success: true, message: "Message sent. We'll get back to you soon." };
 }
