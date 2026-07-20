@@ -18,6 +18,14 @@ export async function GET(request: Request) {
     const { ownerId } = await resolveOwnerAndRole(session.user.id);
     const userId = ownerId;
 
+    const userCheck = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { subscriptionEnd: true },
+    });
+    if (userCheck?.subscriptionEnd && new Date(userCheck.subscriptionEnd) < new Date()) {
+      return NextResponse.json({ success: false, error: 'Subscription expired. Please renew your plan.' }, { status: 403 });
+    }
+
     const { searchParams } = new URL(request.url);
     const format = searchParams.get('format') || 'pdf';
     const cacheKey = `weekly-report-${userId}`;
