@@ -21,21 +21,21 @@ export function SupportDashboard() {
   ];
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="flex flex-col gap-3 p-3">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">Support Center</h1>
       </div>
 
       {/* First row: two columns */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-3">
         {/* Left column – Priority Support only */}
         <div className="lg:col-span-2">
           <PrioritySupport />
         </div>
 
         {/* Right column – Help Center + optional Ticket Details */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           <HelpCenter />
           {selectedTicketId && (
             <TicketDetails
