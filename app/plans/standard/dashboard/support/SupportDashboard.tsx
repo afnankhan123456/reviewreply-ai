@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PrioritySupport } from "./PrioritySupport";
 import { BugReport } from "./BugReport";
 import { MyTickets } from "./MyTickets";
@@ -12,6 +12,25 @@ export function SupportDashboard() {
   const [activeTab, setActiveTab] = useState<string>("tickets");
   const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
 
+  // ✅ Theme state
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
+
+  useEffect(() => {
+    const saved = localStorage.getItem("theme");
+    if (saved === "light" || saved === "dark") {
+      setTheme(saved);
+    }
+  }, []);
+
+  // ✅ Common theme classes
+  const bgMain = theme === "light" ? "bg-gray-50" : "bg-gray-900";
+  const textPrimary = theme === "light" ? "text-gray-900" : "text-white";
+  const tabContainerBg = theme === "light" ? "bg-white border-gray-200" : "bg-gray-800 border-gray-700";
+  const tabBorder = theme === "light" ? "border-gray-200" : "border-gray-700";
+  const tabInactive = theme === "light" ? "text-gray-500 hover:text-gray-700" : "text-gray-400 hover:text-gray-200";
+  const tabActive = "border-b-2 border-blue-500 text-blue-400"; // keep accent
+  const contentText = theme === "light" ? "text-gray-700" : "text-gray-200";
+
   const tabs = [
     { id: "tickets", label: "My Tickets" },
     { id: "bug", label: "Report a Bug" },
@@ -20,10 +39,10 @@ export function SupportDashboard() {
   ];
 
   return (
-    <div className="flex flex-col gap-3 p-3 bg-gray-900 min-h-screen">
+    <div className={`flex flex-col gap-3 p-3 min-h-screen transition-colors duration-300 ${bgMain}`}>
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold tracking-tight text-white">
+        <h1 className={`text-3xl font-bold tracking-tight ${textPrimary}`}>
           Support Center
         </h1>
       </div>
@@ -47,16 +66,16 @@ export function SupportDashboard() {
       </div>
 
       {/* Second row: full-width tabbed section */}
-      <div className="rounded-lg border border-gray-700 bg-gray-800 shadow-sm h-[340px] overflow-y-auto">
-        <div className="flex border-b border-gray-700">
+      <div className={`rounded-lg border shadow-sm h-[340px] overflow-y-auto ${tabContainerBg}`}>
+        <div className={`flex border-b ${tabBorder}`}>
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === tab.id
-                  ? "border-b-2 border-blue-500 text-blue-400"
-                  : "text-gray-400 hover:text-gray-200"
+                  ? tabActive
+                  : tabInactive
               }`}
             >
               {tab.label}
@@ -64,7 +83,7 @@ export function SupportDashboard() {
           ))}
         </div>
 
-        <div className="p-4 text-gray-200">
+        <div className={`p-4 ${contentText}`}>
           {activeTab === "tickets" && (
             <MyTickets onSelectTicket={setSelectedTicketId} />
           )}
