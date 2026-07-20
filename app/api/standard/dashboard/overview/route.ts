@@ -5,6 +5,12 @@ import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
 import { resolveOwnerAndRole } from '@/lib/getEffectiveOwner';
 import { getAllPossibleTags } from '@/lib/autoTag';
 
+function deriveNameFromEmail(email: string) {
+  const localPart = email.split('@')[0];
+  const withoutTrailingNumbers = localPart.replace(/\d+$/, '');
+  return withoutTrailingNumbers || localPart;
+}
+
 export async function GET() {
   try {
     const session: any = await getServerSession(authOptions);
@@ -17,7 +23,7 @@ export async function GET() {
 
     const userCheck = await prisma.user.findUnique({
       where: { id: userId },
-      select: { subscriptionEnd: true, monthlyResetDate: true, createdAt: true, name: true },
+      select: { subscriptionEnd: true, monthlyResetDate: true, createdAt: true, email: true },
     });
     if (userCheck?.subscriptionEnd && new Date(userCheck.subscriptionEnd) < new Date()) {
       return NextResponse.json({ success: false, error: 'Subscription expired. Please renew your plan.' }, { status: 403 });
@@ -91,7 +97,7 @@ export async function GET() {
     return NextResponse.json({
       success: true,
       data: {
-        userName: userCheck?.name || 'there',
+        userName: userCheck?.email ? deriveNameFromEmail(userCheck.email) : 'there',
         totalReviews,
         avgRating: Number((avgRatingResult._avg.rating || 0).toFixed(1)),
         newReviews,
