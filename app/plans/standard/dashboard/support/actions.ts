@@ -73,19 +73,36 @@ export async function createTicket(formData: FormData): Promise<{ success: boole
   return { success: true, message: "Ticket created successfully.", ticket: newTicket };
 }
 
-export async function submitBugReport(formData: FormData): Promise<{ success: boolean; message: string }> {
-  const title = formData.get("title") as string;
-  const steps = formData.get("steps") as string;
-  const severity = formData.get("severity") as string;
-
-  if (!title || !steps) {
-    return { success: false, message: "Title and steps to reproduce are required." };
+export async function submitBugReport(
+  feature: string,
+  issueType: string,
+  description: string
+): Promise<{ success: boolean; message: string }> {
+  if (!feature || !issueType || !description) {
+    return { success: false, message: "Feature, issue type and description are required." };
   }
 
-  console.log("Bug reported:", { title, steps, severity });
-  await new Promise((resolve) => setTimeout(resolve, 800));
-  revalidatePath("/plans/standard/dashboard/support");
-  return { success: true, message: "Bug report submitted. Thank you!" };
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return { success: false, message: "Unauthorized" };
+    }
+
+    await prisma.bugReport.create({
+      data: {
+        userId: session.user.id,
+        feature,
+        issueType,
+        description,
+      },
+    });
+
+    revalidatePath("/plans/standard/dashboard/support");
+    return { success: true, message: "Bug report submitted. Thank you!" };
+  } catch (error) {
+    console.error("Error submitting bug report:", error);
+    return { success: false, message: "Failed to submit bug report." };
+  }
 }
 
 export async function sendContactMessage(formData: FormData): Promise<{ success: boolean; message: string }> {
