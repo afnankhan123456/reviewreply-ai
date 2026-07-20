@@ -1,16 +1,26 @@
 "use client";
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useSession, signOut } from 'next-auth/react';
 import { 
-  Search, Bell, ChevronDown, MapPin, 
-  RefreshCw, FileText, TrendingUp, TrendingDown, 
-  Send, XCircle
+  Search, Bell, ChevronDown, RefreshCw, FileText, Send, XCircle
 } from 'lucide-react';
 
+function getGreeting() {
+  const hour = new Date().getHours();
+  if (hour >= 5 && hour < 12) return 'Good Morning';
+  if (hour >= 12 && hour < 17) return 'Good Afternoon';
+  if (hour >= 17 && hour < 21) return 'Good Evening';
+  return 'Good Night';
+}
+
 export default function DashboardPage() {
+  const { data: session } = useSession();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetch('/api/standard/dashboard/overview')
@@ -27,6 +37,16 @@ export default function DashboardPage() {
         setError('Failed to load dashboard');
         setLoading(false);
       });
+  }, []);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setProfileOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   if (loading) {
@@ -52,7 +72,7 @@ export default function DashboardPage() {
       <header className="flex justify-between items-center mb-8">
         <div className="flex items-center gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white">Good Morning, {data.userName} 👋</h1>
+            <h1 className="text-2xl font-bold text-white">{getGreeting()}, {data.userName}</h1>
             <p className="text-sm text-gray-400">Here&apos;s what&apos;s happening with your reviews today.</p>
           </div>
         </div>
@@ -71,6 +91,37 @@ export default function DashboardPage() {
             <button className="p-2 bg-[#181D27] rounded-lg border border-[#2A303C] text-gray-400 hover:text-white">
               <Bell size={18} />
             </button>
+
+            <div className="relative" ref={profileRef}>
+              <button
+                onClick={() => setProfileOpen((prev) => !prev)}
+                className="flex items-center gap-2 bg-[#181D27] px-2 py-1 rounded-lg border border-[#2A303C] hover:border-gray-500 transition-colors"
+              >
+                {session?.user?.image ? (
+                  <img
+                    src={session.user.image}
+                    alt="Profile"
+                    className="w-7 h-7 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-7 h-7 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-xs">
+                    {data.userName?.charAt(0).toUpperCase()}
+                  </div>
+                )}
+                <ChevronDown size={14} className="text-gray-500" />
+              </button>
+
+              {profileOpen && (
+                <div className="absolute right-0 mt-2 w-40 bg-[#11141C] border border-[#2A303C] rounded-lg shadow-lg overflow-hidden z-50">
+                  <button
+                    onClick={() => signOut({ callbackUrl: '/login' })}
+                    className="w-full text-left px-4 py-2.5 text-sm text-red-400 hover:bg-[#1A1D27] transition-colors"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </header>
@@ -91,7 +142,6 @@ export default function DashboardPage() {
 
           {/* Middle Charts Row */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Performance Overview - not built yet */}
             <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-5">
               <div className="flex justify-between items-center mb-4">
                 <h3 className="text-white font-medium flex items-center gap-2">
@@ -106,7 +156,6 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Review Summary - real */}
             <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-5">
               <h3 className="text-white font-medium mb-4">Review Summary</h3>
               <div className="flex gap-6">
@@ -186,7 +235,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Recent Reviews List - real */}
+          {/* Recent Reviews List */}
           <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-5">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-white font-medium">Latest Reviews</h3>
