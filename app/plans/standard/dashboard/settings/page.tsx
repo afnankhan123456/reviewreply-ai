@@ -14,6 +14,18 @@ export default function SettingsPage() {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // Theme state
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
+
+  // Load saved theme from localStorage on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("theme");
+    if (saved === "light" || saved === "dark") {
+      setTheme(saved);
+    }
+  }, []);
+
+  // Fetch saved Place ID for owner
   useEffect(() => {
     if (!isOwner) return;
 
@@ -48,6 +60,12 @@ export default function SettingsPage() {
     setLoading(false);
   };
 
+  const toggleTheme = () => {
+    const newTheme = theme === "dark" ? "light" : "dark";
+    setTheme(newTheme);
+    localStorage.setItem("theme", newTheme);
+  };
+
   // Team member (Owner nahi) is page ko access nahi kar sakta
   if (!isOwner) {
     return (
@@ -63,7 +81,13 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0B0E14] text-white p-6">
+    <div
+      className={`min-h-screen p-6 ${
+        theme === "dark"
+          ? "bg-[#0B0E14] text-white"
+          : "bg-gray-50 text-gray-900"
+      }`}
+    >
       <div className="max-w-3xl mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -73,7 +97,7 @@ export default function SettingsPage() {
           </p>
         </div>
 
-        {/* Google Place ID Card */}
+        {/* Google Place ID Card (unchanged) */}
         <div className="bg-[#11141C] border border-[#1F2430] rounded-2xl overflow-hidden">
           {/* Card Header */}
           <button
@@ -142,6 +166,31 @@ export default function SettingsPage() {
               )}
             </div>
           )}
+        </div>
+
+        {/* ✅ Appearance / Theme Card (NEW) */}
+        <div className="bg-[#11141C] border border-[#1F2430] rounded-2xl p-6 mt-6">
+          <h2 className="text-lg font-medium text-white mb-1">Appearance</h2>
+          <p className="text-sm text-gray-400 mb-4">Choose your preferred theme</p>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-300">Dark Mode</span>
+            <button
+              type="button"
+              onClick={toggleTheme}
+              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors duration-200 ${
+                theme === "dark" ? "bg-indigo-600" : "bg-gray-600"
+              }`}
+            >
+              <span
+                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform duration-200 ${
+                  theme === "dark" ? "translate-x-6" : "translate-x-1"
+                }`}
+              />
+            </button>
+          </div>
+          <p className="text-xs text-gray-500 mt-3">
+            Toggle between light and dark mode.
+          </p>
         </div>
       </div>
     </div>
