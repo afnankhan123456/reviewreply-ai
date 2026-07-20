@@ -71,6 +71,19 @@ export default function AdminBugsPage() {
     }
   };
 
+  // Plan name ko chhota, readable badge banata hai (jaise "standard-monthly" -> "Standard")
+  const planLabel = (plan: string | undefined) => {
+    if (!plan) return "Unknown";
+    if (plan.startsWith("standard")) return "Standard";
+    if (plan.startsWith("basic")) return "Basic";
+    return plan;
+  };
+
+  const planBadgeColor = (plan: string | undefined) => {
+    if (plan?.startsWith("standard")) return "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400";
+    return "bg-zinc-100 dark:bg-zinc-700 text-zinc-600 dark:text-zinc-300";
+  };
+
   return (
     <div className="p-6 lg:p-8">
       {/* HEADER */}
@@ -110,6 +123,9 @@ export default function AdminBugsPage() {
               {/* Summary Row (always visible) */}
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <div className="flex items-center flex-wrap gap-2">
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${planBadgeColor(bug.user?.plan)}`}>
+                    {planLabel(bug.user?.plan)}
+                  </span>
                   <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
                     {bug.feature}
                   </span>
