@@ -33,6 +33,16 @@ export default function ConnectAppPage() {
   const [locationsUsed, setLocationsUsed] = useState<number>(0);
   const [savingLocationId, setSavingLocationId] = useState<string | null>(null);
 
+  // ✅ Theme state
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
+
+  useEffect(() => {
+    const saved = localStorage.getItem("theme");
+    if (saved === "light" || saved === "dark") {
+      setTheme(saved);
+    }
+  }, []);
+
   useEffect(() => {
     if (!isOwner) {
       setLoading(false);
@@ -54,7 +64,6 @@ export default function ConnectAppPage() {
         console.error('Failed to fetch status:', result.error);
       }
 
-      // Pehle se selected locations bhi load karo
       const selectedResult = await getSelectedLocations();
       if (selectedResult.success) {
         setSelectedLocations(selectedResult.locations || []);
@@ -65,6 +74,26 @@ export default function ConnectAppPage() {
 
     fetchConnectionStatus();
   }, [isOwner]);
+
+  // ✅ Common theme classes
+  const bgMain = theme === "light" ? "bg-gray-50" : "bg-[#0B0E14]";
+  const bgCard = theme === "light" ? "bg-white border-gray-200" : "bg-[#11141C] border-[#1F2430]";
+  const bgSubCard = theme === "light" ? "bg-gray-50 border-gray-200" : "bg-[#181D27] border-[#2A303C]";
+  const textPrimary = theme === "light" ? "text-gray-900" : "text-white";
+  const textSecondary = theme === "light" ? "text-gray-600" : "text-gray-400";
+  const textMuted = theme === "light" ? "text-gray-500" : "text-gray-500";
+  const borderCard = theme === "light" ? "border-gray-200" : "border-[#1F2430]";
+  const borderSubCard = theme === "light" ? "border-gray-200" : "border-[#2A303C]";
+  const iconBg = theme === "light" ? "bg-gray-100 border-gray-200" : "bg-[#181D27] border-[#2A303C]";
+  const connectedGreen = "text-green-400"; // keep accent
+  const disconnectedRed = "text-red-400"; // keep accent
+  const pillGreenConnected = "bg-green-500/10 border-green-500/30 text-green-400 hover:bg-green-500/20";
+  const pillRedDisconnect = "bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20";
+  const pillDisabled = "bg-gray-800 border-gray-700 text-gray-500 cursor-not-allowed opacity-60";
+  const fetchButton = "bg-green-500/10 border-green-500/30 text-green-400 hover:bg-green-500/20";
+  const selectedLocBg = theme === "light" ? "bg-green-50 border-green-200 text-green-700" : "bg-green-500/10 border-green-500/40 text-green-400";
+  const removeButton = theme === "light" ? "bg-red-100 text-red-600 hover:bg-red-200" : "bg-red-600/20 text-red-400 hover:bg-red-600/30";
+  const locItemBg = theme === "light" ? "bg-gray-50 border-gray-200" : "bg-[#181D27] border-[#2A303C]";
 
   const toggleConnection = async () => {
     const action = isGmailConnected ? 'disconnect' : 'connect';
@@ -131,19 +160,18 @@ export default function ConnectAppPage() {
 
   if (loading) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-[#0B0E14] text-gray-400">
+      <div className={`flex-1 flex items-center justify-center ${bgMain} ${textSecondary}`}>
         Loading connection status...
       </div>
     );
   }
 
-  // Team member (Owner nahi) is page ko access nahi kar sakta
   if (!isOwner) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center bg-[#0B0E14] text-center p-6">
+      <div className={`flex-1 flex flex-col items-center justify-center ${bgMain} text-center p-6`}>
         <PlugZap size={40} className="text-gray-600 mb-3" />
-        <h2 className="text-white text-lg font-medium">Access Denied</h2>
-        <p className="text-gray-400 text-sm mt-1">
+        <h2 className={`text-lg font-medium ${textPrimary}`}>Access Denied</h2>
+        <p className={`text-sm ${textSecondary} mt-1`}>
           Only the account owner can manage app connections.
         </p>
       </div>
@@ -153,36 +181,81 @@ export default function ConnectAppPage() {
   const remaining = Math.max(0, emailLimit - emailsUsed);
 
   return (
-    <div className="flex-1 flex flex-col p-6 overflow-y-auto bg-[#0B0E14]">
+    <div className={`flex-1 flex flex-col p-6 overflow-y-auto transition-colors duration-300 ${bgMain}`}>
 
       <header className="mb-8">
-        <h1 className="text-2xl font-bold text-white flex items-center gap-2">
+        <h1 className={`text-2xl font-bold ${textPrimary} flex items-center gap-2`}>
           Connect App
         </h1>
-        <p className="text-sm text-gray-400 mt-1">Manage your Gmail and Google Business connections.</p>
+        <p className={`text-sm ${textSecondary} mt-1`}>Manage your Gmail and Google Business connections.</p>
       </header>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <AppCard
-          name="Gmail"
-          icon={<Mail size={24} />}
-          isConnected={isGmailConnected}
-          lastSync={isGmailConnected ? "Just now" : "N/A"}
-          onToggle={toggleConnection}
-          isDisabled={isGmailConnected === true}
-        />
-
-        <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-5 hover:border-[#2A303C] transition-colors">
+        {/* Gmail Card */}
+        <div className={`${bgCard} border rounded-xl p-5 hover:border-[#2A303C] transition-colors`}>
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-[#181D27] rounded-xl flex items-center justify-center border border-[#2A303C]">
-                <Building2 size={24} />
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center border ${iconBg}`}>
+                <Mail size={24} className={textPrimary} />
               </div>
               <div>
-                <h3 className="text-white font-medium">Google Business</h3>
+                <h3 className={`font-medium ${textPrimary}`}>Gmail</h3>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className={`w-1.5 h-1.5 rounded-full ${isGmailConnected ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                  <span className={`text-xs ${isGmailConnected ? connectedGreen : disconnectedRed}`}>
+                    {isGmailConnected ? 'Connected' : 'Disconnected'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={toggleConnection}
+              disabled={isGmailConnected}
+              className={`p-2 rounded border transition-colors text-xs font-medium ${
+                isGmailConnected
+                  ? pillDisabled
+                  : isGmailConnected
+                    ? pillRedDisconnect
+                    : pillGreenConnected
+              }`}
+            >
+              {isGmailConnected ? 'Already Connected' : 'Connect'}
+            </button>
+          </div>
+
+          <div className={`flex items-center justify-between pt-4 border-t ${borderCard}`}>
+            <div className={`flex items-center gap-2 text-[10px] ${textMuted}`}>
+              <Clock size={12} />
+              <span>Last sync: {isGmailConnected ? "Just now" : "N/A"}</span>
+            </div>
+
+            {isGmailConnected ? (
+              <div className={`flex items-center gap-1 text-[10px] ${connectedGreen}`}>
+                <CheckCircle size={12} />
+                <span>Active</span>
+              </div>
+            ) : (
+              <div className={`flex items-center gap-1 text-[10px] ${disconnectedRed} cursor-pointer hover:underline`} onClick={toggleConnection}>
+                <ExternalLink size={12} />
+                <span>Connect</span>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Google Business Card */}
+        <div className={`${bgCard} border rounded-xl p-5 hover:border-[#2A303C] transition-colors`}>
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className={`w-12 h-12 rounded-xl flex items-center justify-center border ${iconBg}`}>
+                <Building2 size={24} className={textPrimary} />
+              </div>
+              <div>
+                <h3 className={`font-medium ${textPrimary}`}>Google Business</h3>
                 <div className="flex items-center gap-2 mt-1">
                   <span className={`w-1.5 h-1.5 rounded-full ${isGoogleConnected ? 'bg-green-500' : 'bg-red-500'}`}></span>
-                  <span className={`text-xs ${isGoogleConnected ? 'text-green-400' : 'text-red-400'}`}>
+                  <span className={`text-xs ${isGoogleConnected ? connectedGreen : disconnectedRed}`}>
                     {isGoogleConnected ? 'Connected' : 'Disconnected'}
                   </span>
                 </div>
@@ -200,8 +273,8 @@ export default function ConnectAppPage() {
 
           {/* Plan limit indicator */}
           <div className="flex items-center justify-between mb-3 px-1">
-            <span className="text-xs text-gray-400">Locations connected</span>
-            <span className={`text-xs font-medium ${isLimitReached ? 'text-yellow-400' : 'text-gray-300'}`}>
+            <span className={`text-xs ${textSecondary}`}>Locations connected</span>
+            <span className={`text-xs font-medium ${isLimitReached ? 'text-yellow-400' : textPrimary}`}>
               {selectedLocations.length} / {locationsLimit}
             </span>
           </div>
@@ -216,16 +289,16 @@ export default function ConnectAppPage() {
               {selectedLocations.map((loc) => (
                 <div
                   key={loc.id}
-                  className="flex items-center justify-between p-2 rounded-lg border border-green-500/40 bg-green-500/10 text-xs"
+                  className={`flex items-center justify-between p-2 rounded-lg border ${selectedLocBg} text-xs`}
                 >
                   <div>
-                    <p className="text-white">{loc.title}</p>
-                    <p className="text-gray-500">{loc.address}</p>
+                    <p className={textPrimary}>{loc.title}</p>
+                    <p className={textMuted}>{loc.address}</p>
                   </div>
                   <button
                     onClick={() => handleRemoveLocation(loc.id)}
                     disabled={savingLocationId === loc.id}
-                    className="p-1.5 rounded bg-red-600/20 text-red-400 hover:bg-red-600/30 disabled:opacity-50"
+                    className={`p-1.5 rounded ${removeButton} disabled:opacity-50`}
                     title="Remove location"
                   >
                     <X size={12} />
@@ -243,11 +316,11 @@ export default function ConnectAppPage() {
                 .map((loc) => (
                   <div
                     key={loc.id}
-                    className="flex items-center justify-between p-2 rounded-lg border border-[#2A303C] bg-[#181D27] text-xs"
+                    className={`flex items-center justify-between p-2 rounded-lg border ${locItemBg} text-xs`}
                   >
                     <div>
-                      <p className="text-white">{loc.title}</p>
-                      <p className="text-gray-500">{loc.address}</p>
+                      <p className={textPrimary}>{loc.title}</p>
+                      <p className={textMuted}>{loc.address}</p>
                     </div>
                     <button
                       onClick={() => handleSelectLocation(loc)}
@@ -272,80 +345,24 @@ export default function ConnectAppPage() {
       </div>
 
       {isGmailConnected && (
-        <div className="mt-6 bg-[#11141C] border border-[#1F2430] rounded-xl p-5">
-          <h3 className="text-white font-medium mb-4">Email Usage</h3>
+        <div className={`mt-6 ${bgCard} border rounded-xl p-5`}>
+          <h3 className={`font-medium ${textPrimary} mb-4`}>Email Usage</h3>
           <div className="space-y-3">
             <div className="flex justify-between text-sm">
-              <span className="text-gray-400">Total Limit</span>
-              <span className="text-white">{emailLimit} / month</span>
+              <span className={textSecondary}>Total Limit</span>
+              <span className={textPrimary}>{emailLimit} / month</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-400">Used</span>
-              <span className="text-white">{emailsUsed}</span>
+              <span className={textSecondary}>Used</span>
+              <span className={textPrimary}>{emailsUsed}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-400">Remaining</span>
-              <span className="text-white">{remaining}</span>
+              <span className={textSecondary}>Remaining</span>
+              <span className={textPrimary}>{remaining}</span>
             </div>
           </div>
         </div>
       )}
-    </div>
-  );
-}
-
-function AppCard({ name, icon, isConnected, lastSync, onToggle, isDisabled }: any) {
-  return (
-    <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-5 hover:border-[#2A303C] transition-colors">
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-[#181D27] rounded-xl flex items-center justify-center border border-[#2A303C]">
-            {icon}
-          </div>
-          <div>
-            <h3 className="text-white font-medium">{name}</h3>
-            <div className="flex items-center gap-2 mt-1">
-              <span className={`w-1.5 h-1.5 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}></span>
-              <span className={`text-xs ${isConnected ? 'text-green-400' : 'text-red-400'}`}>
-                {isConnected ? 'Connected' : 'Disconnected'}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <button
-          onClick={onToggle}
-          disabled={isDisabled}
-          className={`p-2 rounded border transition-colors text-xs font-medium ${
-            isDisabled
-              ? 'bg-gray-800 border-gray-700 text-gray-500 cursor-not-allowed opacity-60'
-              : isConnected
-                ? 'bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20'
-                : 'bg-green-500/10 border-green-500/30 text-green-400 hover:bg-green-500/20'
-          }`}
-        >
-          {isDisabled ? 'Already Connected' : (isConnected ? 'Disconnect' : 'Connect')}
-        </button>
-      </div>
-
-      <div className="flex items-center justify-between pt-4 border-t border-[#1F2430]">
-        <div className="flex items-center gap-2 text-[10px] text-gray-500">
-          <Clock size={12} />
-          <span>Last sync: {lastSync}</span>
-        </div>
-
-        {isConnected ? (
-          <div className="flex items-center gap-1 text-[10px] text-green-400">
-            <CheckCircle size={12} />
-            <span>Active</span>
-          </div>
-        ) : (
-          <div className="flex items-center gap-1 text-[10px] text-red-400 cursor-pointer hover:underline" onClick={onToggle}>
-            <ExternalLink size={12} />
-            <span>Connect</span>
-          </div>
-        )}
-      </div>
     </div>
   );
 }
