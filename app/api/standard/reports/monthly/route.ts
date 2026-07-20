@@ -20,7 +20,7 @@ export async function GET(request: Request) {
 
     const userCheck = await prisma.user.findUnique({
       where: { id: userId },
-      select: { subscriptionEnd: true },
+      select: { subscriptionEnd: true, monthlyResetDate: true, createdAt: true },
     });
     if (userCheck?.subscriptionEnd && new Date(userCheck.subscriptionEnd) < new Date()) {
       return NextResponse.json({ success: false, error: 'Subscription expired. Please renew your plan.' }, { status: 403 });
@@ -28,75 +28,58 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const format = searchParams.get('format') || 'pdf';
-    const cacheKey = `weekly-report-${userId}`;
+    const cacheKey = `monthly-report-${userId}`;
 
     const responseData = await getCachedOrFetch(
       cacheKey,
       async () => {
         const now = new Date();
-        const startOfWeek = new Date(now);
-        startOfWeek.setDate(now.getDate() - now.getDay());
-        startOfWeek.setHours(0, 0, 0, 0);
 
-        const endOfWeek = new Date(now);
-        endOfWeek.setHours(23, 59, 59, 999);
+        const cycleStart = userCheck?.monthlyResetDate || userCheck?.createdAt || now;
+        const cycleEnd = now;
 
         const totalReviews = await prisma.review.count({
-          where: { userId, createdAt: { gte: startOfWeek, lte: endOfWeek } },
+          where: { userId, createdAt: { gte: cycleStart, lte: cycleEnd } },
         });
 
-        const newReviews = totalReviews;
+        const avgRating = await prisma.review.aggregate({
+          where: { userId, createdAt: { gte: cycleStart, lte: cycleEnd } },
+          _avg: { rating: true },
+        });
+
+        const positiveReviews = await prisma.review.count({
+          where: { userId, rating: { gte: 4 }, createdAt: { gte: cycleStart, lte: cycleEnd } },
+        });
+
+        const negativeReviews = await prisma.review.count({
+          where: { userId, rating: { lte: 2 }, createdAt: { gte: cycleStart, lte: cycleEnd } },
+        });
 
         const repliedReviews = await prisma.review.count({
-          where: { userId, replied: true, createdAt: { gte: startOfWeek, lte: endOfWeek } },
+          where: { userId, replied: true, createdAt: { gte: cycleStart, lte: cycleEnd } },
         });
 
         const responseRate = totalReviews > 0
           ? Math.round((repliedReviews / totalReviews) * 100)
           : 0;
 
-        const positiveReviews = await prisma.review.count({
-          where: { userId, rating: { gte: 4 }, createdAt: { gte: startOfWeek, lte: endOfWeek } },
-        });
-
-        const negativeReviews = await prisma.review.count({
-          where: { userId, rating: { lte: 2 }, createdAt: { gte: startOfWeek, lte: endOfWeek } },
-        });
-
-        const dailyData = [];
-        for (let i = 6; i >= 0; i--) {
-          const date = new Date(now);
-          date.setDate(date.getDate() - i);
-          const startOfDay = new Date(date);
-          startOfDay.setHours(0, 0, 0, 0);
-          const endOfDay = new Date(date);
-          endOfDay.setHours(23, 59, 59, 999);
-
-          const count = await prisma.review.count({
-            where: { userId, createdAt: { gte: startOfDay, lte: endOfDay } },
-          });
-          dailyData.push(count);
-        }
-
         const reviews = await prisma.review.findMany({
-          where: { userId, createdAt: { gte: startOfWeek, lte: endOfWeek } },
+          where: { userId, createdAt: { gte: cycleStart, lte: cycleEnd } },
           take: 500,
           orderBy: { createdAt: 'desc' },
         });
 
-        const weekNumber = Math.ceil((now.getDate() + new Date(now.getFullYear(), now.getMonth(), 1).getDay()) / 7);
+        const monthLabel = `${cycleStart.toLocaleDateString()} - ${cycleEnd.toLocaleDateString()}`;
 
         return {
           success: true,
           data: {
-            week: `Week ${weekNumber}`,
-            year: now.getFullYear(),
-            newReviews,
+            month: monthLabel,
             totalReviews,
-            responseRate,
+            avgRating: avgRating._avg.rating || 0,
             positiveReviews,
             negativeReviews,
-            dailyTrend: dailyData,
+            responseRate,
             reviews,
             generatedAt: now.toISOString(),
           },
@@ -127,7 +110,7 @@ export async function GET(request: Request) {
       return new NextResponse(csvString, {
         headers: {
           'Content-Type': 'text/csv',
-          'Content-Disposition': `attachment; filename="weekly-report-week-${data.week.replace(/ /g, '-')}-${data.year}.csv"`,
+          'Content-Disposition': `attachment; filename="monthly-report-${data.month.replace(/ /g, '-')}.csv"`,
         },
       });
     }
@@ -137,29 +120,14 @@ export async function GET(request: Request) {
       const doc = new jsPDF();
 
       doc.setFontSize(20);
-      doc.text(`Weekly Report - ${data.week} ${data.year}`, 105, 20, { align: 'center' });
+      doc.text(`Monthly Report - ${data.month}`, 105, 20, { align: 'center' });
 
       doc.setFontSize(12);
-      doc.text(`New Reviews: ${data.newReviews}`, 20, 40);
-      doc.text(`Total Reviews: ${data.totalReviews}`, 20, 50);
+      doc.text(`Total Reviews: ${data.totalReviews}`, 20, 40);
+      doc.text(`Avg Rating: ${data.avgRating.toFixed(1)} ★`, 20, 50);
       doc.text(`Response Rate: ${data.responseRate}%`, 20, 60);
       doc.text(`Positive: ${data.positiveReviews}`, 20, 70);
       doc.text(`Negative: ${data.negativeReviews}`, 20, 80);
-
-      doc.text('Daily Trend:', 20, 95);
-      const trendData = data.dailyTrend.map((count: number, index: number) => {
-        const date = new Date();
-        date.setDate(date.getDate() - (6 - index));
-        return [date.toLocaleDateString(), count.toString()];
-      });
-
-      autoTable(doc, {
-        head: [['Date', 'Reviews']],
-        body: trendData,
-        startY: 100,
-        styles: { fontSize: 8 },
-        headStyles: { fillColor: [168, 85, 247] },
-      });
 
       const tableData = data.reviews.map((review: any) => [
         review.id.slice(0, 8) + '...',
@@ -172,9 +140,9 @@ export async function GET(request: Request) {
       autoTable(doc, {
         head: [['ID', 'Rating', 'Comment', 'Replied', 'Date']],
         body: tableData,
-        startY: (doc as any).lastAutoTable.finalY + 10,
+        startY: 90,
         styles: { fontSize: 8 },
-        headStyles: { fillColor: [168, 85, 247] },
+        headStyles: { fillColor: [79, 70, 229] },
       });
 
       const pdfBuffer = doc.output('arraybuffer');
@@ -182,14 +150,14 @@ export async function GET(request: Request) {
       return new NextResponse(pdfBuffer, {
         headers: {
           'Content-Type': 'application/pdf',
-          'Content-Disposition': `attachment; filename="weekly-report-${data.week.replace(/ /g, '-')}-${data.year}.pdf"`,
+          'Content-Disposition': `attachment; filename="monthly-report-${data.month.replace(/ /g, '-')}.pdf"`,
         },
       });
     }
 
     return NextResponse.json(responseData);
   } catch (error) {
-    console.error('Weekly Report Error:', error);
+    console.error('Monthly Report Error:', error);
     return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
   }
 }
