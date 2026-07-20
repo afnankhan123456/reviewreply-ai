@@ -24,6 +24,17 @@ export default function DashboardLayout({
   const plan = (authSession?.user as any)?.plan || "basic";
   const hasStandardAccess = plan?.startsWith("standard");
 
+  // ✅ Theme state – default dark
+  const [theme, setTheme] = useState<"light" | "dark">("dark");
+
+  // ✅ Har navigation par localStorage se theme read karo
+  useEffect(() => {
+    const saved = localStorage.getItem("theme");
+    if (saved === "light" || saved === "dark") {
+      setTheme(saved);
+    }
+  }, [pathname]); // <-- pathname change hone par dobara read hoga
+
   useEffect(() => {
     if (status === "unauthenticated") {
       router.replace("/login");
@@ -31,8 +42,6 @@ export default function DashboardLayout({
   }, [status, router]);
 
   useEffect(() => {
-    // Agar (removed member ki tarah) is user ka access ab Standard plan se
-    // link nahi hai, to Standard dashboard turant chhod dena hoga.
     if (status === "authenticated" && !hasStandardAccess) {
       router.replace("/plans");
     }
@@ -69,8 +78,10 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="flex h-screen w-full bg-[#0B0E14] text-gray-200 font-sans overflow-hidden">
+    // ✅ Outer container ab sirf layout structure rakhta hai, background nahi
+    <div className="flex h-screen w-full font-sans overflow-hidden">
       
+      {/* ✅ Sidebar – hamesha dark (koi change nahi) */}
       <aside className="w-64 bg-[#11141C] border-r border-[#1F2430] flex flex-col p-4 overflow-y-auto">
         <div className="flex items-center gap-2 mb-10 px-2">
           <div className="bg-indigo-500 p-1.5 rounded-lg">
@@ -102,7 +113,6 @@ export default function DashboardLayout({
             <NavItem icon={<Settings size={20} />} label="Settings" href="/plans/standard/dashboard/settings" isActive={activeItem === 'Settings'} onClick={() => setActiveItem('Settings')} />
           )}
 
-          {/* Support – at the bottom, visible to all */}
           <NavItem 
             icon={<LifeBuoy size={20} />} 
             label="Support" 
@@ -125,7 +135,12 @@ export default function DashboardLayout({
         </div>
       </aside>
 
-      <div className="flex-1 flex flex-col h-screen overflow-hidden relative">
+      {/* ✅ Main content area – background aur text theme ke according badlega */}
+      <div className={`flex-1 flex flex-col h-screen overflow-hidden relative transition-colors duration-300 ${
+        theme === "light" 
+          ? "bg-gray-50 text-gray-900" 
+          : "bg-[#0B0E14] text-gray-200"
+      }`}>
         {children}
       </div>
     </div>
