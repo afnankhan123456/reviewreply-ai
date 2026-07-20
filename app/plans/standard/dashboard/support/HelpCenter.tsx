@@ -2,7 +2,7 @@ import { ExternalLink } from "lucide-react";
 
 export function HelpCenter() {
   return (
-    <div className="rounded-lg border bg-white dark:bg-gray-950 shadow-sm p-3 h-[173px] flex flex-col">
+    <div className="rounded-lg border bg-white dark:bg-gray-950 shadow-sm p-3 h-[183px] flex flex-col">
       <h3 className="text-base font-semibold mb-1.5">Help Center</h3>
       <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 flex-1">
         Browse comprehensive guides, video tutorials, and API documentation.
