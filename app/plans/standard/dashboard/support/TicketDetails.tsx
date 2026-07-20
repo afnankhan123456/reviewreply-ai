@@ -49,9 +49,7 @@ export function TicketDetails({ ticketId, onClose }: { ticketId: string; onClose
 
   const statusColor = {
     open: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-    in_progress: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
     resolved: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
-    closed: "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200",
   }[ticket.status];
 
   return (
@@ -59,8 +57,10 @@ export function TicketDetails({ ticketId, onClose }: { ticketId: string; onClose
       <div className="flex items-start justify-between mb-2">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="font-mono text-sm text-gray-500 dark:text-gray-400">{ticket.id}</span>
-            <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold text-gray-700 dark:text-gray-300">
+            <span className="font-mono text-sm text-gray-500 dark:text-gray-400">
+              BUG-{ticket.id.slice(-6).toUpperCase()}
+            </span>
+            <span className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold text-gray-700 dark:text-gray-300 capitalize">
               {ticket.priority}
             </span>
           </div>
@@ -74,7 +74,7 @@ export function TicketDetails({ ticketId, onClose }: { ticketId: string; onClose
         <div>
           <span className="text-sm font-medium">Status: </span>
           <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium capitalize ${statusColor}`}>
-            {ticket.status.replace("_", " ")}
+            {ticket.status}
           </span>
         </div>
         <div>
@@ -83,8 +83,6 @@ export function TicketDetails({ ticketId, onClose }: { ticketId: string; onClose
         </div>
         <div className="text-xs text-gray-500 dark:text-gray-400">
           Created: {new Date(ticket.createdAt).toLocaleString()}
-          <br />
-          Last updated: {new Date(ticket.updatedAt).toLocaleString()}
         </div>
       </div>
     </div>
