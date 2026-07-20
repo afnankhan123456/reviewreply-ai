@@ -18,59 +18,69 @@ export interface Ticket {
   updatedAt: string;
 }
 
-let tickets: Ticket[] = [
-  {
-    id: "TKT-001",
-    subject: "Cannot access billing page",
-    description: "Getting 403 error when trying to view invoices.",
-    status: "open",
-    priority: "high",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: "TKT-002",
-    subject: "Feature request: Dark mode",
-    description: "Please add dark mode support to the dashboard.",
-    status: "in_progress",
+function mapStatus(dbStatus: string): TicketStatus {
+  const normalized = dbStatus.toLowerCase().replace(/\s+/g, "_");
+  if (normalized === "open" || normalized === "in_progress" || normalized === "resolved" || normalized === "closed") {
+    return normalized;
+  }
+  return "open";
+}
+
+function bugToTicket(bug: {
+  id: string;
+  feature: string;
+  issueType: string;
+  description: string;
+  status: string;
+  createdAt: Date;
+}): Ticket {
+  return {
+    id: bug.id,
+    subject: `${bug.feature} — ${bug.issueType}`,
+    description: bug.description,
+    status: mapStatus(bug.status),
     priority: "medium",
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
+    createdAt: bug.createdAt.toISOString(),
+    updatedAt: bug.createdAt.toISOString(),
+  };
+}
 
 export async function getTickets(): Promise<Ticket[]> {
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  return tickets;
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return [];
+    }
+
+    const bugs = await prisma.bugReport.findMany({
+      where: { userId: session.user.id },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return bugs.map(bugToTicket);
+  } catch (error) {
+    console.error("Error fetching tickets:", error);
+    return [];
+  }
 }
 
 export async function getTicketById(id: string): Promise<Ticket | undefined> {
-  await new Promise((resolve) => setTimeout(resolve, 300));
-  return tickets.find((t) => t.id === id);
-}
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return undefined;
+    }
 
-export async function createTicket(formData: FormData): Promise<{ success: boolean; message: string; ticket?: Ticket }> {
-  const subject = formData.get("subject") as string;
-  const description = formData.get("description") as string;
-  const priority = (formData.get("priority") as TicketPriority) || "medium";
+    const bug = await prisma.bugReport.findUnique({ where: { id } });
+    if (!bug || bug.userId !== session.user.id) {
+      return undefined;
+    }
 
-  if (!subject || !description) {
-    return { success: false, message: "Subject and description are required." };
+    return bugToTicket(bug);
+  } catch (error) {
+    console.error("Error fetching ticket:", error);
+    return undefined;
   }
-
-  const newTicket: Ticket = {
-    id: `TKT-${String(tickets.length + 1).padStart(3, "0")}`,
-    subject,
-    description,
-    status: "open",
-    priority,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  };
-
-  tickets.push(newTicket);
-  revalidatePath("/plans/standard/dashboard/support");
-  return { success: true, message: "Ticket created successfully.", ticket: newTicket };
 }
 
 export async function submitBugReport(
@@ -157,4 +167,3 @@ export async function submitArticleFeedback(articleId: string, helpful: boolean)
     return { success: false, error: "Failed to submit feedback" };
   }
 }
-
