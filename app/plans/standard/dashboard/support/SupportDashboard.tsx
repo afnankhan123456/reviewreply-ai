@@ -46,8 +46,8 @@ export function SupportDashboard() {
         </div>
       </div>
 
-      {/* Second row: full‑width tabbed section – height fixed 136px */}
-      <div className="rounded-lg border bg-white dark:bg-gray-950 shadow-sm h-[136px] overflow-y-auto">
+      {/* Second row: full‑width tabbed section – height now 200px */}
+      <div className="rounded-lg border bg-white dark:bg-gray-950 shadow-sm h-[200px] overflow-y-auto">
         <div className="flex border-b">
           {tabs.map((tab) => (
             <button
