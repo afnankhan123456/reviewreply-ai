@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
-import { sendReviewRequestEmail } from "./actions";
+import { sendReviewRequestEmail, getWhatsAppShareLink } from "./actions";
 
 export default function RequestsPage() {
   const { data: authSession } = useSession();
@@ -13,6 +13,9 @@ export default function RequestsPage() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+
+  const [whatsappLoading, setWhatsappLoading] = useState(false);
+  const [whatsappMessage, setWhatsappMessage] = useState("");
 
   // ✅ Theme state
   const [theme, setTheme] = useState<"light" | "dark">("dark");
@@ -42,6 +45,21 @@ export default function RequestsPage() {
     const result = await sendReviewRequestEmail(name, email);
     setMessage(result.message);
     setLoading(false);
+  };
+
+  const handleWhatsAppShare = async () => {
+    if (!canSend) return;
+
+    setWhatsappLoading(true);
+    setWhatsappMessage("");
+    const result = await getWhatsAppShareLink(name);
+
+    if (result.success && result.whatsappUrl) {
+      window.open(result.whatsappUrl, "_blank");
+    } else {
+      setWhatsappMessage(result.error || "Failed to open WhatsApp");
+    }
+    setWhatsappLoading(false);
   };
 
   return (
@@ -106,6 +124,22 @@ export default function RequestsPage() {
             <p className="text-sm text-green-400 mt-2">{message}</p>
           )}
         </form>
+
+        <div className="pt-2 border-t border-dashed border-gray-700/50 mt-4">
+          <p className={`text-sm ${textSecondary} mb-2`}>Or share via WhatsApp:</p>
+          <button
+            type="button"
+            onClick={handleWhatsAppShare}
+            disabled={whatsappLoading || !canSend}
+            className="w-full bg-green-600 hover:bg-green-500 text-white font-medium py-2 rounded-lg transition disabled:opacity-50"
+          >
+            {whatsappLoading ? "Opening..." : "Share via WhatsApp"}
+          </button>
+
+          {whatsappMessage && (
+            <p className="text-sm text-red-400 mt-2">{whatsappMessage}</p>
+          )}
+        </div>
       </fieldset>
     </div>
   );
