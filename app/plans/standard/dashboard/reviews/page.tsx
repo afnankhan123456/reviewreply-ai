@@ -148,7 +148,7 @@ export default function ReviewsPage() {
     try {
       if (platform === 'whatsapp') {
         window.open(
-          `https://wa.me/?text=${encodeURIComponent(combinedText)}`,
+          `https://web.whatsapp.com/send?text=${encodeURIComponent(combinedText)}`,
           '_blank',
           'noopener,noreferrer'
         );
