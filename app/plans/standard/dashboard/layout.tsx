@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import { 
   LayoutDashboard, Star, Sparkles, BarChart3, FileText, 
   Send, Bell, ShieldCheck, Users, Settings, Gift,
-  Tag, PlugZap, LifeBuoy
+  Tag, PlugZap, LifeBuoy, Globe
 } from 'lucide-react';
 
 export default function DashboardLayout({
@@ -58,6 +58,7 @@ export default function DashboardLayout({
       'reports': 'Reports',
       'tags-categories': 'Tags & Categories',
       'requests': 'Requests',
+      'review-page': 'Review Page',
       'alerts': 'Alerts',
       'support': 'Support',
       'team': 'Team',
@@ -98,6 +99,7 @@ export default function DashboardLayout({
           <NavItem icon={<FileText size={20} />} label="Reports" href="/plans/standard/dashboard/reports" isActive={activeItem === 'Reports'} onClick={() => setActiveItem('Reports')} />
           <NavItem icon={<Tag size={20} />} label="Tags & Categories" href="/plans/standard/dashboard/tags-categories" isActive={activeItem === 'Tags & Categories'} onClick={() => setActiveItem('Tags & Categories')} />
           <NavItem icon={<Send size={20} />} label="Requests" href="/plans/standard/dashboard/requests" isActive={activeItem === 'Requests'} onClick={() => setActiveItem('Requests')} />
+          <NavItem icon={<Globe size={20} />} label="Review Page" href="/plans/standard/dashboard/review-page" isActive={activeItem === 'Review Page'} onClick={() => setActiveItem('Review Page')} />
           <NavItem icon={<Bell size={20} />} label="Alerts" href="/plans/standard/dashboard/alerts" isActive={activeItem === 'Alerts'} onClick={() => setActiveItem('Alerts')} />
           
           {isOwner && (
