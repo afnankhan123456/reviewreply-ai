@@ -78,7 +78,7 @@ export async function GET() {
       if (count > 0) tagCounts.push({ tag, count });
     }
     tagCounts.sort((a, b) => b.count - a.count);
-    const topTags = tagCounts.slice(0, 5);
+    const topTags = tagCounts.slice(0, 20);
 
     const latestReviews = await prisma.review.findMany({
       where: { userId },
