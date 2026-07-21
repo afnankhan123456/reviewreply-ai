@@ -39,8 +39,13 @@ async function getPageData(slug: string) {
   };
 }
 
-export default async function PublicReviewPage({ params }: { params: { slug: string } }) {
-  const data = await getPageData(params.slug);
+export default async function PublicReviewPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
+  const { slug } = await params;
+  const data = await getPageData(slug);
 
   if (!data) {
     notFound();
