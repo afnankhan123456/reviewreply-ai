@@ -23,7 +23,6 @@ export default function DashboardPage() {
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
 
-  // Theme state – default dark, localStorage se read
   const [theme, setTheme] = useState<"light" | "dark">("dark");
 
   useEffect(() => {
