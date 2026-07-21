@@ -273,10 +273,10 @@ export default function ReviewsPage() {
         {/* Header */}
         <div className={`grid grid-cols-12 gap-4 px-6 py-3 border-b ${borderLight} ${tableHeaderBg} text-[10px] text-gray-400 font-medium uppercase tracking-wider shrink-0`}>
           <div className="col-span-4">Customer & Review</div>
-          <div className="col-span-2 text-center">Rating</div>
+          <div className="col-span-1 text-center">Rating</div>
           <div className="col-span-2 text-center">Sentiment</div>
           <div className="col-span-2 text-center">Source</div>
-          <div className="col-span-2 text-center">Status / Action</div>
+          <div className="col-span-3 text-center">Status / Action</div>
         </div>
 
         <div className={`h-[600px] overflow-y-auto custom-scroll ${divider}`}>
@@ -383,7 +383,7 @@ function ReviewRow({ reviewId, reviewText, name, text, rating, sentiment, source
         </div>
         <div className={`text-[11px] ${textColor} line-clamp-2`}>{text}</div>
       </div>
-      <div className="col-span-2 flex items-center justify-center gap-1">
+      <div className="col-span-1 flex items-center justify-center gap-1">
         <div className="flex text-[10px] text-yellow-500">
           {Array.from({ length: 5 }).map((_, i) => (
             <span key={i}>{i < rating ? '★' : '☆'}</span>
@@ -407,7 +407,7 @@ function ReviewRow({ reviewId, reviewText, name, text, rating, sentiment, source
           {source}
         </span>
       </div>
-      <div className="col-span-2 flex items-center justify-center gap-2">
+      <div className="col-span-3 flex items-center justify-center flex-wrap gap-1.5">
         <span className={`text-[10px] px-2 py-0.5 rounded-full ${
           status === 'Replied' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'
         }`}>
@@ -422,7 +422,7 @@ function ReviewRow({ reviewId, reviewText, name, text, rating, sentiment, source
           </button>
         )}
         <button
-          className={`text-[10px] px-1.5 py-0.5 rounded ${theme === "light" ? "bg-gray-100 hover:bg-gray-200 text-gray-500" : "bg-[#1F2430] hover:bg-[#2A303C] text-gray-400"}`}
+          className={`flex items-center justify-center w-5 h-5 rounded ${theme === "light" ? "bg-gray-100 hover:bg-gray-200 text-gray-500" : "bg-[#1F2430] hover:bg-[#2A303C] text-gray-400"}`}
           onClick={() => onShareClick(name, text, rating)}
           title="Share this review"
         >
