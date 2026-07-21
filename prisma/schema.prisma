@@ -25,6 +25,7 @@ model User {
   googleConnected     Boolean             @default(false)
   lastReviewSync      DateTime?
   syncEnabled         Boolean             @default(true)
+  slug                String?             @unique
   monthlyResetDate    DateTime?
   gmailConnected      Boolean             @default(false)
   googleBusinessConnected  Boolean        @default(false)
