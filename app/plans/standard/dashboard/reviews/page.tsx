@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { 
   Search, Filter, RefreshCw, CheckCircle, XCircle, 
-  Star, ThumbsUp, ThumbsDown, MoreHorizontal
+  Star, ThumbsUp, ThumbsDown, MoreHorizontal, Share2
 } from 'lucide-react';
 
 export default function ReviewsPage() {
@@ -109,6 +109,26 @@ export default function ReviewsPage() {
       }
     } catch (error) {
       setToast({ message: 'Error sending reply', type: 'error' });
+    }
+  };
+
+  // ✅ NEW: Social share handler (Task 4)
+  const handleShare = async (name: string, text: string, rating: number) => {
+    const shareText = `${rating}★ review from ${name}: "${text}"`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ text: shareText });
+      } catch (error) {
+        // user cancelled share — no action needed
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareText);
+        setToast({ message: 'Review copied to clipboard!', type: 'success' });
+      } catch (error) {
+        setToast({ message: 'Unable to copy review', type: 'error' });
+      }
     }
   };
 
@@ -278,6 +298,7 @@ export default function ReviewsPage() {
                   setSelectedReviewText(text);
                   setShowReplyModal(true);
                 }}
+                onShareClick={handleShare}
                 theme={theme}
               />
             ))
@@ -345,7 +366,7 @@ export default function ReviewsPage() {
   );
 }
 
-function ReviewRow({ reviewId, reviewText, name, text, rating, sentiment, source, status, canReply, onReplyClick, theme }: any) {
+function ReviewRow({ reviewId, reviewText, name, text, rating, sentiment, source, status, canReply, onReplyClick, onShareClick, theme }: any) {
   const rowBg = theme === "light" ? "hover:bg-gray-100" : "hover:bg-[#181D27]";
   const nameColor = theme === "light" ? "text-gray-900" : "text-white";
   const textColor = theme === "light" ? "text-gray-600" : "text-gray-400";
@@ -400,6 +421,13 @@ function ReviewRow({ reviewId, reviewText, name, text, rating, sentiment, source
             Reply
           </button>
         )}
+        <button
+          className={`text-[10px] px-1.5 py-0.5 rounded ${theme === "light" ? "bg-gray-100 hover:bg-gray-200 text-gray-500" : "bg-[#1F2430] hover:bg-[#2A303C] text-gray-400"}`}
+          onClick={() => onShareClick(name, text, rating)}
+          title="Share this review"
+        >
+          <Share2 size={12} />
+        </button>
       </div>
     </div>
   );
