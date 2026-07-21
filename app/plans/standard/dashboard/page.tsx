@@ -2,9 +2,8 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useSession, signOut } from 'next-auth/react';
-import { 
-  Search, Bell, ChevronDown, RefreshCw, FileText, Send, XCircle
-} from 'lucide-react';
+import { ChevronDown, RefreshCw, FileText, Send, XCircle } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
 function getGreeting() {
   const hour = new Date().getHours();
@@ -21,14 +20,6 @@ export default function DashboardPage() {
   const [error, setError] = useState<string | null>(null);
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
-
-  // ✅ Theme state
-  const [theme, setTheme] = useState<"light" | "dark">("dark");
-
-  useEffect(() => {
-    const saved = localStorage.getItem("theme");
-    if (saved === "light" || saved === "dark") setTheme(saved);
-  }, []);
 
   useEffect(() => {
     fetch('/api/standard/dashboard/overview')
@@ -57,26 +48,9 @@ export default function DashboardPage() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // ✅ Common theme classes
-  const bgMain = theme === "light" ? "bg-gray-50" : "bg-[#0B0E14]";
-  const textPrimary = theme === "light" ? "text-gray-900" : "text-white";
-  const textSecondary = theme === "light" ? "text-gray-600" : "text-gray-400";
-  const textMuted = theme === "light" ? "text-gray-500" : "text-gray-500";
-  const bgCard = theme === "light" ? "bg-white border-gray-200" : "bg-[#11141C] border-[#1F2430]";
-  const bgSubCard = theme === "light" ? "bg-gray-50 border-gray-200" : "bg-[#181D27] border-[#1F2430]";
-  const headerBg = theme === "light" ? "bg-white border-gray-200" : "bg-[#181D27] border-[#2A303C]";
-  const inputBg = theme === "light" ? "bg-white border-gray-300 text-gray-900 placeholder-gray-400" : "bg-[#181D27] border-[#2A303C] text-gray-300 placeholder-gray-500";
-  const profileBg = theme === "light" ? "bg-white border-gray-200" : "bg-[#181D27] border-[#2A303C]";
-  const dropdownBg = theme === "light" ? "bg-white border-gray-200" : "bg-[#11141C] border-[#2A303C]";
-  const statCardBg = theme === "light" ? "bg-white border-gray-200" : "bg-[#11141C] border-[#1F2430]";
-  const reviewItemBg = theme === "light" ? "bg-gray-50 border-gray-200" : "bg-[#181D27] border-[#1F2430]";
-  const avatarBg = "bg-blue-900 text-blue-300"; // keep accent
-  const quickActionBg = theme === "light" ? "bg-white border-gray-200" : "bg-[#11141C] border-[#1F2430]";
-  const separatorColor = theme === "light" ? "border-gray-200" : "border-[#1F2430]";
-
   if (loading) {
     return (
-      <div className={`flex-1 flex items-center justify-center ${bgMain} ${textSecondary}`}>
+      <div className="flex-1 flex items-center justify-center bg-[#0B0E14] text-gray-400">
         Loading dashboard...
       </div>
     );
@@ -84,69 +58,54 @@ export default function DashboardPage() {
 
   if (error || !data) {
     return (
-      <div className={`flex-1 flex items-center justify-center ${bgMain} text-red-400 text-sm`}>
+      <div className="flex-1 flex items-center justify-center bg-[#0B0E14] text-red-400 text-sm">
         {error || 'Something went wrong'}
       </div>
     );
   }
 
   return (
-    <div className={`flex-1 flex flex-col p-6 overflow-y-auto transition-colors duration-300 ${bgMain}`}>
+    <div className="flex-1 flex flex-col p-6 overflow-y-auto bg-[#0B0E14]">
       
       {/* Header */}
       <header className="flex justify-between items-center mb-8">
         <div className="flex items-center gap-4">
           <div>
-            <h1 className={`text-2xl font-bold ${textPrimary}`}>{getGreeting()}, {data.userName}</h1>
-            <p className={`text-sm ${textSecondary}`}>Here&apos;s what&apos;s happening with your reviews today.</p>
+            <h1 className="text-2xl font-bold text-white">{getGreeting()}, {data.userName}</h1>
+            <p className="text-sm text-gray-400">Here&apos;s what&apos;s happening with your reviews today.</p>
           </div>
         </div>
 
         <div className="flex items-center gap-4">
-          <div className={`hidden md:flex items-center px-3 py-1.5 rounded-lg border ${headerBg}`}>
-            <Search size={16} className="text-gray-500 mr-2" />
-            <input 
-              type="text" 
-              placeholder="Search reviews, keywords, users..." 
-              className={`bg-transparent border-none outline-none text-sm w-48 ${inputBg}`}
-            />
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button className={`p-2 rounded-lg border ${theme === "light" ? "bg-white border-gray-200 text-gray-600 hover:text-gray-800" : "bg-[#181D27] border-[#2A303C] text-gray-400 hover:text-white"}`}>
-              <Bell size={18} />
-            </button>
-
-            <div className="relative" ref={profileRef}>
-              <button
-                onClick={() => setProfileOpen((prev) => !prev)}
-                className={`flex items-center gap-2 px-2 py-1 rounded-lg border hover:border-gray-500 transition-colors ${profileBg}`}
-              >
-                {session?.user?.image ? (
-                  <img
-                    src={session.user.image}
-                    alt="Profile"
-                    className="w-7 h-7 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className={`w-7 h-7 ${avatarBg} rounded-full flex items-center justify-center text-white font-bold text-xs`}>
-                    {data.userName?.charAt(0).toUpperCase()}
-                  </div>
-                )}
-                <ChevronDown size={14} className="text-gray-500" />
-              </button>
-
-              {profileOpen && (
-                <div className={`absolute right-0 mt-2 w-40 border rounded-lg shadow-lg overflow-hidden z-50 ${dropdownBg}`}>
-                  <button
-                    onClick={() => signOut({ callbackUrl: '/login' })}
-                    className="w-full text-left px-4 py-2.5 text-sm text-red-400 hover:bg-gray-100 dark:hover:bg-[#1A1D27] transition-colors"
-                  >
-                    Logout
-                  </button>
+          <div className="relative" ref={profileRef}>
+            <button
+              onClick={() => setProfileOpen((prev) => !prev)}
+              className="flex items-center gap-2 bg-[#181D27] px-2 py-1 rounded-lg border border-[#2A303C] hover:border-gray-500 transition-colors"
+            >
+              {session?.user?.image ? (
+                <img
+                  src={session.user.image}
+                  alt="Profile"
+                  className="w-7 h-7 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-7 h-7 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-xs">
+                  {data.userName?.charAt(0).toUpperCase()}
                 </div>
               )}
-            </div>
+              <ChevronDown size={14} className="text-gray-500" />
+            </button>
+
+            {profileOpen && (
+              <div className="absolute right-0 mt-2 w-40 bg-[#11141C] border border-[#2A303C] rounded-lg shadow-lg overflow-hidden z-50">
+                <button
+                  onClick={() => signOut({ callbackUrl: '/login' })}
+                  className="w-full text-left px-4 py-2.5 text-sm text-red-400 hover:bg-[#1A1D27] transition-colors"
+                >
+                  Logout
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </header>
@@ -158,31 +117,44 @@ export default function DashboardPage() {
         <div className="col-span-12 lg:col-span-9 space-y-6">
           {/* Top Stat Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-4">
-            <StatCard title="Total Reviews" value={data.totalReviews} icon="💬" color="bg-blue-500/20 text-blue-400" theme={theme} />
-            <StatCard title="Average Rating" value={data.avgRating} icon="⭐" color="bg-yellow-500/20 text-yellow-400" theme={theme} />
-            <StatCard title="New Reviews" value={data.newReviews} icon="📨" color="bg-blue-500/20 text-blue-400" theme={theme} />
-            <StatCard title="Response Rate" value={`${data.responseRate}%`} icon="📈" color="bg-green-500/20 text-green-400" theme={theme} />
-            <StatCard title="Low Rating Reviews" value={data.lowRatingCount} icon="😡" color="bg-red-500/20 text-red-400" theme={theme} />
+            <StatCard title="Total Reviews" value={data.totalReviews} icon="💬" color="bg-blue-500/20 text-blue-400" />
+            <StatCard title="Average Rating" value={data.avgRating} icon="⭐" color="bg-yellow-500/20 text-yellow-400" />
+            <StatCard title="New Reviews" value={data.newReviews} icon="📨" color="bg-blue-500/20 text-blue-400" />
+            <StatCard title="Response Rate" value={`${data.responseRate}%`} icon="📈" color="bg-green-500/20 text-green-400" />
+            <StatCard title="Low Rating Reviews" value={data.lowRatingCount} icon="😡" color="bg-red-500/20 text-red-400" />
           </div>
 
           {/* Middle Charts Row */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className={`${bgCard} border rounded-xl p-5`}>
+            <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-5">
               <div className="flex justify-between items-center mb-4">
-                <h3 className={`font-medium flex items-center gap-2 ${textPrimary}`}>
-                  Review Performance Overview <XCircle size={14} className="text-red-500" />
-                </h3>
+                <h3 className="text-white font-medium">Review Performance Overview</h3>
+                <span className="text-[10px] bg-[#181D27] text-gray-400 px-2 py-1 rounded border border-[#2A303C]">Last 30 Days</span>
               </div>
-              <div className="h-48 w-full bg-gradient-to-b from-indigo-500/10 to-transparent rounded-lg relative flex items-center justify-center">
-                <div className="absolute inset-0 flex items-center justify-center text-gray-500 text-sm flex-col gap-2">
-                  <span className="text-4xl">📉</span>
-                  <span>Not built yet</span>
-                </div>
+              <div className="h-48 w-full">
+                {data.dailyTrend.every((d: any) => d.count === 0) ? (
+                  <div className="h-full flex items-center justify-center text-gray-500 text-sm">
+                    No reviews in the last 30 days yet.
+                  </div>
+                ) : (
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={data.dailyTrend}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#1F2430" />
+                      <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#6B7280' }} interval={4} />
+                      <YAxis tick={{ fontSize: 10, fill: '#6B7280' }} allowDecimals={false} />
+                      <Tooltip
+                        contentStyle={{ backgroundColor: '#11141C', border: '1px solid #2A303C', fontSize: 12 }}
+                        labelStyle={{ color: '#fff' }}
+                      />
+                      <Line type="monotone" dataKey="count" stroke="#6366F1" strokeWidth={2} dot={false} />
+                    </LineChart>
+                  </ResponsiveContainer>
+                )}
               </div>
             </div>
 
-            <div className={`${bgCard} border rounded-xl p-5`}>
-              <h3 className={`font-medium mb-4 ${textPrimary}`}>Review Summary</h3>
+            <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-5">
+              <h3 className="text-white font-medium mb-4">Review Summary</h3>
               <div className="flex gap-6">
                 <div className="w-32 h-32 rounded-full border-8 border-green-500 flex items-center justify-center bg-[#181D27] relative">
                   <div className="text-center">
@@ -193,8 +165,8 @@ export default function DashboardPage() {
                 <div className="flex-1 space-y-2 text-xs">
                   {data.starBreakdown.map((s: any) => (
                     <div key={s.stars} className="flex justify-between">
-                      <span className={textSecondary}>{s.stars} Stars</span>
-                      <span className={textMuted}>{s.count} ({s.percent}%)</span>
+                      <span className="text-gray-300">{s.stars} Stars</span>
+                      <span className="text-gray-400">{s.count} ({s.percent}%)</span>
                     </div>
                   ))}
                 </div>
@@ -204,8 +176,8 @@ export default function DashboardPage() {
 
           {/* Bottom Charts Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className={`${bgCard} border rounded-xl p-4`}>
-               <h4 className={`text-xs mb-3 ${textSecondary}`}>Top Tags</h4>
+            <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-4">
+               <h4 className="text-xs text-gray-400 mb-3">Top Tags</h4>
                <div className="space-y-2">
                   {data.topTags.length === 0 && (
                     <div className="text-[10px] text-gray-500">No tags yet</div>
@@ -213,8 +185,8 @@ export default function DashboardPage() {
                   {data.topTags.map((t: any) => (
                     <div key={t.tag}>
                       <div className="flex justify-between text-xs">
-                        <span className={textSecondary}>{t.tag}</span>
-                        <span className={textMuted}>{t.count}</span>
+                        <span className="text-gray-300">{t.tag}</span>
+                        <span className="text-gray-500">{t.count}</span>
                       </div>
                       <div className="w-full bg-[#1F2430] h-1.5 rounded-full">
                         <div
@@ -227,11 +199,11 @@ export default function DashboardPage() {
                </div>
             </div>
 
-            <div className={`${bgCard} border rounded-xl p-4 flex flex-col justify-between`}>
-              <h4 className={`text-xs mb-2 ${textSecondary}`}>Sentiment Analysis</h4>
+            <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-4 flex flex-col justify-between">
+              <h4 className="text-xs text-gray-400 mb-2">Sentiment Analysis</h4>
               <div className="flex items-center justify-center">
                 <div className="w-20 h-20 rounded-full border-[6px] border-green-500 flex items-center justify-center">
-                  <span className={`text-xl font-bold ${textPrimary}`}>{data.sentiment.positivePercent}%</span>
+                  <span className="text-xl font-bold text-white">{data.sentiment.positivePercent}%</span>
                 </div>
               </div>
               <div className="flex justify-between text-[10px] text-gray-400 mt-2">
@@ -241,8 +213,8 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            <div className={`${bgCard} border rounded-xl p-4`}>
-               <h4 className={`text-xs mb-3 ${textSecondary}`}>Reviews by Source</h4>
+            <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-4">
+               <h4 className="text-xs text-gray-400 mb-3">Reviews by Source</h4>
                <div className="space-y-1 text-[11px] text-gray-400">
                  {data.sourceBreakdown.length === 0 && <div className="text-[10px] text-gray-500">No data yet</div>}
                  {data.sourceBreakdown.map((s: any) => (
@@ -254,16 +226,16 @@ export default function DashboardPage() {
                </div>
             </div>
 
-            <div className={`${bgCard} border rounded-xl p-4 text-center`}>
-               <h4 className={`text-xs mb-3 ${textSecondary}`}>Response Rate</h4>
-               <div className={`text-3xl font-bold ${textPrimary}`}>{data.responseRate}%</div>
+            <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-4 text-center">
+               <h4 className="text-xs text-gray-400 mb-3">Response Rate</h4>
+               <div className="text-3xl font-bold text-white">{data.responseRate}%</div>
             </div>
           </div>
 
           {/* Recent Reviews List */}
-          <div className={`${bgCard} border rounded-xl p-5`}>
+          <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-5">
             <div className="flex justify-between items-center mb-4">
-              <h3 className={`font-medium ${textPrimary}`}>Latest Reviews</h3>
+              <h3 className="text-white font-medium">Latest Reviews</h3>
               <span className="text-xs text-indigo-400 cursor-pointer hover:underline">View All Reviews →</span>
             </div>
             
@@ -279,7 +251,6 @@ export default function DashboardPage() {
                   text={r.comment || 'No comment'}
                   sentiment={r.rating >= 4 ? 'Positive' : r.rating === 3 ? 'Neutral' : 'Negative'}
                   platform={r.source || 'Other'}
-                  theme={theme}
                 />
               ))}
             </div>
@@ -289,15 +260,14 @@ export default function DashboardPage() {
         {/* RIGHT COLUMN (AI Actions & Alerts) */}
         <div className="col-span-12 lg:col-span-3 space-y-6">
           
-          <div className={`${bgCard} border rounded-xl p-4`}>
-             <h3 className={`font-medium text-sm mb-4 ${textPrimary}`}>✨ AI Quick Actions</h3>
+          <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-4">
+             <h3 className="text-white font-medium text-sm mb-4">✨ AI Quick Actions</h3>
              <div className="space-y-3">
                <ActionCard 
                  icon={<SparklesIcon />} 
                  title="Generate AI Reply" 
                  desc="Create smart replies in seconds" 
                  color="bg-blue-500/10 border-blue-500/20"
-                 theme={theme}
                />
                <ActionCard 
                  icon={<RefreshCw size={18} className="text-yellow-400" />} 
@@ -305,21 +275,18 @@ export default function DashboardPage() {
                  desc="Set rules for 5★, 4★, 3★, 2★, 1★" 
                  color="bg-yellow-500/10 border-yellow-500/20"
                  notBuilt
-                 theme={theme}
                />
                <ActionCard 
                  icon={<Send size={18} className="text-green-400" />} 
                  title="Review Request" 
                  desc="Send review requests via Email" 
                  color="bg-green-500/10 border-green-500/20"
-                 theme={theme}
                />
                <ActionCard 
                  icon={<FileText size={18} className="text-purple-400" />} 
                  title="Review Summary Report" 
                  desc="Download weekly/monthly report" 
                  color="bg-purple-500/10 border-purple-500/20"
-                 theme={theme}
                />
              </div>
              <button className="w-full mt-4 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium py-2.5 rounded-lg transition-colors">
@@ -327,8 +294,8 @@ export default function DashboardPage() {
              </button>
           </div>
 
-          <div className={`${bgCard} border rounded-xl p-4`}>
-             <h3 className={`font-medium text-sm mb-4 flex items-center justify-between ${textPrimary}`}>
+          <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-4">
+             <h3 className="text-white font-medium text-sm mb-4 flex items-center justify-between">
                Alerts & Notifications
                <XCircle size={14} className="text-red-500" />
              </h3>
@@ -337,29 +304,29 @@ export default function DashboardPage() {
 
           {/* Quick Links */}
           <div className="grid grid-cols-2 gap-2 text-[10px]">
-            <div className={`${quickActionBg} border rounded-lg p-3 text-center relative`}>
+            <div className="bg-[#11141C] border border-[#1F2430] rounded-lg p-3 text-center relative">
               <XCircle size={12} className="absolute top-1 right-1 text-red-500" />
               <div className="w-8 h-8 bg-green-500/20 rounded-lg mx-auto mb-1 flex items-center justify-center text-green-400">📱</div>
-              <div className={textSecondary}>QR Code</div>
-              <div className={textMuted}>Generate QR</div>
+              <div className="text-gray-300">QR Code</div>
+              <div className="text-gray-500">Generate QR</div>
             </div>
-            <div className={`${quickActionBg} border rounded-lg p-3 text-center relative`}>
+            <div className="bg-[#11141C] border border-[#1F2430] rounded-lg p-3 text-center relative">
               <XCircle size={12} className="absolute top-1 right-1 text-red-500" />
               <div className="w-8 h-8 bg-yellow-500/20 rounded-lg mx-auto mb-1 flex items-center justify-center text-yellow-400">🔗</div>
-              <div className={textSecondary}>Request Link</div>
-              <div className={textMuted}>Copy Link</div>
+              <div className="text-gray-300">Request Link</div>
+              <div className="text-gray-500">Copy Link</div>
             </div>
-            <div className={`${quickActionBg} border rounded-lg p-3 text-center relative`}>
+            <div className="bg-[#11141C] border border-[#1F2430] rounded-lg p-3 text-center relative">
               <XCircle size={12} className="absolute top-1 right-1 text-red-500" />
               <div className="w-8 h-8 bg-blue-500/20 rounded-lg mx-auto mb-1 flex items-center justify-center text-blue-400">✉️</div>
-              <div className={textSecondary}>Email Request</div>
-              <div className={textMuted}>Send Email</div>
+              <div className="text-gray-300">Email Request</div>
+              <div className="text-gray-500">Send Email</div>
             </div>
-            <div className={`${quickActionBg} border rounded-lg p-3 text-center relative`}>
+            <div className="bg-[#11141C] border border-[#1F2430] rounded-lg p-3 text-center relative">
               <XCircle size={12} className="absolute top-1 right-1 text-red-500" />
               <div className="w-8 h-8 bg-purple-500/20 rounded-lg mx-auto mb-1 flex items-center justify-center text-purple-400">💬</div>
-              <div className={textSecondary}>SMS Request</div>
-              <div className={textMuted}>Send SMS</div>
+              <div className="text-gray-300">SMS Request</div>
+              <div className="text-gray-500">Send SMS</div>
             </div>
           </div>
         </div>
@@ -368,51 +335,49 @@ export default function DashboardPage() {
   );
 }
 
-// --- Reusable Components (Updated to accept theme) ---
+// --- Reusable Components ---
 
-function StatCard({ title, value, icon, color, theme }: any) {
-  const bg = theme === "light" ? "bg-white border-gray-200" : "bg-[#11141C] border-[#1F2430]";
+function StatCard({ title, value, icon, color }: any) {
   return (
-    <div className={`${bg} border rounded-xl p-4`}>
+    <div className="bg-[#11141C] border border-[#1F2430] rounded-xl p-4">
       <div className="flex justify-between items-start mb-2">
-        <span className={`text-xs ${theme === "light" ? "text-gray-600" : "text-gray-400"}`}>{title}</span>
+        <span className="text-xs text-gray-400">{title}</span>
         <span className={`text-xs px-1.5 py-0.5 rounded ${color}`}>{icon}</span>
       </div>
-      <div className={`text-2xl font-bold ${theme === "light" ? "text-gray-900" : "text-white"} mb-1`}>{value}</div>
+      <div className="text-2xl font-bold text-white mb-1">{value}</div>
     </div>
   );
 }
 
-function ActionCard({ icon, title, desc, color, notBuilt, theme }: any) {
+function ActionCard({ icon, title, desc, color, notBuilt }: any) {
   return (
-    <div className={`p-3 rounded-lg border ${color} cursor-pointer hover:bg-[#1A1D27] dark:hover:bg-[#1A1D27] transition-colors flex gap-3 items-start relative`}>
+    <div className={`p-3 rounded-lg border ${color} cursor-pointer hover:bg-[#1A1D27] transition-colors flex gap-3 items-start relative`}>
       {notBuilt && <XCircle size={12} className="absolute top-1 right-1 text-red-500" />}
       <div className="mt-0.5">{icon}</div>
       <div>
-        <div className={`text-xs font-medium ${theme === "light" ? "text-gray-900" : "text-white"}`}>{title}</div>
-        <div className={`text-[10px] ${theme === "light" ? "text-gray-600" : "text-gray-400"}`}>{desc}</div>
+        <div className="text-xs font-medium text-white">{title}</div>
+        <div className="text-[10px] text-gray-400">{desc}</div>
       </div>
     </div>
   );
 }
 
-function ReviewItem({ name, rating, text, sentiment, platform, theme }: any) {
-  const bg = theme === "light" ? "bg-gray-50 border-gray-200" : "bg-[#181D27] border-[#1F2430]";
+function ReviewItem({ name, rating, text, sentiment, platform }: any) {
   return (
-    <div className={`flex items-start gap-3 p-3 rounded-lg border ${bg}`}>
+    <div className="flex items-start gap-3 p-3 bg-[#181D27] rounded-lg border border-[#1F2430]">
       <div className="w-8 h-8 rounded-full bg-blue-900 text-blue-300 flex items-center justify-center text-xs font-bold">
         {name.split(' ').map((n: string) => n[0]).join('')}
       </div>
       <div className="flex-1">
         <div className="flex justify-between items-start">
           <div>
-             <span className={`text-xs font-medium ${theme === "light" ? "text-gray-900" : "text-white"}`}>{name}</span>
+             <span className="text-xs text-white font-medium">{name}</span>
           </div>
           <span className={`text-[10px] px-2 py-0.5 rounded-full ${sentiment === 'Negative' ? 'bg-red-500/20 text-red-400' : sentiment === 'Positive' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>
             {sentiment}
           </span>
         </div>
-        <div className={`text-xs mt-1 ${theme === "light" ? "text-gray-600" : "text-gray-400"}`}>{text}</div>
+        <div className="text-xs text-gray-400 mt-1">{text}</div>
         <div className="flex items-center gap-1 mt-1 text-[10px] text-gray-500">
            <span>{'★'.repeat(rating)}{'☆'.repeat(5-rating)}</span>
            <span className="ml-1 bg-[#1F2430] px-1 rounded text-[9px]">{platform}</span>
