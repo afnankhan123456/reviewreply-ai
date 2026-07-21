@@ -3,8 +3,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
-import { ChevronDown, RefreshCw, FileText, Send, XCircle } from 'lucide-react';
+import { ChevronDown, RefreshCw, FileText, Send, XCircle, Link2, Mail, QrCode, X } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { getReviewLink, sendReviewRequestEmail } from './requests/actions';
 
 function getGreeting() {
   const hour = new Date().getHours();
@@ -24,6 +25,20 @@ export default function DashboardPage() {
   const profileRef = useRef<HTMLDivElement>(null);
 
   const [theme, setTheme] = useState<"light" | "dark">("dark");
+
+  // ✅ NEW: Quick Links states
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [linkLoading, setLinkLoading] = useState(false);
+
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [emailName, setEmailName] = useState('');
+  const [emailValue, setEmailValue] = useState('');
+  const [emailSending, setEmailSending] = useState(false);
+  const [emailResultMsg, setEmailResultMsg] = useState('');
+
+  const [showQrModal, setShowQrModal] = useState(false);
+  const [qrLink, setQrLink] = useState('');
+  const [qrLoading, setQrLoading] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("theme");
@@ -59,6 +74,64 @@ export default function DashboardPage() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => setToast(null), 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
+
+  // ✅ NEW: Request Link (Copy Link) handler
+  const handleCopyLink = async () => {
+    setLinkLoading(true);
+    const result = await getReviewLink();
+    setLinkLoading(false);
+
+    if (result.success && result.reviewLink) {
+      try {
+        await navigator.clipboard.writeText(result.reviewLink);
+        setToast({ message: 'Review link copied to clipboard!', type: 'success' });
+      } catch (err) {
+        setToast({ message: 'Unable to copy link', type: 'error' });
+      }
+    } else {
+      setToast({ message: result.error || 'Failed to get review link', type: 'error' });
+    }
+  };
+
+  // ✅ NEW: Email Request handler
+  const handleSendEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setEmailSending(true);
+    setEmailResultMsg('');
+    const result = await sendReviewRequestEmail(emailName, emailValue);
+    setEmailResultMsg(result.message);
+    setEmailSending(false);
+    if (result.message?.toLowerCase().includes('sent')) {
+      setToast({ message: result.message, type: 'success' });
+      setTimeout(() => {
+        setShowEmailModal(false);
+        setEmailName('');
+        setEmailValue('');
+        setEmailResultMsg('');
+      }, 1200);
+    }
+  };
+
+  // ✅ NEW: QR Code handler
+  const handleOpenQr = async () => {
+    setQrLoading(true);
+    const result = await getReviewLink();
+    setQrLoading(false);
+
+    if (result.success && result.reviewLink) {
+      setQrLink(result.reviewLink);
+      setShowQrModal(true);
+    } else {
+      setToast({ message: result.error || 'Failed to get review link', type: 'error' });
+    }
+  };
+
   const isLight = theme === "light";
   const bgMain = isLight ? "bg-gray-50" : "bg-[#0B0E14]";
   const bgCard = isLight ? "bg-white" : "bg-[#11141C]";
@@ -68,6 +141,8 @@ export default function DashboardPage() {
   const textPrimary = isLight ? "text-gray-900" : "text-white";
   const textSecondary = isLight ? "text-gray-500" : "text-gray-400";
   const textMuted = isLight ? "text-gray-400" : "text-gray-500";
+  const inputBg = isLight ? "bg-white border-gray-300 text-gray-900 placeholder-gray-400" : "bg-[#181D27] border-[#2A303C] text-gray-300 placeholder-gray-500";
+  const modalBg = isLight ? "bg-white border-gray-200" : "bg-[#11141C] border-[#1F2430]";
 
   if (loading) {
     return (
@@ -87,6 +162,17 @@ export default function DashboardPage() {
 
   return (
     <div className={`flex-1 flex flex-col p-6 overflow-y-auto ${bgMain}`}>
+
+      {/* ✅ NEW: Toast Notification */}
+      {toast && (
+        <div
+          className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg text-sm font-medium transition-all duration-300 ${
+            toast.type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
+          }`}
+        >
+          {toast.message}
+        </div>
+      )}
       
       {/* Header */}
       <header className="flex justify-between items-center mb-8">
@@ -326,24 +412,51 @@ export default function DashboardPage() {
 
           {/* Quick Links */}
           <div className="grid grid-cols-2 gap-2 text-[10px]">
-            <div className={`${bgCard} border ${borderCard} rounded-lg p-3 text-center relative`}>
-              <XCircle size={12} className="absolute top-1 right-1 text-red-500" />
-              <div className="w-8 h-8 bg-yellow-500/20 rounded-lg mx-auto mb-1 flex items-center justify-center text-yellow-400">🔗</div>
+            {/* ✅ NOW FUNCTIONAL: Request Link */}
+            <button
+              onClick={handleCopyLink}
+              disabled={linkLoading}
+              className={`${bgCard} border ${borderCard} rounded-lg p-3 text-center hover:opacity-80 transition-opacity disabled:opacity-50`}
+            >
+              <div className="w-8 h-8 bg-yellow-500/20 rounded-lg mx-auto mb-1 flex items-center justify-center text-yellow-400">
+                <Link2 size={16} />
+              </div>
               <div className={isLight ? "text-gray-700" : "text-gray-300"}>Request Link</div>
-              <div className={textMuted}>Copy Link</div>
-            </div>
-            <div className={`${bgCard} border ${borderCard} rounded-lg p-3 text-center relative`}>
-              <XCircle size={12} className="absolute top-1 right-1 text-red-500" />
-              <div className="w-8 h-8 bg-blue-500/20 rounded-lg mx-auto mb-1 flex items-center justify-center text-blue-400">✉️</div>
+              <div className={textMuted}>{linkLoading ? 'Loading...' : 'Copy Link'}</div>
+            </button>
+
+            {/* ✅ NOW FUNCTIONAL: Email Request */}
+            <button
+              onClick={() => setShowEmailModal(true)}
+              className={`${bgCard} border ${borderCard} rounded-lg p-3 text-center hover:opacity-80 transition-opacity`}
+            >
+              <div className="w-8 h-8 bg-blue-500/20 rounded-lg mx-auto mb-1 flex items-center justify-center text-blue-400">
+                <Mail size={16} />
+              </div>
               <div className={isLight ? "text-gray-700" : "text-gray-300"}>Email Request</div>
               <div className={textMuted}>Send Email</div>
-            </div>
+            </button>
+
+            {/* SMS Request — chhoda hai, jaisa kaha tha */}
             <div className={`${bgCard} border ${borderCard} rounded-lg p-3 text-center relative`}>
               <XCircle size={12} className="absolute top-1 right-1 text-red-500" />
               <div className="w-8 h-8 bg-purple-500/20 rounded-lg mx-auto mb-1 flex items-center justify-center text-purple-400">💬</div>
               <div className={isLight ? "text-gray-700" : "text-gray-300"}>SMS Request</div>
               <div className={textMuted}>Send SMS</div>
             </div>
+
+            {/* ✅ NEW: QR Code */}
+            <button
+              onClick={handleOpenQr}
+              disabled={qrLoading}
+              className={`${bgCard} border ${borderCard} rounded-lg p-3 text-center hover:opacity-80 transition-opacity disabled:opacity-50`}
+            >
+              <div className="w-8 h-8 bg-green-500/20 rounded-lg mx-auto mb-1 flex items-center justify-center text-green-400">
+                <QrCode size={16} />
+              </div>
+              <div className={isLight ? "text-gray-700" : "text-gray-300"}>QR Code</div>
+              <div className={textMuted}>{qrLoading ? 'Loading...' : 'Generate QR'}</div>
+            </button>
           </div>
 
           {/* Top 20 Review Keywords */}
@@ -363,6 +476,81 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+
+      {/* ✅ NEW: Email Request Modal */}
+      {showEmailModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
+          <div className={`${modalBg} border rounded-xl p-6 w-[420px] shadow-2xl`}>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className={`text-lg font-medium ${textPrimary}`}>Send Review Request</h3>
+              <button onClick={() => setShowEmailModal(false)} className={textMuted}>
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSendEmail} className="space-y-3">
+              <div>
+                <label className={`block text-xs ${textSecondary} mb-1`}>Customer Name</label>
+                <input
+                  type="text"
+                  required
+                  value={emailName}
+                  onChange={(e) => setEmailName(e.target.value)}
+                  placeholder="John Doe"
+                  className={`w-full border rounded-lg px-3 py-2 text-sm outline-none ${inputBg}`}
+                />
+              </div>
+              <div>
+                <label className={`block text-xs ${textSecondary} mb-1`}>Customer Email</label>
+                <input
+                  type="email"
+                  required
+                  value={emailValue}
+                  onChange={(e) => setEmailValue(e.target.value)}
+                  placeholder="customer@example.com"
+                  className={`w-full border rounded-lg px-3 py-2 text-sm outline-none ${inputBg}`}
+                />
+              </div>
+              <button
+                type="submit"
+                disabled={emailSending}
+                className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 rounded-lg transition disabled:opacity-50"
+              >
+                {emailSending ? 'Sending...' : 'Send Review Request'}
+              </button>
+              {emailResultMsg && (
+                <p className={`text-xs mt-1 ${emailResultMsg.toLowerCase().includes('sent') ? 'text-green-400' : 'text-red-400'}`}>
+                  {emailResultMsg}
+                </p>
+              )}
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ✅ NEW: QR Code Modal */}
+      {showQrModal && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
+          <div className={`${modalBg} border rounded-xl p-6 w-[340px] shadow-2xl text-center`}>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className={`text-lg font-medium ${textPrimary}`}>Review QR Code</h3>
+              <button onClick={() => setShowQrModal(false)} className={textMuted}>
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="bg-white p-3 rounded-lg inline-block">
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(qrLink)}`}
+                alt="Review QR Code"
+                width={220}
+                height={220}
+              />
+            </div>
+            <p className={`text-xs mt-3 ${textMuted} break-all`}>{qrLink}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
