@@ -100,3 +100,29 @@ export async function getWhatsAppShareLink(name: string) {
     return { error: 'Failed to generate WhatsApp link' };
   }
 }
+
+export async function getReviewLink() {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return { success: false, error: 'User not authenticated' };
+    }
+
+    const { ownerId } = await resolveOwnerAndRole(session.user.id);
+
+    const user = await prisma.user.findUnique({
+      where: { id: ownerId },
+      select: { googlePlaceId: true },
+    });
+
+    if (!user?.googlePlaceId) {
+      return { success: false, error: 'Please save your Google Place ID in Settings first.' };
+    }
+
+    const reviewLink = `https://search.google.com/local/writereview?placeid=${user.googlePlaceId}`;
+    return { success: true, reviewLink };
+  } catch (error) {
+    console.error('Get review link error:', error);
+    return { success: false, error: 'Failed to get review link' };
+  }
+}
