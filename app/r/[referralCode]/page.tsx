@@ -8,16 +8,13 @@ interface PageProps {
   }>;
 }
 
-// 👇 New: Track referral click in database
 async function trackReferralClick(referralCode: string, referrerEmail: string, referrerId: string) {
   try {
-    // Check if referral_stats entry exists
     const existingStats = await prisma.referralStats.findFirst({
       where: { userId: referrerId },
     });
 
     if (existingStats) {
-      // Update: referralClicks +1
       await prisma.referralStats.update({
         where: { id: existingStats.id },
         data: {
@@ -26,7 +23,6 @@ async function trackReferralClick(referralCode: string, referrerEmail: string, r
         },
       });
     } else {
-      // Create new stats entry
       await prisma.referralStats.create({
         data: {
           userId: referrerId,
@@ -44,7 +40,6 @@ async function trackReferralClick(referralCode: string, referrerEmail: string, r
   }
 }
 
-// 👇 Public Review Page renderer (jab slug match ho)
 async function renderPublicReviewPage(slug: string) {
   const user = await prisma.user.findUnique({
     where: { slug },
@@ -114,7 +109,6 @@ async function renderPublicReviewPage(slug: string) {
 }
 
 export default async function ReferralPage({ params }: PageProps) {
-  // Await params since Next.js 15 with async dynamic routes
   const { referralCode } = await params;
 
   if (!referralCode) {
@@ -122,7 +116,6 @@ export default async function ReferralPage({ params }: PageProps) {
   }
 
   try {
-    // Find the user who owns this referral code
     const user = await prisma.user.findUnique({
       where: { referralCode: referralCode },
       select: {
@@ -133,7 +126,6 @@ export default async function ReferralPage({ params }: PageProps) {
     });
 
     if (!user) {
-      // 👇 Referral code match nahi hua, ab slug (Public Review Page) check karo
       const reviewPage = await renderPublicReviewPage(referralCode);
       if (reviewPage) {
         return reviewPage;
@@ -151,20 +143,13 @@ export default async function ReferralPage({ params }: PageProps) {
       );
     }
 
-    // 👇 Track the referral click
     await trackReferralClick(referralCode, user.email, user.id);
 
-    // Success - Clean Professional Background
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 relative overflow-hidden">
-        
-        {/* TrackingWrapper for cookie */}
         <TrackingWrapper referralCode={referralCode} />
-        
-        {/* Subtle professional background glow */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-indigo-50/50 via-transparent to-transparent pointer-events-none"></div>
 
-        {/* White Card */}
         <div className="relative z-10 text-center p-10 bg-white rounded-2xl shadow-xl border border-gray-100 max-w-lg">
           <div className="mb-2">
             <h1 className="text-4xl font-bold text-gray-900 mb-1">
@@ -177,14 +162,7 @@ export default async function ReferralPage({ params }: PageProps) {
               Reply smarter, build stronger trust, and take your business to the next level with AI-powered review management.
             </p>
           </div>
-          
-          
-            href="/login"
-            className="inline-block bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white px-8 py-3 rounded-xl font-medium transition shadow-md mt-4"
-          >
-            Get Started Now
-          </a>
-
+          <a href="/login" className="inline-block bg-[#7c5cfc] hover:bg-[#6a4ce0] text-white px-8 py-3 rounded-xl font-medium transition shadow-md mt-4">Get Started Now</a>
           <p className="text-xs text-gray-400 mt-6">
             Made by Afnan Khan
           </p>
@@ -196,3 +174,4 @@ export default async function ReferralPage({ params }: PageProps) {
     notFound();
   }
 }
+
