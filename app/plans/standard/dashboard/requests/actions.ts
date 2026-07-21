@@ -92,7 +92,7 @@ export async function getWhatsAppShareLink(name: string) {
       ? `Hi ${customerName}! We value your feedback. Please leave a review here: ${reviewLink}`
       : `Hi ${customerName}! We value your feedback. Please review us on Google.`;
 
-    const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+    const whatsappUrl = `https://web.whatsapp.com/send?text=${encodeURIComponent(text)}`;
 
     return { success: true, whatsappUrl };
   } catch (error) {
