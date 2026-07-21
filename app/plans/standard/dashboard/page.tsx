@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
-import { ChevronDown, RefreshCw, FileText, Send, XCircle, QrCode, ExternalLink } from 'lucide-react';
+import { ChevronDown, RefreshCw, FileText, Send, XCircle } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
 function getGreeting() {
@@ -326,19 +326,6 @@ export default function DashboardPage() {
 
           {/* Quick Links */}
           <div className="grid grid-cols-2 gap-2 text-[10px]">
-            
-              href="https://free-ai-tools-for-pdf-image-file.onrender.com/qr-generator"
-              target="_blank"
-              rel="noopener noreferrer"
-              className={`${bgCard} border ${borderCard} rounded-lg p-3 text-center relative hover:opacity-80 transition-opacity block`}
-            >
-              <ExternalLink size={10} className="absolute top-1 right-1 text-gray-500" />
-              <div className="w-8 h-8 bg-green-500/20 rounded-lg mx-auto mb-1 flex items-center justify-center text-green-400">
-                <QrCode size={16} />
-              </div>
-              <div className={isLight ? "text-gray-700" : "text-gray-300"}>QR Code</div>
-              <div className={textMuted}>Generate QR</div>
-            </a>
             <div className={`${bgCard} border ${borderCard} rounded-lg p-3 text-center relative`}>
               <XCircle size={12} className="absolute top-1 right-1 text-red-500" />
               <div className="w-8 h-8 bg-yellow-500/20 rounded-lg mx-auto mb-1 flex items-center justify-center text-yellow-400">🔗</div>
