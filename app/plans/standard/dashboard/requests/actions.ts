@@ -19,7 +19,6 @@ export async function sendReviewRequestEmail(name: string, email: string) {
 
     // Team member ho to Owner ka data use hoga; View Only ko email bhejne nahi denge
     const { ownerId, role } = await resolveOwnerAndRole(session.user.id);
-
     if (role === 'VIEW_ONLY') {
       return { message: 'You have view-only access and cannot send review requests.' };
     }
@@ -45,13 +44,9 @@ export async function sendReviewRequestEmail(name: string, email: string) {
 
     const message = `
       Dear ${name},
-
       We value your feedback! If you'd like to share your experience with us, please leave a review.
-
       ${reviewLink ? `Please leave a review here: ${reviewLink}` : 'Please review us on Google.'}
-
       Thank you for your time!
-
       Best regards,
       ReviewMate Team
     `;
@@ -67,5 +62,41 @@ export async function sendReviewRequestEmail(name: string, email: string) {
   } catch (error) {
     console.error('Email error:', error);
     return { message: 'Failed to send email. Please try again.' };
+  }
+}
+
+export async function getWhatsAppShareLink(name: string) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return { error: 'User not authenticated' };
+    }
+
+    const { ownerId, role } = await resolveOwnerAndRole(session.user.id);
+    if (role === 'VIEW_ONLY') {
+      return { error: 'You have view-only access and cannot send review requests.' };
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: ownerId },
+      select: { googlePlaceId: true },
+    });
+
+    let reviewLink = '';
+    if (user?.googlePlaceId) {
+      reviewLink = `https://search.google.com/local/writereview?placeid=${user.googlePlaceId}`;
+    }
+
+    const customerName = name?.trim() || 'there';
+    const text = reviewLink
+      ? `Hi ${customerName}! We value your feedback. Please leave a review here: ${reviewLink}`
+      : `Hi ${customerName}! We value your feedback. Please review us on Google.`;
+
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(text)}`;
+
+    return { success: true, whatsappUrl };
+  } catch (error) {
+    console.error('WhatsApp link error:', error);
+    return { error: 'Failed to generate WhatsApp link' };
   }
 }
