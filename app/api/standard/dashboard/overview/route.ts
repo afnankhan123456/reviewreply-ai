@@ -94,6 +94,27 @@ export async function GET() {
       },
     });
 
+    // Pichle 30 din ka daily trend (Review Performance chart ke liye)
+    const dailyTrend = [];
+    const today = new Date();
+    for (let i = 29; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      const startOfDay = new Date(date);
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(date);
+      endOfDay.setHours(23, 59, 59, 999);
+
+      const count = await prisma.review.count({
+        where: { userId, createdAt: { gte: startOfDay, lte: endOfDay } },
+      });
+
+      dailyTrend.push({
+        date: startOfDay.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        count,
+      });
+    }
+
     return NextResponse.json({
       success: true,
       data: {
@@ -108,6 +129,7 @@ export async function GET() {
         sourceBreakdown,
         topTags,
         latestReviews,
+        dailyTrend,
       },
     });
   } catch (error) {
