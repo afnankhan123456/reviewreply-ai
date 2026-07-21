@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useRef, useMemo } from "react";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import {
@@ -16,13 +16,119 @@ import {
   Mail,
   Lock,
 } from "lucide-react";
+// Three.js imports for 3D Particle Wave Mesh
+import { Canvas, useFrame } from "@react-three/fiber";
+import * as THREE from "three";
+
+// 3D Particle Wave Mesh Component
+function ParticleWave() {
+  const meshRef = useRef();
+  const segments = 80; // Mesh ki density
+  const width = 30; // Width of the wave
+  const height = 15; // Depth of the wave
+
+  // Geometry generate karna (positions aur grid lines)
+  const { positions, gridIndices } = useMemo(() => {
+    const pos = [];
+    const idx = [];
+    for (let i = 0; i <= segments; i++) {
+      for (let j = 0; j <= segments; j++) {
+        const x = (i / segments - 0.5) * width;
+        const z = (j / segments - 0.5) * height;
+        pos.push(x, 0, z);
+      }
+    }
+    // Horizontal lines for grid
+    for (let i = 0; i <= segments; i++) {
+      for (let j = 0; j < segments; j++) {
+        const a = i * (segments + 1) + j;
+        const b = a + 1;
+        idx.push(a, b);
+      }
+    }
+    // Vertical lines for grid
+    for (let j = 0; j <= segments; j++) {
+      for (let i = 0; i < segments; i++) {
+        const a = i * (segments + 1) + j;
+        const b = (i + 1) * (segments + 1) + j;
+        idx.push(a, b);
+      }
+    }
+    return {
+      positions: new Float32Array(pos),
+      gridIndices: new Uint16Array(idx),
+    };
+  }, [segments, width, height]);
+
+  // Animation Loop (Har frame pe wave move hogi)
+  useFrame((state) => {
+    const t = state.clock.getElapsedTime() * 0.3; // Speed control
+    if (meshRef.current) {
+      const pos = meshRef.current.geometry.attributes.position.array;
+      for (let i = 0; i <= segments; i++) {
+        for (let j = 0; j <= segments; j++) {
+          const idx = (i * (segments + 1) + j) * 3;
+          const x = (i / segments - 0.5) * width;
+          const z = (j / segments - 0.5) * height;
+          // Y-axis par height change (3D wave effect)
+          pos[idx + 1] =
+            Math.sin(x * 0.5 + t) * 1.2 +
+            Math.cos(z * 0.7 + t * 1.2) * 1.2 +
+            Math.sin(x * 0.2 + z * 0.3 + t) * 0.5;
+        }
+      }
+      meshRef.current.geometry.attributes.position.needsUpdate = true;
+    }
+  });
+
+  return (
+    <group rotation={[-Math.PI / 2.5, 0, 0]} position={[0, -3, 0]}>
+      {/* Glowing Particles (Dots) */}
+      <points ref={meshRef}>
+        <bufferGeometry>
+          <bufferAttribute
+            attach="attributes-position"
+            count={positions.length / 3}
+            array={positions}
+            itemSize={3}
+          />
+        </bufferGeometry>
+        <pointsMaterial
+          color="#ff2d55"
+          size={0.15}
+          transparent
+          opacity={0.9}
+          sizeAttenuation
+          blending={THREE.AdditiveBlending} // Glow effect
+        />
+      </points>
+
+      {/* Wireframe Grid Lines (Mesh connections) */}
+      <lineSegments>
+        <bufferGeometry>
+          <bufferAttribute
+            attach="attributes-position"
+            count={positions.length / 3}
+            array={positions}
+            itemSize={3}
+          />
+          <bufferAttribute
+            attach="index"
+            count={gridIndices.length}
+            array={gridIndices}
+            itemSize={1}
+          />
+        </bufferGeometry>
+        <lineBasicMaterial color="#ff2d55" transparent opacity={0.15} />
+      </lineSegments>
+    </group>
+  );
+}
 
 function LoginPageContent() {
   const searchParams = useSearchParams();
 
   const handleLogin = async () => {
-    // Agar koi specific callbackUrl diya gaya hai (jaise team invite link),
-    // usi pe wapas bhejo. Warna default pricing page pe.
     const rawCallback = searchParams.get("callbackUrl");
     const safeCallback =
       rawCallback && rawCallback.startsWith("/") ? rawCallback : "/plans/basic/pricing";
@@ -51,34 +157,17 @@ function LoginPageContent() {
       `}</style>
 
       <div className="min-h-screen relative bg-black overflow-hidden">
-        {/* 🔴 Big glowing red orb — top right, matches reference image */}
+        {/* 🔴 Big glowing red orb — top right */}
         <div className="absolute -top-40 right-[-200px] w-[900px] h-[900px] rounded-full bg-gradient-to-br from-[#ff2d55] via-[#c81e3a] to-transparent opacity-30 blur-[80px] pointer-events-none" />
         <div className="absolute top-[-100px] right-[-100px] w-[600px] h-[600px] rounded-full border border-[#ff3b5c]/30 pointer-events-none" />
 
-        {/* Decorative wave at bottom */}
-        <svg
-          className="absolute bottom-0 left-0 w-full h-[300px] pointer-events-none opacity-70"
-          viewBox="0 0 1440 300"
-          preserveAspectRatio="none"
-        >
-          <defs>
-            <linearGradient id="waveGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#ff2d55" stopOpacity="0.5" />
-              <stop offset="100%" stopColor="#ff2d55" stopOpacity="0" />
-            </linearGradient>
-          </defs>
-          <path
-            d="M0,180 C240,240 480,120 720,150 C960,180 1200,260 1440,190 L1440,300 L0,300 Z"
-            fill="url(#waveGradient)"
-          />
-          <path
-            d="M0,200 C240,150 480,220 720,190 C960,160 1200,230 1440,200"
-            fill="none"
-            stroke="#ff3b5c"
-            strokeWidth="1"
-            opacity="0.4"
-          />
-        </svg>
+        {/* 🟢 NEW: 3D Particle Wave Mesh */}
+        <div className="absolute bottom-0 left-0 w-full h-[350px] z-0 pointer-events-none">
+          <Canvas camera={{ position: [0, 8, 15], fov: 50 }}>
+            <ambientLight intensity={0.5} />
+            <ParticleWave />
+          </Canvas>
+        </div>
 
         <div className="relative z-10 grid xl:grid-cols-2 min-h-screen">
           {/* LEFT SIDE */}
