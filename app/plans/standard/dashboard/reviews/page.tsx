@@ -29,6 +29,19 @@ export default function ReviewsPage() {
   // ✅ Theme state
   const [theme, setTheme] = useState<"light" | "dark">("dark");
 
+  // ✅ Share modal state
+  const [shareMenu, setShareMenu] = useState<{
+    open: boolean;
+    name: string;
+    text: string;
+    rating: number;
+  }>({
+    open: false,
+    name: '',
+    text: '',
+    rating: 0,
+  });
+
   useEffect(() => {
     const saved = localStorage.getItem("theme");
     if (saved === "light" || saved === "dark") {
@@ -112,23 +125,64 @@ export default function ReviewsPage() {
     }
   };
 
-  // ✅ NEW: Social share handler (Task 4)
-  const handleShare = async (name: string, text: string, rating: number) => {
-    const shareText = `${rating}★ review from ${name}: "${text}"`;
+  // ✅ NEW: Open share modal
+  const handleShare = (name: string, text: string, rating: number) => {
+    setShareMenu({ open: true, name, text, rating });
+  };
 
-    if (navigator.share) {
-      try {
-        await navigator.share({ text: shareText });
-      } catch (error) {
-        // user cancelled share — no action needed
+  // ✅ Close share modal
+  const closeShareMenu = () => {
+    setShareMenu((prev) => ({ ...prev, open: false }));
+  };
+
+  // ✅ Perform share action
+  const shareCurrentReview = async (
+    platform: 'whatsapp' | 'x' | 'linkedin' | 'facebook' | 'copy'
+  ) => {
+    if (!shareMenu.open) return;
+
+    const shareText = `${shareMenu.rating}★ review from ${shareMenu.name}: "${shareMenu.text}"`;
+    const pageUrl = window.location.href;
+    const combinedText = `${shareText}\n${pageUrl}`;
+
+    try {
+      if (platform === 'whatsapp') {
+        window.open(
+          `https://wa.me/?text=${encodeURIComponent(combinedText)}`,
+          '_blank',
+          'noopener,noreferrer'
+        );
+      } else if (platform === 'x') {
+        window.open(
+          `https://twitter.com/intent/tweet?text=${encodeURIComponent(combinedText)}`,
+          '_blank',
+          'noopener,noreferrer'
+        );
+      } else if (platform === 'linkedin') {
+        window.open(
+          `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(pageUrl)}`,
+          '_blank',
+          'noopener,noreferrer'
+        );
+      } else if (platform === 'facebook') {
+        window.open(
+          `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`,
+          '_blank',
+          'noopener,noreferrer'
+        );
+      } else {
+        // copy
+        if (navigator.clipboard?.writeText) {
+          await navigator.clipboard.writeText(combinedText);
+          setToast({ message: 'Review copied to clipboard!', type: 'success' });
+        } else {
+          window.prompt('Copy this review text:', combinedText);
+        }
       }
-    } else {
-      try {
-        await navigator.clipboard.writeText(shareText);
-        setToast({ message: 'Review copied to clipboard!', type: 'success' });
-      } catch (error) {
-        setToast({ message: 'Unable to copy review', type: 'error' });
-      }
+    } catch (error) {
+      setToast({ message: 'Unable to share review', type: 'error' });
+    } finally {
+      closeShareMenu();
     }
   };
 
@@ -298,7 +352,7 @@ export default function ReviewsPage() {
                   setSelectedReviewText(text);
                   setShowReplyModal(true);
                 }}
-                onShareClick={handleShare}
+                onShareClick={handleShare}  // ✅ Pass the new modal handler
                 theme={theme}
               />
             ))
@@ -359,6 +413,70 @@ export default function ReviewsPage() {
                 Send Reply
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ✅ Share Modal */}
+      {shareMenu.open && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
+          <div className={`${modalBg} border rounded-xl p-6 w-[420px] shadow-2xl`}>
+            <h3 className={`text-lg font-medium ${textPrimary} mb-2`}>Share Review</h3>
+            <p className={`text-sm ${textSecondary} mb-4 line-clamp-2`}>
+              {shareMenu.name} · {shareMenu.rating}★
+            </p>
+
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                className="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-500 text-white text-sm"
+                onClick={() => shareCurrentReview('whatsapp')}
+              >
+                WhatsApp
+              </button>
+
+              <button
+                className="px-4 py-2 rounded-lg bg-black hover:bg-zinc-800 text-white text-sm"
+                onClick={() => shareCurrentReview('x')}
+              >
+                X
+              </button>
+
+              <button
+                className="px-4 py-2 rounded-lg bg-blue-700 hover:bg-blue-600 text-white text-sm"
+                onClick={() => shareCurrentReview('linkedin')}
+              >
+                LinkedIn
+              </button>
+
+              <button
+                className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm"
+                onClick={() => shareCurrentReview('facebook')}
+              >
+                Facebook
+              </button>
+
+              <button
+                className={`col-span-2 px-4 py-2 rounded-lg text-sm ${
+                  theme === 'light'
+                    ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    : 'bg-[#1F2430] text-gray-300 hover:bg-[#2A303C]'
+                }`}
+                onClick={() => shareCurrentReview('copy')}
+              >
+                Copy Text
+              </button>
+            </div>
+
+            <button
+              className={`mt-4 w-full px-4 py-2 rounded-lg text-sm ${
+                theme === 'light'
+                  ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  : 'bg-[#1F2430] text-gray-400 hover:bg-[#2A303C]'
+              }`}
+              onClick={closeShareMenu}
+            >
+              Cancel
+            </button>
           </div>
         </div>
       )}
@@ -432,5 +550,3 @@ function ReviewRow({ reviewId, reviewText, name, text, rating, sentiment, source
     </div>
   );
 }
-
-
