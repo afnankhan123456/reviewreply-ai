@@ -31,87 +31,93 @@ export async function GET() {
 
     const cycleStart = userCheck?.monthlyResetDate || userCheck?.createdAt || new Date();
 
-    const totalReviews = await prisma.review.count({ where: { userId } });
-
-    const avgRatingResult = await prisma.review.aggregate({
-      where: { userId },
-      _avg: { rating: true },
-    });
-
-    const newReviews = await prisma.review.count({
-      where: { userId, createdAt: { gte: cycleStart } },
-    });
-
-    const repliedReviews = await prisma.review.count({ where: { userId, replied: true } });
-    const responseRate = totalReviews > 0 ? Math.round((repliedReviews / totalReviews) * 100) : 0;
-
-    const lowRatingCount = await prisma.review.count({ where: { userId, rating: { lte: 2 } } });
-
-    const starBreakdown = [];
-    for (const stars of [5, 4, 3, 2, 1]) {
-      const count = await prisma.review.count({ where: { userId, rating: stars } });
-      const percent = totalReviews > 0 ? Math.round((count / totalReviews) * 100) : 0;
-      starBreakdown.push({ stars, count, percent });
-    }
-
-    const positiveCount = await prisma.review.count({ where: { userId, rating: { gte: 4 } } });
-    const neutralCount = await prisma.review.count({ where: { userId, rating: 3 } });
-    const negativeCount = lowRatingCount;
-    const positivePercent = totalReviews > 0 ? Math.round((positiveCount / totalReviews) * 100) : 0;
-    const neutralPercent = totalReviews > 0 ? Math.round((neutralCount / totalReviews) * 100) : 0;
-    const negativePercent = totalReviews > 0 ? Math.round((negativeCount / totalReviews) * 100) : 0;
-
-    const sourceGroups = await prisma.review.groupBy({
-      by: ['source'],
-      where: { userId },
-      _count: { source: true },
-    });
-    const sourceBreakdown = sourceGroups.map((g) => ({
-      source: g.source || 'Other',
-      count: g._count.source,
-    }));
-
-    const allTags = getAllPossibleTags();
-    const tagCounts: { tag: string; count: number }[] = [];
-    for (const tag of allTags) {
-      const count = await prisma.review.count({ where: { userId, tags: { has: tag } } });
-      if (count > 0) tagCounts.push({ tag, count });
-    }
-    tagCounts.sort((a, b) => b.count - a.count);
-    const topTags = tagCounts.slice(0, 20);
-
-    const latestReviews = await prisma.review.findMany({
+    // ✅ Saare reviews ek hi baar mein le lo — baaki sab yahan se JS mein calculate hoga
+    const allReviews = await prisma.review.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },
-      take: 3,
       select: {
         id: true,
         reviewerName: true,
         rating: true,
         comment: true,
         source: true,
+        replied: true,
+        tags: true,
         createdAt: true,
       },
     });
 
-    // Pichle 30 din ka daily trend (Review Performance chart ke liye)
+    const totalReviews = allReviews.length;
+
+    const avgRating = totalReviews > 0
+      ? allReviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews
+      : 0;
+
+    const newReviews = allReviews.filter((r) => r.createdAt >= cycleStart).length;
+
+    const repliedReviews = allReviews.filter((r) => r.replied).length;
+    const responseRate = totalReviews > 0 ? Math.round((repliedReviews / totalReviews) * 100) : 0;
+
+    const lowRatingCount = allReviews.filter((r) => r.rating <= 2).length;
+
+    const starBreakdown = [5, 4, 3, 2, 1].map((stars) => {
+      const count = allReviews.filter((r) => r.rating === stars).length;
+      const percent = totalReviews > 0 ? Math.round((count / totalReviews) * 100) : 0;
+      return { stars, count, percent };
+    });
+
+    const positiveCount = allReviews.filter((r) => r.rating >= 4).length;
+    const neutralCount = allReviews.filter((r) => r.rating === 3).length;
+    const negativeCount = lowRatingCount;
+    const positivePercent = totalReviews > 0 ? Math.round((positiveCount / totalReviews) * 100) : 0;
+    const neutralPercent = totalReviews > 0 ? Math.round((neutralCount / totalReviews) * 100) : 0;
+    const negativePercent = totalReviews > 0 ? Math.round((negativeCount / totalReviews) * 100) : 0;
+
+    const sourceMap: Record<string, number> = {};
+    for (const r of allReviews) {
+      const key = r.source || 'Other';
+      sourceMap[key] = (sourceMap[key] || 0) + 1;
+    }
+    const sourceBreakdown = Object.entries(sourceMap).map(([source, count]) => ({ source, count }));
+
+    const allTags = getAllPossibleTags();
+    const tagCountMap: Record<string, number> = {};
+    for (const r of allReviews) {
+      for (const t of r.tags) {
+        tagCountMap[t] = (tagCountMap[t] || 0) + 1;
+      }
+    }
+    const tagCounts = allTags
+      .map((tag) => ({ tag, count: tagCountMap[tag] || 0 }))
+      .filter((t) => t.count > 0)
+      .sort((a, b) => b.count - a.count);
+    const topTags = tagCounts.slice(0, 20);
+
+    const latestReviews = allReviews.slice(0, 3).map((r) => ({
+      id: r.id,
+      reviewerName: r.reviewerName,
+      rating: r.rating,
+      comment: r.comment,
+      source: r.source,
+      createdAt: r.createdAt,
+    }));
+
+    // ✅ Pichle 30 din ka daily trend — ek hi pass mein bucket karke
+    const dailyBuckets: Record<string, number> = {};
+    for (const r of allReviews) {
+      const key = new Date(r.createdAt).toDateString();
+      dailyBuckets[key] = (dailyBuckets[key] || 0) + 1;
+    }
+
     const dailyTrend = [];
     const today = new Date();
     for (let i = 29; i >= 0; i--) {
       const date = new Date(today);
       date.setDate(date.getDate() - i);
-      const startOfDay = new Date(date);
-      startOfDay.setHours(0, 0, 0, 0);
-      const endOfDay = new Date(date);
-      endOfDay.setHours(23, 59, 59, 999);
-
-      const count = await prisma.review.count({
-        where: { userId, createdAt: { gte: startOfDay, lte: endOfDay } },
-      });
-
+      const key = date.toDateString();
       dailyTrend.push({
-        date: startOfDay.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-        count,
+        date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        count: dailyBuckets[key] || 0,
       });
     }
 
@@ -120,7 +126,7 @@ export async function GET() {
       data: {
         userName: userCheck?.email ? deriveNameFromEmail(userCheck.email) : 'there',
         totalReviews,
-        avgRating: Number((avgRatingResult._avg.rating || 0).toFixed(1)),
+        avgRating: Number(avgRating.toFixed(1)),
         newReviews,
         responseRate,
         lowRatingCount,
