@@ -33,7 +33,7 @@ export default function DashboardLayout({
     if (saved === "light" || saved === "dark") {
       setTheme(saved);
     }
-  }, [pathname]); // <-- pathname change hone par dobara read hoga
+  }, [pathname]);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -78,17 +78,25 @@ export default function DashboardLayout({
   }
 
   return (
-    // ✅ Outer container ab sirf layout structure rakhta hai, background nahi
     <div className="flex h-screen w-full font-sans overflow-hidden">
       
-      {/* ✅ Sidebar – hamesha dark (koi change nahi) */}
+      {/* ✅ Sidebar – hamesha dark */}
       <aside className="w-64 bg-[#11141C] border-r border-[#1F2430] flex flex-col p-4 overflow-y-auto">
-        <div className="flex items-center gap-2 mb-10 px-2">
-          <div className="bg-indigo-500 p-1.5 rounded-lg">
-            <Sparkles className="w-5 h-5 text-white" />
-          </div>
-          <span className="text-xl font-bold tracking-tight text-white">ReviewMate</span>
-        </div>
+        
+        {/* 🔽 Updated Header: Logo + "ReviewReply AI" */}
+        <Link 
+          href="/plans/standard/dashboard" 
+          className="flex items-center gap-3 mb-10 px-2 hover:opacity-80 transition-opacity"
+        >
+          <img 
+            src="https://raw.githubusercontent.com/afnankhan123456/reviewreply-ai/main/public/ai-logo.png" 
+            alt="ReviewReply AI" 
+            className="h-9 w-auto object-contain" 
+          />
+          <span className="text-xl font-bold tracking-tight text-white">
+            ReviewReply AI
+          </span>
+        </Link>
 
         <nav className="space-y-1 flex-1">
           <NavItem icon={<LayoutDashboard size={20} />} label="Overview" href="/plans/standard/dashboard" isActive={activeItem === 'Overview'} onClick={() => setActiveItem('Overview')} />
@@ -105,7 +113,7 @@ export default function DashboardLayout({
             <NavItem icon={<PlugZap size={20} />} label="Connect App" href="/plans/standard/dashboard/connect-app" isActive={activeItem === 'Connect App'} onClick={() => setActiveItem('Connect App')} />
           )}
           
-          {/* 🔽 Competitors NavItem REMOVED */}
+          {/* Competitors NavItem REMOVED */}
 
           {isOwner && (
             <NavItem icon={<Users size={20} />} label="Team" href="/plans/standard/dashboard/team" isActive={activeItem === 'Team'} onClick={() => setActiveItem('Team')} />
@@ -136,7 +144,7 @@ export default function DashboardLayout({
         </div>
       </aside>
 
-      {/* ✅ Main content area – background aur text theme ke according badlega */}
+      {/* Main content – theme ke hisaab se background */}
       <div className={`flex-1 flex flex-col h-screen overflow-hidden relative transition-colors duration-300 ${
         theme === "light" 
           ? "bg-gray-50 text-gray-900" 
