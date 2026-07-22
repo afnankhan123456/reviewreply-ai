@@ -21,29 +21,28 @@ export async function GET() {
       cacheKey,
       async () => {
         const today = new Date();
-        const dailyData = [];
+        const sevenDaysAgo = new Date(today);
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+        sevenDaysAgo.setHours(0, 0, 0, 0);
 
+        // ✅ Ek hi query se pichle 7 din ke saare reviews le lo
+        const reviews = await prisma.review.findMany({
+          where: { userId, createdAt: { gte: sevenDaysAgo } },
+          select: { createdAt: true },
+        });
+
+        const dayBuckets: Record<string, number> = {};
+        for (const r of reviews) {
+          const key = new Date(r.createdAt).toDateString();
+          dayBuckets[key] = (dayBuckets[key] || 0) + 1;
+        }
+
+        const dailyData = [];
         for (let i = 6; i >= 0; i--) {
           const date = new Date(today);
           date.setDate(date.getDate() - i);
-
-          const startOfDay = new Date(date);
-          startOfDay.setHours(0, 0, 0, 0);
-
-          const endOfDay = new Date(date);
-          endOfDay.setHours(23, 59, 59, 999);
-
-          const count = await prisma.review.count({
-            where: {
-              userId,
-              createdAt: {
-                gte: startOfDay,
-                lte: endOfDay,
-              },
-            },
-          });
-
-          dailyData.push(count);
+          const key = date.toDateString();
+          dailyData.push(dayBuckets[key] || 0);
         }
 
         return {
