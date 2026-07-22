@@ -28,8 +28,19 @@ export async function GET() {
       cacheKey,
       async () => {
         const today = new Date();
-        const weeklyData = [];
 
+        // Sabse purani week ka start pata karo (7 weeks pehle)
+        const earliestWeekStart = new Date(today);
+        earliestWeekStart.setDate(earliestWeekStart.getDate() - (6 * 7));
+        earliestWeekStart.setHours(0, 0, 0, 0);
+
+        // ✅ Ek hi query se saari zaroori reviews le lo
+        const reviews = await prisma.review.findMany({
+          where: { userId, createdAt: { gte: earliestWeekStart } },
+          select: { createdAt: true },
+        });
+
+        const weeklyData = [];
         for (let i = 6; i >= 0; i--) {
           const weekStart = new Date(today);
           weekStart.setDate(weekStart.getDate() - (i * 7));
@@ -39,15 +50,9 @@ export async function GET() {
           weekEnd.setDate(weekEnd.getDate() + 6);
           weekEnd.setHours(23, 59, 59, 999);
 
-          const count = await prisma.review.count({
-            where: {
-              userId,
-              createdAt: {
-                gte: weekStart,
-                lte: weekEnd,
-              },
-            },
-          });
+          const count = reviews.filter(
+            (r) => r.createdAt >= weekStart && r.createdAt <= weekEnd
+          ).length;
 
           weeklyData.push(count);
         }
