@@ -58,9 +58,10 @@ function LoginPageContent() {
         <div className="relative z-10 grid xl:grid-cols-2 min-h-screen">
           {/* LEFT SIDE */}
           <div className="flex flex-col justify-center px-6 lg:px-16 py-10 order-last xl:order-none">
-            <div className="flex items-center gap-2 mb-8">
-              <img src="/ai-logo.png" alt="ReviewReply AI" className="w-9 h-9 object-contain" />
-              <h1 className="text-xl font-extrabold tracking-tight text-white">
+            {/* Logo — badha diya */}
+            <div className="flex items-center gap-3 mb-8">
+              <img src="/ai-logo.png" alt="ReviewReply AI" className="w-14 h-14 object-contain" />
+              <h1 className="text-2xl lg:text-3xl font-extrabold tracking-tight text-white">
                 ReviewReply <span className="text-[#ff2d55]">AI</span>
               </h1>
             </div>
@@ -142,7 +143,7 @@ function LoginPageContent() {
 
           {/* RIGHT SIDE - LOGIN CARD */}
           <div className="flex items-center justify-center px-6 py-10 order-first xl:order-none">
-            <div className="w-full max-w-md bg-[#0a0505] border border-white/10 rounded-3xl p-8 shadow-[0_0_80px_-20px_rgba(255,45,85,0.3)]">
+            <div className="w-full max-w-md bg-black/30 backdrop-blur-md border border-white/10 rounded-3xl p-8 shadow-[0_0_80px_-20px_rgba(255,45,85,0.3)]">
               <div className="flex justify-center mb-5">
                 <div className="relative w-20 h-20 flex items-center justify-center">
                   <div className="absolute inset-0 rounded-full border border-[#ff2d55]/20" />
@@ -154,7 +155,7 @@ function LoginPageContent() {
               <h2 className="text-2xl font-extrabold text-center text-white">
                 Welcome <span className="text-[#ff2d55]">Back</span>
               </h2>
-              <p className="text-gray-500 text-center mt-1 text-sm mb-6">
+              <p className="text-gray-300 text-center mt-1 text-sm mb-6">
                 Sign in to continue to your dashboard
               </p>
 
@@ -172,7 +173,7 @@ function LoginPageContent() {
 
               <div className="flex items-center justify-center gap-3 my-4">
                 <div className="h-px bg-white/10 flex-1"></div>
-                <p className="text-gray-500 text-xs font-medium">OR</p>
+                <p className="text-gray-300 text-xs font-medium">OR</p>
                 <div className="h-px bg-white/10 flex-1"></div>
               </div>
 
@@ -184,11 +185,11 @@ function LoginPageContent() {
                 Continue with Email
               </button>
 
-              <div className="bg-white/[0.03] rounded-xl p-3 border border-white/10 flex items-start gap-2.5 mt-5">
+              <div className="bg-white/[0.05] rounded-xl p-3 border border-white/10 flex items-start gap-2.5 mt-5">
                 <div className="w-8 h-8 rounded-full bg-[#2a0a10] text-[#ff2d55] flex items-center justify-center shrink-0">
                   <Lock className="w-3.5 h-3.5" />
                 </div>
-                <p className="text-gray-400 text-xs leading-5">
+                <p className="text-gray-300 text-xs leading-5">
                   We use Google secure OAuth to keep your account and data safe.
                 </p>
               </div>
@@ -206,7 +207,7 @@ function LoginPageContent() {
                         <Icon className="w-4 h-4" />
                       </div>
                       <h4 className="font-bold text-[11px] text-white leading-tight">{item.title}</h4>
-                      <p className="text-[9px] text-gray-500 mt-1 leading-tight">{item.desc}</p>
+                      <p className="text-[9px] text-gray-300 mt-1 leading-tight">{item.desc}</p>
                     </div>
                   );
                 })}
