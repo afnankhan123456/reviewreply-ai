@@ -30,9 +30,10 @@ export async function GET() {
     const responseData = await getCachedOrFetch(
       cacheKey,
       async () => {
+        // ✅ Ek hi query mein user ka createdAt + monthlyResetDate dono le lo
         const user = await prisma.user.findUnique({
           where: { id: userId },
-          select: { createdAt: true },
+          select: { createdAt: true, monthlyResetDate: true },
         });
 
         const pastCycles = await prisma.tagCycle.findMany({
@@ -41,13 +42,8 @@ export async function GET() {
           take: 5,
         });
 
-        const currentUser = await prisma.user.findUnique({
-          where: { id: userId },
-          select: { monthlyResetDate: true },
-        });
-
         const now = new Date();
-        const currentCycleStart = currentUser?.monthlyResetDate || user?.createdAt || now;
+        const currentCycleStart = user?.monthlyResetDate || user?.createdAt || now;
 
         const allCycles = [
           { cycleStart: currentCycleStart, cycleEnd: now, label: 'Current Cycle' },
@@ -58,43 +54,47 @@ export async function GET() {
           })),
         ].slice(0, 6);
 
+        // ✅ Saare cycles ka earliest-start pata karke, ek hi query se sab reviews le lo
+        const earliestStart = allCycles.reduce(
+          (min, c) => (c.cycleStart < min ? c.cycleStart : min),
+          allCycles[0].cycleStart
+        );
+
+        const allReviews = await prisma.review.findMany({
+          where: { userId, createdAt: { gte: earliestStart } },
+          select: { rating: true, replied: true, tags: true, createdAt: true },
+        });
+
         const allTags = getAllPossibleTags();
         const monthlyData = [];
 
         for (const cycle of allCycles) {
-          const count = await prisma.review.count({
-            where: { userId, createdAt: { gte: cycle.cycleStart, lt: cycle.cycleEnd } },
-          });
+          const cycleReviews = allReviews.filter(
+            (r) => r.createdAt >= cycle.cycleStart && r.createdAt < cycle.cycleEnd
+          );
 
+          const count = cycleReviews.length;
           if (count === 0) continue;
 
-          const avgRatingResult = await prisma.review.aggregate({
-            where: { userId, createdAt: { gte: cycle.cycleStart, lt: cycle.cycleEnd } },
-            _avg: { rating: true },
-          });
+          const avgRating = cycleReviews.reduce((sum, r) => sum + r.rating, 0) / count;
+          const repliedCount = cycleReviews.filter((r) => r.replied).length;
 
-          const repliedCount = await prisma.review.count({
-            where: { userId, replied: true, createdAt: { gte: cycle.cycleStart, lt: cycle.cycleEnd } },
-          });
-
-          const tagBreakdown: { tag: string; count: number }[] = [];
-          for (const tag of allTags) {
-            const tagCount = await prisma.review.count({
-              where: {
-                userId,
-                tags: { has: tag },
-                createdAt: { gte: cycle.cycleStart, lt: cycle.cycleEnd },
-              },
-            });
-            if (tagCount > 0) tagBreakdown.push({ tag, count: tagCount });
+          const tagCountMap: Record<string, number> = {};
+          for (const r of cycleReviews) {
+            for (const t of r.tags) {
+              tagCountMap[t] = (tagCountMap[t] || 0) + 1;
+            }
           }
+          const tagBreakdown = allTags
+            .map((tag) => ({ tag, count: tagCountMap[tag] || 0 }))
+            .filter((t) => t.count > 0);
 
           monthlyData.push({
             month: cycle.label,
             periodStart: cycle.cycleStart,
             periodEnd: cycle.cycleEnd,
             count,
-            avgRating: Number((avgRatingResult._avg.rating || 0).toFixed(1)),
+            avgRating: Number(avgRating.toFixed(1)),
             responseRate: Math.round((repliedCount / count) * 100),
             tagBreakdown,
           });
