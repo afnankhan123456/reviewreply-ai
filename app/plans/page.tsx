@@ -65,6 +65,10 @@ const standardFeatures = [
   "Knowledge Base / Help Center",
   "Priority Support",
   "Custom Review Filters",
+  "Unified Inbox",
+  "Social Media Sharing",
+  "WhatsApp Review Requests",
+  "Public Review Page",
 ];
 
 const proFeatures = [
