@@ -63,7 +63,7 @@ const proFeatures = [
 
 export default function PlansPage() {
   return (
-    <div className="min-h-screen bg-black text-white px-4 md:px-8 py-6 relative overflow-hidden">
+    <div className="min-h-screen bg-black text-white px-4 md:px-10 py-6 relative overflow-hidden">
 
       <div className="absolute top-[10%] left-[-200px] w-[700px] h-[700px] rounded-full bg-violet-600/20 blur-[140px] pointer-events-none" />
       <div className="absolute top-[5%] right-[-200px] w-[700px] h-[700px] rounded-full bg-blue-600/20 blur-[140px] pointer-events-none" />
@@ -144,7 +144,7 @@ export default function PlansPage() {
         </div>
 
         {/* PLANS */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-[1600px] mx-auto items-stretch">
 
           {/* BASIC */}
           <Link href="/plans/basic/pricing" className="h-full">
@@ -163,11 +163,11 @@ export default function PlansPage() {
                 Perfect for small businesses
               </p>
 
-              <div className="grid grid-cols-2 gap-x-3 gap-y-2.5 text-zinc-300 text-sm flex-1">
+              <div className="grid grid-cols-2 gap-x-2 gap-y-2.5 text-zinc-300 text-xs flex-1">
                 {basicFeatures.map((feature) => (
-                  <div key={feature} className="flex items-center gap-1.5">
-                    <CheckCircle2 size={14} className="text-violet-400 shrink-0" />
-                    <span>{feature}</span>
+                  <div key={feature} className="flex items-center gap-1.5 whitespace-nowrap overflow-hidden">
+                    <CheckCircle2 size={13} className="text-violet-400 shrink-0" />
+                    <span className="truncate" title={feature}>{feature}</span>
                   </div>
                 ))}
               </div>
@@ -204,11 +204,11 @@ export default function PlansPage() {
                 Best for growing businesses
               </p>
 
-              <div className="grid grid-cols-2 gap-x-3 gap-y-2.5 text-zinc-300 text-sm flex-1">
+              <div className="grid grid-cols-2 gap-x-2 gap-y-2.5 text-zinc-300 text-xs flex-1">
                 {standardFeatures.map((feature) => (
-                  <div key={feature} className="flex items-center gap-1.5">
-                    <CheckCircle2 size={14} className="text-blue-400 shrink-0" />
-                    <span>{feature}</span>
+                  <div key={feature} className="flex items-center gap-1.5 whitespace-nowrap overflow-hidden">
+                    <CheckCircle2 size={13} className="text-blue-400 shrink-0" />
+                    <span className="truncate" title={feature}>{feature}</span>
                   </div>
                 ))}
               </div>
@@ -241,11 +241,11 @@ export default function PlansPage() {
                 Full power for agencies & brands
               </p>
 
-              <div className="grid grid-cols-2 gap-x-3 gap-y-2.5 text-zinc-300 text-sm flex-1">
+              <div className="grid grid-cols-2 gap-x-2 gap-y-2.5 text-zinc-300 text-xs flex-1">
                 {proFeatures.map((feature) => (
-                  <div key={feature} className="flex items-center gap-1.5">
-                    <CheckCircle2 size={14} className="text-yellow-400 shrink-0" />
-                    <span>{feature}</span>
+                  <div key={feature} className="flex items-center gap-1.5 whitespace-nowrap overflow-hidden">
+                    <CheckCircle2 size={13} className="text-yellow-400 shrink-0" />
+                    <span className="truncate" title={feature}>{feature}</span>
                   </div>
                 ))}
               </div>
