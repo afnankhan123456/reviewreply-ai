@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useRef, useMemo } from "react";
+import { Suspense } from "react";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import {
@@ -16,114 +16,7 @@ import {
   Mail,
   Lock,
 } from "lucide-react";
-// Three.js imports for 3D Particle Wave Mesh
-import { Canvas, useFrame } from "@react-three/fiber";
-import * as THREE from "three";
-
-// 3D Particle Wave Mesh Component
-function ParticleWave() {
-  const meshRef = useRef();
-  const segments = 80; // Mesh ki density
-  const width = 30; // Width of the wave
-  const height = 15; // Depth of the wave
-
-  // Geometry generate karna (positions aur grid lines)
-  const { positions, gridIndices } = useMemo(() => {
-    const pos = [];
-    const idx = [];
-    for (let i = 0; i <= segments; i++) {
-      for (let j = 0; j <= segments; j++) {
-        const x = (i / segments - 0.5) * width;
-        const z = (j / segments - 0.5) * height;
-        pos.push(x, 0, z);
-      }
-    }
-    // Horizontal lines for grid
-    for (let i = 0; i <= segments; i++) {
-      for (let j = 0; j < segments; j++) {
-        const a = i * (segments + 1) + j;
-        const b = a + 1;
-        idx.push(a, b);
-      }
-    }
-    // Vertical lines for grid
-    for (let j = 0; j <= segments; j++) {
-      for (let i = 0; i < segments; i++) {
-        const a = i * (segments + 1) + j;
-        const b = (i + 1) * (segments + 1) + j;
-        idx.push(a, b);
-      }
-    }
-    return {
-      positions: new Float32Array(pos),
-      gridIndices: new Uint16Array(idx),
-    };
-  }, [segments, width, height]);
-
-  // Animation Loop (Har frame pe wave move hogi)
-  useFrame((state) => {
-    const t = state.clock.getElapsedTime() * 0.3; // Speed control
-    if (meshRef.current) {
-      const pos = meshRef.current.geometry.attributes.position.array;
-      for (let i = 0; i <= segments; i++) {
-        for (let j = 0; j <= segments; j++) {
-          const idx = (i * (segments + 1) + j) * 3;
-          const x = (i / segments - 0.5) * width;
-          const z = (j / segments - 0.5) * height;
-          // Y-axis par height change (3D wave effect)
-          pos[idx + 1] =
-            Math.sin(x * 0.5 + t) * 1.2 +
-            Math.cos(z * 0.7 + t * 1.2) * 1.2 +
-            Math.sin(x * 0.2 + z * 0.3 + t) * 0.5;
-        }
-      }
-      meshRef.current.geometry.attributes.position.needsUpdate = true;
-    }
-  });
-
-  return (
-    <group rotation={[-Math.PI / 2.5, 0, 0]} position={[0, -3, 0]}>
-      {/* Glowing Particles (Dots) */}
-      <points ref={meshRef}>
-        <bufferGeometry>
-          <bufferAttribute
-            attach="attributes-position"
-            count={positions.length / 3}
-            array={positions}
-            itemSize={3}
-          />
-        </bufferGeometry>
-        <pointsMaterial
-          color="#ff2d55"
-          size={0.15}
-          transparent
-          opacity={0.9}
-          sizeAttenuation
-          blending={THREE.AdditiveBlending} // Glow effect
-        />
-      </points>
-
-      {/* Wireframe Grid Lines (Mesh connections) */}
-      <lineSegments>
-        <bufferGeometry>
-          <bufferAttribute
-            attach="attributes-position"
-            count={positions.length / 3}
-            array={positions}
-            itemSize={3}
-          />
-          <bufferAttribute
-            attach="index"
-            count={gridIndices.length}
-            array={gridIndices}
-            itemSize={1}
-          />
-        </bufferGeometry>
-        <lineBasicMaterial color="#ff2d55" transparent opacity={0.15} />
-      </lineSegments>
-    </group>
-  );
-}
+import ParticleWave from "./ParticleWave";
 
 function LoginPageContent() {
   const searchParams = useSearchParams();
@@ -157,22 +50,14 @@ function LoginPageContent() {
       `}</style>
 
       <div className="min-h-screen relative bg-black overflow-hidden">
-        {/* 🔴 Big glowing red orb — top right */}
         <div className="absolute -top-40 right-[-200px] w-[900px] h-[900px] rounded-full bg-gradient-to-br from-[#ff2d55] via-[#c81e3a] to-transparent opacity-30 blur-[80px] pointer-events-none" />
         <div className="absolute top-[-100px] right-[-100px] w-[600px] h-[600px] rounded-full border border-[#ff3b5c]/30 pointer-events-none" />
 
-        {/* 🟢 NEW: 3D Particle Wave Mesh */}
-        <div className="absolute bottom-0 left-0 w-full h-[350px] z-0 pointer-events-none">
-          <Canvas camera={{ position: [0, 8, 15], fov: 50 }}>
-            <ambientLight intensity={0.5} />
-            <ParticleWave />
-          </Canvas>
-        </div>
+        <ParticleWave />
 
         <div className="relative z-10 grid xl:grid-cols-2 min-h-screen">
           {/* LEFT SIDE */}
           <div className="flex flex-col justify-center px-6 lg:px-16 py-10 order-last xl:order-none">
-            {/* LOGO */}
             <div className="flex items-center gap-2 mb-8">
               <div className="w-9 h-9 rounded-lg bg-[#ff2d55] flex items-center justify-center text-white font-black text-lg">
                 R
@@ -182,13 +67,11 @@ function LoginPageContent() {
               </h1>
             </div>
 
-            {/* Badge */}
             <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 mb-6 w-fit">
               <Sparkles className="w-3.5 h-3.5 text-[#ff2d55]" />
               <span className="text-xs font-medium text-gray-300">AI-Powered Review Management</span>
             </div>
 
-            {/* Heading */}
             <h2 className="text-4xl lg:text-5xl font-extrabold leading-tight text-white mb-4">
               Turn Every Review
               <br />
@@ -202,7 +85,6 @@ function LoginPageContent() {
               Build trust. Improve reputation. Grow your business.
             </p>
 
-            {/* Feature cards */}
             <div className="grid grid-cols-3 gap-3 mb-10 max-w-xl">
               {[
                 {
@@ -237,7 +119,6 @@ function LoginPageContent() {
               })}
             </div>
 
-            {/* Bottom stat bar */}
             <div className="grid grid-cols-4 gap-4 bg-[#0a0a0a]/80 border border-white/10 rounded-2xl p-5 backdrop-blur-sm max-w-2xl">
               {[
                 { icon: Users, value: "10K+", label: "Businesses Trust Us" },
@@ -264,7 +145,6 @@ function LoginPageContent() {
           {/* RIGHT SIDE - LOGIN CARD */}
           <div className="flex items-center justify-center px-6 py-10 order-first xl:order-none">
             <div className="w-full max-w-md bg-[#0a0505] border border-white/10 rounded-3xl p-8 shadow-[0_0_80px_-20px_rgba(255,45,85,0.3)]">
-              {/* Logo with glow ring */}
               <div className="flex justify-center mb-5">
                 <div className="relative w-20 h-20 flex items-center justify-center">
                   <div className="absolute inset-0 rounded-full border border-[#ff2d55]/20" />
