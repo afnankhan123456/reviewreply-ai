@@ -33,52 +33,53 @@ export async function GET() {
         const startOfPrevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
         const endOfPrevMonth = new Date(now.getFullYear(), now.getMonth(), 1);
 
-        const totalReviews = await prisma.review.count({ where: { userId } });
+        // ✅ Ek hi query se saare zaroori reviews-fields le lo
+        const reviews = await prisma.review.findMany({
+          where: { userId },
+          select: { rating: true, replied: true, aiReplied: true, createdAt: true },
+        });
 
-        const repliedReviews = await prisma.review.count({ where: { userId, replied: true } });
+        const totalReviews = reviews.length;
+        const repliedReviews = reviews.filter((r) => r.replied).length;
 
         let responseRate = 0;
         if (totalReviews > 0) {
-          responseRate = Math.round((Number(repliedReviews) / Number(totalReviews)) * 100);
+          responseRate = Math.round((repliedReviews / totalReviews) * 100);
         }
 
-        const positive = await prisma.review.count({ where: { userId, rating: { gte: 4 } } });
-        const negative = await prisma.review.count({ where: { userId, rating: { lte: 2 } } });
-
-        const totalRated = totalReviews;
+        const positive = reviews.filter((r) => r.rating >= 4).length;
+        const negative = reviews.filter((r) => r.rating <= 2).length;
 
         let positivePercent = 0;
         let negativePercent = 0;
-        if (totalRated > 0) {
-          positivePercent = Math.round((Number(positive) / Number(totalRated)) * 100);
-          negativePercent = Math.round((Number(negative) / Number(totalRated)) * 100);
+        if (totalReviews > 0) {
+          positivePercent = Math.round((positive / totalReviews) * 100);
+          negativePercent = Math.round((negative / totalReviews) * 100);
         }
 
-        const aiRepliedCount = await prisma.review.count({
-          where: { userId, replied: true, aiReplied: true },
-        });
+        const aiRepliedCount = reviews.filter((r) => r.replied && r.aiReplied).length;
         const aiUsed = aiRepliedCount > 5 ? 5 : aiRepliedCount;
         const limit = 5;
 
-        const currentMonthReviews = await prisma.review.count({
-          where: { userId, createdAt: { gte: startOfCurrentMonth, lt: startOfNextMonth } },
-        });
+        const currentMonthReviews = reviews.filter(
+          (r) => r.createdAt >= startOfCurrentMonth && r.createdAt < startOfNextMonth
+        ).length;
 
-        const prevMonthReviews = await prisma.review.count({
-          where: { userId, createdAt: { gte: startOfPrevMonth, lt: endOfPrevMonth } },
-        });
+        const prevMonthReviews = reviews.filter(
+          (r) => r.createdAt >= startOfPrevMonth && r.createdAt < endOfPrevMonth
+        ).length;
 
         const totalGrowth = prevMonthReviews > 0
           ? Math.round(((currentMonthReviews - prevMonthReviews) / prevMonthReviews) * 100)
           : 0;
 
-        const currentMonthReplied = await prisma.review.count({
-          where: { userId, replied: true, createdAt: { gte: startOfCurrentMonth, lt: startOfNextMonth } },
-        });
+        const currentMonthReplied = reviews.filter(
+          (r) => r.replied && r.createdAt >= startOfCurrentMonth && r.createdAt < startOfNextMonth
+        ).length;
 
-        const prevMonthReplied = await prisma.review.count({
-          where: { userId, replied: true, createdAt: { gte: startOfPrevMonth, lt: endOfPrevMonth } },
-        });
+        const prevMonthReplied = reviews.filter(
+          (r) => r.replied && r.createdAt >= startOfPrevMonth && r.createdAt < endOfPrevMonth
+        ).length;
 
         const responseGrowth = prevMonthReplied > 0
           ? Math.round(((currentMonthReplied - prevMonthReplied) / prevMonthReplied) * 100)
