@@ -286,22 +286,14 @@ export default function ReferEarnPage() {
                 </button>
               </div>
 
-              <div className="bg-black/30 rounded-xl p-4 max-w-lg border border-white/10">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <IndianRupee className="w-5 h-5 text-amber-400" />
-                    <span className="text-zinc-300 text-sm">Total Earnings</span>
-                  </div>
-                  <span className="text-2xl font-bold text-amber-400">₹{statsLoading ? "..." : stats.totalEarnings.toLocaleString()}</span>
-                </div>
-              </div>
-
+              {/* 🔽 Total Earnings card REMOVED – replaced with View Your Status button */}
               <button
                 onClick={() => { setShowStatusModal(true); fetchStatuses(); }}
-                className="mt-4 bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-200 px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2"
+                className="bg-white/5 hover:bg-white/10 border border-white/10 text-zinc-200 px-4 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 w-fit"
               >
                 <Clock className="w-4 h-4" /> View Your Status
               </button>
+              {/* No separate mt-4 button below anymore */}
             </div>
           </div>
         </div>
