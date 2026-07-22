@@ -105,7 +105,7 @@ export default function DashboardLayout({
             <NavItem icon={<PlugZap size={20} />} label="Connect App" href="/plans/standard/dashboard/connect-app" isActive={activeItem === 'Connect App'} onClick={() => setActiveItem('Connect App')} />
           )}
           
-          <NavItem icon={<ShieldCheck size={20} />} label="Competitors" href="/plans/standard/dashboard/competitors" isActive={activeItem === 'Competitors'} onClick={() => setActiveItem('Competitors')} />
+          {/* 🔽 Competitors NavItem REMOVED */}
 
           {isOwner && (
             <NavItem icon={<Users size={20} />} label="Team" href="/plans/standard/dashboard/team" isActive={activeItem === 'Team'} onClick={() => setActiveItem('Team')} />
