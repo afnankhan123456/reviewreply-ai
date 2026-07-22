@@ -16,7 +16,6 @@ import {
   Mail,
   Lock,
 } from "lucide-react";
-import ParticleWave from "./ParticleWave";
 
 function LoginPageContent() {
   const searchParams = useSearchParams();
@@ -49,19 +48,18 @@ function LoginPageContent() {
         }
       `}</style>
 
-      <div className="min-h-screen relative bg-black overflow-hidden">
+      <div
+        className="min-h-screen relative bg-black overflow-hidden bg-no-repeat bg-cover bg-bottom"
+        style={{ backgroundImage: "url('/main-BG.PNG')" }}
+      >
         <div className="absolute -top-40 right-[-200px] w-[900px] h-[900px] rounded-full bg-gradient-to-br from-[#ff2d55] via-[#c81e3a] to-transparent opacity-30 blur-[80px] pointer-events-none" />
         <div className="absolute top-[-100px] right-[-100px] w-[600px] h-[600px] rounded-full border border-[#ff3b5c]/30 pointer-events-none" />
-
-        <ParticleWave />
 
         <div className="relative z-10 grid xl:grid-cols-2 min-h-screen">
           {/* LEFT SIDE */}
           <div className="flex flex-col justify-center px-6 lg:px-16 py-10 order-last xl:order-none">
             <div className="flex items-center gap-2 mb-8">
-              <div className="w-9 h-9 rounded-lg bg-[#ff2d55] flex items-center justify-center text-white font-black text-lg">
-                R
-              </div>
+              <img src="/ai-logo.png" alt="ReviewReply AI" className="w-9 h-9 object-contain" />
               <h1 className="text-xl font-extrabold tracking-tight text-white">
                 ReviewReply <span className="text-[#ff2d55]">AI</span>
               </h1>
@@ -149,9 +147,7 @@ function LoginPageContent() {
                 <div className="relative w-20 h-20 flex items-center justify-center">
                   <div className="absolute inset-0 rounded-full border border-[#ff2d55]/20" />
                   <div className="absolute inset-2 rounded-full border border-[#ff2d55]/10" />
-                  <div className="w-14 h-14 rounded-2xl bg-[#ff2d55] flex items-center justify-center text-white font-black text-2xl shadow-[0_0_30px_rgba(255,45,85,0.5)]">
-                    R
-                  </div>
+                  <img src="/ai-logo.png" alt="logo" className="w-14 h-14 object-contain" />
                 </div>
               </div>
 
