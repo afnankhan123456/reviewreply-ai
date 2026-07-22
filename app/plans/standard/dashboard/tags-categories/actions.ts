@@ -27,24 +27,31 @@ export async function getTagSummary() {
     const { ownerId } = await resolveOwnerAndRole(session.user.id);
 
     const cycleStart = await getCycleStart(ownerId);
-    const allTags = getAllPossibleTags();
-    const summary: { tag: string; count: number }[] = [];
 
-    for (const tag of allTags) {
-      const count = await prisma.review.count({
-        where: { userId: ownerId, tags: { has: tag }, createdAt: { gte: cycleStart } },
-      });
-      if (count > 0) {
-        summary.push({ tag, count });
+    // ✅ Ek hi query se saare cycle-ke-andar wale reviews le lo, baaki JS mein ginlo
+    const reviews = await prisma.review.findMany({
+      where: { userId: ownerId, createdAt: { gte: cycleStart } },
+      select: { tags: true },
+    });
+
+    const allTags = getAllPossibleTags();
+    const tagCountMap: Record<string, number> = {};
+    let untaggedCount = 0;
+
+    for (const r of reviews) {
+      if (r.tags.length === 0) {
+        untaggedCount++;
+      }
+      for (const t of r.tags) {
+        tagCountMap[t] = (tagCountMap[t] || 0) + 1;
       }
     }
 
-    const totalCount = await prisma.review.count({
-      where: { userId: ownerId, createdAt: { gte: cycleStart } },
-    });
-    const untaggedCount = await prisma.review.count({
-      where: { userId: ownerId, tags: { equals: [] }, createdAt: { gte: cycleStart } },
-    });
+    const summary = allTags
+      .map((tag) => ({ tag, count: tagCountMap[tag] || 0 }))
+      .filter((t) => t.count > 0);
+
+    const totalCount = reviews.length;
 
     return { success: true, summary, totalCount, untaggedCount, cycleStart };
   } catch (error) {
