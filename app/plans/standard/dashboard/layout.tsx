@@ -63,8 +63,7 @@ export default function DashboardLayout({
       'support': 'Support',
       'team': 'Team',
       'settings': 'Settings',
-      'connect-app': 'Connect App',
-      'competitors': 'Competitors'
+      'connect-app': 'Connect App'
     };
 
     return segmentToLabel[lastSegment] || 'Overview';
