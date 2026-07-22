@@ -160,9 +160,9 @@ export default function PlansPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-[1600px] mx-auto items-start">
 
           {/* BASIC */}
-          <Link href="/plans/basic/pricing" className="h-full">
+          <Link href="/plans/basic/pricing">
 
-            <div className="bg-zinc-900/60 backdrop-blur-sm border border-zinc-800 rounded-3xl p-6 hover:border-violet-500 transition-all cursor-pointer h-full flex flex-col">
+            <div className="bg-zinc-900/60 backdrop-blur-sm border border-zinc-800 rounded-3xl p-6 hover:border-violet-500 transition-all cursor-pointer flex flex-col">
 
               <div className="w-12 h-12 rounded-xl bg-violet-500/10 border border-violet-500/30 flex items-center justify-center mb-5">
                 <Feather size={20} className="text-violet-400" />
@@ -176,7 +176,7 @@ export default function PlansPage() {
                 Perfect for small businesses
               </p>
 
-              <div className="grid grid-cols-2 gap-x-2 gap-y-2.5 text-zinc-300 text-xs flex-1">
+              <div className="grid grid-cols-2 gap-x-2 gap-y-2.5 text-zinc-300 text-xs">
                 {basicFeatures.map((feature) => (
                   <div key={feature} className="flex items-center gap-1.5 whitespace-nowrap overflow-hidden">
                     <CheckCircle2 size={13} className="text-violet-400 shrink-0" />
@@ -197,9 +197,9 @@ export default function PlansPage() {
           </Link>
 
           {/* STANDARD */}
-          <Link href="/plans/standard/pricing" className="h-full">
+          <Link href="/plans/standard/pricing">
 
-            <div className="relative bg-zinc-900/60 backdrop-blur-sm border border-blue-500/50 rounded-3xl p-8 hover:border-blue-400 transition-all cursor-pointer h-full flex flex-col shadow-[0_0_60px_-15px_rgba(139,92,246,0.4)]">
+            <div className="relative bg-zinc-900/60 backdrop-blur-sm border border-blue-500/50 rounded-3xl p-8 hover:border-blue-400 transition-all cursor-pointer flex flex-col shadow-[0_0_60px_-15px_rgba(139,92,246,0.4)]">
 
               <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-violet-600 to-blue-600 text-white text-xs font-bold px-4 py-1.5 rounded-full flex items-center gap-1.5 whitespace-nowrap">
                 ★ MOST POPULAR
@@ -217,7 +217,7 @@ export default function PlansPage() {
                 Best for growing businesses
               </p>
 
-              <div className="grid grid-cols-2 gap-x-2 gap-y-2.5 text-zinc-300 text-xs flex-1">
+              <div className="grid grid-cols-2 gap-x-2 gap-y-2.5 text-zinc-300 text-xs">
                 {standardFeatures.map((feature) => (
                   <div key={feature} className="flex items-center gap-1.5 whitespace-nowrap overflow-hidden">
                     <CheckCircle2 size={13} className="text-blue-400 shrink-0" />
@@ -238,9 +238,9 @@ export default function PlansPage() {
           </Link>
 
           {/* PRO */}
-          <Link href="/plans/pro/pricing" className="h-full">
+          <Link href="/plans/pro/pricing">
 
-            <div className="bg-zinc-900/60 backdrop-blur-sm border border-zinc-800 rounded-3xl p-8 hover:border-yellow-500 transition-all cursor-pointer h-full flex flex-col">
+            <div className="bg-zinc-900/60 backdrop-blur-sm border border-zinc-800 rounded-3xl p-8 hover:border-yellow-500 transition-all cursor-pointer flex flex-col">
 
               <div className="w-12 h-12 rounded-xl bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center mb-5">
                 <Zap size={20} className="text-yellow-400" />
@@ -254,7 +254,7 @@ export default function PlansPage() {
                 Full power for agencies & brands
               </p>
 
-              <div className="grid grid-cols-2 gap-x-2 gap-y-2.5 text-zinc-300 text-xs flex-1">
+              <div className="grid grid-cols-2 gap-x-2 gap-y-2.5 text-zinc-300 text-xs">
                 {proFeatures.map((feature) => (
                   <div key={feature} className="flex items-center gap-1.5 whitespace-nowrap overflow-hidden">
                     <CheckCircle2 size={13} className="text-yellow-400 shrink-0" />
