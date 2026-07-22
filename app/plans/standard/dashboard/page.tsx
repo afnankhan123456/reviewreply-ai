@@ -26,7 +26,7 @@ export default function DashboardPage() {
 
   const [theme, setTheme] = useState<"light" | "dark">("dark");
 
-  // ✅ NEW: Quick Links states
+  // ✅ Quick Links states
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [linkLoading, setLinkLoading] = useState(false);
 
@@ -40,6 +40,9 @@ export default function DashboardPage() {
   const [qrLink, setQrLink] = useState('');
   const [qrLoading, setQrLoading] = useState(false);
 
+  // ✅ NEW: Manual Sync state
+  const [isSyncing, setIsSyncing] = useState(false);
+
   useEffect(() => {
     const saved = localStorage.getItem("theme");
     if (saved === "light" || saved === "dark") {
@@ -47,7 +50,7 @@ export default function DashboardPage() {
     }
   }, [pathname]);
 
-  useEffect(() => {
+  const fetchDashboardData = () => {
     fetch('/api/standard/dashboard/overview')
       .then((res) => res.json())
       .then((result) => {
@@ -62,6 +65,10 @@ export default function DashboardPage() {
         setError('Failed to load dashboard');
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchDashboardData();
   }, []);
 
   useEffect(() => {
@@ -81,7 +88,7 @@ export default function DashboardPage() {
     }
   }, [toast]);
 
-  // ✅ NEW: Request Link (Copy Link) handler
+  // ✅ Request Link (Copy Link) handler
   const handleCopyLink = async () => {
     setLinkLoading(true);
     const result = await getReviewLink();
@@ -99,7 +106,7 @@ export default function DashboardPage() {
     }
   };
 
-  // ✅ NEW: Email Request handler
+  // ✅ Email Request handler
   const handleSendEmail = async (e: React.FormEvent) => {
     e.preventDefault();
     setEmailSending(true);
@@ -118,7 +125,7 @@ export default function DashboardPage() {
     }
   };
 
-  // ✅ NEW: QR Code handler
+  // ✅ QR Code handler
   const handleOpenQr = async () => {
     setQrLoading(true);
     const result = await getReviewLink();
@@ -129,6 +136,25 @@ export default function DashboardPage() {
       setShowQrModal(true);
     } else {
       setToast({ message: result.error || 'Failed to get review link', type: 'error' });
+    }
+  };
+
+  // ✅ NEW: Manual Sync handler
+  const handleManualSync = async () => {
+    setIsSyncing(true);
+    try {
+      const res = await fetch('/api/standard/google/sync', { method: 'POST' });
+      const result = await res.json();
+      if (result.success) {
+        setToast({ message: 'Reviews synced successfully!', type: 'success' });
+        fetchDashboardData();
+      } else {
+        setToast({ message: result.message || 'Sync failed', type: 'error' });
+      }
+    } catch (err) {
+      setToast({ message: 'Error syncing reviews', type: 'error' });
+    } finally {
+      setIsSyncing(false);
     }
   };
 
@@ -143,6 +169,7 @@ export default function DashboardPage() {
   const textMuted = isLight ? "text-gray-400" : "text-gray-500";
   const inputBg = isLight ? "bg-white border-gray-300 text-gray-900 placeholder-gray-400" : "bg-[#181D27] border-[#2A303C] text-gray-300 placeholder-gray-500";
   const modalBg = isLight ? "bg-white border-gray-200" : "bg-[#11141C] border-[#1F2430]";
+  const buttonBg = isLight ? "bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200" : "bg-[#181D27] border-[#2A303C] text-gray-400 hover:text-white hover:bg-[#222633]";
 
   if (loading) {
     return (
@@ -163,7 +190,23 @@ export default function DashboardPage() {
   return (
     <div className={`flex-1 flex flex-col p-6 overflow-y-auto ${bgMain}`}>
 
-      {/* ✅ NEW: Toast Notification */}
+      <style>{`
+        .thin-scroll::-webkit-scrollbar {
+          width: 3px;
+        }
+        .thin-scroll::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .thin-scroll::-webkit-scrollbar-thumb {
+          background: rgba(128,128,128,0.3);
+          border-radius: 10px;
+        }
+        .thin-scroll::-webkit-scrollbar-thumb:hover {
+          background: rgba(128,128,128,0.5);
+        }
+      `}</style>
+
+      {/* Toast Notification */}
       {toast && (
         <div
           className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg text-sm font-medium transition-all duration-300 ${
@@ -183,7 +226,17 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
+          {/* ✅ NEW: Manual Sync button — profile icon ke left */}
+          <button
+            onClick={handleManualSync}
+            disabled={isSyncing}
+            className={`${buttonBg} border rounded-lg px-3 py-2 flex items-center gap-2 text-xs font-medium transition-colors disabled:opacity-50`}
+          >
+            <RefreshCw size={14} className={isSyncing ? 'animate-spin' : ''} />
+            {isSyncing ? 'Syncing...' : 'Sync Now'}
+          </button>
+
           <div className="relative" ref={profileRef}>
             <button
               onClick={() => setProfileOpen((prev) => !prev)}
@@ -339,18 +392,18 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Recent Reviews List */}
+          {/* ✅ UPDATED: Latest Reviews — sirf latest 5, 3 visible + thin scroll */}
           <div className={`${bgCard} border ${borderCard} rounded-xl p-5`}>
             <div className="flex justify-between items-center mb-4">
               <h3 className={`font-medium ${textPrimary}`}>Latest Reviews</h3>
               <span className="text-xs text-indigo-400 cursor-pointer hover:underline">View All Reviews →</span>
             </div>
             
-            <div className="space-y-4">
+            <div className="space-y-4 max-h-[300px] overflow-y-auto thin-scroll pr-1">
               {data.latestReviews.length === 0 && (
                 <div className={`text-sm text-center py-4 ${textMuted}`}>No reviews yet.</div>
               )}
-              {data.latestReviews.map((r: any) => (
+              {data.latestReviews.slice(0, 5).map((r: any) => (
                 <ReviewItem
                   key={r.id}
                   name={r.reviewerName}
@@ -365,7 +418,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* RIGHT COLUMN (AI Actions & Alerts) */}
+        {/* RIGHT COLUMN (AI Actions & Quick Links) */}
         <div className="col-span-12 lg:col-span-3 space-y-6">
           
           <div className={`${bgCard} border ${borderCard} rounded-xl p-4`}>
@@ -402,17 +455,11 @@ export default function DashboardPage() {
              </button>
           </div>
 
-          <div className={`${bgCard} border ${borderCard} rounded-xl p-4`}>
-             <h3 className={`font-medium text-sm mb-4 flex items-center justify-between ${textPrimary}`}>
-               Alerts & Notifications
-               <XCircle size={14} className="text-red-500" />
-             </h3>
-             <div className={`text-[10px] ${textMuted}`}>Not built yet — coming soon.</div>
-          </div>
+          {/* ❌ Alerts & Notifications card removed */}
 
           {/* Quick Links */}
           <div className="grid grid-cols-2 gap-2 text-[10px]">
-            {/* ✅ NOW FUNCTIONAL: Request Link */}
+            {/* Request Link */}
             <button
               onClick={handleCopyLink}
               disabled={linkLoading}
@@ -425,7 +472,7 @@ export default function DashboardPage() {
               <div className={textMuted}>{linkLoading ? 'Loading...' : 'Copy Link'}</div>
             </button>
 
-            {/* ✅ NOW FUNCTIONAL: Email Request */}
+            {/* Email Request */}
             <button
               onClick={() => setShowEmailModal(true)}
               className={`${bgCard} border ${borderCard} rounded-lg p-3 text-center hover:opacity-80 transition-opacity`}
@@ -437,7 +484,7 @@ export default function DashboardPage() {
               <div className={textMuted}>Send Email</div>
             </button>
 
-            {/* SMS Request — chhoda hai, jaisa kaha tha */}
+            {/* SMS Request — chhoda hai */}
             <div className={`${bgCard} border ${borderCard} rounded-lg p-3 text-center relative`}>
               <XCircle size={12} className="absolute top-1 right-1 text-red-500" />
               <div className="w-8 h-8 bg-purple-500/20 rounded-lg mx-auto mb-1 flex items-center justify-center text-purple-400">💬</div>
@@ -445,7 +492,7 @@ export default function DashboardPage() {
               <div className={textMuted}>Send SMS</div>
             </div>
 
-            {/* ✅ NEW: QR Code */}
+            {/* QR Code */}
             <button
               onClick={handleOpenQr}
               disabled={qrLoading}
@@ -459,10 +506,10 @@ export default function DashboardPage() {
             </button>
           </div>
 
-          {/* Top 20 Review Keywords */}
+          {/* Top 20 Review Keywords — Alerts ki jagah upar aa gaya */}
           <div className={`${bgCard} border ${borderCard} rounded-xl p-4`}>
             <h3 className={`font-medium text-sm mb-3 ${textPrimary}`}>Top 20 Review Keywords</h3>
-            <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
+            <div className="space-y-2 max-h-80 overflow-y-auto thin-scroll pr-1">
               {data.topTags.length === 0 && (
                 <div className={`text-[10px] ${textMuted}`}>No keywords yet</div>
               )}
@@ -477,7 +524,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* ✅ NEW: Email Request Modal */}
+      {/* Email Request Modal */}
       {showEmailModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
           <div className={`${modalBg} border rounded-xl p-6 w-[420px] shadow-2xl`}>
@@ -528,7 +575,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* ✅ NEW: QR Code Modal */}
+      {/* QR Code Modal */}
       {showQrModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
           <div className={`${modalBg} border rounded-xl p-6 w-[340px] shadow-2xl text-center`}>
