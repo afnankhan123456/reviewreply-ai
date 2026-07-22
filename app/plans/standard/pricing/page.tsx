@@ -100,7 +100,8 @@ export default function StandardPricingPage() {
         </div>
 
         <div className="overflow-x-auto rounded-2xl border border-zinc-800 bg-zinc-900/60 backdrop-blur-sm shadow-[0_0_60px_-20px_rgba(139,92,246,0.3)]">
-          <table className="w-full">
+          {/* FIX: added w-full min-w-[700px] to make table fill container and scroll on small screens */}
+          <table className="w-full min-w-[700px]">
             <thead className="bg-black/60 text-white border-b border-zinc-800">
               <tr>
                 <th className="px-8 py-5 text-left font-semibold">Plan</th>
