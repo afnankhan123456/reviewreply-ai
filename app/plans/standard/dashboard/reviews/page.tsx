@@ -42,6 +42,12 @@ export default function ReviewsPage() {
     rating: 0,
   });
 
+  // ✅ NEW: Templates state (Reply modal ke andar)
+  const [templates, setTemplates] = useState<string[]>([]);
+  const [templatesLoading, setTemplatesLoading] = useState(true);
+  const [templateCategory, setTemplateCategory] = useState('All');
+  const [selectedTemplate, setSelectedTemplate] = useState('');
+
   useEffect(() => {
     const saved = localStorage.getItem("theme");
     if (saved === "light" || saved === "dark") {
@@ -51,6 +57,7 @@ export default function ReviewsPage() {
 
   useEffect(() => {
     fetchDashboardData();
+    fetchTemplates();
   }, []);
 
   useEffect(() => {
@@ -74,6 +81,19 @@ export default function ReviewsPage() {
       setUnansweredCount(countData.count || 0);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
+    }
+  };
+
+  // ✅ NEW: Fetch templates for the reply modal
+  const fetchTemplates = async () => {
+    try {
+      const res = await fetch('/api/standard/ai-reply-center/templates');
+      const data = await res.json();
+      if (data.success) setTemplates(data.templates);
+    } catch (error) {
+      console.error('Error fetching templates:', error);
+    } finally {
+      setTemplatesLoading(false);
     }
   };
 
@@ -116,6 +136,8 @@ export default function ReviewsPage() {
         setReplyText('');
         setSelectedReviewId(null);
         setSelectedReviewText('');
+        setSelectedTemplate('');
+        setTemplateCategory('All');
         fetchDashboardData();
       } else {
         setToast({ message: 'Failed to send reply: ' + data.message, type: 'error' });
@@ -124,6 +146,22 @@ export default function ReviewsPage() {
       setToast({ message: 'Error sending reply', type: 'error' });
     }
   };
+
+  // ✅ NEW: Template select handler — no AI, direct text set
+  const handleSelectTemplate = (tpl: string) => {
+    setSelectedTemplate(tpl);
+    setReplyText(tpl);
+  };
+
+  // ✅ NEW: Filtered templates by category (same logic as AI Reply Center)
+  const filteredTemplates = templates.filter((tpl) => {
+    if (templateCategory === 'All') return true;
+    if (templateCategory === 'Positive') return tpl.includes('Positive') || tpl.includes('glowing') || tpl.includes('5-star') || tpl.includes('enjoyed') || tpl.includes('thrilled');
+    if (templateCategory === 'Negative') return tpl.includes('Negative') || tpl.includes('sorry') || tpl.includes('apologize') || tpl.includes('improve') || tpl.includes('disappointed');
+    if (templateCategory === 'Professional') return tpl.includes('Dear Customer') || tpl.includes('Dear Valued') || tpl.includes('Dear Guest');
+    if (templateCategory === 'General') return tpl.includes('Thank you') && !tpl.includes('Dear');
+    return true;
+  });
 
   // ✅ NEW: Open share modal
   const handleShare = (name: string, text: string, rating: number) => {
@@ -217,6 +255,7 @@ export default function ReviewsPage() {
   const inputBg = theme === "light" ? "bg-white border-gray-300 text-gray-900 placeholder-gray-400" : "bg-[#181D27] border-[#2A303C] text-gray-300 placeholder-gray-500";
   const buttonBg = theme === "light" ? "bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200" : "bg-[#181D27] border-[#2A303C] text-gray-400 hover:text-white hover:bg-[#222633]";
   const pillInactive = theme === "light" ? "bg-gray-100 text-gray-600 border-gray-300" : "bg-[#1F2430] text-gray-400 border-[#2A303C]";
+  const pillActive = "bg-indigo-500/20 text-indigo-400 border-indigo-500/30";
   const tableHeaderBg = theme === "light" ? "bg-gray-50/50" : "bg-[#181D27]/50";
   const rowHover = theme === "light" ? "hover:bg-gray-100" : "hover:bg-[#181D27]";
   const borderLight = theme === "light" ? "border-gray-200" : "border-[#1F2430]";
@@ -350,9 +389,12 @@ export default function ReviewsPage() {
                 onReplyClick={(id, text) => {
                   setSelectedReviewId(id);
                   setSelectedReviewText(text);
+                  setReplyText('');
+                  setSelectedTemplate('');
+                  setTemplateCategory('All');
                   setShowReplyModal(true);
                 }}
-                onShareClick={handleShare}  // ✅ Pass the new modal handler
+                onShareClick={handleShare}
                 theme={theme}
               />
             ))
@@ -371,10 +413,10 @@ export default function ReviewsPage() {
 
       </div>
 
-      {/* Reply Modal */}
+      {/* Reply Modal — ✅ UPDATED: template picker added */}
       {showReplyModal && canReply && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
-          <div className={`${modalBg} border rounded-xl p-6 w-[600px] shadow-2xl`}>
+          <div className={`${modalBg} border rounded-xl p-6 w-[640px] max-h-[85vh] overflow-y-auto shadow-2xl`}>
             <h3 className={`text-lg font-medium ${textPrimary} mb-3`}>Reply to Review</h3>
             
             <div className={`${bgSubCard} border rounded-lg p-3 mb-4`}>
@@ -382,10 +424,52 @@ export default function ReviewsPage() {
               <p className={`text-sm ${textPrimary}`}>{selectedReviewText}</p>
             </div>
 
+            {/* ✅ NEW: Template category filter */}
+            <p className={`text-xs ${textSecondary} mb-2`}>Choose a template category:</p>
+            <div className="flex flex-wrap gap-2 mb-3">
+              {['All', 'General', 'Positive', 'Negative', 'Professional'].map((cat) => (
+                <button
+                  key={cat}
+                  className={`text-[10px] px-3 py-1 rounded-full border transition-colors ${
+                    templateCategory === cat ? pillActive : pillInactive
+                  }`}
+                  onClick={() => setTemplateCategory(cat)}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+
+            {/* ✅ NEW: Template list */}
+            <div className={`space-y-1.5 max-h-[180px] overflow-y-auto custom-scroll mb-4 pr-1`}>
+              {templatesLoading && (
+                <div className={`text-xs ${textMuted}`}>Loading templates...</div>
+              )}
+              {!templatesLoading && filteredTemplates.length === 0 && (
+                <div className={`text-xs ${textMuted}`}>No templates in this category.</div>
+              )}
+              {filteredTemplates.map((tpl, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => handleSelectTemplate(tpl)}
+                  className={`text-xs px-3 py-2 rounded-lg border cursor-pointer transition-colors ${
+                    selectedTemplate === tpl
+                      ? 'bg-indigo-500/20 border-indigo-500/40 text-indigo-300'
+                      : theme === "light"
+                        ? "bg-gray-50 border-gray-200 hover:bg-gray-100 text-gray-700"
+                        : "bg-[#181D27] border-[#2A303C] hover:bg-[#222633] text-gray-300"
+                  }`}
+                >
+                  {tpl}
+                </div>
+              ))}
+            </div>
+
+            <p className={`text-xs ${textSecondary} mb-1`}>Final reply (aap edit bhi kar sakte ho):</p>
             <textarea
               className={`w-full border rounded-lg p-3 text-sm focus:outline-none focus:border-indigo-500 resize-none ${inputBg}`}
               rows={4}
-              placeholder="Write your professional reply here..."
+              placeholder="Select a template above, or write your own reply..."
               value={replyText}
               onChange={(e) => setReplyText(e.target.value)}
             />
@@ -401,6 +485,8 @@ export default function ReviewsPage() {
                   setReplyText('');
                   setSelectedReviewId(null);
                   setSelectedReviewText('');
+                  setSelectedTemplate('');
+                  setTemplateCategory('All');
                 }}
               >
                 Cancel
@@ -417,7 +503,7 @@ export default function ReviewsPage() {
         </div>
       )}
 
-      {/* ✅ Share Modal */}
+      {/* Share Modal */}
       {shareMenu.open && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
           <div className={`${modalBg} border rounded-xl p-6 w-[420px] shadow-2xl`}>
@@ -488,7 +574,7 @@ function ReviewRow({ reviewId, reviewText, name, text, rating, sentiment, source
   const rowBg = theme === "light" ? "hover:bg-gray-100" : "hover:bg-[#181D27]";
   const nameColor = theme === "light" ? "text-gray-900" : "text-white";
   const textColor = theme === "light" ? "text-gray-600" : "text-gray-400";
-  const avatarBg = "bg-blue-900 text-blue-300"; // keep accent
+  const avatarBg = "bg-blue-900 text-blue-300";
 
   return (
     <div className={`grid grid-cols-12 gap-4 px-6 py-4 transition-colors ${rowBg}`}>
