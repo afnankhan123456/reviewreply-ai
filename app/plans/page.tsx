@@ -157,7 +157,7 @@ export default function PlansPage() {
         </div>
 
         {/* PLANS */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-[1600px] mx-auto items-stretch">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-[1600px] mx-auto items-start">
 
           {/* BASIC */}
           <Link href="/plans/basic/pricing" className="h-full">
