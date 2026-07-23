@@ -127,7 +127,7 @@ export default function PlansPage() {
                 </span>
 
                 <span className="bg-violet-600 text-white text-sm font-bold px-3 py-1 rounded-full">
-                  ₹100
+                  ₹250
                 </span>
 
               </div>
