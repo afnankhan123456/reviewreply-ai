@@ -52,6 +52,8 @@ model User {
   referralStats       ReferralStats[]
   reviewRequests      ReviewRequest[]
   tagCycles           TagCycle[]
+  lastWeeklyReportSent DateTime?
+  lastExpiryNotified   DateTime?
   teamMembersOwned    TeamMember[]        @relation("TeamOwner")
   teamMembershipOf    TeamMember[]        @relation("TeamMembership")
   articleFeedback     ArticleFeedback[]
