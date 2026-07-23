@@ -1,6 +1,6 @@
 import { prisma } from './prisma';
-import nodemailer from 'nodemailer';
 import { autoTagReview } from './autoTag';
+import { sendFromCriticalPool } from './notificationEmails';
 
 const STAR_MAP: Record<string, number> = {
   STAR_RATING_UNSPECIFIED: 0,
@@ -116,80 +116,21 @@ export async function syncUserReviews(userId: string) {
       user.reviewsUsed++;
       syncedCount++;
 
+      // Low rating alert — shared 50/450-pool helper use karta hai (notificationEmails.ts)
       if (newReview.rating <= 2 && user.gmailConnected) {
-        const isStandard = user.plan?.startsWith('standard');
-        const now = new Date();
-
-        if (user.alertMonthlyReset) {
-          const daysSinceAlertReset = Math.floor(
-            (now.getTime() - new Date(user.alertMonthlyReset).getTime()) / (1000 * 60 * 60 * 24)
-          );
-          if (daysSinceAlertReset >= 30) {
-            await prisma.user.update({
-              where: { id: user.id },
-              data: { alertEmailsSent: 0, criticalEmailsSent: 0, alertMonthlyReset: now },
-            });
-            user.alertEmailsSent = 0;
-            user.criticalEmailsSent = 0;
-            user.alertMonthlyReset = now;
-          }
-        } else {
-          await prisma.user.update({
-            where: { id: user.id },
-            data: { alertMonthlyReset: now },
-          });
-          user.alertMonthlyReset = now;
-        }
-
-        const count = isStandard ? (user.criticalEmailsSent ?? 0) : (user.alertEmailsSent ?? 0);
-        const limit = isStandard ? (user.criticalEmailsLimit ?? 50) : (user.alertEmailsLimit ?? 100);
-
-        if (count < limit) {
-          try {
-            const transporter = nodemailer.createTransport({
-              host: 'smtp.gmail.com',
-              port: 587,
-              secure: false,
-              auth: {
-                user: process.env.GMAIL_USER,
-                pass: process.env.GMAIL_APP_PASSWORD,
-              },
-            });
-
-            await transporter.sendMail({
-              from: `"ReviewReply Alerts" <${process.env.GMAIL_USER}>`,
-              to: user.email,
-              subject: '🔔 New Low Rating Review Alert',
-              html: buildAlertEmail('Low Rating Alert', {
-                reviewerName: newReview.reviewerName,
-                rating: newReview.rating,
-                comment: newReview.comment,
-                reviewDate: newReview.reviewDate.toISOString(),
-              }),
-            });
-
-            if (isStandard) {
-              await prisma.user.update({
-                where: { id: user.id },
-                data: { criticalEmailsSent: { increment: 1 } },
-              });
-              user.criticalEmailsSent = (user.criticalEmailsSent ?? 0) + 1;
-            } else {
-              await prisma.user.update({
-                where: { id: user.id },
-                data: { alertEmailsSent: { increment: 1 } },
-              });
-              user.alertEmailsSent = (user.alertEmailsSent ?? 0) + 1;
-            }
-          } catch (emailError) {
-            console.error('Failed to send alert email for user', user.email, emailError);
-          }
-        }
+        await sendFromCriticalPool(
+          user.id,
+          '🔔 New Low Rating Review Alert',
+          buildAlertEmail('Low Rating Alert', {
+            reviewerName: newReview.reviewerName,
+            rating: newReview.rating,
+            comment: newReview.comment,
+            reviewDate: newReview.reviewDate.toISOString(),
+          })
+        );
       }
     }
   }
 
   return { synced: syncedCount };
 }
-
-
