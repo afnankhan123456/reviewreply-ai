@@ -1,6 +1,8 @@
 import { prisma } from './prisma';
 import { autoTagReview } from './autoTag';
 import { sendFromCriticalPool } from './notificationEmails';
+import { generateAIReply } from './aiReply';
+import { postReplyToGoogle } from './googlePostReply';
 
 const STAR_MAP: Record<string, number> = {
   STAR_RATING_UNSPECIFIED: 0,
@@ -116,7 +118,7 @@ export async function syncUserReviews(userId: string) {
       user.reviewsUsed++;
       syncedCount++;
 
-      // Low rating alert — shared 50/450-pool helper use karta hai (notificationEmails.ts)
+      // Low rating alert — shared 50/450-pool helper use karta hai
       if (newReview.rating <= 2 && user.gmailConnected) {
         await sendFromCriticalPool(
           user.id,
@@ -128,6 +130,30 @@ export async function syncUserReviews(userId: string) {
             reviewDate: newReview.reviewDate.toISOString(),
           })
         );
+      }
+
+      // ✅ Auto-Reply: Draft ya Auto mode ho to turant AI-reply generate karo
+      if (!newReview.replied && user.autoReplyMode !== 'manual') {
+        const aiResult = await generateAIReply(user.id, {
+          reviewText: newReview.comment || '',
+          reviewerName: newReview.reviewerName,
+          rating: newReview.rating,
+        });
+
+        if (aiResult.success && aiResult.reply) {
+          if (user.autoReplyMode === 'draft') {
+            await prisma.review.update({
+              where: { id: newReview.id },
+              data: { reviewReply: aiResult.reply, replyStatus: 'pending_approval', aiReplied: true },
+            });
+          } else if (user.autoReplyMode === 'auto') {
+            await prisma.review.update({
+              where: { id: newReview.id },
+              data: { aiReplied: true },
+            });
+            await postReplyToGoogle(newReview.id, aiResult.reply);
+          }
+        }
       }
     }
   }
