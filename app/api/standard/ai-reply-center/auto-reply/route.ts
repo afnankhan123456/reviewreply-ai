@@ -1,82 +1,74 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { generateAIReply } from '@/lib/aiReply';
+import { postReplyToGoogle } from '@/lib/googlePostReply';
 
-// ✅ Auto Reply Logic (Triggers every hour via Vercel Cron)
-export async function GET() {
+export async function GET(req: Request) {
+  const authHeader = req.headers.get('authorization');
+  if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
-    console.log('🚀 Auto-Reply Triggered...');
-
-    // 1. Fetch first 5 Unanswered reviews (replied = false)
-    const unansweredReviews = await prisma.review.findMany({
-      where: { replied: false },
-      take: 5, // Test mode: sirf 5 reviews process honge
-      orderBy: { createdAt: 'asc' },
+    // Sirf wahi users jinhone Draft ya Auto mode chuna hai, aur jinka subscription active hai
+    const users = await prisma.user.findMany({
+      where: {
+        autoReplyMode: { in: ['draft', 'auto'] },
+        OR: [{ subscriptionEnd: null }, { subscriptionEnd: { gt: new Date() } }],
+      },
+      select: { id: true, autoReplyMode: true, email: true },
     });
 
-    if (unansweredReviews.length === 0) {
-      return NextResponse.json({
-        success: true,
-        message: 'No unanswered reviews found.',
-        processed: 0,
+    const results: any[] = [];
+
+    for (const user of users) {
+      // Sirf isi user ke unanswered, abhi tak untouched reviews
+      const unansweredReviews = await prisma.review.findMany({
+        where: { userId: user.id, replied: false, replyStatus: 'none' },
+        take: 10,
+        orderBy: { createdAt: 'asc' },
       });
-    }
 
-    console.log(`✅ Found ${unansweredReviews.length} unanswered reviews`);
-
-    // 2. For each review, generate AI reply
-    const updatedReviews = [];
-    for (const review of unansweredReviews) {
-      try {
-        // AI API Call (OpenRouter)
-        const aiResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            model: 'gpt-3.5-turbo',
-            messages: [
-              {
-                role: 'system',
-                content: 'You are a helpful assistant that writes professional, empathetic replies for customer reviews.',
-              },
-              {
-                role: 'user',
-                content: `Write a professional reply for this review: "${review.comment || review.text}"`,
-              },
-            ],
-          }),
+      for (const review of unansweredReviews) {
+        const aiResult = await generateAIReply(user.id, {
+          reviewText: review.comment || review.text || '',
+          reviewerName: review.reviewerName,
+          rating: review.rating,
         });
 
-        const data = await aiResponse.json();
-        const replyText = data.choices?.[0]?.message?.content || 'Thank you for your feedback!';
+        if (!aiResult.success) {
+          results.push({ email: user.email, reviewId: review.id, sent: false, reason: aiResult.error });
+          continue;
+        }
 
-        // 3. Save reply to database
-        await prisma.review.update({
-          where: { id: review.id },
-          data: {
-            reviewReply: replyText,
-            replied: true,
-            aiReplied: true, // ✅ AI reply flag (manual reply se alag)
-          },
-        });
-
-        updatedReviews.push({ id: review.id, reply: replyText });
-        console.log(`✅ Reply sent to review ID: ${review.id}`);
-      } catch (error) {
-        console.error(`❌ Error replying to review ${review.id}:`, error);
+        if (user.autoReplyMode === 'draft') {
+          // Sirf draft banao, Google pe post nahi karna — user Approve karega
+          await prisma.review.update({
+            where: { id: review.id },
+            data: { reviewReply: aiResult.reply, replyStatus: 'pending_approval', aiReplied: true },
+          });
+          results.push({ email: user.email, reviewId: review.id, mode: 'draft', sent: true });
+        } else if (user.autoReplyMode === 'auto') {
+          // Seedha Google pe post karo
+          await prisma.review.update({
+            where: { id: review.id },
+            data: { aiReplied: true },
+          });
+          const postResult = await postReplyToGoogle(review.id, aiResult.reply!);
+          results.push({
+            email: user.email,
+            reviewId: review.id,
+            mode: 'auto',
+            posted: postResult.success,
+            error: postResult.error,
+          });
+        }
       }
     }
 
-    return NextResponse.json({
-      success: true,
-      message: `Auto-replied to ${updatedReviews.length} reviews.`,
-      processed: updatedReviews.length,
-      reviews: updatedReviews,
-    });
+    return NextResponse.json({ success: true, usersProcessed: users.length, results });
   } catch (error) {
-    console.error('Auto-Reply Error:', error);
+    console.error('Auto-Reply Cron Error:', error);
     return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
   }
 }
