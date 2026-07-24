@@ -13,3 +13,7 @@ jobs:
         run: |
           curl -f -X GET "https://reviewreply-ai-pi.vercel.app/api/standard/ai-reply-center/auto-reply" \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
+
+
+
+
