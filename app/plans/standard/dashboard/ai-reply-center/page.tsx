@@ -1,10 +1,17 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { 
-  Sparkles, BarChart3, MessageSquare, RefreshCw, 
-  ThumbsUp, ThumbsDown, AlertCircle, Copy, CheckCircle
+import {
+  Sparkles, BarChart3, MessageSquare, RefreshCw,
+  ThumbsUp, Copy, CheckCircle, Clock, Check, X
 } from 'lucide-react';
+import {
+  getAutoReplyMode,
+  setAutoReplyMode,
+  getPendingReplies,
+  approvePendingReply,
+  rejectPendingReply,
+} from './actions';
 
 export default function AIReplyCenterPage() {
   const [stats, setStats] = useState({
@@ -14,13 +21,17 @@ export default function AIReplyCenterPage() {
     positive: 0,
     negative: 0,
   });
-  const [templates, setTemplates] = useState<string[]>([]);
-  const [selectedTemplate, setSelectedTemplate] = useState('');
+  const [reviewText, setReviewText] = useState('');
   const [generatedReply, setGeneratedReply] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const [filterCategory, setFilterCategory] = useState('All');
+  const [mode, setMode] = useState<'manual' | 'draft' | 'auto'>('manual');
+  const [savingMode, setSavingMode] = useState(false);
+
+  const [pendingReplies, setPendingReplies] = useState<any[]>([]);
+  const [editingText, setEditingText] = useState<Record<string, string>>({});
+  const [pendingActionId, setPendingActionId] = useState<string | null>(null);
 
   // ✅ Theme state – reads from localStorage
   const [theme, setTheme] = useState<"light" | "dark">("dark");
@@ -38,16 +49,25 @@ export default function AIReplyCenterPage() {
 
   const fetchDashboardData = async () => {
     try {
-      const [statsRes, templatesRes] = await Promise.all([
+      const [statsRes, modeResult, pendingResult] = await Promise.all([
         fetch('/api/standard/ai-reply-center/stats'),
-        fetch('/api/standard/ai-reply-center/templates')
+        getAutoReplyMode(),
+        getPendingReplies(),
       ]);
 
       const statsData = await statsRes.json();
       if (statsData.success) setStats(statsData.data);
 
-      const templatesData = await templatesRes.json();
-      if (templatesData.success) setTemplates(templatesData.templates);
+      if (modeResult.success) setMode(modeResult.mode as any);
+
+      if (pendingResult.success) {
+        setPendingReplies(pendingResult.reviews);
+        const initialEdits: Record<string, string> = {};
+        pendingResult.reviews.forEach((r: any) => {
+          initialEdits[r.id] = r.reviewReply || '';
+        });
+        setEditingText(initialEdits);
+      }
 
       setIsLoading(false);
     } catch (error) {
@@ -62,13 +82,13 @@ export default function AIReplyCenterPage() {
       const res = await fetch('/api/standard/ai-reply-center/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ template: selectedTemplate }),
+        body: JSON.stringify({ reviewText }),
       });
       const data = await res.json();
       if (data.success) {
         setGeneratedReply(data.reply);
       } else {
-        alert('Failed to generate reply');
+        alert(data.error || 'Failed to generate reply');
       }
     } catch (error) {
       alert('Error generating reply');
@@ -77,14 +97,39 @@ export default function AIReplyCenterPage() {
     }
   };
 
-  const filteredTemplates = templates.filter((tpl) => {
-    if (filterCategory === 'All') return true;
-    if (filterCategory === 'Positive') return tpl.includes('Positive') || tpl.includes('glowing') || tpl.includes('5-star') || tpl.includes('enjoyed') || tpl.includes('thrilled');
-    if (filterCategory === 'Negative') return tpl.includes('Negative') || tpl.includes('sorry') || tpl.includes('apologize') || tpl.includes('improve') || tpl.includes('disappointed');
-    if (filterCategory === 'Professional') return tpl.includes('Dear Customer') || tpl.includes('Dear Valued') || tpl.includes('Dear Guest');
-    if (filterCategory === 'General') return tpl.includes('Thank you') && !tpl.includes('Dear');
-    return true;
-  });
+  const handleModeChange = async (newMode: 'manual' | 'draft' | 'auto') => {
+    setSavingMode(true);
+    const result = await setAutoReplyMode(newMode);
+    if (result.success) {
+      setMode(newMode);
+    } else {
+      alert(result.error || 'Failed to update mode');
+    }
+    setSavingMode(false);
+  };
+
+  const handleApprove = async (reviewId: string) => {
+    setPendingActionId(reviewId);
+    const finalText = editingText[reviewId] || '';
+    const result = await approvePendingReply(reviewId, finalText);
+    if (result.success) {
+      setPendingReplies((prev) => prev.filter((r) => r.id !== reviewId));
+    } else {
+      alert(result.error || 'Failed to approve');
+    }
+    setPendingActionId(null);
+  };
+
+  const handleReject = async (reviewId: string) => {
+    setPendingActionId(reviewId);
+    const result = await rejectPendingReply(reviewId);
+    if (result.success) {
+      setPendingReplies((prev) => prev.filter((r) => r.id !== reviewId));
+    } else {
+      alert(result.error || 'Failed to reject');
+    }
+    setPendingActionId(null);
+  };
 
   if (isLoading) {
     return (
@@ -102,21 +147,24 @@ export default function AIReplyCenterPage() {
   const textPrimary = theme === "light" ? "text-gray-900" : "text-white";
   const textSecondary = theme === "light" ? "text-gray-500" : "text-gray-400";
   const textMuted = theme === "light" ? "text-gray-400" : "text-gray-500";
-  const borderColor = theme === "light" ? "border-gray-200" : "border-[#1F2430]";
-  const selectBg = theme === "light" ? "bg-white border-gray-300 text-gray-900" : "bg-[#181D27] border-[#2A303C] text-gray-300";
-  const pillInactive = theme === "light" ? "bg-gray-100 text-gray-600 border-gray-300" : "bg-[#1F2430] text-gray-400 border-[#2A303C]";
-  const pillActive = "bg-indigo-500/20 text-indigo-400 border-indigo-500/30"; // same in both modes (keeps accent)
+  const inputBg = theme === "light" ? "bg-white border-gray-300 text-gray-900" : "bg-[#181D27] border-[#2A303C] text-gray-300";
+
+  const modeOptions: { value: 'manual' | 'draft' | 'auto'; label: string; desc: string }[] = [
+    { value: 'manual', label: 'Manual', desc: 'You generate & send replies yourself.' },
+    { value: 'draft', label: 'Draft & Approve', desc: 'AI drafts replies — you approve before posting.' },
+    { value: 'auto', label: 'Fully Automatic', desc: 'AI generates & posts replies with no review.' },
+  ];
 
   return (
     <div className={`flex-1 flex flex-col p-6 overflow-y-auto transition-colors duration-300 ${
       theme === "light" ? "bg-gray-50 text-gray-900" : "bg-[#0B0E14] text-gray-200"
     }`}>
-      
+
       {/* Page Header */}
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className={`text-2xl font-bold ${textPrimary}`}>AI Reply Center</h1>
-          <p className={`text-sm ${textSecondary}`}>Automate your review responses with AI-powered tools and templates.</p>
+          <p className={`text-sm ${textSecondary}`}>Automate your review responses with AI-powered tools.</p>
         </div>
         <div className={`flex items-center gap-2 ${bgSubCard} border rounded-lg px-3 py-2 text-sm`}>
           <Sparkles size={16} className="text-indigo-400" />
@@ -126,7 +174,7 @@ export default function AIReplyCenterPage() {
 
       {/* Top Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        
+
         {/* Card 1 */}
         <div className={`${bgCard} border rounded-xl p-4 flex flex-col justify-between`}>
           <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium mb-2`}>
@@ -182,94 +230,119 @@ export default function AIReplyCenterPage() {
         </div>
       </div>
 
-      {/* Middle Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 mb-6">
-        
-        {/* Left: AI Generator */}
-        <div className={`lg:col-span-2 ${bgCard} border rounded-xl p-5`}>
-          <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium mb-3`}>
-            <Sparkles size={14} /> AI Review Reply Generator
-          </div>
-          <div className="flex gap-3 mb-3">
-            <select 
-              className={`w-[450px] h-12 border rounded-lg px-3 py-2 text-sm outline-none ${selectBg}`}
-              value={selectedTemplate}
-              onChange={(e) => setSelectedTemplate(e.target.value)}
-            >
-              <option value="">Select a template (optional)</option>
-              {templates.map((tpl) => (
-                <option key={tpl} value={tpl}>{tpl}</option>
-              ))}
-            </select>
-            <button 
-              className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm px-4 py-2 rounded-lg transition-colors"
-              onClick={handleGenerateReply}
-              disabled={isGenerating}
-            >
-              {isGenerating ? 'Generating...' : 'Generate Reply'}
-            </button>
-          </div>
-          
-          {generatedReply && (
-            <div className={`${bgSubCard} border rounded-lg p-4 mt-2`}>
-              <div className="flex justify-between items-start mb-2">
-                <span className={`text-xs ${textSecondary}`}>AI Generated Reply:</span>
-                <button 
-                  className={`text-[10px] px-2 py-1 rounded transition-colors flex items-center gap-1 ${
-                    theme === "light" ? "bg-gray-200 text-gray-700 hover:bg-gray-300" : "bg-[#1F2430] text-gray-400 hover:text-white"
-                  }`}
-                  onClick={() => navigator.clipboard.writeText(generatedReply)}
-                >
-                  <Copy size={12} /> Copy
-                </button>
-              </div>
-              <p className={`text-sm leading-relaxed ${textPrimary}`}>{generatedReply}</p>
-            </div>
-          )}
+      {/* Auto-Reply Mode Selector */}
+      <div className={`${bgCard} border rounded-xl p-5 mb-6`}>
+        <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium mb-3`}>
+          <RefreshCw size={14} /> Auto-Reply Mode
         </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {modeOptions.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => handleModeChange(opt.value)}
+              disabled={savingMode}
+              className={`text-left p-3 rounded-lg border transition-colors disabled:opacity-50 ${
+                mode === opt.value
+                  ? 'border-indigo-500 bg-indigo-500/10'
+                  : theme === "light"
+                    ? 'border-gray-200 hover:bg-gray-50'
+                    : 'border-[#2A303C] hover:bg-[#181D27]'
+              }`}
+            >
+              <div className={`text-sm font-medium ${mode === opt.value ? 'text-indigo-400' : textPrimary}`}>
+                {opt.label}
+              </div>
+              <div className={`text-xs mt-1 ${textMuted}`}>{opt.desc}</div>
+            </button>
+          ))}
+        </div>
+      </div>
 
-        {/* Right: Templates */}
-        <div className={`lg:col-span-1 ${bgCard} border rounded-xl p-5`}>
+      {/* Pending Approval (Draft mode) */}
+      {pendingReplies.length > 0 && (
+        <div className={`${bgCard} border rounded-xl p-5 mb-6`}>
           <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium mb-3`}>
-            <Copy size={14} /> 500 AI Reply Templates
+            <Clock size={14} /> Pending Approval ({pendingReplies.length})
           </div>
+          <div className="space-y-3">
+            {pendingReplies.map((r) => (
+              <div key={r.id} className={`${bgSubCard} border rounded-lg p-4`}>
+                <div className="flex items-center justify-between mb-2">
+                  <span className={`text-xs font-medium ${textPrimary}`}>{r.reviewerName}</span>
+                  <span className="text-yellow-500 text-xs">
+                    {'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}
+                  </span>
+                </div>
+                <p className={`text-xs mb-3 ${textSecondary}`}>{r.comment || 'No comment'}</p>
 
-          {/* Filter Buttons */}
-          <div className="flex flex-wrap gap-2 mb-3">
-            {['All', 'General', 'Positive', 'Negative', 'Professional'].map((cat) => (
+                <label className={`block text-[10px] mb-1 ${textMuted}`}>AI-drafted reply (editable):</label>
+                <textarea
+                  className={`w-full border rounded-lg p-2 text-sm outline-none mb-3 ${inputBg}`}
+                  rows={3}
+                  value={editingText[r.id] || ''}
+                  onChange={(e) => setEditingText((prev) => ({ ...prev, [r.id]: e.target.value }))}
+                />
+
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleApprove(r.id)}
+                    disabled={pendingActionId === r.id}
+                    className="flex items-center gap-1 bg-green-600 hover:bg-green-500 text-white text-xs px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50"
+                  >
+                    <Check size={12} /> Approve & Post
+                  </button>
+                  <button
+                    onClick={() => handleReject(r.id)}
+                    disabled={pendingActionId === r.id}
+                    className={`flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg transition-colors disabled:opacity-50 ${
+                      theme === "light" ? "bg-gray-200 text-gray-700 hover:bg-gray-300" : "bg-[#1F2430] text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    <X size={12} /> Reject
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* AI Generator (test/manual use) */}
+      <div className={`${bgCard} border rounded-xl p-5 mb-6`}>
+        <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium mb-3`}>
+          <Sparkles size={14} /> AI Review Reply Generator
+        </div>
+        <textarea
+          className={`w-full border rounded-lg p-3 text-sm outline-none mb-3 ${inputBg}`}
+          rows={3}
+          placeholder="Paste a customer review here to generate a reply..."
+          value={reviewText}
+          onChange={(e) => setReviewText(e.target.value)}
+        />
+        <button
+          className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+          onClick={handleGenerateReply}
+          disabled={isGenerating || !reviewText.trim()}
+        >
+          {isGenerating ? 'Generating...' : 'Generate Reply'}
+        </button>
+
+        {generatedReply && (
+          <div className={`${bgSubCard} border rounded-lg p-4 mt-3`}>
+            <div className="flex justify-between items-start mb-2">
+              <span className={`text-xs ${textSecondary}`}>AI Generated Reply:</span>
               <button
-                key={cat}
-                className={`text-[10px] px-3 py-1 rounded-full border transition-colors ${
-                  filterCategory === cat ? pillActive : pillInactive
+                className={`text-[10px] px-2 py-1 rounded transition-colors flex items-center gap-1 ${
+                  theme === "light" ? "bg-gray-200 text-gray-700 hover:bg-gray-300" : "bg-[#1F2430] text-gray-400 hover:text-white"
                 }`}
-                onClick={() => setFilterCategory(cat)}
+                onClick={() => navigator.clipboard.writeText(generatedReply)}
               >
-                {cat}
+                <Copy size={12} /> Copy
               </button>
-            ))}
+            </div>
+            <p className={`text-sm leading-relaxed ${textPrimary}`}>{generatedReply}</p>
           </div>
-
-          {/* Template List */}
-          <div className="space-y-2 mt-2 max-h-[250px] overflow-y-auto custom-scroll">
-            {filteredTemplates.map((tpl) => (
-              <div 
-                key={tpl}
-                className={`flex items-center justify-between border rounded-lg px-3 py-2 cursor-pointer transition-colors ${
-                  theme === "light"
-                    ? "bg-gray-50 border-gray-200 hover:bg-gray-100 text-gray-800"
-                    : "bg-[#181D27] border-[#2A303C] hover:bg-[#222633] text-gray-300"
-                }`}
-                onClick={() => setSelectedTemplate(tpl)}
-              >
-                <span className="text-xs">{tpl}</span>
-                <span className="text-[10px] text-indigo-400">Select</span>
-              </div>
-            ))}
-            <button className="w-full mt-2 text-[10px] text-indigo-400 hover:text-indigo-300 transition-colors text-center">
-              View All Templates →
-            </button>
-          </div>
-        </div>
+        )}
       </div>
 
       {/* Recent AI Activity */}
