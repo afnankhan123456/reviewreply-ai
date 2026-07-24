@@ -38,6 +38,11 @@ model User {
   criticalEmailsSent  Int                 @default(0)
   criticalEmailsLimit Int                 @default(0)
   alertMonthlyReset   DateTime?
+  autoReplyMode       String              @default("manual")
+  aiRepliesUsed       Int                 @default(0)
+  aiRepliesLimit      Int                 @default(500)
+  aiRepliesHourCount  Int                 @default(0)
+  aiRepliesHourReset  DateTime?
   createdAt           DateTime            @default(now())
   lastLogin           DateTime            @default(now())
   referralCode        String              @unique
@@ -86,6 +91,7 @@ model Review {
   reviewReply      String?
   replied          Boolean  @default(false)
   aiReplied        Boolean  @default(false)
+  replyStatus      String   @default("none")
   reviewDate       DateTime
   syncedAt         DateTime @default(now())
   createdAt        DateTime @default(now())
