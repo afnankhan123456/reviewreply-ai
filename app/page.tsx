@@ -417,16 +417,65 @@ const howItWorks = [
 
 function InfoSection() {
   return (
-    <div className="bg-black text-white">
+    <div className="relative bg-black text-white overflow-hidden">
+      {/* Seamless continuation background */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        {/* Soft glow gradients — same colour palette as hero */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_20%_10%,rgba(255,45,85,0.15),transparent_70%),radial-gradient(ellipse_60%_60%_at_80%_30%,rgba(180,0,60,0.2),transparent_70%),radial-gradient(ellipse_100%_100%_at_50%_100%,rgba(80,0,50,0.25),transparent_70%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_20%,rgba(255,45,85,0.1),transparent_60%),radial-gradient(circle_at_30%_80%,rgba(200,0,100,0.15),transparent_60%)]" />
+        <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-black/80 to-transparent" />
+
+        {/* Subtle noise texture */}
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.4'/%3E%3C/svg%3E")`,
+            backgroundRepeat: "repeat",
+            backgroundSize: "256px 256px",
+          }}
+        />
+
+        {/* Faint curved neon lines */}
+        <div className="absolute top-1/4 left-0 w-full h-64 opacity-20">
+          <div className="absolute top-0 left-[10%] w-96 h-96 rounded-full border border-[#ff2d55]/30 blur-sm" />
+          <div className="absolute bottom-0 right-[5%] w-80 h-80 rounded-full border border-[#ff2d55]/20 blur-sm" />
+          <div className="absolute top-20 right-[15%] w-64 h-64 rounded-full border border-pink-500/20 blur-sm" />
+        </div>
+
+        {/* Floating particles */}
+        <div className="absolute inset-0">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <div
+              key={i}
+              className="absolute rounded-full bg-[#ff2d55]/20"
+              style={{
+                width: `${Math.random() * 4 + 1}px`,
+                height: `${Math.random() * 4 + 1}px`,
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 100}%`,
+                animation: `floatParticle ${Math.random() * 6 + 4}s infinite ease-in-out`,
+                animationDelay: `${Math.random() * 5}s`,
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Actual content — same as before, now readable over the enhanced background */}
       <style>{`
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+
+        @keyframes floatParticle {
+          0%, 100% { transform: translateY(0) scale(1); opacity: 0.3; }
+          50% { transform: translateY(-20px) scale(1.2); opacity: 0.6; }
+        }
       `}</style>
 
       {/* App Name + Short Description */}
-      <section className="px-5 py-16 md:py-24 text-center max-w-4xl mx-auto">
+      <section className="px-5 py-16 md:py-24 text-center max-w-4xl mx-auto relative z-10">
         <div className="flex flex-col items-center mb-6">
           <img src="/ai-logo.png" alt="ReviewReply AI" className="w-16 h-16 object-contain mb-4" />
           <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight text-white">
@@ -442,7 +491,7 @@ function InfoSection() {
       </section>
 
       {/* Main Features */}
-      <section className="px-5 py-12 md:py-16 max-w-6xl mx-auto">
+      <section className="px-5 py-12 md:py-16 max-w-6xl mx-auto relative z-10">
         <h3 className="text-2xl md:text-3xl font-bold text-center mb-10">
           Main <span className="text-[#ff2d55]">Features</span>
         </h3>
@@ -466,7 +515,7 @@ function InfoSection() {
       </section>
 
       {/* How It Works */}
-      <section className="px-5 py-12 md:py-16 max-w-6xl mx-auto">
+      <section className="px-5 py-12 md:py-16 max-w-6xl mx-auto relative z-10">
         <h3 className="text-2xl md:text-3xl font-bold text-center mb-10">
           How It <span className="text-[#ff2d55]">Works</span>
         </h3>
@@ -491,7 +540,7 @@ function InfoSection() {
       </section>
 
       {/* Screenshots / Dashboard Preview */}
-      <section className="px-5 py-12 md:py-16 max-w-6xl mx-auto">
+      <section className="px-5 py-12 md:py-16 max-w-6xl mx-auto relative z-10">
         <h3 className="text-2xl md:text-3xl font-bold text-center mb-10">
           Dashboard <span className="text-[#ff2d55]">Preview</span>
         </h3>
@@ -515,7 +564,7 @@ function InfoSection() {
       </section>
 
       {/* Google Data Usage */}
-      <section className="px-5 py-12 md:py-16 max-w-4xl mx-auto">
+      <section className="px-5 py-12 md:py-16 max-w-4xl mx-auto relative z-10">
         <div className="bg-[#0d0d0d] border border-white/10 rounded-2xl p-6 md:p-8 flex items-start gap-4">
           <div className="w-10 h-10 rounded-full bg-[#2a0a10] border border-[#ff2d55]/30 flex items-center justify-center shrink-0">
             <ShieldCheck className="w-5 h-5 text-[#ff2d55]" />
@@ -530,7 +579,7 @@ function InfoSection() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 px-5 py-10">
+      <footer className="border-t border-white/10 px-5 py-10 relative z-10">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <img src="/ai-logo.png" alt="ReviewReply AI" className="w-8 h-8 object-contain" />
@@ -547,7 +596,7 @@ function InfoSection() {
             <a href="mailto:afnank6789@gmail.com" className="hover:text-[#ff2d55] transition-colors">
               afnank6789@gmail.com
             </a>
-          </div># DEV NOTE: is placeholder email ko apne asli support email se replace karna
+          </div>
         </div>
 
         <p className="text-center text-xs text-gray-600 mt-6">
