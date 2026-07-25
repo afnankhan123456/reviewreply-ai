@@ -4,6 +4,9 @@ import Providers from "../components/Providers";
 export const metadata = {
   title: "ReviewReply AI",
   description: "AI Review Dashboard",
+  verification: {
+    google: "mLuWg9q3JVkzCcLhRQhEqye5XCK4C5lVRizxsF7Hs_c",
+  },
 };
 
 // 🔥 YEH 3 LINES ADD KARO 🔥
