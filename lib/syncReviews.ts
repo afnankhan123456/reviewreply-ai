@@ -3,6 +3,7 @@ import { autoTagReview } from './autoTag';
 import { sendFromCriticalPool } from './notificationEmails';
 import { generateAIReply } from './aiReply';
 import { postReplyToGoogle } from './googlePostReply';
+import { ensureFreshGoogleToken } from './googleTokenRefresh';
 
 const STAR_MAP: Record<string, number> = {
   STAR_RATING_UNSPECIFIED: 0,
@@ -36,6 +37,11 @@ export async function syncUserReviews(userId: string) {
   }
 
   if (!user.googleAccessToken) return { synced: 0, error: 'No Google access token' };
+
+  // ✅ FIX: sync se pehle token freshness ensure karo — 1 hour baad expire na ho
+  const freshToken = await ensureFreshGoogleToken(user.id);
+  if (freshToken) user.googleAccessToken = freshToken;
+
   if (!user.businessLocations.length) return { synced: 0, error: 'No business location connected' };
 
   if (user.monthlyResetDate) {
