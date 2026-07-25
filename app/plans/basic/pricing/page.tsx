@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import {
   CalendarDays,
   BadgeDollarSign,
@@ -11,22 +10,14 @@ import {
   ShieldCheck,
   Headphones,
   BadgeCheck,
+  ArrowRight,
 } from "lucide-react";
-import PayPalButton from "@/app/components/PayPalButton";
 
 export default function BasicPricingPage() {
   const router = useRouter();
-  const [processingPlan, setProcessingPlan] = useState<string | null>(null);
-  const [errorMsg, setErrorMsg] = useState("");
 
-  const handleSuccess = () => {
-    setProcessingPlan(null);
-    router.push("/plans/basic/dashbord");
-  };
-
-  const handleFailure = (message: string) => {
-    setProcessingPlan(null);
-    setErrorMsg(message);
+  const goToCheckout = (planId: string, amount: string) => {
+    router.push(`/plans/basic/checkout?plan=${planId}&amount=${amount}`);
   };
 
   const plans = [
@@ -120,12 +111,6 @@ export default function BasicPricingPage() {
           </p>
         </div>
 
-        {errorMsg && (
-          <div className="max-w-xl mx-auto mb-6 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm text-center">
-            {errorMsg}
-          </div>
-        )}
-
         {/* MOBILE CARDS */}
         <div className="block md:hidden space-y-4">
 
@@ -172,14 +157,15 @@ export default function BasicPricingPage() {
                 )}
               </div>
 
-              <PayPalButton
-                amount={plan.amount}
-                planType={plan.id}
-                tier="basic"
-                disabled={processingPlan !== null}
-                onSuccess={handleSuccess}
-                onFailure={handleFailure}
-              />
+              <button
+                onClick={() => goToCheckout(plan.id, plan.amount)}
+                className="w-full rounded-2xl bg-gradient-to-r from-violet-700 to-fuchsia-500 py-3 text-base font-bold text-white shadow-lg transition-all"
+              >
+                <div className="flex items-center justify-center gap-2">
+                  Pay
+                  <ArrowRight size={18} />
+                </div>
+              </button>
             </div>
           ))}
         </div>
@@ -264,14 +250,15 @@ export default function BasicPricingPage() {
               </div>
 
               <div className="p-5 border-l border-violet-100">
-                <PayPalButton
-                  amount={plan.amount}
-                  planType={plan.id}
-                  tier="basic"
-                  disabled={processingPlan !== null}
-                  onSuccess={handleSuccess}
-                  onFailure={handleFailure}
-                />
+                <button
+                  onClick={() => goToCheckout(plan.id, plan.amount)}
+                  className="w-full rounded-2xl bg-gradient-to-r from-violet-700 to-fuchsia-500 py-3.5 text-lg font-bold text-white shadow-lg transition-all hover:scale-[1.01]"
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    Pay
+                    <ArrowRight size={18} />
+                  </div>
+                </button>
               </div>
             </div>
           ))}
