@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+import { useSession, signIn } from 'next-auth/react';
 import {
   CheckCircle, Clock,
   ExternalLink, Mail, Building2, X, PlugZap
@@ -262,14 +262,34 @@ export default function ConnectAppPage() {
               </div>
             </div>
 
-            <button
-              onClick={handleConnectGoogleBusiness}
-              disabled={loadingLocations}
-              className="p-2 rounded border transition-colors text-xs font-medium bg-green-500/10 border-green-500/30 text-green-400 hover:bg-green-500/20 disabled:opacity-50"
-            >
-              {loadingLocations ? 'Loading...' : 'Fetch Locations'}
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={handleConnectGoogleBusiness}
+                disabled={loadingLocations}
+                className="p-2 rounded border transition-colors text-xs font-medium bg-green-500/10 border-green-500/30 text-green-400 hover:bg-green-500/20 disabled:opacity-50"
+              >
+                {loadingLocations ? 'Loading...' : 'Fetch Locations'}
+              </button>
+
+              <button
+                onClick={() =>
+                  signIn("google", {
+                    callbackUrl: "/plans/standard/dashboard/connect-app",
+                  })
+                }
+                className="p-2 rounded border transition-colors text-xs font-medium bg-blue-500/10 border-blue-500/30 text-blue-400 hover:bg-blue-500/20"
+                title="Refresh your Google Business permission if locations stop loading"
+              >
+                Reconnect Business
+              </button>
+            </div>
           </div>
+
+          {locationError?.includes('No Google access token') && (
+            <p className="text-xs text-yellow-400 mb-2">
+              Your Google Business access expired. Click "Reconnect Business" above to restore it.
+            </p>
+          )}
 
           {/* Plan limit indicator */}
           <div className="flex items-center justify-between mb-3 px-1">
