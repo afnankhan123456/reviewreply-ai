@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useSession } from "next-auth/react";
 
 const pricingPlans = [
   {
@@ -48,6 +49,7 @@ const pricingPlans = [
 
 export default function StandardPricingPage() {
   const router = useRouter();
+  const { update } = useSession();
   const [activatingPlan, setActivatingPlan] = useState<string | null>(null);
 
   const handleChoosePlan = async (plan: (typeof pricingPlans)[number]) => {
@@ -63,6 +65,9 @@ export default function StandardPricingPage() {
       const data = await res.json();
 
       if (data.success) {
+        // ✅ FIX: session refresh karo taaki naya plan turant reflect ho,
+        // warna dashboard layout purana plan dekh kar wapas /plans bhej deta hai
+        await update();
         router.push(`/plans/standard/dashboard?plan=${plan.id}&days=${plan.days}`);
       } else {
         alert(data.error || "Failed to activate plan");
