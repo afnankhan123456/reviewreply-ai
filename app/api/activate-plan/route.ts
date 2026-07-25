@@ -37,7 +37,7 @@ export async function POST(req: any) {
         subscriptionEnd: end,
         plan: planType,
         reviewsUsed: 0,
-        monthlyResetDate: start,  // ← naya field
+        monthlyResetDate: start,
       },
     });
 
