@@ -167,9 +167,10 @@ export const authOptions = {
           // me na ghus sake agar uska apna account Basic plan ka hai.
           const ownerRecord = await prisma.user.findUnique({
             where: { id: ownerId },
-            select: { plan: true },
+            select: { plan: true, subscriptionEnd: true },
           });
           token.plan = ownerRecord?.plan || "basic";
+          token.subscriptionEnd = ownerRecord?.subscriptionEnd || null;
 
           // ✅ Agar queue me koi naya plan tha aur purane plan ke din poore ho chuke,
           // to login hote hi usko turant switch kar do.
