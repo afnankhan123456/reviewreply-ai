@@ -1,22 +1,5 @@
-import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export default function HomePage() {
-  return (
-    <div className="min-h-screen bg-black flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-6xl font-bold text-white mb-6">
-          ReviewReply AI
-        </h1>
-        <p className="text-zinc-400 text-xl mb-8">
-          Smart AI replies for Google reviews.
-        </p>
-        <Link
-          href="/plans"
-          className="bg-white text-black px-8 py-4 rounded-2xl font-bold text-lg inline-block"
-        >
-          Open Dashboard
-        </Link>
-      </div>
-    </div>
-  );
+  redirect("/login");
 }
