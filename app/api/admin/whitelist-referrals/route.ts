@@ -1,7 +1,13 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getToken } from "next-auth/jwt";
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  const token: any = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  if (!token?.email || !token.isAdmin) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     // Get whitelisted emails
     const partners = await prisma.partnerWhitelist.findMany({
