@@ -54,7 +54,7 @@ export default function StandardPricingPage() {
     try {
       setActivatingPlan(plan.id);
 
-      const res = await fetch("/api/activate-plan", {
+      const res = await fetch("/api/activate-standard-plan", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ plan: plan.id, tier: "standard" }),
