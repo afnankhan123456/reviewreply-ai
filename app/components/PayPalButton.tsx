@@ -27,6 +27,7 @@ export default function PayPalButton({
       options={{
         clientId: process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || "",
         currency: "USD",
+        locale: "en_IN", // ✅ India target — form India/+91 default dikhega
       }}
     >
       <PayPalButtons
