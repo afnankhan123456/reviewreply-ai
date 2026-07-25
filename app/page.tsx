@@ -359,32 +359,32 @@ const features = [
   {
     icon: Link2,
     title: "Google Business Profile Sync",
-    desc: "Apni Google Business Profile ko connect karke saari reviews ek jagah dekho aur manage karo.",
+    desc: "Connect your Google Business Profile to view and manage all your reviews in one place.",
   },
   {
     icon: Sparkles,
     title: "AI Review Replies",
-    desc: "Har review ke liye AI se professional, human-like reply seconds me generate karo.",
+    desc: "Generate professional, human-like replies for every review in seconds using AI.",
   },
   {
     icon: BarChart3,
     title: "Review Analytics",
-    desc: "Ratings, trends aur performance ka detailed analytics dashboard.",
+    desc: "A detailed analytics dashboard for ratings, trends, and performance.",
   },
   {
     icon: Smile,
     title: "Sentiment Analysis",
-    desc: "Har review ka sentiment (positive/negative/neutral) automatically detect karo.",
+    desc: "Automatically detect the sentiment (positive/negative/neutral) of every review.",
   },
   {
     icon: Bell,
     title: "Email Alerts",
-    desc: "Nayi review aane par turant email alert paao — kuch bhi miss nahi hoga.",
+    desc: "Get instant email alerts when a new review comes in — never miss anything.",
   },
   {
     icon: UserCog,
     title: "Team Management",
-    desc: "Apni team ko invite karo aur unke saath reviews ka kaam share karo.",
+    desc: "Invite your team and share review management tasks with them.",
   },
 ];
 
@@ -393,25 +393,25 @@ const howItWorks = [
     icon: Link2,
     step: "1",
     title: "Connect",
-    desc: "Apna Google Business Profile secure OAuth ke through connect karo.",
+    desc: "Connect your Google Business Profile using secure OAuth.",
   },
   {
     icon: RefreshCw,
     step: "2",
     title: "Sync",
-    desc: "Tumhari saari reviews automatically sync ho kar dashboard me aa jaati hain.",
+    desc: "All your reviews sync automatically and appear on the dashboard.",
   },
   {
     icon: Sparkles,
     step: "3",
     title: "Generate Reply",
-    desc: "AI ek click me smart, relevant reply generate kar deta hai.",
+    desc: "AI generates a smart, relevant reply with just one click.",
   },
   {
     icon: Send,
     step: "4",
     title: "Publish",
-    desc: "Reply review kar ke seedha Google Business Profile par publish kar do.",
+    desc: "Review the reply and publish it directly to your Google Business Profile.",
   },
 ];
 
@@ -434,14 +434,10 @@ function InfoSection() {
           </h2>
         </div>
         <p className="text-gray-300 text-base md:text-lg max-w-2xl mx-auto">
-          ReviewReply AI ek AI-powered tool hai jo businesses ko unki Google reviews
-          manage karne aur unpar smart, professional replies generate karne me madad karta hai.
+          ReviewReply AI is an AI-powered tool that helps businesses manage their Google reviews and generate smart, professional replies to them.
         </p>
         <p className="text-gray-500 text-sm md:text-base max-w-2xl mx-auto mt-4">
-          Detailed purpose: ReviewReply AI aapke Google Business Profile ki reviews ko sync
-          karta hai, unka sentiment analyze karta hai, aur AI ki madad se relevant reply
-          generate karke aapka time bachata hai — taaki aap apne customers se behtar tareeke
-          se judh sakein aur apni online reputation grow kar sakein.
+          Detailed purpose: ReviewReply AI syncs your Google Business Profile reviews, analyzes their sentiment, and uses AI to generate relevant replies — saving you time so you can connect better with your customers and grow your online reputation.
         </p>
       </section>
 
@@ -527,9 +523,7 @@ function InfoSection() {
           <div>
             <h4 className="text-lg font-bold text-white mb-2">Google Data Usage</h4>
             <p className="text-sm text-gray-400 leading-relaxed">
-              Google Business Profile data sirf reviews sync karne aur AI replies generate
-              karne ke liye use hota hai. Hum aapka data kisi third party ko bechte nahi
-              hain, aur ise sirf isi app ki functionality provide karne ke liye use karte hain.
+              Google Business Profile data is used solely to sync reviews and generate AI replies. We do not sell your data to any third party, and it is only used to provide the functionality of this app.
             </p>
           </div>
         </div>
@@ -550,9 +544,8 @@ function InfoSection() {
             <Link href="/legal/terms" className="hover:text-[#ff2d55] transition-colors">
               Terms of Service
             </Link>
-            {/* TODO: apna asli support email yahan daalo */}
-            <a href="mailto:support@reviewreplyai.com" className="hover:text-[#ff2d55] transition-colors">
-              support@reviewreplyai.com
+            <a href="mailto:afnank6789@gmail.com" className="hover:text-[#ff2d55] transition-colors">
+              afnank6789@gmail.com
             </a>
           </div># DEV NOTE: is placeholder email ko apne asli support email se replace karna
         </div>
