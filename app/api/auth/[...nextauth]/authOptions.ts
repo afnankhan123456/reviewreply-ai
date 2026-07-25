@@ -2,6 +2,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { prisma } from "@/lib/prisma";
 import { cookies } from "next/headers";
 import { resolveOwnerAndRole } from "@/lib/getEffectiveOwner";
+import { activatePendingPlanIfDue } from "@/lib/planQueue";
 
 const adminEmail = process.env.ADMIN_EMAIL;
 
@@ -169,6 +170,10 @@ export const authOptions = {
             select: { plan: true },
           });
           token.plan = ownerRecord?.plan || "basic";
+
+          // ✅ Agar queue me koi naya plan tha aur purane plan ke din poore ho chuke,
+          // to login hote hi usko turant switch kar do.
+          await activatePendingPlanIfDue(ownerId);
         } catch (err) {
           console.log("Error resolving team role for JWT:", err);
         }
