@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { prisma } from "../../../lib/prisma";
 import { getToken } from "next-auth/jwt";
+import { activateOrQueuePlan } from "@/lib/planActivation";
 
 export async function POST(req: any) {
   try {
@@ -14,34 +14,25 @@ export async function POST(req: any) {
     }
 
     const body = await req.json();
-    const planType = body.plan; // "1m", "3m", "6m", "12m"
+    const planType = body.plan;
+    const tier = body.tier === "standard" ? "standard" : "basic";
 
-    const durations: Record<string, number> = {
-      "1m": 30,
-      "3m": 90,
-      "6m": 180,
-      "12m": 365,
-    };
-
-    if (!planType || !durations[planType]) {
-      return NextResponse.json({ success: false, error: "Invalid plan type" }, { status: 400 });
+    try {
+      const result = await activateOrQueuePlan(token.email, planType, tier);
+      return NextResponse.json({
+        success: true,
+        queued: result.queued,
+        message: result.queued
+          ? `Naya plan queue ho gaya hai — purane plan ke khatam hone ke agle din se shuru hoga`
+          : "Plan activated",
+        plan: result.plan,
+      });
+    } catch (e: any) {
+      return NextResponse.json(
+        { success: false, error: e.message || "Invalid plan type" },
+        { status: 400 }
+      );
     }
-
-    const start = new Date();
-    const end = new Date(start.getTime() + durations[planType] * 24 * 60 * 60 * 1000);
-
-    await prisma.user.update({
-      where: { email: token.email },
-      data: {
-        subscriptionStart: start,
-        subscriptionEnd: end,
-        plan: planType,
-        reviewsUsed: 0,
-        monthlyResetDate: start,
-      },
-    });
-
-    return NextResponse.json({ success: true, message: "Plan activated" });
   } catch (error) {
     return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
   }
