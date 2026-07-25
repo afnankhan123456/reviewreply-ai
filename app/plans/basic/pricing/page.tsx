@@ -11,37 +11,22 @@ import {
   ShieldCheck,
   Headphones,
   BadgeCheck,
-  ArrowRight,
 } from "lucide-react";
+import PayPalButton from "@/app/components/PayPalButton";
 
 export default function BasicPricingPage() {
   const router = useRouter();
-  const [activatingPlan, setActivatingPlan] = useState<string | null>(null);
+  const [processingPlan, setProcessingPlan] = useState<string | null>(null);
+  const [errorMsg, setErrorMsg] = useState("");
 
-  const handlePlanActivation = async (planType: string) => {
-    try {
-      setActivatingPlan(planType);
+  const handleSuccess = () => {
+    setProcessingPlan(null);
+    router.push("/plans/basic/dashbord");
+  };
 
-      const res = await fetch("/api/activate-plan", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ plan: planType, tier: "basic" }),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        router.push("/plans/basic/dashbord");
-      } else {
-        alert(data.error || "Failed to activate plan");
-      }
-    } catch (err) {
-      alert("Something went wrong");
-    } finally {
-      setActivatingPlan(null);
-    }
+  const handleFailure = (message: string) => {
+    setProcessingPlan(null);
+    setErrorMsg(message);
   };
 
   const plans = [
@@ -49,6 +34,7 @@ export default function BasicPricingPage() {
       id: "1m",
       duration: "1 Month",
       price: "$0.01",
+      amount: "0.01",
       monthly: "$0.01 / month",
       save: "—",
     },
@@ -56,6 +42,7 @@ export default function BasicPricingPage() {
       id: "3m",
       duration: "3 Months",
       price: "$24",
+      amount: "24",
       monthly: "$8 / month",
       save: "Save 11%",
     },
@@ -63,6 +50,7 @@ export default function BasicPricingPage() {
       id: "6m",
       duration: "6 Months",
       price: "$45",
+      amount: "45",
       monthly: "$7.50 / month",
       save: "Save 17%",
     },
@@ -70,6 +58,7 @@ export default function BasicPricingPage() {
       id: "12m",
       duration: "12 Months",
       price: "$88",
+      amount: "88",
       monthly: "$7.33 / month",
       save: "Save 20%",
     },
@@ -131,6 +120,12 @@ export default function BasicPricingPage() {
           </p>
         </div>
 
+        {errorMsg && (
+          <div className="max-w-xl mx-auto mb-6 bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-xl text-sm text-center">
+            {errorMsg}
+          </div>
+        )}
+
         {/* MOBILE CARDS */}
         <div className="block md:hidden space-y-4">
 
@@ -177,20 +172,14 @@ export default function BasicPricingPage() {
                 )}
               </div>
 
-              <button
-                onClick={() => handlePlanActivation(plan.id)}
-                disabled={activatingPlan !== null}
-                className="w-full rounded-2xl bg-gradient-to-r from-violet-700 to-fuchsia-500 py-3 text-base font-bold text-white shadow-lg transition-all disabled:opacity-50"
-              >
-                {activatingPlan === plan.id ? (
-                  "Activating..."
-                ) : (
-                  <div className="flex items-center justify-center gap-2">
-                    Pay
-                    <ArrowRight size={18} />
-                  </div>
-                )}
-              </button>
+              <PayPalButton
+                amount={plan.amount}
+                planType={plan.id}
+                tier="basic"
+                disabled={processingPlan !== null}
+                onSuccess={handleSuccess}
+                onFailure={handleFailure}
+              />
             </div>
           ))}
         </div>
@@ -275,20 +264,14 @@ export default function BasicPricingPage() {
               </div>
 
               <div className="p-5 border-l border-violet-100">
-                <button
-                  onClick={() => handlePlanActivation(plan.id)}
-                  disabled={activatingPlan !== null}
-                  className="w-full rounded-2xl bg-gradient-to-r from-violet-700 to-fuchsia-500 py-3.5 text-lg font-bold text-white shadow-lg transition-all hover:scale-[1.01] disabled:opacity-50"
-                >
-                  {activatingPlan === plan.id ? (
-                    "Activating..."
-                  ) : (
-                    <div className="flex items-center justify-center gap-2">
-                      Pay
-                      <ArrowRight size={18} />
-                    </div>
-                  )}
-                </button>
+                <PayPalButton
+                  amount={plan.amount}
+                  planType={plan.id}
+                  tier="basic"
+                  disabled={processingPlan !== null}
+                  onSuccess={handleSuccess}
+                  onFailure={handleFailure}
+                />
               </div>
             </div>
           ))}
