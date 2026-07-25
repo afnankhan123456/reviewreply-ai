@@ -1,15 +1,27 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
+import { resolveOwnerAndRole } from '@/lib/getEffectiveOwner';
 
 export async function GET(request: Request) {
   try {
+    // ✅ Auth check add kiya — ab bina login ke ye endpoint kaam nahi karega
+    const session: any = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+    }
+
+    // ✅ Sirf logged-in user (ya uske owner) ka data milega, kisi aur ka nahi
+    const { ownerId } = await resolveOwnerAndRole(session.user.id);
+
     const { searchParams } = new URL(request.url);
     const format = searchParams.get('format') || 'csv';
     const startDate = searchParams.get('startDate');
     const endDate = searchParams.get('endDate');
 
     // Build where clause
-    const where: any = {};
+    const where: any = { userId: ownerId }; // ✅ sirf apna data
     if (startDate && endDate) {
       where.createdAt = {
         gte: new Date(startDate),
