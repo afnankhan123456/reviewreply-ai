@@ -180,6 +180,10 @@ export const authOptions = {
           const updateData: any = {
             googleAccessToken: account.access_token,
             googleConnected: true,
+            // ✅ FIX: token kab expire hoga, wo bhi save karo — taaki refresh logic ko pata chale
+            googleTokenExpiresAt: account.expires_at
+              ? new Date(account.expires_at * 1000)
+              : new Date(Date.now() + 3600 * 1000),
           };
           if (account.refresh_token) {
             updateData.googleRefreshToken = account.refresh_token;
