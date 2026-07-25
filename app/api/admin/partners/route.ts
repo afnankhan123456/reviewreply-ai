@@ -1,8 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { getToken } from "next-auth/jwt";
+
+async function checkAdmin(req: NextRequest) {
+  const token: any = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  return token?.email && token.isAdmin;
+}
 
 // GET - List all whitelisted partners
-export async function GET() {
+export async function GET(req: NextRequest) {
+  if (!(await checkAdmin(req))) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     // Partners ko ek alag table mein store karenge
     // Abhi ke liye referralStats mein ek flag use karte hain
@@ -27,6 +37,10 @@ export async function GET() {
 
 // POST - Add email to whitelist
 export async function POST(req: NextRequest) {
+  if (!(await checkAdmin(req))) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const { email } = await req.json();
 
@@ -68,6 +82,10 @@ export async function POST(req: NextRequest) {
 
 // DELETE - Remove email from whitelist
 export async function DELETE(req: NextRequest) {
+  if (!(await checkAdmin(req))) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const { email } = await req.json();
 
