@@ -34,6 +34,7 @@ import {
   UserCheck,
   HelpCircle,
   ArrowRight,
+  CheckCircle,
 } from "lucide-react";
 
 function LoginPageContent() {
@@ -539,7 +540,7 @@ function InfoSection() {
         </div>
       </section>
 
-      {/* 5. Dashboard Preview (already existed but now refined) */}
+      {/* 5. Dashboard Preview */}
       <section className="px-5 py-12 md:py-16 max-w-6xl mx-auto relative z-10">
         <h3 className="text-2xl md:text-3xl font-bold text-center mb-10">
           Dashboard <span className="text-[#ff2d55]">Preview</span>
