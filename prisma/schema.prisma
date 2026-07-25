@@ -60,6 +60,9 @@ model User {
   tagCycles           TagCycle[]
   lastWeeklyReportSent DateTime?
   lastExpiryNotified   DateTime?
+  pendingPlan          String?
+  pendingPlanDays      Int?
+  pendingPlanActivatesAt DateTime?
   teamMembersOwned    TeamMember[]        @relation("TeamOwner")
   teamMembershipOf    TeamMember[]        @relation("TeamMembership")
   articleFeedback     ArticleFeedback[]
