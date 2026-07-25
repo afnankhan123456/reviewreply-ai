@@ -20,6 +20,7 @@ import {
   Crown,
 } from "lucide-react";
 import Topbar from "./components/Topbar";
+import ExpiryBanner from "./components/ExpiryBanner";
 
 export default function DashboardPage() {
   const [locations, setLocations] = useState<any[]>([]);
@@ -214,7 +215,7 @@ export default function DashboardPage() {
         {/* Mobile Menu Items – NOW WITH PROPER href */}
         <nav className="flex-1 overflow-y-auto p-4 space-y-1">
           {menuItems.map((item, index) => (
-            <a
+            
               key={index}
               href={item.href}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium transition ${
@@ -252,6 +253,9 @@ export default function DashboardPage() {
         <div className="mb-2">
           <Topbar onMenuClick={() => setIsSidebarOpen(true)} />
         </div>
+
+        {/* Plan Expiry Warning Banner */}
+        <ExpiryBanner />
 
         {/* Google Business Locations Card */}
         <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 sm:p-6 mt-5">
