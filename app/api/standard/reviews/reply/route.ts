@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
 import { resolveOwnerAndRole } from '@/lib/getEffectiveOwner';
+import { postReplyToGoogle } from '@/lib/googlePostReply';
 
 export async function POST(request: Request) {
   try {
@@ -44,41 +45,21 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: false, message: 'Forbidden' }, { status: 403 });
     }
 
-    const updatedReview = await prisma.review.update({
-      where: { id: reviewId },
-      data: {
-        reviewReply: replyText,
-        replied: true,
-      },
-    });
+    // ✅ Real Google-post — fail hone par sach me fail bhi bolega
+    const result = await postReplyToGoogle(reviewId, replyText);
 
-    if (updatedReview.source === 'google' && updatedReview.googleReviewId) {
-      try {
-        const googleResponse = await fetch(
-          `https://mybusiness.googleapis.com/v4/accounts/YOUR_ACCOUNT_ID/locations/YOUR_LOCATION_ID/reviews/${updatedReview.googleReviewId}/reply`,
-          {
-            method: 'POST',
-            headers: {
-              Authorization: `Bearer ${process.env.GOOGLE_ACCESS_TOKEN}`,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ comment: replyText }),
-          }
-        );
-
-        if (!googleResponse.ok) {
-          console.error('❌ Google API Error:', await googleResponse.text());
-        } else {
-          console.log('✅ Reply posted to Google successfully!');
-        }
-      } catch (googleError) {
-        console.error('❌ Error posting to Google API:', googleError);
-      }
+    if (!result.success) {
+      return NextResponse.json(
+        { success: false, message: result.error || 'Failed to post reply to Google' },
+        { status: 502 }
+      );
     }
+
+    const updatedReview = await prisma.review.findUnique({ where: { id: reviewId } });
 
     return NextResponse.json({
       success: true,
-      message: 'Reply saved successfully (and posted to Google if applicable)',
+      message: 'Reply posted successfully',
       data: updatedReview,
     });
   } catch (error) {
