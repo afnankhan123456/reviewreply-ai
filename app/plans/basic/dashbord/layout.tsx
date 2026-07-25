@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import Sidebar from "./components/Sidebar";
@@ -13,14 +13,25 @@ export default function DashboardLayout({
   const { status } = useSession();
   const router = useRouter();
 
+  // ✅ NEW: Sidebar collapsed state — Standard plan jaisa hi
+  const [isCollapsed, setIsCollapsed] = useState<boolean>(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("basicSidebarCollapsed");
+      return saved === "true";
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    localStorage.setItem("basicSidebarCollapsed", String(isCollapsed));
+  }, [isCollapsed]);
+
   useEffect(() => {
     if (status === "unauthenticated") {
       router.replace("/login");
     }
   }, [status, router]);
 
-  // Jab tak session check ho nahi jaata, ya user login nahi hai,
-  // tab tak koi bhi dashboard content (sidebar, data, kuch bhi) render nahi hoga.
   if (status === "loading" || status === "unauthenticated") {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white dark:bg-[#0F172A]">
@@ -32,13 +43,13 @@ export default function DashboardLayout({
   return (
     <div className="relative flex min-h-screen bg-white dark:bg-[#0F172A] transition-colors duration-300">
 
-      {/* DESKTOP SIDEBAR ONLY */}
-      <div className="hidden lg:block relative z-40">
-        <Sidebar />
+      {/* ✅ FIX: ab sirf desktop pe hidden nahi — sabhi screens pe visible, collapse/expand karke */}
+      <div className="block relative z-40">
+        <Sidebar isCollapsed={isCollapsed} onToggle={() => setIsCollapsed((prev) => !prev)} />
       </div>
 
       {/* MAIN CONTENT */}
-      <main className="flex-1 p-6 overflow-y-auto text-black dark:text-white transition-colors duration-300 relative z-10">
+      <main className="flex-1 p-6 overflow-y-auto text-black dark:text-white transition-colors duration-300 relative z-10 min-w-0">
         {children}
       </main>
 
