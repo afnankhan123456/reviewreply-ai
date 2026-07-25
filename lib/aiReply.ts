@@ -91,7 +91,12 @@ export async function generateAIReply(ownerId: string, options: GenerateOptions)
     });
 
     const data = await response.json();
-    const reply = data.choices?.[0]?.message?.content || 'Sorry, unable to generate reply at this time.';
+    const reply = data.choices?.[0]?.message?.content;
+
+    //  FIX: agar AI ne valid reply nahi di (empty/missing), to quota consume mat karo
+    if (!reply || !reply.trim()) {
+      return { success: false, error: 'AI did not return a valid reply. Please try again.' };
+    }
 
     await prisma.user.update({
       where: { id: user.id },
