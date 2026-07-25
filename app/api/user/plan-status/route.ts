@@ -1,47 +1,50 @@
 import { NextResponse } from "next/server";
-import { prisma } from "../../../lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { getToken } from "next-auth/jwt";
+import { activatePendingPlanIfDue } from "@/lib/planQueue";
 
-export async function POST(req: any) {
+export async function GET(req: any) {
   try {
     const token: any = await getToken({
       req,
       secret: process.env.NEXTAUTH_SECRET,
     });
 
-    if (!token?.email) {
+    if (!token?.id) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
 
-    const body = await req.json();
-    const planType = body.plan; // "1m", "3m", "6m", "12m"
+    // Pehle check karo — agar naya (queued) plan activate hone ka time aa gaya hai to abhi kar do
+    await activatePendingPlanIfDue(token.id);
 
-    const durations: Record<string, number> = {
-      "1m": 30,
-      "3m": 90,
-      "6m": 180,
-      "12m": 365,
-    };
-
-    if (!planType || !durations[planType]) {
-      return NextResponse.json({ success: false, error: "Invalid plan type" }, { status: 400 });
-    }
-
-    const start = new Date();
-    const end = new Date(start.getTime() + durations[planType] * 24 * 60 * 60 * 1000);
-
-    await prisma.user.update({
-      where: { email: token.email },
-      data: {
-        subscriptionStart: start,
-        subscriptionEnd: end,
-        plan: planType,
-        reviewsUsed: 0,
-        monthlyResetDate: start,  // ← naya field
+    const user = await prisma.user.findUnique({
+      where: { id: token.id },
+      select: {
+        plan: true,
+        subscriptionEnd: true,
+        pendingPlan: true,
+        pendingPlanActivatesAt: true,
       },
     });
 
-    return NextResponse.json({ success: true, message: "Plan activated" });
+    if (!user) {
+      return NextResponse.json({ success: false, error: "User not found" }, { status: 404 });
+    }
+
+    let daysLeft: number | null = null;
+    if (user.subscriptionEnd) {
+      const diffMs = new Date(user.subscriptionEnd).getTime() - Date.now();
+      daysLeft = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    }
+
+    return NextResponse.json({
+      success: true,
+      plan: user.plan,
+      subscriptionEnd: user.subscriptionEnd,
+      daysLeft,
+      hasPendingPlan: !!user.pendingPlan,
+      pendingPlanActivatesAt: user.pendingPlanActivatesAt,
+    });
   } catch (error) {
     return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
   }
