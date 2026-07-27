@@ -82,6 +82,11 @@ function LoginPageContent() {
             <Sparkles className="w-3.5 h-3.5 text-[#ff2d55]" />
             <span className="text-xs font-medium text-gray-300">AI-Powered Review Management</span>
           </div>
+          {/* 🔥 NEW: purpose description above the fold */}
+          <p className="text-gray-400 text-sm text-center max-w-xs mt-3 px-4 leading-relaxed">
+            ReviewReply AI helps businesses automatically generate and manage
+            AI-powered replies to their Google customer reviews.
+          </p>
         </div>
 
         <div className="w-full bg-black/40 backdrop-blur-md border border-[#ff2d55]/30 rounded-3xl p-6 shadow-[0_0_60px_-20px_rgba(255,45,85,0.4)] mb-6">
@@ -182,7 +187,7 @@ function LoginPageContent() {
         </div>
       </div>
 
-      {/* ✅ DESKTOP LAYOUT (md and above) — unchanged */}
+      {/* ✅ DESKTOP LAYOUT (md and above) */}
       <div
         className="hidden md:block min-h-screen relative bg-black overflow-hidden bg-no-repeat bg-cover bg-bottom"
         style={{ backgroundImage: "url('/main-BG.PNG')" }}
@@ -199,10 +204,16 @@ function LoginPageContent() {
               </h1>
             </div>
 
-            <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 mb-6 w-fit">
+            <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 mb-4 w-fit">
               <Sparkles className="w-3.5 h-3.5 text-[#ff2d55]" />
               <span className="text-xs font-medium text-gray-300">AI-Powered Review Management</span>
             </div>
+
+            {/* 🔥 NEW: purpose description above the fold (desktop) */}
+            <p className="text-gray-400 text-sm max-w-md mb-6 leading-relaxed">
+              ReviewReply AI helps businesses automatically generate and manage
+              AI-powered replies to their Google customer reviews.
+            </p>
 
             <h2 className="text-4xl lg:text-5xl font-extrabold leading-tight text-white mb-4">
               Turn Every Review
