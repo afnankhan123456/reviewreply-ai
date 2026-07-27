@@ -35,6 +35,8 @@ import {
   HelpCircle,
   ArrowRight,
   CheckCircle,
+  Ban,
+  Globe,
 } from "lucide-react";
 
 function LoginPageContent() {
@@ -82,14 +84,48 @@ function LoginPageContent() {
             <Sparkles className="w-3.5 h-3.5 text-[#ff2d55]" />
             <span className="text-xs font-medium text-gray-300">AI-Powered Review Management</span>
           </div>
-          {/* 🔥 NEW: purpose description above the fold */}
-          <p className="text-gray-400 text-sm text-center max-w-xs mt-3 px-4 leading-relaxed">
-            ReviewReply AI helps businesses automatically generate and manage
-            AI-powered replies to their Google customer reviews.
+          {/* Purpose statement above the fold: what it does, why Google sign-in, GBP usage, explicit authorization */}
+          <p className="text-gray-400 text-sm text-center max-w-sm mt-3 px-2 leading-relaxed">
+            ReviewReply AI is an AI-powered Google Business Profile review management platform.
+            Securely connect your Google Business Profile to automatically sync customer reviews,
+            generate AI-powered replies, respond to customer feedback, monitor ratings, analyze
+            sentiment, and manage your online reputation from one dashboard. You sign in with
+            Google and explicitly authorize access to your own Business Profile — we never access
+            anything without your permission.
           </p>
         </div>
 
-        <div className="w-full bg-black/40 backdrop-blur-md border border-[#ff2d55]/30 rounded-3xl p-6 shadow-[0_0_60px_-20px_rgba(255,45,85,0.4)] mb-6">
+        {/* CTA before the login section */}
+        <div className="w-full text-center mb-6">
+          <h2 className="text-xl font-extrabold text-white leading-snug">
+            Start Managing Your <span className="text-[#ff2d55]">Google Business Profile</span> Reviews with AI
+          </h2>
+          <div className="flex flex-col gap-3 mt-4">
+            
+              href="#google-signin"
+              className="w-full bg-[#ff2d55] hover:bg-[#ff425f] transition-all py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 text-white shadow-sm"
+            >
+              Get Started Free
+              <ArrowRight className="w-4 h-4" />
+            </a>
+            <button
+              onClick={handleLogin}
+              className="w-full bg-white hover:bg-gray-100 transition-all py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 text-[#111827] shadow-sm"
+            >
+              <img
+                src="https://www.svgrepo.com/show/475656/google-color.svg"
+                alt="Google"
+                className="w-4 h-4"
+              />
+              Continue with Google
+            </button>
+          </div>
+        </div>
+
+        <div
+          id="google-signin"
+          className="w-full bg-black/40 backdrop-blur-md border border-[#ff2d55]/30 rounded-3xl p-6 shadow-[0_0_60px_-20px_rgba(255,45,85,0.4)] mb-6"
+        >
           <div className="flex justify-center mb-4">
             <div className="relative w-20 h-20 flex items-center justify-center">
               <div className="absolute inset-0 rounded-full border border-[#ff2d55]/20" />
@@ -138,6 +174,32 @@ function LoginPageContent() {
             <p className="text-gray-300 text-xs leading-5">
               We use Google secure OAuth to keep your account and data safe.
             </p>
+          </div>
+        </div>
+
+        {/* Why Google Sign-In is Required — mobile */}
+        <div className="w-full bg-black/40 backdrop-blur-md border border-[#ff2d55]/30 rounded-3xl p-6 mb-6">
+          <div className="flex items-center gap-2.5 mb-4">
+            <div className="w-9 h-9 rounded-full bg-[#2a0a10] border border-[#ff2d55]/30 flex items-center justify-center shrink-0">
+              <Key className="w-4 h-4 text-[#ff2d55]" />
+            </div>
+            <h3 className="text-lg font-bold text-white">Why Google Sign-In is Required</h3>
+          </div>
+          <div className="space-y-2.5">
+            {[
+              "Secure Google OAuth authentication.",
+              "Connect your Google Business Profile.",
+              "Sync reviews from connected business locations.",
+              "Generate AI-powered review replies.",
+              "Publish replies back to Google Business Profile.",
+              "Access is only granted after user authorization.",
+              "No access to Gmail, Contacts, Drive, or unrelated Google data.",
+            ].map((text, i) => (
+              <div key={i} className="flex items-start gap-2.5">
+                <CheckCircle className="w-4 h-4 text-[#ff2d55] shrink-0 mt-0.5" />
+                <span className="text-xs text-gray-300 leading-relaxed">{text}</span>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -209,10 +271,14 @@ function LoginPageContent() {
               <span className="text-xs font-medium text-gray-300">AI-Powered Review Management</span>
             </div>
 
-            {/* 🔥 NEW: purpose description above the fold (desktop) */}
-            <p className="text-gray-400 text-sm max-w-md mb-6 leading-relaxed">
-              ReviewReply AI helps businesses automatically generate and manage
-              AI-powered replies to their Google customer reviews.
+            {/* Purpose statement above the fold (desktop): what it does, why Google sign-in, GBP usage, explicit authorization */}
+            <p className="text-gray-400 text-sm max-w-lg mb-6 leading-relaxed">
+              ReviewReply AI is an AI-powered Google Business Profile review management platform.
+              Securely connect your Google Business Profile to automatically sync customer reviews,
+              generate AI-powered replies, respond to customer feedback, monitor ratings, analyze
+              sentiment, and manage your online reputation from one dashboard. You sign in with
+              Google and explicitly authorize access to your own Business Profile — nothing is
+              accessed without your permission.
             </p>
 
             <h2 className="text-4xl lg:text-5xl font-extrabold leading-tight text-white mb-4">
@@ -222,11 +288,38 @@ function LoginPageContent() {
             </h2>
             <div className="w-14 h-1 bg-[#ff2d55] rounded-full mb-4" />
 
-            <p className="text-gray-400 text-base max-w-lg mb-8">
-              Collect, manage, and reply to reviews across all platforms.
+            <p className="text-gray-400 text-base max-w-lg mb-6">
+              Collect, manage, and reply to Google Business Profile reviews across all your locations.
               <br />
               Build trust. Improve reputation. Grow your business.
             </p>
+
+            {/* CTA before the login section (desktop) */}
+            <div className="flex flex-wrap items-center gap-4 mb-8">
+              <h3 className="text-lg font-bold text-white">
+                Start Managing Your <span className="text-[#ff2d55]">Google Business Profile</span> Reviews with AI
+              </h3>
+            </div>
+            <div className="flex flex-wrap items-center gap-3 mb-10">
+              
+                href="#google-signin-desktop"
+                className="bg-[#ff2d55] hover:bg-[#ff425f] transition-all py-3 px-6 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 text-white shadow-sm"
+              >
+                Get Started Free
+                <ArrowRight className="w-4 h-4" />
+              </a>
+              <button
+                onClick={handleLogin}
+                className="bg-white hover:bg-gray-100 transition-all py-3 px-6 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 text-[#111827] shadow-sm"
+              >
+                <img
+                  src="https://www.svgrepo.com/show/475656/google-color.svg"
+                  alt="Google"
+                  className="w-4 h-4"
+                />
+                Continue with Google
+              </button>
+            </div>
 
             <div className="grid grid-cols-3 gap-3 mb-10 max-w-xl">
               {[
@@ -286,74 +379,105 @@ function LoginPageContent() {
           </div>
 
           <div className="flex items-center justify-center px-6 py-10 order-first xl:order-none">
-            <div className="w-full max-w-md bg-black/30 backdrop-blur-md border border-white/10 rounded-3xl p-8 shadow-[0_0_80px_-20px_rgba(255,45,85,0.3)]">
-              <div className="flex justify-center mb-5">
-                <div className="relative w-20 h-20 flex items-center justify-center">
-                  <div className="absolute inset-0 rounded-full border border-[#ff2d55]/20" />
-                  <div className="absolute inset-2 rounded-full border border-[#ff2d55]/10" />
-                  <img src="/ai-logo.png" alt="logo" className="w-14 h-14 object-contain" />
-                </div>
-              </div>
-
-              <h2 className="text-2xl font-extrabold text-center text-white">
-                Welcome <span className="text-[#ff2d55]">Back</span>
-              </h2>
-              <p className="text-gray-300 text-center mt-1 text-sm mb-6">
-                Sign in to continue to your dashboard
-              </p>
-
-              <button
-                onClick={handleLogin}
-                className="w-full bg-white hover:bg-gray-100 transition-all py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 text-[#111827] shadow-sm"
+            <div className="w-full max-w-md flex flex-col gap-5">
+              <div
+                id="google-signin-desktop"
+                className="bg-black/30 backdrop-blur-md border border-white/10 rounded-3xl p-8 shadow-[0_0_80px_-20px_rgba(255,45,85,0.3)]"
               >
-                <img
-                  src="https://www.svgrepo.com/show/475656/google-color.svg"
-                  alt="Google"
-                  className="w-4 h-4"
-                />
-                Continue with Google
-              </button>
-
-              <div className="flex items-center justify-center gap-3 my-4">
-                <div className="h-px bg-white/10 flex-1"></div>
-                <p className="text-gray-300 text-xs font-medium">OR</p>
-                <div className="h-px bg-white/10 flex-1"></div>
-              </div>
-
-              <button
-                type="button"
-                className="w-full bg-transparent hover:bg-white/5 border border-[#ff2d55]/40 transition-all py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 text-white"
-              >
-                <Mail className="w-4 h-4 text-[#ff2d55]" />
-                Continue with Email
-              </button>
-
-              <div className="bg-white/[0.05] rounded-xl p-3 border border-white/10 flex items-start gap-2.5 mt-5">
-                <div className="w-8 h-8 rounded-full bg-[#2a0a10] text-[#ff2d55] flex items-center justify-center shrink-0">
-                  <Lock className="w-3.5 h-3.5" />
+                <div className="flex justify-center mb-5">
+                  <div className="relative w-20 h-20 flex items-center justify-center">
+                    <div className="absolute inset-0 rounded-full border border-[#ff2d55]/20" />
+                    <div className="absolute inset-2 rounded-full border border-[#ff2d55]/10" />
+                    <img src="/ai-logo.png" alt="logo" className="w-14 h-14 object-contain" />
+                  </div>
                 </div>
-                <p className="text-gray-300 text-xs leading-5">
-                  We use Google secure OAuth to keep your account and data safe.
+
+                <h2 className="text-2xl font-extrabold text-center text-white">
+                  Welcome <span className="text-[#ff2d55]">Back</span>
+                </h2>
+                <p className="text-gray-300 text-center mt-1 text-sm mb-6">
+                  Sign in to continue to your dashboard
                 </p>
+
+                <button
+                  onClick={handleLogin}
+                  className="w-full bg-white hover:bg-gray-100 transition-all py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 text-[#111827] shadow-sm"
+                >
+                  <img
+                    src="https://www.svgrepo.com/show/475656/google-color.svg"
+                    alt="Google"
+                    className="w-4 h-4"
+                  />
+                  Continue with Google
+                </button>
+
+                <div className="flex items-center justify-center gap-3 my-4">
+                  <div className="h-px bg-white/10 flex-1"></div>
+                  <p className="text-gray-300 text-xs font-medium">OR</p>
+                  <div className="h-px bg-white/10 flex-1"></div>
+                </div>
+
+                <button
+                  type="button"
+                  className="w-full bg-transparent hover:bg-white/5 border border-[#ff2d55]/40 transition-all py-3 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 text-white"
+                >
+                  <Mail className="w-4 h-4 text-[#ff2d55]" />
+                  Continue with Email
+                </button>
+
+                <div className="bg-white/[0.05] rounded-xl p-3 border border-white/10 flex items-start gap-2.5 mt-5">
+                  <div className="w-8 h-8 rounded-full bg-[#2a0a10] text-[#ff2d55] flex items-center justify-center shrink-0">
+                    <Lock className="w-3.5 h-3.5" />
+                  </div>
+                  <p className="text-gray-300 text-xs leading-5">
+                    We use Google secure OAuth to keep your account and data safe.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-3 gap-3 mt-6">
+                  {[
+                    { icon: Lock, title: "Secure & Safe", desc: "Enterprise-grade protection" },
+                    { icon: ShieldCheck, title: "Privacy First", desc: "Your data is never shared" },
+                    { icon: Zap, title: "AI Powered", desc: "Smart automation that saves time" },
+                  ].map((item, idx) => {
+                    const Icon = item.icon;
+                    return (
+                      <div key={idx} className="text-center">
+                        <div className="w-11 h-11 rounded-2xl bg-[#2a0a10] border border-[#ff2d55]/20 text-[#ff2d55] mx-auto flex items-center justify-center mb-2">
+                          <Icon className="w-4 h-4" />
+                        </div>
+                        <h4 className="font-bold text-[11px] text-white leading-tight">{item.title}</h4>
+                        <p className="text-[9px] text-gray-300 mt-1 leading-tight">{item.desc}</p>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-3 mt-6">
-                {[
-                  { icon: Lock, title: "Secure & Safe", desc: "Enterprise-grade protection" },
-                  { icon: ShieldCheck, title: "Privacy First", desc: "Your data is never shared" },
-                  { icon: Zap, title: "AI Powered", desc: "Smart automation that saves time" },
-                ].map((item, idx) => {
-                  const Icon = item.icon;
-                  return (
-                    <div key={idx} className="text-center">
-                      <div className="w-11 h-11 rounded-2xl bg-[#2a0a10] border border-[#ff2d55]/20 text-[#ff2d55] mx-auto flex items-center justify-center mb-2">
-                        <Icon className="w-4 h-4" />
-                      </div>
-                      <h4 className="font-bold text-[11px] text-white leading-tight">{item.title}</h4>
-                      <p className="text-[9px] text-gray-300 mt-1 leading-tight">{item.desc}</p>
+              {/* Why Google Sign-In is Required — desktop, directly below the login card */}
+              <div className="bg-black/30 backdrop-blur-md border border-[#ff2d55]/30 rounded-3xl p-6">
+                <div className="flex items-center gap-2.5 mb-4">
+                  <div className="w-9 h-9 rounded-full bg-[#2a0a10] border border-[#ff2d55]/30 flex items-center justify-center shrink-0">
+                    <Key className="w-4 h-4 text-[#ff2d55]" />
+                  </div>
+                  <h3 className="text-lg font-bold text-white">Why Google Sign-In is Required</h3>
+                </div>
+                <div className="space-y-2.5">
+                  {[
+                    "Secure Google OAuth authentication.",
+                    "Connect your Google Business Profile.",
+                    "Sync reviews from connected business locations.",
+                    "Generate AI-powered review replies.",
+                    "Publish replies back to Google Business Profile.",
+                    "Access is only granted after user authorization.",
+                    "No access to Gmail, Contacts, Drive, or unrelated Google data.",
+                  ].map((text, i) => (
+                    <div key={i} className="flex items-start gap-2.5">
+                      <CheckCircle className="w-4 h-4 text-[#ff2d55] shrink-0 mt-0.5" />
+                      <span className="text-xs text-gray-300 leading-relaxed">{text}</span>
                     </div>
-                  );
-                })}
+                  ))}
+                </div>
               </div>
             </div>
           </div>
@@ -425,14 +549,17 @@ function InfoSection() {
         }
       `}</style>
 
-      {/* 1. What is ReviewReply AI? */}
+      {/* 1. What is ReviewReply AI? — expanded */}
       <section className="px-5 py-16 md:py-24 max-w-6xl mx-auto relative z-10">
         <div className="flex flex-col items-center text-center mb-10">
           <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-white">
             What is <span className="text-[#ff2d55]">ReviewReply AI</span>?
           </h2>
           <p className="text-gray-400 text-lg max-w-2xl mt-4">
-            The all‑in‑one AI platform that helps businesses manage their Google reviews effortlessly.
+            ReviewReply AI is an AI-powered Google Business Profile review management platform.
+            Businesses connect their Google Business Profile, reviews are synchronized
+            automatically, AI generates replies, businesses respond to customer feedback, and
+            analytics and sentiment insights are available — all from a single dashboard.
           </p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -458,17 +585,19 @@ function InfoSection() {
         </div>
       </section>
 
-      {/* 2. How It Works */}
+      {/* 2. How It Works — 6 steps */}
       <section className="px-5 py-12 md:py-16 max-w-6xl mx-auto relative z-10">
         <h3 className="text-2xl md:text-3xl font-bold text-center mb-10">
           How It <span className="text-[#ff2d55]">Works</span>
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {[
             { icon: UserCheck, step: "1", title: "Sign in with Google", desc: "Secure one‑click OAuth login." },
-            { icon: Link2, step: "2", title: "Connect GBP", desc: "Authorize your Business Profile." },
+            { icon: Link2, step: "2", title: "Authorize GBP Access", desc: "Grant access to your Business Profile." },
             { icon: RefreshCw, step: "3", title: "Sync Reviews", desc: "All reviews appear automatically." },
-            { icon: Sparkles, step: "4", title: "Generate AI Replies", desc: "AI drafts smart replies." },
+            { icon: Sparkles, step: "4", title: "Generate AI Replies", desc: "AI drafts smart, on‑brand replies." },
+            { icon: Send, step: "5", title: "Publish Replies", desc: "Replies are posted back to Google." },
+            { icon: BarChart3, step: "6", title: "Monitor Analytics", desc: "Track ratings and sentiment trends." },
           ].map((s, idx) => {
             const Icon = s.icon;
             return (
@@ -479,9 +608,6 @@ function InfoSection() {
                 <span className="text-xs font-bold text-[#ff2d55] tracking-widest">STEP {s.step}</span>
                 <h4 className="text-lg font-bold text-white mt-1 mb-1">{s.title}</h4>
                 <p className="text-sm text-gray-400 leading-relaxed">{s.desc}</p>
-                {idx !== 3 && (
-                  <ChevronRight className="hidden lg:block absolute top-1/2 -right-3 -translate-y-1/2 w-5 h-5 text-[#ff2d55]/50" />
-                )}
               </div>
             );
           })}
@@ -519,7 +645,7 @@ function InfoSection() {
         </div>
       </section>
 
-      {/* 4. Why Google Access is Required — CRITICAL for verification */}
+      {/* 4. Why Google Access is Required */}
       <section className="px-5 py-12 md:py-16 max-w-4xl mx-auto relative z-10">
         <div className="bg-[#0d0d0d] border border-white/10 rounded-2xl p-6 md:p-8 flex flex-col gap-6">
           <div className="flex items-start gap-4">
@@ -529,7 +655,9 @@ function InfoSection() {
             <div>
               <h3 className="text-xl font-bold text-white mb-2">Why Google Access is Required</h3>
               <p className="text-gray-400 leading-relaxed text-sm">
-                ReviewReply AI only requests access to your Google Business Profile after you explicitly sign in and authorize our application. We never access any data without your permission.
+                ReviewReply AI only requests access to your Google Business Profile after you
+                explicitly sign in and authorize our application. We never access any data without
+                your permission.
               </p>
             </div>
           </div>
@@ -538,8 +666,8 @@ function InfoSection() {
               "Read business reviews from your connected locations",
               "Synchronize reviews into your dashboard",
               "Generate AI‑powered replies to those reviews",
+              "Publish replies back to Google Business Profile",
               "Display analytics and sentiment trends",
-              "Help you manage and respond to customer feedback",
               "No access to emails, contacts, or unrelated Google services",
             ].map((text, i) => (
               <div key={i} className="flex items-start gap-3">
@@ -551,7 +679,39 @@ function InfoSection() {
         </div>
       </section>
 
-      {/* 5. Dashboard Preview */}
+      {/* 5. Why ReviewReply AI Uses Google APIs */}
+      <section className="px-5 py-12 md:py-16 max-w-4xl mx-auto relative z-10">
+        <div className="bg-[#0d0d0d] border border-white/10 rounded-2xl p-6 md:p-8 flex flex-col gap-6">
+          <div className="flex items-start gap-4">
+            <div className="w-10 h-10 rounded-full bg-[#2a0a10] border border-[#ff2d55]/30 flex items-center justify-center shrink-0">
+              <Globe className="w-5 h-5 text-[#ff2d55]" />
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-white mb-2">Why ReviewReply AI Uses Google APIs</h3>
+              <p className="text-gray-400 leading-relaxed text-sm">
+                We integrate with a single, purpose‑built Google API so we can sync and reply to
+                your business reviews — nothing more.
+              </p>
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {[
+              "Only the Google Business Profile API is used.",
+              "Access is requested only after user permission.",
+              "Only business review related information is accessed.",
+              "No unrelated Google services are accessed.",
+              "Users can revoke access anytime.",
+            ].map((text, i) => (
+              <div key={i} className="flex items-start gap-3">
+                <ShieldCheck className="w-5 h-5 text-[#ff2d55] shrink-0 mt-0.5" />
+                <span className="text-sm text-gray-300">{text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 6. Dashboard Preview */}
       <section className="px-5 py-12 md:py-16 max-w-6xl mx-auto relative z-10">
         <h3 className="text-2xl md:text-3xl font-bold text-center mb-10">
           Dashboard <span className="text-[#ff2d55]">Preview</span>
@@ -566,17 +726,19 @@ function InfoSection() {
         </div>
       </section>
 
-      {/* 6. Security & Trust */}
+      {/* 7. Security & Trust — expanded */}
       <section className="px-5 py-12 md:py-16 max-w-6xl mx-auto relative z-10">
         <h3 className="text-2xl md:text-3xl font-bold text-center mb-10">
           Enterprise‑Grade <span className="text-[#ff2d55]">Security</span>
         </h3>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-5">
           {[
             { icon: ShieldCheck, title: "Secure Google OAuth" },
-            { icon: Lock, title: "Encrypted Data" },
-            { icon: ClipboardCheck, title: "Google Authorized APIs" },
-            { icon: UserCheck, title: "Disconnect Anytime" },
+            { icon: Lock, title: "Encrypted Communication" },
+            { icon: UserCog, title: "User‑Controlled Permissions" },
+            { icon: ClipboardCheck, title: "Google API Compliance" },
+            { icon: UserCheck, title: "Revoke Access Anytime" },
+            { icon: Ban, title: "No Selling of Data" },
           ].map((item, idx) => {
             const Icon = item.icon;
             return (
@@ -591,18 +753,19 @@ function InfoSection() {
         </div>
       </section>
 
-      {/* 7. FAQ */}
+      {/* 8. FAQ — expanded for OAuth verification */}
       <section className="px-5 py-12 md:py-16 max-w-3xl mx-auto relative z-10">
         <h3 className="text-2xl md:text-3xl font-bold text-center mb-10">
           Frequently Asked <span className="text-[#ff2d55]">Questions</span>
         </h3>
         <div className="space-y-4">
           {[
-            { q: "What is ReviewReply AI?", a: "ReviewReply AI is an AI‑powered tool that helps businesses manage Google reviews, generate replies, and analyze customer sentiment — all in one place." },
-            { q: "Why do I need to sign in with Google?", a: "We use Google OAuth to securely connect your Business Profile. This allows us to sync reviews and help you reply directly from the platform." },
-            { q: "Which Google APIs do you use?", a: "We only use the Google Business Profile API to read reviews and publish replies. No other Google services are accessed." },
-            { q: "Is my data secure?", a: "Absolutely. All data is encrypted in transit and at rest. We never share your information with third parties." },
-            { q: "Can I disconnect my account?", a: "Yes, you can revoke access at any time from your Google Account settings or within our app." },
+            { q: "What is ReviewReply AI?", a: "ReviewReply AI is an AI‑powered Google Business Profile review management platform that helps businesses sync reviews, generate replies, and analyze customer sentiment — all in one place." },
+            { q: "Why is Google Sign-In required?", a: "We use Google OAuth to securely verify your identity and connect your Google Business Profile. This lets us sync your reviews and let you reply directly from the platform." },
+            { q: "Which Google API is used?", a: "We only use the Google Business Profile API. It is the API that lets us read your reviews and publish replies on your behalf." },
+            { q: "Why is Business Profile permission requested?", a: "Business Profile access is what allows ReviewReply AI to pull in your reviews and publish AI‑generated replies back to Google on your behalf." },
+            { q: "What data is accessed?", a: "Only business review data from the Google Business Profile locations you connect — nothing from Gmail, Contacts, Drive, or any other Google service." },
+            { q: "How do I revoke access?", a: "You can revoke access at any time from your Google Account security settings, or by disconnecting your account directly within ReviewReply AI." },
           ].map((faq, i) => (
             <details key={i} className="bg-[#0d0d0d] border border-white/10 rounded-2xl p-5 group">
               <summary className="flex items-center justify-between cursor-pointer">
