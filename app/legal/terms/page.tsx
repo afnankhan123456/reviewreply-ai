@@ -15,7 +15,12 @@ export default function TermsPage() {
         <div className="space-y-6 text-zinc-700 dark:text-zinc-300 leading-7">
 
           <p>
-            Welcome to ReviewReply AI. By accessing or using our platform, you agree to comply with and be bound by the following Terms & Conditions.
+            Welcome to ReviewReply AI. By accessing or using our platform, you agree to comply
+            with and be bound by the following Terms & Conditions. ReviewReply AI is an
+            AI-powered Google Business Profile review management platform that enables
+            businesses to securely connect their Google Business Profile, synchronize customer
+            reviews, generate AI-powered review replies, publish responses, monitor ratings, and
+            manage online reputation.
           </p>
 
           <div>
@@ -25,6 +30,42 @@ export default function TermsPage() {
 
             <p>
               ReviewReply AI provides AI-powered tools for generating review replies and business assistance content. You agree to use the platform only for lawful purposes and in compliance with all applicable laws and platform policies.
+            </p>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-semibold mb-2 text-black dark:text-white">
+              Google Account Connection
+            </h2>
+
+            <ul className="list-disc pl-6 space-y-2">
+              <li>Users may connect their Google Account through Google OAuth.</li>
+              <li>Authorization is completely optional.</li>
+              <li>Users explicitly grant permission before any Google data is accessed.</li>
+              <li>Users may disconnect their Google Account at any time.</li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-semibold mb-2 text-black dark:text-white">
+              Google Business Profile Access
+            </h2>
+
+            <p>
+              ReviewReply AI only requests the permissions necessary to:
+            </p>
+
+            <ul className="list-disc pl-6 space-y-2">
+              <li>Connect Google Business Profile</li>
+              <li>Read business reviews</li>
+              <li>Display reviews in the dashboard</li>
+              <li>Generate AI-powered replies</li>
+              <li>Publish replies to Google Business Profile</li>
+              <li>Synchronize review information</li>
+            </ul>
+
+            <p className="mt-2">
+              No unrelated Google services are accessed.
             </p>
           </div>
 
@@ -50,6 +91,25 @@ export default function TermsPage() {
 
           <div>
             <h2 className="text-xl font-semibold mb-2 text-black dark:text-white">
+              Permitted Use
+            </h2>
+
+            <p>
+              By using ReviewReply AI, you agree not to:
+            </p>
+
+            <ul className="list-disc pl-6 space-y-2">
+              <li>Misuse Google APIs.</li>
+              <li>Attempt unauthorized access.</li>
+              <li>Violate Google's Terms of Service.</li>
+              <li>Abuse the platform.</li>
+              <li>Upload malicious content.</li>
+              <li>Attempt to interfere with platform security.</li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-semibold mb-2 text-black dark:text-white">
               Prohibited Activities
             </h2>
 
@@ -58,6 +118,50 @@ export default function TermsPage() {
               <li>Attempting unauthorized access to our systems</li>
               <li>Using AI-generated content for illegal or harmful purposes</li>
               <li>Violating third-party platform policies</li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-semibold mb-2 text-black dark:text-white">
+              User Responsibilities
+            </h2>
+
+            <p>
+              Users are responsible for:
+            </p>
+
+            <ul className="list-disc pl-6 space-y-2">
+              <li>Maintaining account security.</li>
+              <li>Protecting login credentials.</li>
+              <li>Ensuring they have authority to manage connected Google Business Profiles.</li>
+              <li>Complying with Google policies.</li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-semibold mb-2 text-black dark:text-white">
+              Google API Usage
+            </h2>
+
+            <ul className="list-disc pl-6 space-y-2">
+              <li>ReviewReply AI uses the Google Business Profile API.</li>
+              <li>Google APIs are only used to provide requested functionality.</li>
+              <li>Access is limited to permissions approved by the user.</li>
+              <li>Google user data is processed only for application functionality.</li>
+              <li>ReviewReply AI follows Google's API Services User Data Policy.</li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-semibold mb-2 text-black dark:text-white">
+              AI Generated Replies
+            </h2>
+
+            <ul className="list-disc pl-6 space-y-2">
+              <li>AI-generated review replies are suggestions.</li>
+              <li>Users are responsible for reviewing replies before publishing.</li>
+              <li>Users remain responsible for all published content.</li>
+              <li>AI output may require editing.</li>
             </ul>
           </div>
 
@@ -83,6 +187,49 @@ export default function TermsPage() {
 
           <div>
             <h2 className="text-xl font-semibold mb-2 text-black dark:text-white">
+              Privacy
+            </h2>
+
+            <p>
+              Our use of your data, including data accessed through Google OAuth and the Google
+              Business Profile API, is described in our Privacy Policy. Please review our Privacy
+              Policy to understand our data protection practices, including how Google Business
+              Profile reviews and related information are handled.
+            </p>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-semibold mb-2 text-black dark:text-white">
+              Termination
+            </h2>
+
+            <p>
+              ReviewReply AI may suspend or terminate accounts that:
+            </p>
+
+            <ul className="list-disc pl-6 space-y-2">
+              <li>Violate these Terms.</li>
+              <li>Abuse Google APIs.</li>
+              <li>Violate applicable laws.</li>
+              <li>Attempt unauthorized access.</li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-semibold mb-2 text-black dark:text-white">
+              Disclaimer
+            </h2>
+
+            <ul className="list-disc pl-6 space-y-2">
+              <li>The service is provided "as is."</li>
+              <li>Availability is not guaranteed.</li>
+              <li>AI-generated content may not always be accurate.</li>
+              <li>Google services are subject to Google's own availability and policies.</li>
+            </ul>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-semibold mb-2 text-black dark:text-white">
               Limitation of Liability
             </h2>
 
@@ -103,7 +250,7 @@ export default function TermsPage() {
 
           <div>
             <h2 className="text-xl font-semibold mb-2 text-black dark:text-white">
-              Contact Us
+              Contact Information
             </h2>
 
             <p>
@@ -111,7 +258,10 @@ export default function TermsPage() {
             </p>
 
             <p className="mt-2 font-medium text-black dark:text-white">
-              afnak6789@gmail.com
+              Support Email: afnak6789@gmail.com
+            </p>
+            <p className="mt-1 font-medium text-black dark:text-white">
+              Official Website: https://www.reviewreply-ai.in
             </p>
           </div>
 
@@ -126,5 +276,3 @@ export default function TermsPage() {
     </div>
   );
 }
-
-
