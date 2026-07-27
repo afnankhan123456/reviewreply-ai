@@ -1,22 +1,32 @@
-import { MetadataRoute } from "next";
+import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  const baseUrl = 'https://www.reviewreply-ai.in';
+
   return [
     {
-      url: "https://reviewreply-ai-pi.vercel.app",
+      url: baseUrl,
       lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 1,
     },
     {
-      url: "https://reviewreply-ai-pi.vercel.app/login",
+      url: `${baseUrl}/legal/privacy-policy`,
       lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.5,
     },
     {
-      url: "https://reviewreply-ai-pi.vercel.app/legal/privacy-policy",
+      url: `${baseUrl}/legal/terms`,
       lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.5,
     },
     {
-      url: "https://reviewreply-ai-pi.vercel.app/legal/terms",
+      url: `${baseUrl}/plans/basic/pricing`,
       lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
     },
   ];
 }
