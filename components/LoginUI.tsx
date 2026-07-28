@@ -1,5 +1,5 @@
 import GoogleSignInButton from "@/app/components/GoogleSignInButton";
-import { MessageSquareText, ShieldCheck, Sparkles, BarChart3 } from "lucide-react";
+import { MessageSquareText, ShieldCheck, Sparkles, BarChart3, Info } from "lucide-react";
 import Link from "next/link";
 
 const APP_NAME = "ReviewReply AI"; // ⚠️ must be IDENTICAL to the name on OAuth consent screen
@@ -23,6 +23,18 @@ function LoginHero() {
           <div className="flex items-center gap-2 mb-2">
             <img src="/ai-logo.png" alt={`${APP_NAME} logo`} className="w-9 h-9 object-contain" />
             <h1 className="text-xl font-black tracking-tight text-white">{APP_NAME}</h1>
+          </div>
+
+          {/* 👇 EXPLICIT PURPOSE – added for verification */}
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-4 py-3 mb-3 max-w-xs">
+            <div className="flex items-center gap-1.5 text-[#ff2d55] mb-1">
+              <Info className="w-3.5 h-3.5" />
+              <span className="text-[10px] font-black uppercase tracking-widest">App Purpose</span>
+            </div>
+            <p className="text-[10px] font-semibold text-white leading-snug">
+              {APP_NAME} is an AI-powered Google Business Profile review management platform.
+              We help businesses sync, read, and reply to Google reviews with AI – all from one dashboard.
+            </p>
           </div>
 
           <p className="text-[11px] font-semibold text-gray-200 leading-snug max-w-xs">
@@ -49,6 +61,19 @@ function LoginHero() {
           <div className="flex items-center gap-3 mb-4">
             <img src="/ai-logo.png" alt={`${APP_NAME} logo`} className="w-11 h-11 object-contain" />
             <h1 className="text-3xl font-black tracking-tight text-white">{APP_NAME}</h1>
+          </div>
+
+          {/* 👇 EXPLICIT PURPOSE – added for verification */}
+          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-6 py-4 mb-6 inline-block">
+            <div className="flex items-center gap-2 text-[#ff2d55] mb-2">
+              <Info className="w-4 h-4" />
+              <span className="text-xs font-black uppercase tracking-widest">App Purpose</span>
+            </div>
+            <p className="text-sm font-semibold text-white leading-relaxed max-w-lg">
+              {APP_NAME} is an AI-powered Google Business Profile review management platform.
+              We help businesses automatically sync Google reviews, generate AI-powered replies,
+              and manage their online reputation – all from a single dashboard.
+            </p>
           </div>
 
           <p className="text-base font-semibold text-gray-200 leading-relaxed max-w-lg mb-2">
