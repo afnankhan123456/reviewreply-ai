@@ -50,7 +50,7 @@ function LoginHero() {
       <div className="flex md:hidden min-h-screen flex-col justify-center relative bg-black px-5 py-6">
         <img
           src="/main-ph.webp"
-          alt=""
+          alt="ReviewReply AI Background"
           className="absolute inset-0 w-full h-full object-cover object-top"
         />
         <div className="relative z-10 flex flex-col items-center text-center">
@@ -61,6 +61,7 @@ function LoginHero() {
             </h1>
           </div>
 
+          {/* Purpose - Clearly defined here for mobile crawlers/reviewers */}
           <p className="text-[11px] font-semibold text-gray-200 leading-snug max-w-xs mb-1">
             ReviewReply AI is an AI-powered Google Business Profile review management platform
             that helps businesses manage and reply to Google reviews with AI.
@@ -111,6 +112,7 @@ function LoginHero() {
           ))}
         </div>
 
+        {/* Google Data Usage Transparency - Placed here so Google sees it clearly */}
         <div className="relative z-10 bg-white/[0.04] backdrop-blur-md rounded-xl p-3 border border-white/10 flex items-start gap-2 mb-4">
           <div className="w-6 h-6 rounded-full bg-[#2a0a10] border border-[#ff2d55]/30 flex items-center justify-center shrink-0">
             <ShieldCheck className="w-3.5 h-3.5 text-[#ff2d55]" />
@@ -167,12 +169,13 @@ function LoginHero() {
       <div className="hidden md:flex min-h-screen flex-col justify-center relative bg-black overflow-hidden px-10 lg:px-20 py-10">
         <img
           src="/main-BG.webp"
-          alt=""
+          alt="ReviewReply AI Background"
           className="absolute inset-0 w-full h-full object-cover object-bottom"
         />
         <div className="absolute -top-40 right-[-200px] w-[900px] h-[900px] rounded-full bg-gradient-to-br from-[#ff2d55] via-[#c81e3a] to-transparent opacity-20 blur-[80px] pointer-events-none" />
 
         <div className="relative z-10 grid xl:grid-cols-[1.15fr_0.9fr] gap-14 items-center max-w-6xl mx-auto w-full">
+          {/* Left Side - Purpose & Branding */}
           <div className="flex flex-col">
             <div className="flex items-center gap-3.5 mb-6">
               <img src="/ai-logo.png" alt="ReviewReply AI logo" className="w-[3.3rem] h-[3.3rem] object-contain" />
@@ -192,6 +195,7 @@ function LoginHero() {
             </p>
           </div>
 
+          {/* Right Side - Login Card */}
           <div
             id="google-signin-desktop"
             className="bg-black/30 backdrop-blur-md border border-white/10 rounded-3xl p-9 shadow-[0_0_80px_-20px_rgba(255,45,85,0.3)] w-full max-w-md justify-self-end"
@@ -200,7 +204,7 @@ function LoginHero() {
               <div className="relative w-[4.5rem] h-[4.5rem] flex items-center justify-center">
                 <div className="absolute inset-0 rounded-full border border-[#ff2d55]/20" />
                 <div className="absolute inset-2 rounded-full border border-[#ff2d55]/10" />
-                <img src="/ai-logo.png" alt="logo" className="w-12 h-12 object-contain" />
+                <img src="/ai-logo.png" alt="ReviewReply AI Logo" className="w-12 h-12 object-contain" />
               </div>
             </div>
 
