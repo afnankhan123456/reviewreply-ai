@@ -189,78 +189,16 @@ function LoginHero() {
 
         <div className="relative z-10 grid xl:grid-cols-[1.15fr_0.9fr] gap-14 items-center max-w-6xl mx-auto w-full">
           <div className="flex flex-col">
-            <div className="flex items-center gap-3.5 mb-5">
+            <div className="flex items-center gap-3.5 mb-6">
               <img src="/ai-logo.png" alt="ReviewReply AI logo" className="w-[3.3rem] h-[3.3rem] object-contain" />
               <h1 className="text-4xl font-black tracking-tight text-white">
                 ReviewReply <span className="text-[#ff2d55]">AI</span>
               </h1>
             </div>
 
-            <p className="text-sm font-semibold text-gray-200 leading-relaxed max-w-lg mb-1.5">
-              ReviewReply AI is an AI-powered Google Business Profile review management platform.
+            <p className="text-base text-gray-300 leading-relaxed max-w-lg">
+              AI-powered Google Business Profile review management — connect, sync, and reply to customer reviews automatically.
             </p>
-            <p className="text-xs text-gray-400 leading-relaxed max-w-lg mb-5">
-              It helps businesses securely connect their Google Business Profile, automatically
-              sync customer reviews, generate AI-powered replies, publish responses, track
-              ratings, analyze customer sentiment, and manage online reputation from one
-              dashboard.
-            </p>
-
-            <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 mb-6 w-fit">
-              <Sparkles className="w-3.5 h-3.5 text-[#ff2d55]" />
-              <span className="text-xs font-medium text-gray-300">
-                AI-Powered Google Business Profile Review Management
-              </span>
-            </div>
-
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-gray-500 mb-3">
-              Manage Google Reviews Smarter
-            </h2>
-
-            <div className="flex flex-col gap-3.5 mb-7 max-w-lg">
-              {HERO_CONTENT_BLOCKS.map((block, i) => {
-                const Icon = block.icon;
-                return (
-                  <div
-                    key={i}
-                    className="flex items-start gap-3.5 border-b border-white/5 last:border-b-0 pb-3.5 last:pb-0"
-                  >
-                    <div className="w-8 h-8 rounded-lg bg-[#2a0a10] border border-[#ff2d55]/30 flex items-center justify-center shrink-0 mt-0.5">
-                      <Icon className="w-4 h-4 text-[#ff2d55]" />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-bold text-white leading-tight">{block.title}</h3>
-                      <p className="text-xs text-gray-400 leading-relaxed mt-1">{block.desc}</p>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="grid grid-cols-2 gap-x-6 gap-y-3 mb-6 max-w-md">
-              {FEATURE_CHECKLIST.map((item, i) => (
-                <div key={i} className="group flex items-center gap-2.5">
-                  <div className="w-6 h-6 rounded-full bg-[#2a0a10] border border-[#ff2d55]/30 flex items-center justify-center shrink-0 shadow-[0_0_12px_-2px_rgba(255,45,85,0.6)] transition-transform duration-200 group-hover:scale-110">
-                    <CheckCircle className="w-3.5 h-3.5 text-[#ff2d55]" />
-                  </div>
-                  <span className="text-xs text-gray-300">{item}</span>
-                </div>
-              ))}
-            </div>
-
-            <div className="bg-white/[0.04] backdrop-blur-md rounded-xl p-4 border border-white/10 flex items-start gap-3 max-w-lg">
-              <div className="w-8 h-8 rounded-full bg-[#2a0a10] border border-[#ff2d55]/30 flex items-center justify-center shrink-0">
-                <ShieldCheck className="w-4 h-4 text-[#ff2d55]" />
-              </div>
-              <p className="text-gray-300 text-xs leading-relaxed">
-                Google Sign-In is required only to verify your identity, connect your Google
-                Business Profile, read reviews, generate AI replies, publish replies, and display
-                analytics. Access is granted only after you authorize it, and can be revoked
-                anytime. We never access Gmail, Google Drive, Calendar, Contacts, Photos,
-                YouTube, or any unrelated Google services. ReviewReply AI only uses the Google
-                Business Profile API.
-              </p>
-            </div>
           </div>
 
           <div
