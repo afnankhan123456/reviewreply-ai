@@ -1,3 +1,4 @@
+import Image from "next/image";
 import GoogleSignInButton from "@/app/components/GoogleSignInButton";
 import {
   ShieldCheck,
@@ -71,10 +72,15 @@ function LoginHero() {
       `}</style>
 
       {/* ✅ MOBILE HERO (below md) — everything visible without scrolling */}
-      <div
-        className="flex md:hidden min-h-screen flex-col justify-center relative bg-black bg-no-repeat bg-cover bg-top px-5 py-6"
-        style={{ backgroundImage: "url('/main-ph.webp')" }}
-      >
+      <div className="flex md:hidden min-h-screen flex-col justify-center relative bg-black px-5 py-6">
+        <Image
+          src="/main-ph.webp"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-top -z-10"
+        />
         <div className="flex flex-col items-center text-center">
           <div className="flex items-center gap-2.5 mb-2.5">
             <img src="/ai-logo.png" alt="ReviewReply AI logo" className="w-11 h-11 object-contain" />
@@ -185,10 +191,15 @@ function LoginHero() {
       </div>
 
       {/* ✅ DESKTOP HERO (md and above) — everything visible without scrolling */}
-      <div
-        className="hidden md:flex min-h-screen flex-col justify-center relative bg-black overflow-hidden bg-no-repeat bg-cover bg-bottom px-10 lg:px-20 py-10"
-        style={{ backgroundImage: "url('/main-BG.webp')" }}
-      >
+      <div className="hidden md:flex min-h-screen flex-col justify-center relative bg-black overflow-hidden px-10 lg:px-20 py-10">
+        <Image
+          src="/main-BG.webp"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-bottom -z-10"
+        />
         <div className="absolute -top-40 right-[-200px] w-[900px] h-[900px] rounded-full bg-gradient-to-br from-[#ff2d55] via-[#c81e3a] to-transparent opacity-20 blur-[80px] pointer-events-none" />
 
         <div className="relative z-10 grid xl:grid-cols-[1.15fr_0.9fr] gap-14 items-center max-w-6xl mx-auto w-full">
@@ -321,7 +332,3 @@ function LoginHero() {
 export function LoginUI() {
   return <LoginHero />;
 }
-
-
-
-
