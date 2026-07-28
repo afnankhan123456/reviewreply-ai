@@ -90,10 +90,10 @@ export async function POST(req: Request) {
           application_context: {
 
             return_url:
-              "https://reviewreply-ai-pi.vercel.app/plans/basic/dashboard",
+              "https://www.reviewreply-ai.in/plans/basic/dashboard",
 
             cancel_url:
-              "https://reviewreply-ai-pi.vercel.app/plans/basic/pricing",
+              "https://www.reviewreply-ai.in/plans/basic/pricing",
 
             brand_name: "ReviewReply AI",
 
