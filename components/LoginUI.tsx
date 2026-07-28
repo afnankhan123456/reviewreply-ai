@@ -67,9 +67,9 @@ function LoginHero() {
         <img
           src="/main-ph.webp"
           alt=""
-          className="absolute inset-0 w-full h-full object-cover object-top -z-10"
+          className="absolute inset-0 w-full h-full object-cover object-top"
         />
-        <div className="flex flex-col items-center text-center">
+        <div className="relative z-10 flex flex-col items-center text-center">
           <div className="flex items-center gap-2.5 mb-2.5">
             <img src="/ai-logo.png" alt="ReviewReply AI logo" className="w-11 h-11 object-contain" />
             <h1 className="text-2xl font-black tracking-tight text-white">
@@ -94,11 +94,11 @@ function LoginHero() {
           </div>
         </div>
 
-        <h2 className="text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-2 text-center">
+        <h2 className="relative z-10 text-[11px] font-semibold uppercase tracking-wider text-gray-500 mb-2 text-center">
           Manage Google Reviews Smarter
         </h2>
 
-        <div className="flex flex-col gap-2 mb-4">
+        <div className="relative z-10 flex flex-col gap-2 mb-4">
           {HERO_CONTENT_BLOCKS.map((block, i) => {
             const Icon = block.icon;
             return (
@@ -115,7 +115,7 @@ function LoginHero() {
           })}
         </div>
 
-        <div className="grid grid-cols-2 gap-x-3 gap-y-2 max-w-sm mx-auto w-full mb-4">
+        <div className="relative z-10 grid grid-cols-2 gap-x-3 gap-y-2 max-w-sm mx-auto w-full mb-4">
           {FEATURE_CHECKLIST.map((item, i) => (
             <div key={i} className="group flex items-center gap-1.5">
               <div className="w-5 h-5 rounded-full bg-[#2a0a10] border border-[#ff2d55]/30 flex items-center justify-center shrink-0 shadow-[0_0_10px_-2px_rgba(255,45,85,0.6)] transition-transform group-active:scale-90">
@@ -126,7 +126,7 @@ function LoginHero() {
           ))}
         </div>
 
-        <div className="bg-white/[0.04] backdrop-blur-md rounded-xl p-3 border border-white/10 flex items-start gap-2 mb-4">
+        <div className="relative z-10 bg-white/[0.04] backdrop-blur-md rounded-xl p-3 border border-white/10 flex items-start gap-2 mb-4">
           <div className="w-6 h-6 rounded-full bg-[#2a0a10] border border-[#ff2d55]/30 flex items-center justify-center shrink-0">
             <ShieldCheck className="w-3.5 h-3.5 text-[#ff2d55]" />
           </div>
@@ -141,7 +141,7 @@ function LoginHero() {
 
         <div
           id="google-signin"
-          className="w-full bg-black/40 backdrop-blur-md border border-[#ff2d55]/30 rounded-2xl p-5 shadow-[0_0_60px_-20px_rgba(255,45,85,0.4)]"
+          className="relative z-10 w-full bg-black/40 backdrop-blur-md border border-[#ff2d55]/30 rounded-2xl p-5 shadow-[0_0_60px_-20px_rgba(255,45,85,0.4)]"
         >
           <div className="flex justify-center mb-3">
             <img src="/ai-logo.png" alt="ReviewReply AI" className="w-9 h-9 object-contain" />
@@ -183,7 +183,7 @@ function LoginHero() {
         <img
           src="/main-BG.webp"
           alt=""
-          className="absolute inset-0 w-full h-full object-cover object-bottom -z-10"
+          className="absolute inset-0 w-full h-full object-cover object-bottom"
         />
         <div className="absolute -top-40 right-[-200px] w-[900px] h-[900px] rounded-full bg-gradient-to-br from-[#ff2d55] via-[#c81e3a] to-transparent opacity-20 blur-[80px] pointer-events-none" />
 
