@@ -9,6 +9,9 @@ function LoginHero() {
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
+
+        #google-signin, #google-signin-desktop { display: none; }
+        #google-signin:target, #google-signin-desktop:target { display: block; }
       `}</style>
 
       {/* ✅ MOBILE HERO — everything fits in one screen, no scroll */}
