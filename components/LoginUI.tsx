@@ -73,7 +73,7 @@ function LoginHero() {
       {/* ✅ MOBILE HERO (below md) — everything visible without scrolling */}
       <div
         className="flex md:hidden min-h-screen flex-col justify-center relative bg-black bg-no-repeat bg-cover bg-top px-5 py-6"
-        style={{ backgroundImage: "url('/main-ph.PNG')" }}
+        style={{ backgroundImage: "url('/main-ph.webp')" }}
       >
         <div className="flex flex-col items-center text-center">
           <div className="flex items-center gap-2.5 mb-2.5">
@@ -187,7 +187,7 @@ function LoginHero() {
       {/* ✅ DESKTOP HERO (md and above) — everything visible without scrolling */}
       <div
         className="hidden md:flex min-h-screen flex-col justify-center relative bg-black overflow-hidden bg-no-repeat bg-cover bg-bottom px-10 lg:px-20 py-10"
-        style={{ backgroundImage: "url('/main-BG.PNG')" }}
+        style={{ backgroundImage: "url('/main-BG.webp')" }}
       >
         <div className="absolute -top-40 right-[-200px] w-[900px] h-[900px] rounded-full bg-gradient-to-br from-[#ff2d55] via-[#c81e3a] to-transparent opacity-20 blur-[80px] pointer-events-none" />
 
