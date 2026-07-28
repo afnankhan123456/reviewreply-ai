@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LoginUI } from "@/components/LoginUI";
+import LoginUI from "@/components/LoginUI";
 import {
   ShieldCheck,
   Sparkles,
