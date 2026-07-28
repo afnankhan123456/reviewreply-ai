@@ -62,13 +62,13 @@ function LoginHero() {
           </div>
 
           <p className="text-[11px] font-semibold text-gray-200 leading-snug max-w-xs mb-1">
-            ReviewReply AI helps businesses manage and reply to Google reviews with AI.
+            ReviewReply AI is an AI-powered Google Business Profile review management platform
+            that helps businesses manage and reply to Google reviews with AI.
           </p>
           <p className="text-[10px] text-gray-400 leading-snug max-w-xs mb-3">
-            ReviewReply AI is an AI-powered Google Business Profile review management platform
-            that securely connects, syncs, and responds to customer reviews automatically —
-            helping businesses track ratings, analyze sentiment, and manage their online
-            reputation from one dashboard.
+            Securely connect your Google Business Profile, automatically sync customer reviews,
+            generate AI-powered replies, publish responses, track ratings, analyze customer
+            sentiment, and manage your online reputation — all from one dashboard.
           </p>
 
           <div className="inline-flex items-center gap-1.5 bg-white/5 border border-white/10 rounded-full px-3 py-1 mb-4">
@@ -182,13 +182,13 @@ function LoginHero() {
             </div>
 
             <p className="text-base font-semibold text-gray-200 leading-relaxed max-w-lg mb-2">
-              ReviewReply AI helps businesses manage and reply to Google reviews with AI.
+              ReviewReply AI is an AI-powered Google Business Profile review management platform
+              that helps businesses manage and reply to Google reviews with AI.
             </p>
             <p className="text-sm text-gray-400 leading-relaxed max-w-lg">
-              ReviewReply AI is an AI-powered Google Business Profile review management platform
-              that securely connects, syncs, and responds to customer reviews automatically —
-              helping businesses track ratings, analyze sentiment, and manage their online
-              reputation from one dashboard.
+              Securely connect your Google Business Profile, automatically sync customer reviews,
+              generate AI-powered replies, publish responses, track ratings, analyze customer
+              sentiment, and manage your online reputation — all from one dashboard.
             </p>
           </div>
 
