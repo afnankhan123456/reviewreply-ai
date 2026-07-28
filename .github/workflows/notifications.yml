@@ -11,5 +11,5 @@ jobs:
     steps:
       - name: Call notifications endpoint
         run: |
-          curl -f -X GET "https://reviewreply-ai-pi.vercel.app/api/cron/notifications" \
+          curl -f -X GET "https://www.reviewreply-ai.in/api/cron/notifications" \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
