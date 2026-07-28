@@ -9,9 +9,6 @@ function LoginHero() {
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
-
-        #google-signin, #google-signin-desktop { display: none; }
-        #google-signin:target, #google-signin-desktop:target { display: block; }
       `}</style>
 
       {/* ✅ MOBILE HERO — everything fits in one screen, no scroll */}
@@ -22,12 +19,9 @@ function LoginHero() {
           className="absolute inset-0 w-full h-full object-cover object-top"
         />
 
-        <a
-          href="#google-signin"
-          className="absolute top-3 right-3 z-20 bg-white text-[#111827] text-[11px] font-bold px-3 py-1.5 rounded-full shadow-sm"
-        >
+        <GoogleSignInButton className="absolute top-3 right-3 z-20 bg-white text-[#111827] text-[11px] font-bold px-3 py-1.5 rounded-full shadow-sm">
           Get Started
-        </a>
+        </GoogleSignInButton>
 
         <div className="relative z-10 flex flex-col items-center text-center">
           <div className="flex items-center gap-2 mb-2">
@@ -43,10 +37,7 @@ function LoginHero() {
           </p>
         </div>
 
-        <div
-          id="google-signin"
-          className="relative z-10 w-full bg-black/40 backdrop-blur-md border border-[#ff2d55]/30 rounded-2xl p-4 mt-4 shadow-[0_0_60px_-20px_rgba(255,45,85,0.4)]"
-        >
+        <div className="relative z-10 w-full bg-black/40 backdrop-blur-md border border-[#ff2d55]/30 rounded-2xl p-4 mt-4 shadow-[0_0_60px_-20px_rgba(255,45,85,0.4)]">
           <div className="flex justify-center mb-2">
             <img src="/ai-logo.png" alt="ReviewReply AI" className="w-8 h-8 object-contain" />
           </div>
@@ -91,12 +82,9 @@ function LoginHero() {
         />
         <div className="absolute -top-40 right-[-200px] w-[900px] h-[900px] rounded-full bg-gradient-to-br from-[#ff2d55] via-[#c81e3a] to-transparent opacity-20 blur-[80px] pointer-events-none" />
 
-        <a
-          href="#google-signin-desktop"
-          className="absolute top-6 right-10 lg:right-20 z-20 bg-white hover:bg-gray-100 transition-all text-[#111827] text-sm font-bold px-5 py-2.5 rounded-full shadow-sm"
-        >
+        <GoogleSignInButton className="absolute top-6 right-10 lg:right-20 z-20 bg-white hover:bg-gray-100 transition-all text-[#111827] text-sm font-bold px-5 py-2.5 rounded-full shadow-sm">
           Get Started
-        </a>
+        </GoogleSignInButton>
 
         <div className="relative z-10 grid xl:grid-cols-[1.15fr_0.9fr] gap-10 items-center max-w-6xl mx-auto w-full">
           <div className="flex flex-col">
@@ -118,10 +106,7 @@ function LoginHero() {
             </p>
           </div>
 
-          <div
-            id="google-signin-desktop"
-            className="bg-black/30 backdrop-blur-md border border-white/10 rounded-3xl p-7 shadow-[0_0_80px_-20px_rgba(255,45,85,0.3)] w-full max-w-md justify-self-end"
-          >
+          <div className="bg-black/30 backdrop-blur-md border border-white/10 rounded-3xl p-7 shadow-[0_0_80px_-20px_rgba(255,45,85,0.3)] w-full max-w-md justify-self-end">
             <div className="flex justify-center mb-4">
               <div className="relative w-16 h-16 flex items-center justify-center">
                 <div className="absolute inset-0 rounded-full border border-[#ff2d55]/20" />
