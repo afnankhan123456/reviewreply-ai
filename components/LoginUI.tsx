@@ -1,13 +1,17 @@
 import GoogleSignInButton from "@/app/components/GoogleSignInButton";
+import { MessageSquareText, ShieldCheck, Sparkles, BarChart3 } from "lucide-react";
+import Link from "next/link";
+
+const APP_NAME = "ReviewReply AI"; // ⚠️ must be IDENTICAL to the name on OAuth consent screen
 
 function LoginHero() {
   return (
     <>
       {/* ✅ MOBILE HERO */}
-      <div className="flex md:hidden h-[100dvh] flex-col justify-center relative bg-black px-5 py-4 overflow-hidden">
+      <div className="flex md:hidden min-h-[100dvh] flex-col justify-center relative bg-black px-5 py-8 overflow-hidden">
         <img
           src="/main-ph.webp"
-          alt="ReviewReply AI Background"
+          alt={`${APP_NAME} Background`}
           className="absolute inset-0 w-full h-full object-cover object-top"
         />
 
@@ -17,24 +21,22 @@ function LoginHero() {
 
         <div className="relative z-10 flex flex-col items-center text-center">
           <div className="flex items-center gap-2 mb-2">
-            <img src="/ai-logo.png" alt="ReviewReply AI logo" className="w-9 h-9 object-contain" />
-            <h1 className="text-xl font-black tracking-tight text-white">
-              ReviewReply AI
-            </h1>
+            <img src="/ai-logo.png" alt={`${APP_NAME} logo`} className="w-9 h-9 object-contain" />
+            <h1 className="text-xl font-black tracking-tight text-white">{APP_NAME}</h1>
           </div>
 
           <p className="text-[11px] font-semibold text-gray-200 leading-snug max-w-xs">
-            ReviewReply AI is an AI-powered Google Business Profile review management platform
+            {APP_NAME} is an AI-powered Google Business Profile review management platform
             that helps businesses manage and reply to Google reviews with AI.
           </p>
         </div>
       </div>
 
       {/* ✅ DESKTOP HERO */}
-      <div className="hidden md:flex h-[100dvh] flex-col justify-center relative bg-black overflow-hidden px-10 lg:px-20 py-6">
+      <div className="hidden md:flex min-h-[100dvh] flex-col justify-center relative bg-black overflow-hidden px-10 lg:px-20 py-16">
         <img
           src="/main-BG.webp"
-          alt="ReviewReply AI Background"
+          alt={`${APP_NAME} Background`}
           className="absolute inset-0 w-full h-full object-cover object-bottom"
         />
         <div className="absolute -top-40 right-[-200px] w-[900px] h-[900px] rounded-full bg-gradient-to-br from-[#ff2d55] via-[#c81e3a] to-transparent opacity-20 blur-[80px] pointer-events-none" />
@@ -45,14 +47,12 @@ function LoginHero() {
 
         <div className="relative z-10 max-w-3xl">
           <div className="flex items-center gap-3 mb-4">
-            <img src="/ai-logo.png" alt="ReviewReply AI logo" className="w-11 h-11 object-contain" />
-            <h1 className="text-3xl font-black tracking-tight text-white">
-              ReviewReply AI
-            </h1>
+            <img src="/ai-logo.png" alt={`${APP_NAME} logo`} className="w-11 h-11 object-contain" />
+            <h1 className="text-3xl font-black tracking-tight text-white">{APP_NAME}</h1>
           </div>
 
           <p className="text-base font-semibold text-gray-200 leading-relaxed max-w-lg mb-2">
-            ReviewReply AI is an AI-powered Google Business Profile review management platform
+            {APP_NAME} is an AI-powered Google Business Profile review management platform
             that helps businesses manage and reply to Google reviews with AI.
           </p>
           <p className="text-sm text-gray-400 leading-relaxed max-w-lg mb-4">
@@ -66,6 +66,124 @@ function LoginHero() {
   );
 }
 
+function WhatItDoes() {
+  const features = [
+    {
+      icon: MessageSquareText,
+      title: "Sync your reviews automatically",
+      desc: `${APP_NAME} connects to your Google Business Profile and pulls in new customer reviews in real time, so you never miss one.`,
+    },
+    {
+      icon: Sparkles,
+      title: "AI-generated replies",
+      desc: "Our AI reads each review and drafts a professional, on-brand reply you can edit or publish with one click.",
+    },
+    {
+      icon: BarChart3,
+      title: "Reputation dashboard",
+      desc: "Track ratings, sentiment trends, and response times for every location you manage, all in a single dashboard.",
+    },
+  ];
+
+  return (
+    <section className="bg-black px-6 md:px-20 py-16 border-t border-white/5">
+      <h2 className="text-2xl md:text-3xl font-black text-white text-center mb-3">
+        What {APP_NAME} does
+      </h2>
+      <p className="text-gray-400 text-center max-w-2xl mx-auto mb-12 text-sm md:text-base">
+        {APP_NAME} helps business owners and marketing teams manage customer reviews on their
+        Google Business Profile without switching between multiple tools. It reads incoming
+        reviews, drafts AI-generated replies in your brand voice, and lets you publish approved
+        responses directly back to Google — all from one dashboard.
+      </p>
+      <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+        {features.map(({ icon: Icon, title, desc }) => (
+          <div
+            key={title}
+            className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col gap-3"
+          >
+            <Icon className="w-6 h-6 text-[#ff2d55]" />
+            <h3 className="text-white font-bold text-sm">{title}</h3>
+            <p className="text-gray-400 text-xs leading-relaxed">{desc}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function DataUsage() {
+  return (
+    <section className="bg-black px-6 md:px-20 py-16 border-t border-white/5">
+      <div className="max-w-3xl mx-auto">
+        <h2 className="text-2xl md:text-3xl font-black text-white text-center mb-3">
+          Why we ask for Google account access
+        </h2>
+        <p className="text-gray-400 text-center text-sm md:text-base mb-8">
+          {APP_NAME} only requests the minimum Google permissions needed to provide its core
+          feature: reading and replying to reviews on your Google Business Profile.
+        </p>
+        <div className="space-y-4">
+          <div className="flex items-start gap-3 bg-white/5 border border-white/10 rounded-xl p-4">
+            <ShieldCheck className="w-5 h-5 text-[#ff2d55] mt-0.5 shrink-0" />
+            <div>
+              <h3 className="text-white text-sm font-bold">Google Business Profile access</h3>
+              <p className="text-gray-400 text-xs leading-relaxed">
+                Used to read your business locations and customer reviews, and to publish the
+                replies you approve. We never post a reply without your review or explicit
+                automation settings.
+              </p>
+            </div>
+          </div>
+          <div className="flex items-start gap-3 bg-white/5 border border-white/10 rounded-xl p-4">
+            <ShieldCheck className="w-5 h-5 text-[#ff2d55] mt-0.5 shrink-0" />
+            <div>
+              <h3 className="text-white text-sm font-bold">Basic Google profile info</h3>
+              <p className="text-gray-400 text-xs leading-relaxed">
+                Used only to create and secure your {APP_NAME} account (name, email, profile
+                photo). We do not sell or share this data with third parties.
+              </p>
+            </div>
+          </div>
+        </div>
+        <p className="text-gray-500 text-xs text-center mt-8">
+          For full details on what we collect, how it's used, and how to revoke access at any
+          time, see our{" "}
+          <Link href="/privacy" className="text-[#ff2d55] underline underline-offset-2">
+            Privacy Policy
+          </Link>
+          .
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="bg-black border-t border-white/5 px-6 md:px-20 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
+      <p className="text-gray-500 text-xs">
+        © {new Date().getFullYear()} {APP_NAME}. All rights reserved.
+      </p>
+      <div className="flex items-center gap-6 text-xs">
+        <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors">
+          Privacy Policy
+        </Link>
+        <Link href="/terms" className="text-gray-400 hover:text-white transition-colors">
+          Terms of Service
+        </Link>
+      </div>
+    </footer>
+  );
+}
+
 export default function LoginUI() {
-  return <LoginHero />;
+  return (
+    <>
+      <LoginHero />
+      <WhatItDoes />
+      <DataUsage />
+      <Footer />
+    </>
+  );
 }
