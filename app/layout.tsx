@@ -6,7 +6,7 @@ export const metadata = {
   title: "ReviewReply AI",
   applicationName: "ReviewReply AI",
   description:
-    "ReviewReply AI is an AI-powered Google Business Profile review management platform that helps businesses securely connect their Google Business Profile, automatically sync customer reviews, generate AI-powered replies, publish responses, monitor ratings, analyze customer sentiment, and manage their online reputation from one dashboard.",
+    "ReviewReply AI is an AI-powered Google Business Profile review management platform. It helps businesses securely connect their Google Business Profile, automatically sync customer reviews, generate AI-powered replies, publish responses, monitor ratings, analyze customer sentiment, and manage online reputation from one dashboard. Google Sign-In is used only to verify identity, connect Business Profile, read reviews, generate AI replies, and publish responses. We never access Gmail, Drive, Calendar, Contacts, Photos, or YouTube.",
   keywords: [
     "ReviewReply AI",
     "Google Business Profile",
@@ -29,7 +29,7 @@ export const metadata = {
   openGraph: {
     title: "ReviewReply AI",
     description:
-      "ReviewReply AI is an AI-powered Google Business Profile review management platform that helps businesses securely connect their Google Business Profile, automatically sync customer reviews, generate AI-powered replies, publish responses, monitor ratings, analyze customer sentiment, and manage their online reputation from one dashboard.",
+      "ReviewReply AI is an AI-powered Google Business Profile review management platform. Securely connect your Google Business Profile, sync reviews, generate AI replies, publish responses, track ratings, and manage reputation.",
     url: "https://www.reviewreply-ai.in",
     siteName: "ReviewReply AI",
     type: "website",
@@ -44,7 +44,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "ReviewReply AI",
     description:
-      "ReviewReply AI is an AI-powered Google Business Profile review management platform that helps businesses securely connect their Google Business Profile, automatically sync customer reviews, generate AI-powered replies, publish responses, monitor ratings, analyze customer sentiment, and manage their online reputation from one dashboard.",
+      "ReviewReply AI is an AI-powered Google Business Profile review management platform. Securely connect your Google Business Profile, sync reviews, generate AI replies, publish responses, track ratings, and manage reputation.",
     images: ["/og-image.png"],
   },
   robots: {
