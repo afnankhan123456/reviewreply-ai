@@ -40,20 +40,9 @@ function LoginHero() {
           </p>
         </div>
 
-        {/* Google API compliance — compact, always visible */}
-        <div className="relative z-10 bg-white/[0.05] backdrop-blur-md rounded-lg p-2.5 border border-white/10 flex items-start gap-2 mt-3 max-w-sm mx-auto w-full">
-          <ShieldCheck className="w-3.5 h-3.5 text-[#ff2d55] shrink-0 mt-0.5" />
-          <p className="text-gray-300 text-[9px] leading-snug">
-            Google Sign-In is used only to verify your identity and access your Business Profile
-            to read reviews and publish replies. We never access Gmail, Drive, Calendar, Contacts,
-            or any other Google service. You can revoke access anytime from your Google Account
-            settings.
-          </p>
-        </div>
-
         <div
           id="google-signin"
-          className="relative z-10 w-full bg-black/40 backdrop-blur-md border border-[#ff2d55]/30 rounded-2xl p-4 mt-3 shadow-[0_0_60px_-20px_rgba(255,45,85,0.4)]"
+          className="relative z-10 w-full bg-black/40 backdrop-blur-md border border-[#ff2d55]/30 rounded-2xl p-4 mt-4 shadow-[0_0_60px_-20px_rgba(255,45,85,0.4)]"
         >
           <div className="flex justify-center mb-2">
             <img src="/ai-logo.png" alt="ReviewReply AI" className="w-8 h-8 object-contain" />
@@ -124,17 +113,6 @@ function LoginHero() {
               generate AI-powered replies, publish responses, and manage your online reputation —
               all from one dashboard.
             </p>
-
-            {/* Google API compliance — compact, always visible */}
-            <div className="bg-white/[0.05] backdrop-blur-md rounded-xl p-3.5 border border-white/10 flex items-start gap-3 max-w-lg">
-              <ShieldCheck className="w-4 h-4 text-[#ff2d55] shrink-0 mt-0.5" />
-              <p className="text-gray-300 text-xs leading-relaxed">
-                Google Sign-In is used only to verify your identity and access your Business
-                Profile to read reviews and publish replies. We never access Gmail, Drive,
-                Calendar, Contacts, or any other Google service. You can revoke access anytime
-                from your Google Account settings.
-              </p>
-            </div>
           </div>
 
           <div
