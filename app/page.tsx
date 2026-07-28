@@ -25,7 +25,6 @@ import {
   X,
 } from "lucide-react";
 
-
 /* ================================================================
    BELOW-THE-FOLD SECTIONS — OAuth verification ready
    (UNCHANGED — approved content)
