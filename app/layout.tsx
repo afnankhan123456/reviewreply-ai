@@ -1,74 +1,14 @@
-import "./globals.css";
-import Providers from "../components/Providers";
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
 
-export const metadata = {
-  metadataBase: new URL("https://www.reviewreply-ai.in"),
-  title: "ReviewReply AI",
-  applicationName: "ReviewReply AI",
-  description:
-    "ReviewReply AI is an AI-powered Google Business Profile review management platform that helps businesses securely connect their Google Business Profile, automatically sync customer reviews, generate AI-powered replies, publish responses, monitor ratings, analyze customer sentiment, and manage their online reputation from one dashboard.",
-  keywords: [
-    "ReviewReply AI",
-    "Google Business Profile",
-    "Google Reviews",
-    "AI Review Replies",
-    "Review Management",
-    "Google Business Reviews",
-    "AI Review Generator",
-    "Customer Reviews",
-    "Online Reputation",
-    "Reputation Management",
-  ],
-  authors: [{ name: "ReviewReply AI" }],
-  creator: "ReviewReply AI",
-  publisher: "ReviewReply AI",
-  category: "Business",
-  verification: {
-    google: "mLuWg9q3JVkzCcLhRQhEqye5XCK4C5lVRizxsF7Hs_c",
-  },
-  openGraph: {
-    title: "ReviewReply AI",
-    description:
-      "ReviewReply AI is an AI-powered Google Business Profile review management platform that helps businesses securely connect their Google Business Profile, automatically sync customer reviews, generate AI-powered replies, publish responses, monitor ratings, analyze customer sentiment, and manage their online reputation from one dashboard.",
-    url: "https://www.reviewreply-ai.in",
-    siteName: "ReviewReply AI",
-    type: "website",
-    locale: "en_US",
-    images: [
-      {
-        url: "/og-image.png",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "ReviewReply AI",
-    description:
-      "ReviewReply AI is an AI-powered Google Business Profile review management platform that helps businesses securely connect their Google Business Profile, automatically sync customer reviews, generate AI-powered replies, publish responses, monitor ratings, analyze customer sentiment, and manage their online reputation from one dashboard.",
-    images: ["/og-image.png"],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-      "max-video-preview": -1,
-    },
-  },
-  alternates: {
-    canonical: "https://www.reviewreply-ai.in",
-  },
+const inter = Inter({ subsets: ['latin'] });
+
+// 🚨 GOOGLE VERIFICATION FIX: Name must match exactly "ReviewReply AI"
+export const metadata: Metadata = {
+  title: 'ReviewReply AI', 
+  description: 'ReviewReply AI connects securely to your Google Business Profile to fetch customer reviews and automate AI-powered replies.',
 };
-
-export const viewport = {
-  width: "device-width",
-  initialScale: 1.0,
-};
-
-export const dynamic = "force-dynamic";
 
 export default function RootLayout({
   children,
@@ -77,9 +17,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
-        <Providers>{children}</Providers>
-      </body>
+      <body className={inter.className}>{children}</body>
     </html>
   );
 }
