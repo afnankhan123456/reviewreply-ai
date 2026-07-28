@@ -6,23 +6,7 @@ import {
   Mail,
   CheckCircle,
   RefreshCw,
-  Smile,
-  Bell,
-  UserCog,
-  Link2,
-  Send,
-  QrCode,
-  FileBarChart,
-  ClipboardCheck,
-  UserCheck,
-  HelpCircle,
-  Ban,
-  Globe,
   BarChart3,
-  TrendingUp,
-  Users,
-  Key,
-  X,
 } from "lucide-react";
 
 const FEATURE_CHECKLIST = [
@@ -73,7 +57,7 @@ function LoginHero() {
           <div className="flex items-center gap-2.5 mb-2.5">
             <img src="/ai-logo.png" alt="ReviewReply AI logo" className="w-11 h-11 object-contain" />
             <h1 className="text-2xl font-black tracking-tight text-white">
-              ReviewReply <span className="text-[#ff2d55]">AI</span>
+              ReviewReply AI
             </h1>
           </div>
 
@@ -193,7 +177,7 @@ function LoginHero() {
             <div className="flex items-center gap-3.5 mb-6">
               <img src="/ai-logo.png" alt="ReviewReply AI logo" className="w-[3.3rem] h-[3.3rem] object-contain" />
               <h1 className="text-4xl font-black tracking-tight text-white">
-                ReviewReply <span className="text-[#ff2d55]">AI</span>
+                ReviewReply AI
               </h1>
             </div>
 
@@ -259,6 +243,6 @@ function LoginHero() {
   );
 }
 
-export function LoginUI() {
+export default function LoginUI() {
   return <LoginHero />;
 }
