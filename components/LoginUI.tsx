@@ -1,4 +1,3 @@
-import Image from "next/image";
 import GoogleSignInButton from "@/app/components/GoogleSignInButton";
 import {
   ShieldCheck,
@@ -25,10 +24,6 @@ import {
   Key,
   X,
 } from "lucide-react";
-
-/* ================================================================
-   SHARED CONTENT
-   ================================================================ */
 
 const FEATURE_CHECKLIST = [
   "Connect Google Business Profile",
@@ -57,10 +52,6 @@ const HERO_CONTENT_BLOCKS = [
   },
 ];
 
-/* ================================================================
-   ABOVE-THE-FOLD HERO + SIGN-IN
-   ================================================================ */
-
 function LoginHero() {
   return (
     <>
@@ -71,15 +62,12 @@ function LoginHero() {
         ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
       `}</style>
 
-      {/* ✅ MOBILE HERO (below md) — everything visible without scrolling */}
+      {/* ✅ MOBILE HERO */}
       <div className="flex md:hidden min-h-screen flex-col justify-center relative bg-black px-5 py-6">
-        <Image
+        <img
           src="/main-ph.webp"
           alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-top -z-10"
+          className="absolute inset-0 w-full h-full object-cover object-top -z-10"
         />
         <div className="flex flex-col items-center text-center">
           <div className="flex items-center gap-2.5 mb-2.5">
@@ -190,15 +178,12 @@ function LoginHero() {
         </div>
       </div>
 
-      {/* ✅ DESKTOP HERO (md and above) — everything visible without scrolling */}
+      {/* ✅ DESKTOP HERO */}
       <div className="hidden md:flex min-h-screen flex-col justify-center relative bg-black overflow-hidden px-10 lg:px-20 py-10">
-        <Image
+        <img
           src="/main-BG.webp"
           alt=""
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-bottom -z-10"
+          className="absolute inset-0 w-full h-full object-cover object-bottom -z-10"
         />
         <div className="absolute -top-40 right-[-200px] w-[900px] h-[900px] rounded-full bg-gradient-to-br from-[#ff2d55] via-[#c81e3a] to-transparent opacity-20 blur-[80px] pointer-events-none" />
 
