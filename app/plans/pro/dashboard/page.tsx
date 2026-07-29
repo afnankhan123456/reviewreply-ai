@@ -1,233 +1,213 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import {
+  Search,
+  Bell,
+  Gift,
+  ChevronDown,
+  Home,
+  Star,
+  Sparkles,
+  Settings,
+  Zap,
+  MoreHorizontal,
+} from "lucide-react";
 
-const pricingPlans = [
-  {
-    id: "monthly",
-    title: "1 Month",
-    regularPrice: 79,
-    finalPrice: 79,
-    discount: null,
-    monthlyEquivalent: "$79.00/mo",
-    popular: false,
-    days: 30,
-  },
-  {
-    id: "quarterly",
-    title: "3 Months",
-    regularPrice: 237,
-    finalPrice: 219,
-    discount: "8% OFF",
-    monthlyEquivalent: "$73.00/mo",
-    popular: false,
-    days: 90,
-  },
-  {
-    id: "halfyearly",
-    title: "6 Months",
-    regularPrice: 474,
-    finalPrice: 399,
-    discount: "16% OFF",
-    monthlyEquivalent: "$66.50/mo",
-    popular: true,
-    days: 180,
-  },
-  {
-    id: "yearly",
-    title: "12 Months",
-    regularPrice: 948,
-    finalPrice: 699,
-    discount: "26% OFF",
-    monthlyEquivalent: "$58.25/mo",
-    popular: false,
-    days: 360,
-  },
+const NAV_ITEMS = [
+  { key: "home", label: "Home", href: "/plans/pro/dashboard", icon: Home },
+  { key: "reviews", label: "Reviews", href: "/plans/pro/dashboard/reviews", icon: Star },
+  { key: "ai-center", label: "AI Center", href: "/plans/pro/dashboard/ai-reply-center", icon: Sparkles },
+  { key: "settings", label: "Settings", href: "/plans/pro/dashboard/settings", icon: Settings },
+  { key: "automation", label: "Automation", href: "/plans/pro/dashboard/automation", icon: Zap },
+  { key: "more", label: "More", href: "/plans/pro/dashboard/more", icon: MoreHorizontal },
 ];
 
-export default function ProPricingPage() {
+export default function ProDashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const pathname = usePathname();
   const router = useRouter();
-  const { update } = useSession();
-  const [activatingPlan, setActivatingPlan] = useState<string | null>(null);
+  const { data: authSession, status, update } = useSession();
 
-  const handleChoosePlan = async (plan: (typeof pricingPlans)[number]) => {
-    try {
-      setActivatingPlan(plan.id);
+  const plan = (authSession?.user as any)?.plan || "basic";
+  const hasProAccess = plan?.startsWith("pro");
+  const orgName = (authSession?.user as any)?.name || "Your Business";
 
-      const res = await fetch("/api/activate-pro-plan", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan: plan.id, tier: "pro" }),
+  // ✅ Grace check: agar plan abhi-abhi activate hua hai to session (JWT) ko
+  // DB se naya plan fetch karne me 1-2 second lag sakte hain. Isliye turant
+  // "/plans" par bounce karne ke bajaye, ek baar session refresh karke thoda
+  // wait karo — warna newly-upgraded user ko lagta hai "kuch open hi nahi hua".
+  const [graceChecked, setGraceChecked] = useState(false);
+
+  useEffect(() => {
+    if (status === "authenticated" && !hasProAccess && !graceChecked) {
+      update().finally(() => {
+        setTimeout(() => setGraceChecked(true), 1500);
       });
-
-      const data = await res.json();
-
-      if (data.success) {
-        // session refresh karo taaki naya plan turant reflect ho,
-        // warna dashboard layout purana plan dekh kar wapas /plans bhej deta hai
-        await update();
-        router.push(`/plans/pro/dashboard?plan=${plan.id}&days=${plan.days}`);
-      } else {
-        alert(data.error || "Failed to activate plan");
-      }
-    } catch (err) {
-      alert("Something went wrong");
-    } finally {
-      setActivatingPlan(null);
     }
-  };
+  }, [status, hasProAccess, graceChecked, update]);
+
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setProfileOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.replace("/login");
+    }
+  }, [status, router]);
+
+  useEffect(() => {
+    if (status === "authenticated" && !hasProAccess && graceChecked) {
+      router.replace("/plans");
+    }
+  }, [status, hasProAccess, graceChecked, router]);
+
+  if (
+    status === "loading" ||
+    status === "unauthenticated" ||
+    (!hasProAccess && !graceChecked)
+  ) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-black text-gray-200">
+        <p className="text-sm text-gray-400">Checking your session...</p>
+      </div>
+    );
+  }
+
+  if (!hasProAccess) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-black text-gray-200">
+        <p className="text-sm text-gray-400">Redirecting...</p>
+      </div>
+    );
+  }
+
+  const activeKey =
+    NAV_ITEMS.slice()
+      .reverse()
+      .find((item) => pathname === item.href || pathname.startsWith(item.href + "/"))?.key ?? "home";
 
   return (
-    <main className="min-h-screen bg-black text-white py-16 px-4 sm:px-6 relative overflow-hidden">
+    <div className="min-h-screen w-full bg-black">
+      {/* ---------- Top bar ---------- */}
+      <header className="sticky top-0 z-40 border-b border-white/10 bg-black/60 backdrop-blur-xl">
+        <div className="mx-auto max-w-[1400px] px-4 sm:px-6 h-16 flex items-center gap-4">
+          <Link href="/plans/pro/dashboard" className="flex items-center gap-2 shrink-0">
+            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-violet-500 to-amber-400 flex items-center justify-center">
+              <Sparkles size={16} className="text-white" />
+            </div>
+            <span className="hidden sm:block text-white font-semibold tracking-tight">
+              ReviewReply AI
+            </span>
+          </Link>
 
-      {/* Background glow orbs — same theme as plans page, gold accent for Pro */}
-      <div className="absolute top-[10%] left-[-200px] w-[700px] h-[700px] rounded-full bg-amber-500/20 blur-[140px] pointer-events-none" />
-      <div className="absolute top-[5%] right-[-200px] w-[700px] h-[700px] rounded-full bg-violet-600/20 blur-[140px] pointer-events-none" />
-
-      <div className="relative z-10 mx-auto max-w-7xl">
-        <div className="text-center mb-10 md:mb-14">
-          <div className="inline-flex items-center gap-2 bg-zinc-900 border border-amber-500/40 rounded-full px-4 py-1.5 mb-6">
-            <span className="text-xs font-semibold tracking-widest text-amber-300">PRO PLAN</span>
+          <div className="flex-1 max-w-xl hidden md:flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-white/50 text-sm">
+            <Search size={15} />
+            <span className="flex-1">Ask AI or type a command...</span>
+            <kbd className="text-[10px] border border-white/10 rounded px-1.5 py-0.5">⌘ K</kbd>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">
-            Pro Plan{" "}
-            <span className="bg-gradient-to-r from-amber-400 to-violet-400 bg-clip-text text-transparent">
-              Pricing
-            </span>
-          </h1>
+          <div className="ml-auto flex items-center gap-3 sm:gap-4">
+            <button className="text-white/60 hover:text-white transition-colors hidden sm:block" aria-label="Rewards">
+              <Gift size={19} />
+            </button>
 
-          <p className="mt-4 text-zinc-400 text-sm sm:text-base md:text-lg">
-            Everything in Standard, plus Automation, unlimited locations and priority AI.
-          </p>
-        </div>
+            <button className="relative text-white/60 hover:text-white transition-colors" aria-label="Notifications">
+              <Bell size={19} />
+              <span className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-violet-500 text-[10px] font-semibold flex items-center justify-center text-white">
+                3
+              </span>
+            </button>
 
-        {/* MOBILE — stacked cards (screens below md) */}
-        <div className="block md:hidden space-y-4">
-          {pricingPlans.map((plan) => (
-            <div
-              key={plan.id}
-              className={`rounded-2xl border p-5 ${
-                plan.popular
-                  ? "border-amber-500/50 bg-gradient-to-br from-amber-950/40 to-violet-950/40 shadow-[0_0_40px_-15px_rgba(245,158,11,0.4)]"
-                  : "border-zinc-800 bg-zinc-900/60"
-              }`}
-            >
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-lg font-semibold text-white">{plan.title}</h3>
-                {plan.popular && (
-                  <span className="rounded-full bg-gradient-to-r from-amber-500 to-violet-600 px-3 py-1 text-[10px] font-semibold text-white">
-                    BEST VALUE
-                  </span>
-                )}
-              </div>
-
-              <div className="flex items-end gap-2 mb-3">
-                <span className="text-3xl font-bold bg-gradient-to-r from-amber-400 to-violet-400 bg-clip-text text-transparent">
-                  ${plan.finalPrice}
-                </span>
-                {plan.discount && (
-                  <span className="text-sm text-zinc-500 line-through mb-1">
-                    ${plan.regularPrice}
-                  </span>
-                )}
-              </div>
-
-              <div className="flex items-center gap-2 mb-4 text-xs">
-                {plan.discount ? (
-                  <span className="rounded-full bg-green-500/10 border border-green-500/30 px-2.5 py-1 text-green-400 font-semibold">
-                    {plan.discount}
-                  </span>
-                ) : (
-                  <span className="text-zinc-600">No discount</span>
-                )}
-                <span className="text-zinc-400">{plan.monthlyEquivalent}</span>
-              </div>
-
+            <div ref={profileRef} className="relative">
               <button
-                onClick={() => handleChoosePlan(plan)}
-                disabled={activatingPlan !== null}
-                className="w-full rounded-xl bg-gradient-to-r from-amber-500 to-violet-600 px-6 py-3 font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+                onClick={() => setProfileOpen((v) => !v)}
+                className="flex items-center gap-2"
               >
-                {activatingPlan === plan.id ? "Activating..." : "Choose Plan"}
+                <div className="text-right hidden sm:block">
+                  <p className="text-xs font-semibold text-white leading-tight">{orgName}</p>
+                  <p className="text-[10px] text-amber-300 leading-tight">Pro Plan</p>
+                </div>
+                <div className="h-8 w-8 rounded-full bg-gradient-to-br from-violet-500 to-amber-400 flex items-center justify-center text-xs font-bold text-white">
+                  {orgName?.[0]?.toUpperCase() || "P"}
+                </div>
+                <ChevronDown size={14} className="text-white/40 hidden sm:block" />
               </button>
+
+              {profileOpen && (
+                <div className="absolute right-0 mt-2 w-44 rounded-xl border border-white/10 bg-[#11141C] shadow-xl overflow-hidden">
+                  <Link
+                    href="/plans/pro/dashboard/settings"
+                    className="block px-4 py-2.5 text-sm text-white/80 hover:bg-white/5"
+                    onClick={() => setProfileOpen(false)}
+                  >
+                    Settings
+                  </Link>
+                  <Link
+                    href="/plans/pro/dashboard/more/support"
+                    className="block px-4 py-2.5 text-sm text-white/80 hover:bg-white/5"
+                    onClick={() => setProfileOpen(false)}
+                  >
+                    Support
+                  </Link>
+                  <button
+                    className="w-full text-left px-4 py-2.5 text-sm text-rose-400 hover:bg-white/5"
+                    onClick={() => setProfileOpen(false)}
+                  >
+                    Log out
+                  </button>
+                </div>
+              )}
             </div>
-          ))}
+          </div>
         </div>
+      </header>
 
-        {/* DESKTOP — table (md and above) */}
-        <div className="hidden md:block overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/60 backdrop-blur-sm shadow-[0_0_60px_-20px_rgba(245,158,11,0.3)]">
-          <table className="w-full">
-            <thead className="bg-black/60 text-white border-b border-zinc-800">
-              <tr>
-                <th className="px-8 py-5 text-left font-semibold">Plan</th>
-                <th className="px-8 py-5 text-center font-semibold">Regular Price</th>
-                <th className="px-8 py-5 text-center font-semibold">Discount</th>
-                <th className="px-8 py-5 text-center font-semibold">Final Price</th>
-                <th className="px-8 py-5 text-center font-semibold">
-                  Monthly Equivalent
-                </th>
-                <th className="px-8 py-5 text-center"></th>
-              </tr>
-            </thead>
+      {/* ---------- Page content ---------- */}
+      <main className="min-h-[calc(100vh-4rem)]">{children}</main>
 
-            <tbody>
-              {pricingPlans.map((plan) => (
-                <tr
-                  key={plan.id}
-                  className={`border-t border-zinc-800 ${
-                    plan.popular ? "bg-gradient-to-r from-amber-950/40 to-violet-950/40" : "bg-transparent"
+      {/* ---------- Bottom nav (fixed) ---------- */}
+      <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-white/10 bg-black/70 backdrop-blur-xl">
+        <div className="mx-auto max-w-[1400px] px-2 sm:px-6">
+          <div className="grid grid-cols-6">
+            {NAV_ITEMS.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeKey === item.key;
+              return (
+                <Link
+                  key={item.key}
+                  href={item.href}
+                  className={`flex flex-col items-center justify-center gap-1 py-2.5 transition-colors ${
+                    isActive ? "text-violet-300" : "text-white/50 hover:text-white/80"
                   }`}
                 >
-                  <td className="px-8 py-6 font-semibold text-lg text-white">
-                    {plan.title}
-
-                    {plan.popular && (
-                      <span className="ml-3 rounded-full bg-gradient-to-r from-amber-500 to-violet-600 px-3 py-1 text-xs font-semibold text-white">
-                        BEST VALUE
-                      </span>
-                    )}
-                  </td>
-
-                  <td className="px-8 py-6 text-center text-zinc-400">
-                    ${plan.regularPrice}
-                  </td>
-
-                  <td className="px-8 py-6 text-center">
-                    {plan.discount ? (
-                      <span className="rounded-full bg-green-500/10 border border-green-500/30 px-3 py-1 text-green-400 font-semibold">
-                        {plan.discount}
-                      </span>
-                    ) : (
-                      <span className="text-zinc-600">-</span>
-                    )}
-                  </td>
-
-                  <td className="px-8 py-6 text-center text-2xl font-bold bg-gradient-to-r from-amber-400 to-violet-400 bg-clip-text text-transparent">
-                    ${plan.finalPrice}
-                  </td>
-
-                  <td className="px-8 py-6 text-center font-medium text-zinc-300">
-                    {plan.monthlyEquivalent}
-                  </td>
-
-                  <td className="px-8 py-6 text-center">
-                    <button
-                      onClick={() => handleChoosePlan(plan)}
-                      disabled={activatingPlan !== null}
-                      className="rounded-xl bg-gradient-to-r from-amber-500 to-violet-600 px-6 py-3 font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
-                    >
-                      {activatingPlan === plan.id ? "Activating..." : "Choose Plan"}
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  <Icon size={20} strokeWidth={isActive ? 2.4 : 2} />
+                  <span className="text-[10px] font-medium">{item.label}</span>
+                  {isActive && (
+                    <span className="absolute -mt-[26px] h-1 w-1 rounded-full bg-violet-400" />
+                  )}
+                </Link>
+              );
+            })}
+          </div>
         </div>
-      </div>
-    </main>
+      </nav>
+    </div>
   );
 }
