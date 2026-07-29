@@ -1,6 +1,5 @@
 import GoogleSignInButton from "@/app/components/GoogleSignInButton";
 import { MessageSquareText, ShieldCheck, Sparkles, BarChart3, Info } from "lucide-react";
-import Link from "next/link";
 
 const APP_NAME = "ReviewReply AI"; // ⚠️ must be IDENTICAL to the name on OAuth consent screen
 
@@ -176,31 +175,12 @@ function DataUsage() {
   );
 }
 
-function Footer() {
-  return (
-    <footer className="bg-black border-t border-white/5 px-6 md:px-20 py-8 flex flex-col md:flex-row items-center justify-between gap-4">
-      <p className="text-gray-500 text-xs">
-        © {new Date().getFullYear()} {APP_NAME}. All rights reserved.
-      </p>
-      <div className="flex items-center gap-6 text-xs">
-        <Link href="/privacy" className="text-gray-400 hover:text-white transition-colors">
-          Privacy Policy
-        </Link>
-        <Link href="/terms" className="text-gray-400 hover:text-white transition-colors">
-          Terms of Service
-        </Link>
-      </div>
-    </footer>
-  );
-}
-
 export default function LoginUI() {
   return (
     <>
       <LoginHero />
       <WhatItDoes />
       <DataUsage />
-      <Footer />
     </>
   );
 }
