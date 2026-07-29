@@ -65,8 +65,6 @@ export default function ProPricingPage() {
       const data = await res.json();
 
       if (data.success) {
-        // session refresh karo taaki naya plan turant reflect ho,
-        // warna dashboard layout purana plan dekh kar wapas /plans bhej deta hai
         await update();
         router.push(`/plans/pro/dashboard?plan=${plan.id}&days=${plan.days}`);
       } else {
@@ -81,48 +79,13 @@ export default function ProPricingPage() {
 
   return (
     <main className="min-h-screen bg-black text-white py-16 px-4 sm:px-6 relative overflow-hidden">
-
-      {/* Background glow orbs — same theme as plans page, gold accent for Pro */}
       <div className="absolute top-[10%] left-[-200px] w-[700px] h-[700px] rounded-full bg-amber-500/20 blur-[140px] pointer-events-none" />
       <div className="absolute top-[5%] right-[-200px] w-[700px] h-[700px] rounded-full bg-violet-600/20 blur-[140px] pointer-events-none" />
 
       <div className="relative z-10 mx-auto max-w-7xl">
-        {/* 🔧 TEMP DEBUG BUTTON — isko click karke bata do alert aata hai ya nahi.
-          Isse pata chalega ki page pe React/JS bilkul kaam kar raha hai ya nahi. */}
-      <button
-        type="button"
-        onClick={() => alert("JS WORKING ✅")}
-        style={{
-          position: "fixed",
-          top: 10,
-          left: 10,
-          zIndex: 9999,
-          background: "red",
-          color: "white",
-          padding: "10px 16px",
-          borderRadius: 8,
-          fontWeight: 700,
-        }}
-      >
-        TEST CLICK
-      </button>
-
-      <div className="text-center mb-10 md:mb-14">
-          <div className="inline-flex items-center gap-2 bg-zinc-900 border border-amber-500/40 rounded-full px-4 py-1.5 mb-6">
-            <span className="text-xs font-semibold tracking-widest text-amber-300">PRO PLAN</span>
-          </div>
-
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">
-            Pro Plan{" "}
-            <span className="bg-gradient-to-r from-amber-400 to-violet-400 bg-clip-text text-transparent">
-              Pricing
-            </span>
-          </h1>
-
-          <p className="mt-4 text-zinc-400 text-sm sm:text-base md:text-lg">
-            Everything in Standard, plus Automation, unlimited locations and priority AI.
-          </p>
-        </div>
+        <p className="text-center text-sm font-semibold tracking-widest text-amber-300 mb-6">
+          PRO PLAN
+        </p>
 
         {/* MOBILE — stacked cards (screens below md) */}
         <div className="block md:hidden space-y-4">
@@ -186,9 +149,7 @@ export default function ProPricingPage() {
                 <th className="px-8 py-5 text-center font-semibold">Regular Price</th>
                 <th className="px-8 py-5 text-center font-semibold">Discount</th>
                 <th className="px-8 py-5 text-center font-semibold">Final Price</th>
-                <th className="px-8 py-5 text-center font-semibold">
-                  Monthly Equivalent
-                </th>
+                <th className="px-8 py-5 text-center font-semibold">Monthly Equivalent</th>
                 <th className="px-8 py-5 text-center"></th>
               </tr>
             </thead>
@@ -203,7 +164,6 @@ export default function ProPricingPage() {
                 >
                   <td className="px-8 py-6 font-semibold text-lg text-white">
                     {plan.title}
-
                     {plan.popular && (
                       <span className="ml-3 rounded-full bg-gradient-to-r from-amber-500 to-violet-600 px-3 py-1 text-xs font-semibold text-white">
                         BEST VALUE
