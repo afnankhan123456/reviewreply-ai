@@ -87,7 +87,27 @@ export default function ProPricingPage() {
       <div className="absolute top-[5%] right-[-200px] w-[700px] h-[700px] rounded-full bg-violet-600/20 blur-[140px] pointer-events-none" />
 
       <div className="relative z-10 mx-auto max-w-7xl">
-        <div className="text-center mb-10 md:mb-14">
+        {/* 🔧 TEMP DEBUG BUTTON — isko click karke bata do alert aata hai ya nahi.
+          Isse pata chalega ki page pe React/JS bilkul kaam kar raha hai ya nahi. */}
+      <button
+        type="button"
+        onClick={() => alert("JS WORKING ✅")}
+        style={{
+          position: "fixed",
+          top: 10,
+          left: 10,
+          zIndex: 9999,
+          background: "red",
+          color: "white",
+          padding: "10px 16px",
+          borderRadius: 8,
+          fontWeight: 700,
+        }}
+      >
+        TEST CLICK
+      </button>
+
+      <div className="text-center mb-10 md:mb-14">
           <div className="inline-flex items-center gap-2 bg-zinc-900 border border-amber-500/40 rounded-full px-4 py-1.5 mb-6">
             <span className="text-xs font-semibold tracking-widest text-amber-300">PRO PLAN</span>
           </div>
