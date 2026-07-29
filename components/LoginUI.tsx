@@ -171,14 +171,6 @@ function DataUsage() {
             </div>
           </div>
         </div>
-        <p className="text-gray-500 text-xs text-center mt-8">
-          For full details on what we collect, how it's used, and how to revoke access at any
-          time, see our{" "}
-          <Link href="/privacy" className="text-[#ff2d55] underline underline-offset-2">
-            Privacy Policy
-          </Link>
-          .
-        </p>
       </div>
     </section>
   );
