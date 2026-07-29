@@ -33,11 +33,25 @@ export default function ProDashboardLayout({
 }) {
   const pathname = usePathname();
   const router = useRouter();
-  const { data: authSession, status } = useSession();
+  const { data: authSession, status, update } = useSession();
 
   const plan = (authSession?.user as any)?.plan || "basic";
   const hasProAccess = plan?.startsWith("pro");
   const orgName = (authSession?.user as any)?.name || "Your Business";
+
+  // ✅ Grace check: agar plan abhi-abhi activate hua hai to session (JWT) ko
+  // DB se naya plan fetch karne me 1-2 second lag sakte hain. Isliye turant
+  // "/plans" par bounce karne ke bajaye, ek baar session refresh karke thoda
+  // wait karo — warna newly-upgraded user ko lagta hai "kuch open hi nahi hua".
+  const [graceChecked, setGraceChecked] = useState(false);
+
+  useEffect(() => {
+    if (status === "authenticated" && !hasProAccess && !graceChecked) {
+      update().finally(() => {
+        setTimeout(() => setGraceChecked(true), 1500);
+      });
+    }
+  }, [status, hasProAccess, graceChecked, update]);
 
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -59,15 +73,27 @@ export default function ProDashboardLayout({
   }, [status, router]);
 
   useEffect(() => {
-    if (status === "authenticated" && !hasProAccess) {
+    if (status === "authenticated" && !hasProAccess && graceChecked) {
       router.replace("/plans");
     }
-  }, [status, hasProAccess, router]);
+  }, [status, hasProAccess, graceChecked, router]);
 
-  if (status === "loading" || status === "unauthenticated" || !hasProAccess) {
+  if (
+    status === "loading" ||
+    status === "unauthenticated" ||
+    (!hasProAccess && !graceChecked)
+  ) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-black text-gray-200">
         <p className="text-sm text-gray-400">Checking your session...</p>
+      </div>
+    );
+  }
+
+  if (!hasProAccess) {
+    return (
+      <div className="flex h-screen w-full items-center justify-center bg-black text-gray-200">
+        <p className="text-sm text-gray-400">Redirecting...</p>
       </div>
     );
   }
