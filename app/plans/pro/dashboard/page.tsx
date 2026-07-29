@@ -1,375 +1,233 @@
 "use client";
 
-import React from "react";
-import {
-  MessageSquare,
-  Star,
-  MessageCircle,
-  Undo2,
-  Frown,
-  Plus,
-  ChevronDown,
-  SlidersHorizontal,
-  Sparkles,
-  BarChart3,
-  FileText,
-  Link2,
-  ChevronRight,
-  Zap,
-  Smile,
-  TrendingUp,
-} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useSession } from "next-auth/react";
 
-/**
- * Pro Dashboard — Home page (UI ONLY)
- * No API calls / no real data yet — static placeholder data so the
- * layout, glass cards and interactions can be reviewed first.
- */
-
-// ---------- Static placeholder data (UI only) ----------
-
-const statCards = [
+const pricingPlans = [
   {
-    label: "Total Reviews",
-    value: "1,248",
-    delta: "+12% vs last 7 days",
-    deltaTone: "up" as const,
-    icon: MessageSquare,
-    iconTone: "violet" as const,
+    id: "monthly",
+    title: "1 Month",
+    regularPrice: 79,
+    finalPrice: 79,
+    discount: null,
+    monthlyEquivalent: "$79.00/mo",
+    popular: false,
+    days: 30,
   },
   {
-    label: "Average Rating",
-    value: "4.3",
-    delta: "-0.3 vs last 7 days",
-    deltaTone: "down" as const,
-    icon: Star,
-    iconTone: "amber" as const,
+    id: "quarterly",
+    title: "3 Months",
+    regularPrice: 237,
+    finalPrice: 219,
+    discount: "8% OFF",
+    monthlyEquivalent: "$73.00/mo",
+    popular: false,
+    days: 90,
   },
   {
-    label: "New Reviews",
-    value: "32",
-    delta: "+8% vs last 7 days",
-    deltaTone: "up" as const,
-    icon: MessageCircle,
-    iconTone: "green" as const,
+    id: "halfyearly",
+    title: "6 Months",
+    regularPrice: 474,
+    finalPrice: 399,
+    discount: "16% OFF",
+    monthlyEquivalent: "$66.50/mo",
+    popular: true,
+    days: 180,
   },
   {
-    label: "Response Rate",
-    value: "86%",
-    delta: "+5% vs last 7 days",
-    deltaTone: "up" as const,
-    icon: Undo2,
-    iconTone: "blue" as const,
-  },
-  {
-    label: "Low Rating Reviews",
-    value: "18",
-    delta: "-6% vs last 7 days",
-    deltaTone: "down" as const,
-    icon: Frown,
-    iconTone: "rose" as const,
+    id: "yearly",
+    title: "12 Months",
+    regularPrice: 948,
+    finalPrice: 699,
+    discount: "26% OFF",
+    monthlyEquivalent: "$58.25/mo",
+    popular: false,
+    days: 360,
   },
 ];
 
-const quickActions = [
-  { label: "Reply to Reviews", sub: "Reply to pending reviews", icon: MessageSquare },
-  { label: "AI Reply", sub: "Generate AI replies", icon: Sparkles },
-  { label: "Analytics", sub: "Get AI insights", icon: BarChart3 },
-  { label: "Create Report", sub: "Download reports", icon: FileText },
-  { label: "Connect Platform", sub: "Add review sources", icon: Link2 },
-];
+export default function ProPricingPage() {
+  const router = useRouter();
+  const { update } = useSession();
+  const [activatingPlan, setActivatingPlan] = useState<string | null>(null);
 
-const ratingBreakdown = [
-  { label: "5 Stars", count: 620, pct: 50, dot: "bg-emerald-400" },
-  { label: "4 Stars", count: 320, pct: 26, dot: "bg-blue-400" },
-  { label: "3 Stars", count: 180, pct: 14, dot: "bg-violet-400" },
-  { label: "2 Stars", count: 80, pct: 6, dot: "bg-amber-400" },
-  { label: "1 Star", count: 48, pct: 4, dot: "bg-rose-400" },
-];
+  const handleChoosePlan = async (plan: (typeof pricingPlans)[number]) => {
+    try {
+      setActivatingPlan(plan.id);
 
-const recentReviews = [
-  {
-    name: "John D.",
-    time: "5 min ago",
-    stars: 5,
-    text: "Great service and amazing support! Highly recommend.",
-    status: "Replied" as const,
-    source: "G",
-  },
-  {
-    name: "Sarah M.",
-    time: "15 min ago",
-    stars: 4,
-    text: "Good experience overall. The team was helpful.",
-    status: "Pending" as const,
-    source: "F",
-  },
-  {
-    name: "Michael T.",
-    time: "1 hour ago",
-    stars: 1,
-    text: "Poor communication and slow response time.",
-    status: "Negative" as const,
-    source: "Y",
-  },
-  {
-    name: "Emily R.",
-    time: "2 hours ago",
-    stars: 5,
-    text: "Excellent product and customer service!",
-    status: "Replied" as const,
-    source: "G",
-  },
-];
+      const res = await fetch("/api/activate-pro-plan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan: plan.id, tier: "pro" }),
+      });
 
-const aiSuggestions = [
-  { label: "Enable Auto Reply", sub: "Automatically reply to common reviews", cta: "Set up", icon: Zap },
-  { label: "Create Templates", sub: "Save time with reusable reply templates", cta: "Create now", icon: FileText },
-  { label: "Analyze Sentiment", sub: "Understand customer sentiment better", cta: "Analyze", icon: Smile },
-  { label: "Generate Report", sub: "Get detailed insights about your reviews", cta: "Generate", icon: BarChart3 },
-  { label: "Improve Rating", sub: "Get AI recommendations to improve rating", cta: "Get tips", icon: TrendingUp },
-];
+      const data = await res.json();
 
-// ---------- Small helpers ----------
+      if (data.success) {
+        // session refresh karo taaki naya plan turant reflect ho,
+        // warna dashboard layout purana plan dekh kar wapas /plans bhej deta hai
+        await update();
+        router.push(`/plans/pro/dashboard?plan=${plan.id}&days=${plan.days}`);
+      } else {
+        alert(data.error || "Failed to activate plan");
+      }
+    } catch (err) {
+      alert("Something went wrong");
+    } finally {
+      setActivatingPlan(null);
+    }
+  };
 
-const iconToneClasses: Record<string, string> = {
-  violet: "bg-violet-500/20 text-violet-300",
-  amber: "bg-amber-500/20 text-amber-300",
-  green: "bg-emerald-500/20 text-emerald-300",
-  blue: "bg-blue-500/20 text-blue-300",
-  rose: "bg-rose-500/20 text-rose-300",
-};
-
-const statusClasses: Record<string, string> = {
-  Replied: "bg-emerald-500/20 text-emerald-300",
-  Pending: "bg-amber-500/20 text-amber-300",
-  Negative: "bg-rose-500/20 text-rose-300",
-};
-
-function Stars({ count }: { count: number }) {
   return (
-    <div className="flex items-center gap-0.5">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <Star
-          key={i}
-          size={13}
-          className={i < count ? "fill-amber-400 text-amber-400" : "fill-white/10 text-white/10"}
-        />
-      ))}
-    </div>
-  );
-}
+    <main className="min-h-screen bg-black text-white py-16 px-4 sm:px-6 relative overflow-hidden">
 
-function GlassCard({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
-  return (
-    <div
-      className={`rounded-2xl border border-white/15 bg-white/10 backdrop-blur-xl shadow-[0_8px_32px_rgba(0,0,0,0.25)] ${className}`}
-    >
-      {children}
-    </div>
-  );
-}
+      {/* Background glow orbs — same theme as plans page, gold accent for Pro */}
+      <div className="absolute top-[10%] left-[-200px] w-[700px] h-[700px] rounded-full bg-amber-500/20 blur-[140px] pointer-events-none" />
+      <div className="absolute top-[5%] right-[-200px] w-[700px] h-[700px] rounded-full bg-violet-600/20 blur-[140px] pointer-events-none" />
 
-function getGreeting() {
-  const hour = new Date().getHours();
-  if (hour >= 5 && hour < 12) return "Good Morning";
-  if (hour >= 12 && hour < 17) return "Good Afternoon";
-  if (hour >= 17 && hour < 21) return "Good Evening";
-  return "Good Night";
-}
-
-export default function ProDashboardHomePage() {
-  return (
-    <div
-      className="min-h-full w-full bg-cover bg-center bg-fixed"
-      style={{ backgroundImage: "url('/main-BG.webp')" }}
-    >
-      {/* dark overlay so glass cards stay readable */}
-      <div className="min-h-full w-full bg-black/45 backdrop-brightness-90">
-        <div className="mx-auto max-w-[1400px] px-6 py-8 pb-28 lg:pb-10 text-white">
-          {/* Greeting + New Action */}
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold flex items-center gap-2">
-                {getGreeting()}, aiengineer! <span>🌙</span>
-              </h1>
-              <p className="text-white/60 text-sm mt-1">
-                Here&apos;s what&apos;s happening with your reviews today.
-              </p>
-            </div>
-
-            <button className="inline-flex items-center gap-2 rounded-xl bg-violet-600 hover:bg-violet-500 transition-colors px-4 py-2.5 text-sm font-medium shadow-lg shadow-violet-900/30 w-fit">
-              <Plus size={16} />
-              New Action
-              <ChevronDown size={14} className="opacity-70" />
-            </button>
+      <div className="relative z-10 mx-auto max-w-7xl">
+        <div className="text-center mb-10 md:mb-14">
+          <div className="inline-flex items-center gap-2 bg-zinc-900 border border-amber-500/40 rounded-full px-4 py-1.5 mb-6">
+            <span className="text-xs font-semibold tracking-widest text-amber-300">PRO PLAN</span>
           </div>
 
-          {/* Stat cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
-            {statCards.map((card) => {
-              const Icon = card.icon;
-              return (
-                <GlassCard key={card.label} className="p-4">
-                  <div className={`h-9 w-9 rounded-lg flex items-center justify-center mb-3 ${iconToneClasses[card.iconTone]}`}>
-                    <Icon size={17} />
-                  </div>
-                  <p className="text-white/60 text-xs mb-1">{card.label}</p>
-                  <p className="text-2xl font-bold mb-1">{card.value}</p>
-                  <p className={`text-[11px] font-medium ${card.deltaTone === "up" ? "text-emerald-400" : "text-rose-400"}`}>
-                    {card.delta}
-                  </p>
-                </GlassCard>
-              );
-            })}
-          </div>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">
+            Pro Plan{" "}
+            <span className="bg-gradient-to-r from-amber-400 to-violet-400 bg-clip-text text-transparent">
+              Pricing
+            </span>
+          </h1>
 
-          {/* Quick Actions */}
-          <GlassCard className="p-5 mb-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold">Quick Actions</h2>
-              <button className="flex items-center gap-1.5 text-xs text-white/60 hover:text-white transition-colors rounded-lg border border-white/15 px-3 py-1.5">
-                <SlidersHorizontal size={13} />
-                Customize
+          <p className="mt-4 text-zinc-400 text-sm sm:text-base md:text-lg">
+            Everything in Standard, plus Automation, unlimited locations and priority AI.
+          </p>
+        </div>
+
+        {/* MOBILE — stacked cards (screens below md) */}
+        <div className="block md:hidden space-y-4">
+          {pricingPlans.map((plan) => (
+            <div
+              key={plan.id}
+              className={`rounded-2xl border p-5 ${
+                plan.popular
+                  ? "border-amber-500/50 bg-gradient-to-br from-amber-950/40 to-violet-950/40 shadow-[0_0_40px_-15px_rgba(245,158,11,0.4)]"
+                  : "border-zinc-800 bg-zinc-900/60"
+              }`}
+            >
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-lg font-semibold text-white">{plan.title}</h3>
+                {plan.popular && (
+                  <span className="rounded-full bg-gradient-to-r from-amber-500 to-violet-600 px-3 py-1 text-[10px] font-semibold text-white">
+                    BEST VALUE
+                  </span>
+                )}
+              </div>
+
+              <div className="flex items-end gap-2 mb-3">
+                <span className="text-3xl font-bold bg-gradient-to-r from-amber-400 to-violet-400 bg-clip-text text-transparent">
+                  ${plan.finalPrice}
+                </span>
+                {plan.discount && (
+                  <span className="text-sm text-zinc-500 line-through mb-1">
+                    ${plan.regularPrice}
+                  </span>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2 mb-4 text-xs">
+                {plan.discount ? (
+                  <span className="rounded-full bg-green-500/10 border border-green-500/30 px-2.5 py-1 text-green-400 font-semibold">
+                    {plan.discount}
+                  </span>
+                ) : (
+                  <span className="text-zinc-600">No discount</span>
+                )}
+                <span className="text-zinc-400">{plan.monthlyEquivalent}</span>
+              </div>
+
+              <button
+                onClick={() => handleChoosePlan(plan)}
+                disabled={activatingPlan !== null}
+                className="w-full rounded-xl bg-gradient-to-r from-amber-500 to-violet-600 px-6 py-3 font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+              >
+                {activatingPlan === plan.id ? "Activating..." : "Choose Plan"}
               </button>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-              {quickActions.map((a) => {
-                const Icon = a.icon;
-                return (
-                  <button
-                    key={a.label}
-                    className="text-left rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-colors p-4"
-                  >
-                    <div className="h-8 w-8 rounded-lg bg-white/10 flex items-center justify-center mb-3">
-                      <Icon size={15} />
-                    </div>
-                    <p className="text-sm font-medium">{a.label}</p>
-                    <p className="text-[11px] text-white/50 mt-0.5">{a.sub}</p>
-                  </button>
-                );
-              })}
-            </div>
-          </GlassCard>
+          ))}
+        </div>
 
-          {/* Review Overview + Recent Reviews */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            {/* Review Overview */}
-            <GlassCard className="p-5">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="font-semibold">Review Overview</h2>
-                <button className="flex items-center gap-1.5 text-xs text-white/60 hover:text-white border border-white/15 rounded-lg px-3 py-1.5">
-                  Last 7 days
-                  <ChevronDown size={13} />
-                </button>
-              </div>
+        {/* DESKTOP — table (md and above) */}
+        <div className="hidden md:block overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/60 backdrop-blur-sm shadow-[0_0_60px_-20px_rgba(245,158,11,0.3)]">
+          <table className="w-full">
+            <thead className="bg-black/60 text-white border-b border-zinc-800">
+              <tr>
+                <th className="px-8 py-5 text-left font-semibold">Plan</th>
+                <th className="px-8 py-5 text-center font-semibold">Regular Price</th>
+                <th className="px-8 py-5 text-center font-semibold">Discount</th>
+                <th className="px-8 py-5 text-center font-semibold">Final Price</th>
+                <th className="px-8 py-5 text-center font-semibold">
+                  Monthly Equivalent
+                </th>
+                <th className="px-8 py-5 text-center"></th>
+              </tr>
+            </thead>
 
-              <div className="flex flex-col sm:flex-row items-center gap-6">
-                {/* Donut (static SVG, purely decorative) */}
-                <div className="relative h-40 w-40 shrink-0">
-                  <svg viewBox="0 0 36 36" className="h-full w-full -rotate-90">
-                    <circle cx="18" cy="18" r="15.5" fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="3" />
-                    <circle cx="18" cy="18" r="15.5" fill="none" stroke="#34d399" strokeWidth="3" strokeDasharray="50 50" strokeDashoffset="0" />
-                    <circle cx="18" cy="18" r="15.5" fill="none" stroke="#60a5fa" strokeWidth="3" strokeDasharray="26 74" strokeDashoffset="-50" />
-                    <circle cx="18" cy="18" r="15.5" fill="none" stroke="#a78bfa" strokeWidth="3" strokeDasharray="14 86" strokeDashoffset="-76" />
-                    <circle cx="18" cy="18" r="15.5" fill="none" stroke="#fbbf24" strokeWidth="3" strokeDasharray="6 94" strokeDashoffset="-90" />
-                    <circle cx="18" cy="18" r="15.5" fill="none" stroke="#fb7185" strokeWidth="3" strokeDasharray="4 96" strokeDashoffset="-96" />
-                  </svg>
-                  <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-xl font-bold">1,248</span>
-                    <span className="text-[11px] text-white/60">Total Reviews</span>
-                  </div>
-                </div>
+            <tbody>
+              {pricingPlans.map((plan) => (
+                <tr
+                  key={plan.id}
+                  className={`border-t border-zinc-800 ${
+                    plan.popular ? "bg-gradient-to-r from-amber-950/40 to-violet-950/40" : "bg-transparent"
+                  }`}
+                >
+                  <td className="px-8 py-6 font-semibold text-lg text-white">
+                    {plan.title}
 
-                {/* Legend */}
-                <div className="flex-1 w-full space-y-2.5">
-                  {ratingBreakdown.map((r) => (
-                    <div key={r.label} className="flex items-center justify-between text-sm">
-                      <span className="flex items-center gap-2 text-white/80">
-                        <span className={`h-2 w-2 rounded-full ${r.dot}`} />
-                        {r.label}
+                    {plan.popular && (
+                      <span className="ml-3 rounded-full bg-gradient-to-r from-amber-500 to-violet-600 px-3 py-1 text-xs font-semibold text-white">
+                        BEST VALUE
                       </span>
-                      <span className="text-white/60">
-                        {r.count} ({r.pct}%)
+                    )}
+                  </td>
+
+                  <td className="px-8 py-6 text-center text-zinc-400">
+                    ${plan.regularPrice}
+                  </td>
+
+                  <td className="px-8 py-6 text-center">
+                    {plan.discount ? (
+                      <span className="rounded-full bg-green-500/10 border border-green-500/30 px-3 py-1 text-green-400 font-semibold">
+                        {plan.discount}
                       </span>
-                    </div>
-                  ))}
-                  <button className="flex items-center gap-1 text-xs text-violet-300 hover:text-violet-200 pt-1">
-                    View all analytics
-                    <ChevronRight size={13} />
-                  </button>
-                </div>
-              </div>
-            </GlassCard>
+                    ) : (
+                      <span className="text-zinc-600">-</span>
+                    )}
+                  </td>
 
-            {/* Recent Reviews */}
-            <GlassCard className="p-5">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="font-semibold">Recent Reviews</h2>
-                <button className="text-xs text-violet-300 hover:text-violet-200">View all</button>
-              </div>
+                  <td className="px-8 py-6 text-center text-2xl font-bold bg-gradient-to-r from-amber-400 to-violet-400 bg-clip-text text-transparent">
+                    ${plan.finalPrice}
+                  </td>
 
-              <div className="space-y-4">
-                {recentReviews.map((r, i) => (
-                  <div
-                    key={r.name + i}
-                    className={`flex items-start gap-3 ${i !== recentReviews.length - 1 ? "pb-4 border-b border-white/10" : ""}`}
-                  >
-                    <div className="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center text-xs font-semibold shrink-0">
-                      {r.source}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-2">
-                        <p className="text-sm font-medium truncate">{r.name}</p>
-                        <span className="text-[11px] text-white/40 shrink-0">{r.time}</span>
-                      </div>
-                      <Stars count={r.stars} />
-                      <p className="text-xs text-white/60 mt-1 line-clamp-1">{r.text}</p>
-                    </div>
-                    <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full shrink-0 ${statusClasses[r.status]}`}>
-                      {r.status}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </GlassCard>
-          </div>
+                  <td className="px-8 py-6 text-center font-medium text-zinc-300">
+                    {plan.monthlyEquivalent}
+                  </td>
 
-          {/* AI Suggestions */}
-          <GlassCard className="p-5">
-            <div className="flex items-center gap-2 mb-4">
-              <h2 className="font-semibold">AI Suggestions</h2>
-              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-violet-500/30 text-violet-200">
-                PRO
-              </span>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-              {aiSuggestions.map((s) => {
-                const Icon = s.icon;
-                return (
-                  <div key={s.label} className="rounded-xl border border-white/10 bg-white/5 p-4">
-                    <div className="h-8 w-8 rounded-lg bg-white/10 flex items-center justify-center mb-3">
-                      <Icon size={15} />
-                    </div>
-                    <p className="text-sm font-medium">{s.label}</p>
-                    <p className="text-[11px] text-white/50 mt-0.5 mb-2">{s.sub}</p>
-                    <button className="flex items-center gap-1 text-xs text-violet-300 hover:text-violet-200">
-                      {s.cta}
-                      <ChevronRight size={13} />
+                  <td className="px-8 py-6 text-center">
+                    <button
+                      onClick={() => handleChoosePlan(plan)}
+                      disabled={activatingPlan !== null}
+                      className="rounded-xl bg-gradient-to-r from-amber-500 to-violet-600 px-6 py-3 font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+                    >
+                      {activatingPlan === plan.id ? "Activating..." : "Choose Plan"}
                     </button>
-                  </div>
-                );
-              })}
-            </div>
-          </GlassCard>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
