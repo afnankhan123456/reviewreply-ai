@@ -83,9 +83,20 @@ export default function ProPricingPage() {
       <div className="absolute top-[5%] right-[-200px] w-[700px] h-[700px] rounded-full bg-violet-600/20 blur-[140px] pointer-events-none" />
 
       <div className="relative z-10 mx-auto max-w-7xl">
-        <p className="text-center text-sm font-semibold tracking-widest text-amber-300 mb-6">
-          PRO PLAN
-        </p>
+        <div className="text-center mb-10 md:mb-14">
+          <p className="text-sm font-semibold tracking-widest text-amber-300 mb-4">
+            PRO PLAN
+          </p>
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">
+            Pro Plan{" "}
+            <span className="bg-gradient-to-r from-amber-400 to-violet-400 bg-clip-text text-transparent">
+              Pricing
+            </span>
+          </h1>
+          <p className="mt-4 text-zinc-400 text-sm sm:text-base md:text-lg">
+            Choose the billing period that works best for your business.
+          </p>
+        </div>
 
         {/* MOBILE — stacked cards (screens below md) */}
         <div className="block md:hidden space-y-4">
