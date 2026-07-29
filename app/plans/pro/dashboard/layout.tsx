@@ -26,6 +26,9 @@ const NAV_ITEMS = [
   { key: "more", label: "More", href: "/plans/pro/dashboard/more", icon: MoreHorizontal },
 ];
 
+const MAX_GRACE_ATTEMPTS = 5;
+const GRACE_INTERVAL_MS = 1000;
+
 export default function ProDashboardLayout({
   children,
 }: {
@@ -39,19 +42,36 @@ export default function ProDashboardLayout({
   const hasProAccess = plan?.startsWith("pro");
   const orgName = (authSession?.user as any)?.name || "Your Business";
 
-  // ✅ Grace check: agar plan abhi-abhi activate hua hai to session (JWT) ko
-  // DB se naya plan fetch karne me 1-2 second lag sakte hain. Isliye turant
-  // "/plans" par bounce karne ke bajaye, ek baar session refresh karke thoda
-  // wait karo — warna newly-upgraded user ko lagta hai "kuch open hi nahi hua".
-  const [graceChecked, setGraceChecked] = useState(false);
+  const [graceAttempts, setGraceAttempts] = useState(0);
+  const [graceExhausted, setGraceExhausted] = useState(false);
+  const graceRunning = useRef(false);
 
   useEffect(() => {
-    if (status === "authenticated" && !hasProAccess && !graceChecked) {
-      update().finally(() => {
-        setTimeout(() => setGraceChecked(true), 1500);
-      });
+    if (
+      status === "authenticated" &&
+      !hasProAccess &&
+      !graceExhausted &&
+      !graceRunning.current
+    ) {
+      graceRunning.current = true;
+
+      const runAttempt = async () => {
+        await update();
+        graceRunning.current = false;
+
+        setGraceAttempts((prev) => {
+          const next = prev + 1;
+          if (next >= MAX_GRACE_ATTEMPTS) {
+            setGraceExhausted(true);
+          }
+          return next;
+        });
+      };
+
+      const timer = setTimeout(runAttempt, GRACE_INTERVAL_MS);
+      return () => clearTimeout(timer);
     }
-  }, [status, hasProAccess, graceChecked, update]);
+  }, [status, hasProAccess, graceExhausted, graceAttempts, update]);
 
   const [profileOpen, setProfileOpen] = useState(false);
   const profileRef = useRef<HTMLDivElement>(null);
@@ -73,15 +93,15 @@ export default function ProDashboardLayout({
   }, [status, router]);
 
   useEffect(() => {
-    if (status === "authenticated" && !hasProAccess && graceChecked) {
+    if (status === "authenticated" && !hasProAccess && graceExhausted) {
       router.replace("/plans");
     }
-  }, [status, hasProAccess, graceChecked, router]);
+  }, [status, hasProAccess, graceExhausted, router]);
 
   if (
     status === "loading" ||
     status === "unauthenticated" ||
-    (!hasProAccess && !graceChecked)
+    (!hasProAccess && !graceExhausted)
   ) {
     return (
       <div className="flex h-screen w-full items-center justify-center bg-black text-gray-200">
@@ -105,7 +125,6 @@ export default function ProDashboardLayout({
 
   return (
     <div className="min-h-screen w-full bg-black">
-      {/* ---------- Top bar ---------- */}
       <header className="sticky top-0 z-40 border-b border-white/10 bg-black/60 backdrop-blur-xl">
         <div className="mx-auto max-w-[1400px] px-4 sm:px-6 h-16 flex items-center gap-4">
           <Link href="/plans/pro/dashboard" className="flex items-center gap-2 shrink-0">
@@ -136,10 +155,7 @@ export default function ProDashboardLayout({
             </button>
 
             <div ref={profileRef} className="relative">
-              <button
-                onClick={() => setProfileOpen((v) => !v)}
-                className="flex items-center gap-2"
-              >
+              <button onClick={() => setProfileOpen((v) => !v)} className="flex items-center gap-2">
                 <div className="text-right hidden sm:block">
                   <p className="text-xs font-semibold text-white leading-tight">{orgName}</p>
                   <p className="text-[10px] text-amber-300 leading-tight">Pro Plan</p>
@@ -152,24 +168,13 @@ export default function ProDashboardLayout({
 
               {profileOpen && (
                 <div className="absolute right-0 mt-2 w-44 rounded-xl border border-white/10 bg-[#11141C] shadow-xl overflow-hidden">
-                  <Link
-                    href="/plans/pro/dashboard/settings"
-                    className="block px-4 py-2.5 text-sm text-white/80 hover:bg-white/5"
-                    onClick={() => setProfileOpen(false)}
-                  >
+                  <Link href="/plans/pro/dashboard/settings" className="block px-4 py-2.5 text-sm text-white/80 hover:bg-white/5" onClick={() => setProfileOpen(false)}>
                     Settings
                   </Link>
-                  <Link
-                    href="/plans/pro/dashboard/more/support"
-                    className="block px-4 py-2.5 text-sm text-white/80 hover:bg-white/5"
-                    onClick={() => setProfileOpen(false)}
-                  >
+                  <Link href="/plans/pro/dashboard/more/support" className="block px-4 py-2.5 text-sm text-white/80 hover:bg-white/5" onClick={() => setProfileOpen(false)}>
                     Support
                   </Link>
-                  <button
-                    className="w-full text-left px-4 py-2.5 text-sm text-rose-400 hover:bg-white/5"
-                    onClick={() => setProfileOpen(false)}
-                  >
+                  <button className="w-full text-left px-4 py-2.5 text-sm text-rose-400 hover:bg-white/5" onClick={() => setProfileOpen(false)}>
                     Log out
                   </button>
                 </div>
@@ -179,10 +184,8 @@ export default function ProDashboardLayout({
         </div>
       </header>
 
-      {/* ---------- Page content ---------- */}
       <main className="min-h-[calc(100vh-4rem)]">{children}</main>
 
-      {/* ---------- Bottom nav (fixed) ---------- */}
       <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-white/10 bg-black/70 backdrop-blur-xl">
         <div className="mx-auto max-w-[1400px] px-2 sm:px-6">
           <div className="grid grid-cols-6">
@@ -199,9 +202,7 @@ export default function ProDashboardLayout({
                 >
                   <Icon size={20} strokeWidth={isActive ? 2.4 : 2} />
                   <span className="text-[10px] font-medium">{item.label}</span>
-                  {isActive && (
-                    <span className="absolute -mt-[26px] h-1 w-1 rounded-full bg-violet-400" />
-                  )}
+                  {isActive && <span className="absolute -mt-[26px] h-1 w-1 rounded-full bg-violet-400" />}
                 </Link>
               );
             })}
