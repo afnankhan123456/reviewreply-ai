@@ -1,242 +1,92 @@
-/* =========================================================
-   LIQUID GLASS — OPTICAL MATERIAL SYSTEM (v2)
-   Not gradients-as-glass. This drives the look with:
+/* UPDATED LIQUID GLASS (Total Reviews card only)
+   ------------------------------------------------------------------
+   Replace ONLY the .liquid-glass rules in your existing CSS with the
+   rules below. Leave every other class (.liquid-btn-*, .liquid-glass-pill,
+   .liquid-glass-static, etc.) unchanged.
+   ------------------------------------------------------------------ */
 
-   1) feDisplacementMap  -> actually refracts/bends whatever is
-      behind the card (the "environment"), via backdrop-filter.
-   2) feSpecularLighting -> a real Fresnel-style specular pass,
-      computed from the card's own alpha shape (a blurred rounded
-      rect used as a bump map), so corners genuinely catch more
-      light than flat edges — this is physically derived, not a
-      painted radial-gradient guess.
-   3) CSS mask-composite  -> an optical edge ring (no drawn border).
-   4) mix-blend-mode      -> compositing the specular/ring passes
-      onto the tinted glass instead of flattening them into one
-      background layer.
-
-   Both SVG filters are inlined as data-URIs so this ONE file is
-   the only thing that needs to change — no markup edits required.
-   Import once: import "./liquid-glass.css"
-   ========================================================= */
-
-:root {
-  --glass-tint-2: rgba(255, 255, 255, 0.05);
-  --glass-tint-3: rgba(255, 255, 255, 0.015);
-  --glass-shadow-ambient: rgba(0, 0, 0, 0.55);
-  --glass-shadow-depth: rgba(0, 0, 0, 0.35);
-  --glass-accent: 139, 92, 246;
-  --glass-radius: 28px;
-
-  /* --- Filter 1: environment refraction ---
-     feTurbulence generates an organic noise field; feDisplacementMap
-     uses it to warp SourceGraphic (== whatever backdrop-filter is
-     sampling), which is what makes the background behind the card
-     look bent through curved acrylic instead of just blurred flat. */
-  --liquid-refraction: url('data:image/svg+xml;utf8,\
-<svg xmlns="http://www.w3.org/2000/svg">\
-<filter id="refraction" x="-20%25" y="-20%25" width="140%25" height="140%25">\
-<feTurbulence type="fractalNoise" baseFrequency="0.009 0.012" numOctaves="2" seed="11" result="noise"/>\
-<feGaussianBlur in="noise" stdDeviation="2.2" result="softNoise"/>\
-<feDisplacementMap in="SourceGraphic" in2="softNoise" scale="14" xChannelSelector="R" yChannelSelector="G"/>\
-</filter>\
-</svg>#refraction');
-
-  /* --- Filter 2: Fresnel / specular edge-and-corner light ---
-     feSpecularLighting reads the blurred alpha of the shape as a
-     height field and lights it from one direction (feDistantLight),
-     so the highlight is strongest where the surface curves fastest
-     -- i.e. the corners -- exactly the "corners catch more light"
-     behavior, produced optically rather than drawn. */
-  --liquid-specular: url('data:image/svg+xml;utf8,\
-<svg xmlns="http://www.w3.org/2000/svg">\
-<filter id="specular" x="-40%25" y="-40%25" width="180%25" height="180%25">\
-<feGaussianBlur in="SourceAlpha" stdDeviation="9" result="bump"/>\
-<feSpecularLighting in="bump" surfaceScale="9" specularConstant="1.1" specularExponent="16" lighting-color="white" result="light">\
-<feDistantLight azimuth="235" elevation="58"/>\
-</feSpecularLighting>\
-<feComposite in="light" in2="SourceAlpha" operator="in" result="clipped"/>\
-</filter>\
-</svg>#specular');
-}
-
-/* ---------------------------------------------------------
-   BASE MATERIAL
-   --------------------------------------------------------- */
-.liquid-glass,
-.liquid-glass-static,
-.liquid-glass-pill {
-  position: relative;
-  isolation: isolate;
-  border-radius: var(--glass-radius);
-  background: linear-gradient(180deg, var(--glass-tint-2), var(--glass-tint-3));
-  /* The refraction filter rides in the same list as blur/saturate --
-     it is applied to the sampled backdrop, not painted on top. */
-  backdrop-filter: blur(18px) saturate(165%) var(--liquid-refraction);
-  -webkit-backdrop-filter: blur(18px) saturate(165%);
+.liquid-glass{
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  border-radius:32px;
+  background:
+    linear-gradient(180deg,
+      rgba(255,255,255,.035) 0%,
+      rgba(255,255,255,.012) 35%,
+      rgba(0,0,0,.03) 100%);
+  backdrop-filter:blur(22px) saturate(170%) var(--liquid-refraction);
+  -webkit-backdrop-filter:blur(22px) saturate(170%);
   box-shadow:
-    0 24px 48px -20px var(--glass-shadow-ambient),
-    0 4px 14px var(--glass-shadow-depth);
-  transition: transform 300ms ease-out, box-shadow 300ms ease-out;
+    inset 0 1px 0 rgba(255,255,255,.05),
+    inset 0 -18px 28px rgba(0,0,0,.22),
+    0 26px 48px rgba(0,0,0,.45);
+  transition:all .3s ease;
 }
 
-/* Layer A — optical edge ring: a conic gradient ring cut down to a
-   hairline via mask-composite (exclude), so it's light bending at
-   the edge, never a drawn stroke. */
-.liquid-glass::before,
-.liquid-glass-static::before,
-.liquid-glass-pill::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  border-radius: inherit;
-  padding: 1px;
-  pointer-events: none;
-  background: conic-gradient(
-    from 215deg at 50% 50%,
-    rgba(255, 255, 255, 0.4) 0deg,
-    rgba(255, 255, 255, 0.03) 75deg,
-    rgba(255, 255, 255, 0.02) 190deg,
-    rgba(255, 255, 255, 0.08) 265deg,
-    rgba(255, 255, 255, 0.4) 360deg
-  );
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  opacity: 0.55;
+.liquid-glass::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+
+  background:
+    radial-gradient(circle at 12% 12%,
+      rgba(255,255,255,.16) 0,
+      rgba(255,255,255,.06) 10%,
+      transparent 22%),
+
+    radial-gradient(circle at 88% 12%,
+      rgba(255,255,255,.15) 0,
+      rgba(255,255,255,.05) 10%,
+      transparent 22%),
+
+    linear-gradient(180deg,
+      rgba(255,255,255,.10),
+      rgba(255,255,255,.03) 14%,
+      transparent 28%);
+
+  opacity:.75;
+  mix-blend-mode:screen;
 }
 
-/* Layer B — the real specular/Fresnel pass. A solid rounded-rect
-   whose ALPHA is fed into feSpecularLighting; only the resulting
-   light survives (feComposite operator="in"), then it's screened
-   on top of the tinted glass instead of being its own background. */
-.liquid-glass::after,
-.liquid-glass-static::after,
-.liquid-glass-pill::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  border-radius: inherit;
-  pointer-events: none;
-  background: rgba(255, 255, 255, 0.9);
-  filter: var(--liquid-specular);
-  mix-blend-mode: screen;
-  opacity: 0.5;
+.liquid-glass::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  pointer-events:none;
+
+  background:
+    radial-gradient(circle at 50% -10%,
+      rgba(255,255,255,.16),
+      transparent 42%),
+
+    radial-gradient(circle at 0% 50%,
+      rgba(255,255,255,.05),
+      transparent 28%),
+
+    radial-gradient(circle at 100% 50%,
+      rgba(255,255,255,.05),
+      transparent 28%),
+
+    radial-gradient(circle at 50% 100%,
+      rgba(0,0,0,.18),
+      transparent 42%);
+
+  filter:var(--liquid-specular);
+  mix-blend-mode:screen;
+  opacity:.55;
 }
 
-.liquid-glass > *,
-.liquid-glass-static > *,
-.liquid-glass-pill > * {
-  position: relative;
-  z-index: 3;
-}
-
-/* Interactive lift — small cards only */
-.liquid-glass:hover {
-  transform: translateY(-3px) scale(1.01);
+.liquid-glass:hover{
+  transform:translateY(-3px) scale(1.01);
   box-shadow:
-    0 32px 60px -22px var(--glass-shadow-ambient),
-    0 6px 18px var(--glass-shadow-depth);
-}
-.liquid-glass:hover::before {
-  opacity: 0.85;
-}
-.liquid-glass:hover::after {
-  opacity: 0.62;
+    inset 0 1px 0 rgba(255,255,255,.07),
+    inset 0 -20px 30px rgba(0,0,0,.24),
+    0 34px 60px rgba(0,0,0,.52);
 }
 
-.liquid-glass-pill {
-  border-radius: 999px;
-}
-
-.liquid-glass-static {
-  backdrop-filter: blur(24px) saturate(150%) var(--liquid-refraction);
-  -webkit-backdrop-filter: blur(24px) saturate(150%);
-}
-
-/* ---------------------------------------------------------
-   BUTTONS — same optical language, tinted violet
-   --------------------------------------------------------- */
-.liquid-btn-primary {
-  position: relative;
-  isolation: isolate;
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgba(var(--glass-accent), 0.95), rgba(var(--glass-accent), 0.8));
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.35) inset,
-    0 -6px 14px rgba(0, 0, 0, 0.25) inset,
-    0 10px 26px -8px rgba(var(--glass-accent), 0.55);
-  transition: transform 300ms ease-out, box-shadow 300ms ease-out, filter 300ms ease-out;
-}
-.liquid-btn-primary::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  background: rgba(255, 255, 255, 0.9);
-  filter: var(--liquid-specular);
-  mix-blend-mode: overlay;
-  opacity: 0.7;
-}
-.liquid-btn-primary:hover {
-  transform: translateY(-1px) scale(1.01);
-  filter: brightness(1.06);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.4) inset,
-    0 -6px 14px rgba(0, 0, 0, 0.25) inset,
-    0 14px 32px -8px rgba(var(--glass-accent), 0.65);
-}
-
-.liquid-btn-secondary {
-  position: relative;
-  isolation: isolate;
-  border-radius: 18px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.03));
-  backdrop-filter: blur(12px) var(--liquid-refraction);
-  -webkit-backdrop-filter: blur(12px);
-  box-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.14) inset,
-    0 -1px 0 rgba(0, 0, 0, 0.25) inset,
-    0 10px 22px -12px rgba(0, 0, 0, 0.5);
-  transition: transform 300ms ease-out, background 300ms ease-out, box-shadow 300ms ease-out;
-}
-.liquid-btn-secondary:hover {
-  transform: translateY(-1px);
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
-}
-
-/* ---------------------------------------------------------
-   PERFORMANCE / COMPATIBILITY NOTES (read before shipping)
-   --------------------------------------------------------- */
-/*
-  - backdrop-filter + SVG feDisplacementMap is GPU-heavy. Chromium
-    and Safari support url() SVG filters inside backdrop-filter;
-    Firefox support is inconsistent, so --webkit-backdrop-filter
-    above intentionally omits the SVG term as a lighter fallback.
-  - Don't stack more than a handful of these on screen at once
-    (this dashboard's ~15 cards is fine); avoid using .liquid-glass
-    on list items that repeat in the hundreds.
-  - If a target browser doesn't support url() in backdrop-filter,
-    the blur()/saturate() terms still apply — it degrades to a
-    plain frosted look rather than breaking.
-*/
-
-@media (prefers-reduced-motion: reduce) {
-  .liquid-glass,
-  .liquid-btn-primary,
-  .liquid-btn-secondary {
-    transition: none !important;
-  }
-  .liquid-glass:hover,
-  .liquid-btn-primary:hover,
-  .liquid-btn-secondary:hover {
-    transform: none !important;
-  }
-}
-
-.liquid-focus:focus-visible {
-  outline: 2px solid rgba(167, 139, 250, 0.9);
-  outline-offset: 2px;
-}
+.liquid-glass:hover::before{opacity:.9;}
+.liquid-glass:hover::after{opacity:.68;}
