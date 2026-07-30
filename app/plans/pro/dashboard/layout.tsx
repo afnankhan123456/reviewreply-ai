@@ -1,5 +1,6 @@
 "use client";
 
+import "./liquid-glass.css";
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -133,7 +134,7 @@ export default function ProDashboardLayout({
         <div className="absolute bottom-0 left-1/3 h-[400px] w-[400px] rounded-full bg-emerald-600/5 blur-[140px]" />
       </div>
 
-      <header className="sticky top-0 z-40 border-b border-white/10 bg-black/60 backdrop-blur-xl">
+      <header className="liquid-glass-static sticky top-0 z-40 border-b border-white/10">
         <div className="relative mx-auto max-w-[1400px] px-4 sm:px-6 h-16 flex items-center gap-4">
           <Link href="/plans/pro/dashboard" className="flex items-center gap-2 shrink-0 z-10">
             <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-violet-500 to-violet-700 shadow-[0_0_20px_rgba(139,92,246,0.35)] flex items-center justify-center">
@@ -145,7 +146,7 @@ export default function ProDashboardLayout({
           </Link>
 
           <div className="hidden md:flex flex-1 items-center justify-center px-6">
-            <div className="flex w-full max-w-xl items-center gap-2.5 rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl px-4 py-3 text-white/40 text-sm shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+            <div className="liquid-glass-pill liquid-focus flex w-full max-w-xl items-center gap-2.5 px-4 py-3 text-white/40 text-sm">
               <Search size={16} />
               <span className="flex-1">Ask AI or type a command...</span>
               <kbd className="text-[10px] font-medium text-white/50 border border-white/10 bg-white/5 rounded-md px-1.5 py-0.5">
@@ -155,18 +156,18 @@ export default function ProDashboardLayout({
           </div>
 
           <div className="ml-auto flex items-center gap-3 sm:gap-4 z-10">
-            <button className="text-white/60 hover:text-white transition-colors hidden sm:block" aria-label="Rewards">
+            <button className="liquid-focus text-white/60 hover:text-white transition-colors hidden sm:block rounded-lg" aria-label="Rewards">
               <Gift size={19} />
             </button>
 
-            <button className="relative text-white/60 hover:text-white transition-colors" aria-label="Notifications">
+            <button className="liquid-focus relative text-white/60 hover:text-white transition-colors rounded-lg" aria-label="Notifications">
               <Bell size={19} />
               <span className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-violet-500 text-[10px] font-semibold flex items-center justify-center text-white ring-2 ring-black">
                 1
               </span>
             </button>
 
-            <div className="hidden sm:flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 pl-3 pr-2 py-1.5">
+            <div className="liquid-glass-static hidden sm:flex items-center gap-2 rounded-xl pl-3 pr-2 py-1.5">
               <div className="text-left leading-tight">
                 <p className="text-xs font-semibold text-white">{orgName}</p>
                 <p className="text-[10px] text-emerald-400 font-medium">{planLabel}</p>
@@ -183,7 +184,7 @@ export default function ProDashboardLayout({
               </button>
 
               {profileOpen && (
-                <div className="absolute right-0 mt-2 w-44 rounded-xl border border-white/10 bg-[#11141C] shadow-xl overflow-hidden">
+                <div className="liquid-glass-static absolute right-0 mt-2 w-44 rounded-xl shadow-xl overflow-hidden">
                   <Link href="/plans/pro/dashboard/settings" className="block px-4 py-2.5 text-sm text-white/80 hover:bg-white/5" onClick={() => setProfileOpen(false)}>
                     Settings
                   </Link>
@@ -204,7 +205,7 @@ export default function ProDashboardLayout({
 
       {/* Floating pill bottom dock */}
       <nav className="fixed bottom-5 left-1/2 -translate-x-1/2 z-40">
-        <div className="flex items-center gap-1 rounded-full border border-white/10 bg-black/70 backdrop-blur-xl px-2 py-2 shadow-[0_8px_30px_rgba(0,0,0,0.5)]">
+        <div className="liquid-glass-pill flex items-center gap-1 px-2 py-2">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             const isActive = activeKey === item.key;
@@ -212,9 +213,9 @@ export default function ProDashboardLayout({
               <Link
                 key={item.key}
                 href={item.href}
-                className={`flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition-colors ${
+                className={`liquid-focus flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-medium transition-colors ${
                   isActive
-                    ? "bg-violet-600 text-white shadow-[0_0_16px_rgba(139,92,246,0.5)]"
+                    ? "liquid-btn-primary text-white"
                     : "text-white/50 hover:text-white/80"
                 }`}
               >
@@ -229,7 +230,7 @@ export default function ProDashboardLayout({
       {/* Floating action button */}
       <button
         aria-label="Quick action"
-        className="fixed bottom-6 right-6 z-40 h-12 w-12 rounded-full bg-gradient-to-br from-violet-500 to-violet-700 border border-white/10 shadow-[0_0_24px_rgba(139,92,246,0.55)] flex items-center justify-center text-white hover:scale-105 transition-transform"
+        className="liquid-btn-primary liquid-focus fixed bottom-6 right-6 z-40 h-12 w-12 rounded-full flex items-center justify-center text-white hover:scale-105 transition-transform"
       >
         <Sparkles size={20} />
       </button>

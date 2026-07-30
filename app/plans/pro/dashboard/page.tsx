@@ -1,5 +1,6 @@
 "use client";
 
+import "./liquid-glass.css";
 import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { Suspense } from "react";
@@ -64,7 +65,7 @@ function StatCard({
   trendColor: string;
 }) {
   return (
-    <div className="group rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-5 transition-all duration-300 hover:-translate-y-1 hover:bg-white/[0.07] hover:shadow-[0_12px_30px_rgba(0,0,0,0.4)]">
+    <div className="liquid-glass rounded-2xl p-5">
       <div className={`h-10 w-10 rounded-xl flex items-center justify-center mb-4 ${iconBg}`}>
         <Icon size={18} />
       </div>
@@ -94,7 +95,7 @@ function QuickAction({
   subtitle: string;
 }) {
   return (
-    <button className="group flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-colors p-4 text-left">
+    <button className="liquid-btn-secondary liquid-focus group flex items-center gap-3 rounded-xl p-4 text-left">
       <div className={`h-9 w-9 rounded-lg flex items-center justify-center shrink-0 ${iconBg} ${iconColor}`}>
         <Icon size={16} />
       </div>
@@ -238,7 +239,7 @@ function DashboardContent() {
             Here's what's happening with your reviews today.
           </p>
         </div>
-        <button className="inline-flex items-center gap-1.5 rounded-xl bg-violet-600 hover:bg-violet-700 transition-colors px-4 py-2.5 text-sm font-semibold text-white self-start sm:self-auto shadow-[0_0_20px_rgba(139,92,246,0.35)]">
+        <button className="liquid-btn-primary liquid-focus inline-flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-sm font-semibold text-white self-start sm:self-auto">
           <Plus size={16} />
           New Action
           <ChevronDown size={14} className="ml-0.5" />
@@ -300,7 +301,7 @@ function DashboardContent() {
       </div>
 
       {/* Quick Actions */}
-      <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-5 mb-6">
+      <div className="liquid-glass-static rounded-2xl p-5 mb-6">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-base font-semibold text-white">Quick Actions</h2>
           <button className="text-xs text-white/50 hover:text-white/80 transition-colors">
@@ -349,10 +350,10 @@ function DashboardContent() {
       {/* Review Overview + Recent Reviews */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {/* Review Overview (donut) */}
-        <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-5">
+        <div className="liquid-glass-static rounded-2xl p-5">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-base font-semibold text-white">Review Overview</h2>
-            <button className="text-xs rounded-lg border border-white/10 px-3 py-1.5 text-white/60 inline-flex items-center gap-1">
+            <button className="liquid-btn-secondary liquid-focus text-xs rounded-lg px-3 py-1.5 text-white/60 inline-flex items-center gap-1">
               Last 7 days <ChevronDown size={12} />
             </button>
           </div>
@@ -398,7 +399,7 @@ function DashboardContent() {
         </div>
 
         {/* Recent Reviews */}
-        <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-5">
+        <div className="liquid-glass-static rounded-2xl p-5">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-base font-semibold text-white">Recent Reviews</h2>
             <button className="text-xs text-violet-300 hover:text-violet-200">View all</button>
@@ -439,7 +440,7 @@ function DashboardContent() {
       </div>
 
       {/* AI Suggestions */}
-      <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl p-5">
+      <div className="liquid-glass-static rounded-2xl p-5">
         <div className="flex items-center gap-2 mb-4">
           <h2 className="text-base font-semibold text-white">AI Suggestions</h2>
           <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-violet-500 text-white">
@@ -449,10 +450,7 @@ function DashboardContent() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
           {AI_SUGGESTIONS.map((s) => (
-            <div
-              key={s.title}
-              className="rounded-xl border border-white/10 bg-white/5 p-4 transition-all duration-300 hover:-translate-y-1 hover:bg-white/[0.07]"
-            >
+            <div key={s.title} className="liquid-glass rounded-xl p-4">
               <div className={`h-9 w-9 rounded-lg flex items-center justify-center mb-3 ${s.iconBg} ${s.iconColor}`}>
                 <s.icon size={16} />
               </div>
