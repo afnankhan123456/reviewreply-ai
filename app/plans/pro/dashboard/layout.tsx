@@ -1,2 +1,10 @@
-// Placeholder layout.tsx
-// Import './liquid-glass.css' here in your project if needed.
+import './liquid-glass.css';
+import type { ReactNode } from 'react';
+
+export default function Layout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  return <>{children}</>;
+}
