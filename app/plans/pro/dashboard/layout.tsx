@@ -129,9 +129,9 @@ export default function ProDashboardLayout({
     <div className="relative min-h-screen w-full bg-black overflow-x-hidden">
       {/* ambient background glow — kept very subtle so the page still reads as solid black */}
       <div className="pointer-events-none fixed inset-0 z-0">
-        <div className="absolute -top-40 left-1/4 h-[520px] w-[520px] rounded-full bg-violet-600/10 blur-[140px]" />
-        <div className="absolute top-1/3 -right-40 h-[420px] w-[420px] rounded-full bg-blue-600/10 blur-[140px]" />
-        <div className="absolute bottom-0 left-1/3 h-[400px] w-[400px] rounded-full bg-emerald-600/5 blur-[140px]" />
+        <div className="absolute -top-40 left-1/4 h-[520px] w-[520px] rounded-full bg-violet-600/15 blur-[140px]" />
+        <div className="absolute top-1/3 -right-40 h-[420px] w-[420px] rounded-full bg-blue-600/14 blur-[140px]" />
+        <div className="absolute bottom-0 left-1/3 h-[400px] w-[400px] rounded-full bg-emerald-600/8 blur-[140px]" />
       </div>
 
       <header className="liquid-glass-static sticky top-0 z-40 border-b border-white/10">

@@ -1,31 +1,35 @@
 /* =========================================================
-   LIQUID GLASS — DIAGONAL RIM-LIGHT EDITION
+   LIQUID GLASS — DIAGONAL RIM-LIGHT + SOFT DEPTH EDITION
    -----------------------------------------------------------
-   Center of each card = flat, plain, opaque dark fill.
-   All the "liquid glass" feel lives in the BORDER — a thick-ish
-   stroke that is brightest at the top-left corner and fades
-   clockwise (top → dim right → dark bottom → back up left)
-   like a light source hitting a glass rim from the top-left.
+   - Center: subtle top->bottom gradient (not flat matte)
+   - Border: diagonal rim light, top-left brightest, softened
+   - Outer shadow: strong "floating panel" lift off black bg
+   - Icon boxes: small shadow for 3D pop
    ========================================================= */
 
 :root {
   --liquid-refraction: contrast(1.05) brightness(1.02);
-  --liquid-fill: 15, 16, 21;   /* flat center fill color (rgb) */
-  --liquid-border-w: 1.5px;    /* rim thickness */
+  --liquid-border-w: 1.5px;
 
-  /* diagonal rim gradient: bright top-left -> dark bottom-right */
+  /* center fill: barely-there top-to-bottom gradient, not flat */
+  --liquid-fill-top: 23, 25, 31;
+  --liquid-fill-bottom: 10, 11, 15;
+
+  /* diagonal rim gradient: bright top-left -> dark bottom-right, softened stops */
   --liquid-rim: linear-gradient(
     135deg,
-    rgba(255, 255, 255, 0.65) 0%,
-    rgba(255, 255, 255, 0.28) 22%,
-    rgba(255, 255, 255, 0.1) 45%,
-    rgba(255, 255, 255, 0.035) 70%,
+    rgba(255, 255, 255, 0.55) 0%,
+    rgba(255, 255, 255, 0.32) 16%,
+    rgba(255, 255, 255, 0.16) 34%,
+    rgba(255, 255, 255, 0.07) 55%,
+    rgba(255, 255, 255, 0.025) 80%,
     rgba(255, 255, 255, 0.015) 100%
   );
 }
 
 /* ---------------------------------------------------------
-   PAGE BACKGROUND — pure solid black, no gradients
+   PAGE BACKGROUND — solid black, kept in the CSS for safety
+   (ambient glow blobs live in layout.tsx)
    --------------------------------------------------------- */
 html,
 body {
@@ -42,27 +46,39 @@ body {
   border-radius: 24px !important;
   border: var(--liquid-border-w) solid transparent !important;
 
-  /* flat opaque center (padding-box) + diagonal rim light (border-box) */
   background:
-    linear-gradient(rgba(var(--liquid-fill), 0.94), rgba(var(--liquid-fill), 0.94)) padding-box,
+    linear-gradient(
+        180deg,
+        rgba(var(--liquid-fill-top), 0.95) 0%,
+        rgba(var(--liquid-fill-bottom), 0.97) 100%
+      )
+      padding-box,
     var(--liquid-rim) border-box !important;
 
   backdrop-filter: blur(14px) saturate(130%) var(--liquid-refraction);
   -webkit-backdrop-filter: blur(14px) saturate(130%);
 
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.55), inset 0 -10px 18px rgba(0, 0, 0, 0.25) !important;
+  /* soft outer glow (diffuses the rim edge) + strong lift shadow off the black page */
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.015), 0 4px 12px rgba(0, 0, 0, 0.4),
+    0 24px 48px rgba(0, 0, 0, 0.6), inset 0 -10px 18px rgba(0, 0, 0, 0.25) !important;
 
   transition: all 0.3s ease;
 }
 
 .liquid-glass:hover {
   transform: translateY(-3px) scale(1.01);
-  box-shadow: 0 26px 50px rgba(0, 0, 0, 0.6), inset 0 -10px 18px rgba(0, 0, 0, 0.25) !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.02), 0 6px 16px rgba(0, 0, 0, 0.45),
+    0 30px 56px rgba(0, 0, 0, 0.65), inset 0 -10px 18px rgba(0, 0, 0, 0.25) !important;
+}
+
+/* icon box (first child) inside stat / AI suggestion cards — small 3D pop */
+.liquid-glass > div:first-child {
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
 }
 
 /* =========================================================
    .liquid-glass-static — Quick Actions, Review Overview,
-   Recent Reviews, header. Same rim-light border, no hover lift.
+   Recent Reviews, header. Same rim-light + depth, no hover lift.
    ========================================================= */
 .liquid-glass-static {
   position: relative;
@@ -72,13 +88,19 @@ body {
   border: var(--liquid-border-w) solid transparent !important;
 
   background:
-    linear-gradient(rgba(var(--liquid-fill), 0.92), rgba(var(--liquid-fill), 0.92)) padding-box,
+    linear-gradient(
+        180deg,
+        rgba(var(--liquid-fill-top), 0.92) 0%,
+        rgba(var(--liquid-fill-bottom), 0.95) 100%
+      )
+      padding-box,
     var(--liquid-rim) border-box !important;
 
   backdrop-filter: blur(12px) saturate(125%) var(--liquid-refraction);
   -webkit-backdrop-filter: blur(12px) saturate(125%);
 
-  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.5), inset 0 -8px 16px rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.012), 0 3px 10px rgba(0, 0, 0, 0.35),
+    0 18px 36px rgba(0, 0, 0, 0.55), inset 0 -8px 16px rgba(0, 0, 0, 0.2) !important;
 }
 
 /* =========================================================
@@ -92,13 +114,18 @@ body {
   border: var(--liquid-border-w) solid transparent !important;
 
   background:
-    linear-gradient(rgba(var(--liquid-fill), 0.96), rgba(var(--liquid-fill), 0.96)) padding-box,
+    linear-gradient(
+        180deg,
+        rgba(var(--liquid-fill-top), 0.96) 0%,
+        rgba(var(--liquid-fill-bottom), 0.98) 100%
+      )
+      padding-box,
     var(--liquid-rim) border-box !important;
 
   backdrop-filter: blur(18px) saturate(140%) var(--liquid-refraction);
   -webkit-backdrop-filter: blur(18px) saturate(140%);
 
-  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.55) !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4), 0 18px 36px rgba(0, 0, 0, 0.55) !important;
 }
 
 /* =========================================================
@@ -124,14 +151,30 @@ body {
   border-radius: 12px !important;
   border: var(--liquid-border-w) solid transparent !important;
   background:
-    linear-gradient(rgba(var(--liquid-fill), 0.5), rgba(var(--liquid-fill), 0.5)) padding-box,
+    linear-gradient(
+        180deg,
+        rgba(var(--liquid-fill-top), 0.55) 0%,
+        rgba(var(--liquid-fill-bottom), 0.6) 100%
+      )
+      padding-box,
     var(--liquid-rim) border-box !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3) !important;
   transition: all 0.2s ease;
 }
 .liquid-btn-secondary:hover {
   background:
-    linear-gradient(rgba(var(--liquid-fill), 0.75), rgba(var(--liquid-fill), 0.75)) padding-box,
+    linear-gradient(
+        180deg,
+        rgba(var(--liquid-fill-top), 0.8) 0%,
+        rgba(var(--liquid-fill-bottom), 0.85) 100%
+      )
+      padding-box,
     var(--liquid-rim) border-box !important;
+}
+
+/* icon box inside Quick Action buttons — small 3D pop */
+.liquid-btn-secondary > div:first-child {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
 }
 
 /* =========================================================
