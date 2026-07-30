@@ -1,10 +1,28 @@
-import './liquid-glass.css';
-import type { ReactNode } from 'react';
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./liquid-glass.css";
 
-export default function Layout({
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
+});
+
+export const metadata: Metadata = {
+  title: "ReviewReply AI — Dashboard",
+  description: "Track reviews, ratings, and response performance at a glance.",
+};
+
+export default function DashboardLayout({
   children,
 }: {
-  children: ReactNode;
+  children: React.ReactNode;
 }) {
-  return <>{children}</>;
+  return (
+    <html lang="en" className={inter.variable}>
+      <body className="min-h-screen bg-black text-white antialiased font-sans">
+        {children}
+      </body>
+    </html>
+  );
 }
