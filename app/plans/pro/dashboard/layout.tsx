@@ -127,7 +127,7 @@ export default function ProDashboardLayout({
 
   return (
     <div className="relative min-h-screen w-full bg-black overflow-x-hidden">
-      {/* ambient background glow */}
+      {/* ambient background glow — kept very subtle so the page still reads as solid black */}
       <div className="pointer-events-none fixed inset-0 z-0">
         <div className="absolute -top-40 left-1/4 h-[520px] w-[520px] rounded-full bg-violet-600/10 blur-[140px]" />
         <div className="absolute top-1/3 -right-40 h-[420px] w-[420px] rounded-full bg-blue-600/10 blur-[140px]" />

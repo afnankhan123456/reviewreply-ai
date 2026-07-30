@@ -111,20 +111,20 @@ function QuickAction({
 function PlatformBadge({ platform }: { platform: "google" | "facebook" | "other" }) {
   if (platform === "google") {
     return (
-      <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-white flex items-center justify-center text-[9px] font-bold text-blue-500 ring-2 ring-[#0b0d12]">
+      <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-white flex items-center justify-center text-[9px] font-bold text-blue-500 ring-2 ring-black">
         G
       </div>
     );
   }
   if (platform === "facebook") {
     return (
-      <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-blue-500 flex items-center justify-center text-[9px] font-bold text-white ring-2 ring-[#0b0d12]">
+      <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-blue-500 flex items-center justify-center text-[9px] font-bold text-white ring-2 ring-black">
         f
       </div>
     );
   }
   return (
-    <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-emerald-500 flex items-center justify-center text-[9px] font-bold text-white ring-2 ring-[#0b0d12]">
+    <div className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-emerald-500 flex items-center justify-center text-[9px] font-bold text-white ring-2 ring-black">
       ★
     </div>
   );
