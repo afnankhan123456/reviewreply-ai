@@ -11,7 +11,7 @@
    ========================================================= */
 
 :root {
-  --liquid-border-w: 1.5px;
+  --liquid-border-w: 3px;
   --liquid-fill-top: 23, 25, 31;
   --liquid-fill-bottom: 10, 11, 15;
 }
@@ -46,17 +46,20 @@ body {
   ) !important;
   background-color: rgb(var(--liquid-fill-bottom)) !important;
 
-  /* inset glow softens the hard corner where border colors meet */
-  box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.12), inset -1px -1px 2px rgba(0, 0, 0, 0.3),
-    0 4px 12px rgba(0, 0, 0, 0.4), 0 24px 48px rgba(0, 0, 0, 0.6) !important;
+  /* thick glow that BLEEDS inward from the border (not a crisp line) +
+     a soft outer glow bleeding outward toward the light source corner */
+  box-shadow: inset 5px 5px 16px rgba(255, 255, 255, 0.14), inset -4px -4px 14px rgba(0, 0, 0, 0.4),
+    -3px -3px 20px rgba(255, 255, 255, 0.06), 0 4px 12px rgba(0, 0, 0, 0.4),
+    0 24px 48px rgba(0, 0, 0, 0.6) !important;
 
   transition: transform 0.3s ease, box-shadow 0.3s ease !important;
 }
 
 .liquid-glass:hover {
   transform: translateY(-3px) scale(1.01) !important;
-  box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.16), inset -1px -1px 2px rgba(0, 0, 0, 0.3),
-    0 6px 16px rgba(0, 0, 0, 0.45), 0 30px 56px rgba(0, 0, 0, 0.65) !important;
+  box-shadow: inset 5px 5px 18px rgba(255, 255, 255, 0.18), inset -4px -4px 14px rgba(0, 0, 0, 0.4),
+    -3px -3px 22px rgba(255, 255, 255, 0.08), 0 6px 16px rgba(0, 0, 0, 0.45),
+    0 30px 56px rgba(0, 0, 0, 0.65) !important;
 }
 
 /* icon box (first child) inside stat / AI suggestion cards */
@@ -88,8 +91,9 @@ body {
   ) !important;
   background-color: rgb(var(--liquid-fill-bottom)) !important;
 
-  box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.1), inset -1px -1px 2px rgba(0, 0, 0, 0.25),
-    0 3px 10px rgba(0, 0, 0, 0.35), 0 18px 36px rgba(0, 0, 0, 0.55) !important;
+  box-shadow: inset 5px 5px 14px rgba(255, 255, 255, 0.12), inset -4px -4px 12px rgba(0, 0, 0, 0.35),
+    -3px -3px 18px rgba(255, 255, 255, 0.05), 0 3px 10px rgba(0, 0, 0, 0.35),
+    0 18px 36px rgba(0, 0, 0, 0.55) !important;
 }
 
 /* =========================================================
@@ -115,8 +119,8 @@ body {
   ) !important;
   background-color: rgb(var(--liquid-fill-bottom)) !important;
 
-  box-shadow: inset 1px 1px 2px rgba(255, 255, 255, 0.12), 0 6px 16px rgba(0, 0, 0, 0.4),
-    0 18px 36px rgba(0, 0, 0, 0.55) !important;
+  box-shadow: inset 4px 4px 12px rgba(255, 255, 255, 0.14), -2px -2px 16px rgba(255, 255, 255, 0.06),
+    0 6px 16px rgba(0, 0, 0, 0.4), 0 18px 36px rgba(0, 0, 0, 0.55) !important;
 }
 
 /* =========================================================
