@@ -272,8 +272,10 @@ export default function Page() {
       <div className="stats">
         {statMeta.map((s) => (
           <LiquidCard key={s.label} className="stat-card">
-            <div className={`icon ${s.icon}`}>{s.svg}</div>
-            <p className="title">{s.label}</p>
+            <div className="stat-head">
+              <div className={`icon ${s.icon}`}>{s.svg}</div>
+              <p className="title">{s.label}</p>
+            </div>
             <p className="value">{s.format(data)}</p>
             <Spark color={s.color} path={s.path} />
           </LiquidCard>
