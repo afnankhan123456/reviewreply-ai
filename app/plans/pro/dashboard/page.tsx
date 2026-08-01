@@ -1,195 +1,295 @@
+import type { ReactNode } from "react";
+
+/* Reusable wrapper that gives any section the layered iOS liquid-glass surface */
+function LiquidCard({
+  className = "",
+  children,
+}: {
+  className?: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className={`card ${className}`}>
+      <div className="volume"></div>
+      <div className="refract"></div>
+      <div className="cornerBloom"></div>
+      <div className="bodyShade"></div>
+      <div className="specular"></div>
+      <div className="edgeLight"></div>
+      <div className="rim"></div>
+      <div className="content">{children}</div>
+    </div>
+  );
+}
+
+function Spark({ color, path }: { color: string; path: string }) {
+  return (
+    <svg className="spark" viewBox="0 0 94 30" preserveAspectRatio="none">
+      <path d={path} fill="none" stroke={color} strokeWidth={6} opacity={0.25} filter="blur(3px)" />
+      <path d={path} fill="none" stroke={color} strokeWidth={1.8} strokeLinecap="round" />
+    </svg>
+  );
+}
+
+const statCards = [
+  {
+    icon: "purple",
+    label: "Total Reviews",
+    value: "1,248",
+    delta: "↑ 12%",
+    deltaClass: "green",
+    path: "M0 20 Q 20 8 40 15 T 80 13 T 94 9",
+    color: "#ae47ff",
+    svg: (
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M5.2 5.25h13.6c1.02 0 1.85.83 1.85 1.85v6.36c0 1.02-.83 1.85-1.85 1.85h-5.98l-2.72 2.27v-2.27H5.2a1.85 1.85 0 0 1-1.85-1.85V7.1c0-1.02.83-1.85 1.85-1.85Z" stroke="#fff" strokeWidth={1.65} strokeLinejoin="round" />
+        <circle cx="9" cy="10.48" r=".9" fill="#fff" />
+        <circle cx="12" cy="10.48" r=".9" fill="#fff" />
+        <circle cx="15" cy="10.48" r=".9" fill="#fff" />
+      </svg>
+    ),
+  },
+  {
+    icon: "gold",
+    label: "Average Rating",
+    value: "4.3",
+    delta: "→ 0.3",
+    deltaClass: "amber",
+    path: "M0 12 Q 20 22 40 14 T 80 18 T 94 22",
+    color: "#e9b52a",
+    svg: (
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="m12 3.8 2.1 4.37 4.83.7-3.49 3.39.82 4.8L12 14.8l-4.26 2.26.82-4.8-3.49-3.39 4.83-.7L12 3.8Z" stroke="#fff" strokeWidth={1.45} strokeLinejoin="round" />
+      </svg>
+    ),
+  },
+  {
+    icon: "green",
+    label: "New Reviews",
+    value: "32",
+    delta: "↑ 8%",
+    deltaClass: "green",
+    path: "M0 22 Q 20 16 40 18 T 80 6 T 94 10",
+    color: "#34d399",
+    svg: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+      </svg>
+    ),
+  },
+  {
+    icon: "blue",
+    label: "Response Rate",
+    value: "86%",
+    delta: "↑ 5%",
+    deltaClass: "green",
+    path: "M0 18 Q 20 10 40 14 T 80 8 T 94 12",
+    color: "#4da3ff",
+    svg: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
+        <polyline points="9 10 4 15 9 20" />
+        <path d="M20 4v7a4 4 0 0 1-4 4H4" />
+      </svg>
+    ),
+  },
+  {
+    icon: "red",
+    label: "Low Rating Reviews",
+    value: "18",
+    delta: "↓ 6%",
+    deltaClass: "red",
+    path: "M0 8 Q 20 14 40 10 T 80 18 T 94 14",
+    color: "#ef5a6f",
+    svg: (
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
+        <circle cx="12" cy="8" r="4" />
+        <path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7" />
+      </svg>
+    ),
+  },
+];
+
+const quickActions = [
+  { label: "Reply to Reviews", sub: "Reply to pending reviews", icon: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /> },
+  { label: "AI Reply", sub: "Generate AI replies", icon: <path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" fill="currentColor" /> },
+  { label: "Analyze Reviews", sub: "Get AI insights", icon: <><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></> },
+  { label: "Create Report", sub: "Download reports", icon: <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></> },
+  { label: "Connect Platform", sub: "Add review sources", icon: <><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1" /><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1" /></> },
+];
+
+const recentReviews = [
+  { name: "John D.", time: "5 min ago", stars: 5, text: "Great service and amazing support! Highly recommend.", tag: "replied", flag: "G" },
+  { name: "Sarah M.", time: "15 min ago", stars: 4, text: "Good experience overall. The team was helpful.", tag: "pending", flag: "F" },
+  { name: "Michael T.", time: "1 hour ago", stars: 1, text: "Poor communication and slow response time.", tag: "negative", flag: "G" },
+  { name: "Emily R.", time: "2 hours ago", stars: 5, text: "Excellent product and customer service!", tag: "replied", flag: "G" },
+];
+
+const aiSuggestions = [
+  { label: "Enable Auto Reply", sub: "Automatically reply to common reviews", cta: "Set up →", bg: "rgba(245,166,35,.18)", color: "#f5a623", icon: <path d="M13 2L3 14h7l-1 8 11-14h-7z" fill="currentColor" /> },
+  { label: "Create Templates", sub: "Save time with reusable reply templates", cta: "Create now →", bg: "rgba(255,255,255,.08)", color: "var(--text-dim)", icon: <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></> },
+  { label: "Analyze Sentiment", sub: "Understand customer sentiment better", cta: "Analyze →", bg: "rgba(174,71,255,.18)", color: "#c78bff", icon: <><circle cx="12" cy="12" r="10" /><path d="M8 14s1.5 2 4 2 4-2 4-2" /><line x1="9" y1="9" x2="9.01" y2="9" /><line x1="15" y1="9" x2="15.01" y2="9" /></> },
+  { label: "Generate Report", sub: "Get detailed insights about your reviews", cta: "Generate →", bg: "rgba(77,163,255,.18)", color: "#4da3ff", icon: <><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></> },
+  { label: "Improve Rating", sub: "Get AI recommendations to improve rating", cta: "Get tips →", bg: "rgba(52,211,153,.18)", color: "#34d399", icon: <><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></> },
+];
+
 export default function Page() {
   return (
-    <div className="stage">
-      {/* SVG filter used by the .refract layer for the glass distortion effect */}
+    <div className="page-wrap">
+      {/* SVG filter used by every card's .refract layer */}
       <svg width="0" height="0" style={{ position: "absolute" }}>
         <filter id="liquidWarp" x="-15%" y="-15%" width="130%" height="130%">
-          <feTurbulence
-            type="fractalNoise"
-            baseFrequency="0.012 0.025"
-            numOctaves={2}
-            seed={9}
-            result="noise"
-          />
-          <feDisplacementMap
-            in="SourceGraphic"
-            in2="noise"
-            scale={7}
-            xChannelSelector="R"
-            yChannelSelector="G"
-          />
+          <feTurbulence type="fractalNoise" baseFrequency="0.012 0.025" numOctaves={2} seed={9} result="noise" />
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale={7} xChannelSelector="R" yChannelSelector="G" />
         </filter>
       </svg>
 
-      <div className="cards">
-        {/* ---------- Card 1: Total Reviews ---------- */}
-        <section className="card">
-          <div className="volume"></div>
-          <div className="refract"></div>
-          <div className="cornerBloom"></div>
-          <div className="bodyShade"></div>
-          <div className="specular"></div>
-          <div className="edgeLight"></div>
-          <div className="rim"></div>
-          <div className="content">
-            <div className="icon purple">
-              <svg viewBox="0 0 24 24" fill="none">
-                <path
-                  d="M5.2 5.25h13.6c1.02 0 1.85.83 1.85 1.85v6.36c0 1.02-.83 1.85-1.85 1.85h-5.98l-2.72 2.27v-2.27H5.2a1.85 1.85 0 0 1-1.85-1.85V7.1c0-1.02.83-1.85 1.85-1.85Z"
-                  stroke="#fff"
-                  strokeWidth={1.65}
-                  strokeLinejoin="round"
-                />
-                <circle cx="9" cy="10.48" r=".9" fill="#fff" />
-                <circle cx="12" cy="10.48" r=".9" fill="#fff" />
-                <circle cx="15" cy="10.48" r=".9" fill="#fff" />
-              </svg>
-            </div>
-            <p className="title">Total Reviews</p>
-            <p className="value">1,248</p>
-            <p className="change green">
-              <span className="arrow accent">↑</span>
-              <strong className="accent">12%</strong> vs last 7 days
-            </p>
-            <svg className="chart purple-chart" viewBox="0 0 94 42" aria-hidden="true">
-              <defs>
-                <linearGradient id="pf2" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0" stopColor="#bd5cff" stopOpacity=".48" />
-                  <stop offset=".48" stopColor="#9130dd" stopOpacity=".25" />
-                  <stop offset="1" stopColor="#6515a9" stopOpacity="0" />
-                </linearGradient>
-                <linearGradient id="ps2" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0" stopColor="#ffffff" stopOpacity="0" />
-                  <stop offset=".22" stopColor="#eab1ff" stopOpacity=".52" />
-                  <stop offset=".52" stopColor="#a83eff" stopOpacity=".12" />
-                  <stop offset=".82" stopColor="#d98fff" stopOpacity=".58" />
-                  <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
-                </linearGradient>
-                <filter id="pb2" x="-30%" y="-70%" width="160%" height="240%">
-                  <feGaussianBlur stdDeviation={2.4} />
-                </filter>
-                <filter id="pshadow2" x="-100%" y="-100%" width="300%" height="300%">
-                  <feGaussianBlur stdDeviation={2} />
-                </filter>
-              </defs>
-              <ellipse cx="47" cy="33.5" rx="20" ry="2.1" fill="#5c1595" opacity=".18" filter="url(#pshadow2)" />
-              <path
-                fill="url(#pf2)"
-                d="M0 29 C7 27, 12 20, 20 20 C27 20, 31 25, 36 28 C39 30, 42 31, 45 29 C49 27, 53 23, 57 21 C62 19, 65 13, 69 11 C74 8, 80 8, 84 10 C90 12, 92 17, 94 22 L94 37 L0 37 Z"
-              />
-              <path
-                d="M31 27 C35 28,39 31,44 30 C48 29,52 25,56 23"
-                fill="none"
-                stroke="#c46aff"
-                strokeWidth={5}
-                opacity=".18"
-                filter="url(#pb2)"
-                strokeLinecap="round"
-              />
-              <path
-                d="M1 28.7 C8 27,13 20.5,20 20.5 C27 20.5,31 25.5,36 28 C40 30.5,43 31,46 28.8 C50 26.4,53 23.5,57 21.5 C62 19,65 13.5,69 11.5 C74 8.7,80 8.5,84 10.5 C90 12.5,92 17,94 22"
-                fill="none"
-                stroke="url(#ps2)"
-                strokeWidth={4.5}
-                opacity=".64"
-                filter="url(#pb2)"
-                strokeLinecap="round"
-              />
-              <path
-                className="glow"
-                d="M0 29 C7 27 12 20 20 20 C27 20 31 25 36 28 C40 30.5 43 31 46 29 C50 26 53 23 57 21 C62 19 65 13 69 11 C74 8 80 8 84 10 C90 12 92 17 94 22"
-              />
-              <path
-                className="line"
-                d="M0 29 C7 27 12 20 20 20 C27 20 31 25 36 28 C40 30.5 43 31 46 29 C50 26 53 23 57 21 C62 19 65 13 69 11 C74 8 80 8 84 10 C90 12 92 17 94 22"
-              />
-            </svg>
-          </div>
-        </section>
-
-        {/* ---------- Card 2: Average Rating ---------- */}
-        <section className="card">
-          <div className="volume"></div>
-          <div className="refract"></div>
-          <div className="cornerBloom"></div>
-          <div className="bodyShade"></div>
-          <div className="specular"></div>
-          <div className="edgeLight"></div>
-          <div className="rim"></div>
-          <div className="content">
-            <div className="icon gold">
-              <svg viewBox="0 0 24 24" fill="none">
-                <path
-                  d="m12 3.8 2.1 4.37 4.83.7-3.49 3.39.82 4.8L12 14.8l-4.26 2.26.82-4.8-3.49-3.39 4.83-.7L12 3.8Z"
-                  stroke="#fff"
-                  strokeWidth={1.45}
-                  strokeLinejoin="round"
-                />
-              </svg>
-            </div>
-            <p className="title">Average Rating</p>
-            <p className="value">4.3</p>
-            <p className="change amber">
-              <span className="arrow accent">→</span>
-              <strong className="accent">0.3</strong> vs last 7 days
-            </p>
-            <svg className="chart gold-chart" viewBox="0 0 94 42" aria-hidden="true">
-              <defs>
-                <linearGradient id="gf2" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0" stopColor="#ffd15a" stopOpacity=".50" />
-                  <stop offset=".48" stopColor="#dfa018" stopOpacity=".27" />
-                  <stop offset="1" stopColor="#8e5b08" stopOpacity="0" />
-                </linearGradient>
-                <linearGradient id="gs2" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0" stopColor="#ffffff" stopOpacity="0" />
-                  <stop offset=".22" stopColor="#ffe799" stopOpacity=".56" />
-                  <stop offset=".52" stopColor="#e0a51e" stopOpacity=".12" />
-                  <stop offset=".82" stopColor="#ffd46c" stopOpacity=".60" />
-                  <stop offset="1" stopColor="#ffffff" stopOpacity="0" />
-                </linearGradient>
-                <filter id="gb2" x="-30%" y="-70%" width="160%" height="240%">
-                  <feGaussianBlur stdDeviation={2.4} />
-                </filter>
-                <filter id="gshadow2" x="-100%" y="-100%" width="300%" height="300%">
-                  <feGaussianBlur stdDeviation={2} />
-                </filter>
-              </defs>
-              <ellipse cx="45" cy="33.5" rx="19" ry="2.1" fill="#8e5a09" opacity=".17" filter="url(#gshadow2)" />
-              <path
-                fill="url(#gf2)"
-                d="M0 29 C7 29,12 22,19 21 C26 20,31 26,36 28 C39 30,42 31,45 29 C49 27,53 24,57 22 C62 20,65 18,68 14 C72 9,77 7,82 9 C88 10,92 15,94 20 L94 37 L0 37 Z"
-              />
-              <path
-                d="M31 27 C35 28.5,39 31,44 30 C48 28.5,52 25.5,56 23"
-                fill="none"
-                stroke="#ffd96c"
-                strokeWidth={5}
-                opacity=".18"
-                filter="url(#gb2)"
-                strokeLinecap="round"
-              />
-              <path
-                d="M1 28.8 C8 29,12 22,19 21.5 C26 20.5,31 26,36 28 C40 30.3,42 31,45 29 C49 27,53 24,57 22 C62 20,65 18,68 14 C72 9,77 7,82 9 C88 10,92 15,94 20"
-                fill="none"
-                stroke="url(#gs2)"
-                strokeWidth={4.5}
-                opacity=".66"
-                filter="url(#gb2)"
-                strokeLinecap="round"
-              />
-              <path
-                className="glow"
-                d="M0 29 C7 29 12 22 19 21 C26 20 31 26 36 28 C40 30 42 31 45 29 C49 27 53 24 57 22 C62 20 65 18 68 14 C72 9 77 7 82 9 C88 10 92 15 94 20"
-              />
-              <path
-                className="line"
-                d="M0 29 C7 29 12 22 19 21 C26 20 31 26 36 28 C40 30 42 31 45 29 C49 27 53 24 57 22 C62 20 65 18 68 14 C72 9 77 7 82 9 C88 10 92 15 94 20"
-              />
-            </svg>
-          </div>
-        </section>
+      {/* header */}
+      <div className="header-row">
+        <div>
+          <h1>Good Night, aiengineer! 🌙</h1>
+          <p>Here&apos;s what&apos;s happening with your reviews today.</p>
+        </div>
+        <button className="btn-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.5}>
+            <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+          </svg>
+          New Action
+        </button>
       </div>
-      <div className="bottom-line"></div>
+
+      {/* stat cards */}
+      <div className="stats">
+        {statCards.map((s) => (
+          <LiquidCard key={s.label} className="stat-card">
+            <div className={`icon ${s.icon}`}>{s.svg}</div>
+            <p className="title">{s.label}</p>
+            <p className="value">{s.value}</p>
+            <p className={`change ${s.deltaClass}`}>
+              <span className="arrow accent">{s.delta.split(" ")[0]}</span>
+              <strong className="accent">{s.delta.split(" ")[1]}</strong> vs last 7 days
+            </p>
+            <Spark color={s.color} path={s.path} />
+          </LiquidCard>
+        ))}
+      </div>
+
+      {/* quick actions */}
+      <LiquidCard className="section-card">
+        <div className="section-head">
+          <h3>Quick Actions</h3>
+          <div className="dropdown mini-glass">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+              <path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6" />
+            </svg>
+            Customize
+          </div>
+        </div>
+        <div className="actions-grid">
+          {quickActions.map((a) => (
+            <div className="action-card mini-glass" key={a.label}>
+              <div className="action-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>{a.icon}</svg>
+              </div>
+              <b>{a.label}</b>
+              <div className="sub">{a.sub} →</div>
+            </div>
+          ))}
+        </div>
+      </LiquidCard>
+
+      {/* two column: overview + recent reviews */}
+      <div className="two-col">
+        <LiquidCard>
+          <div className="section-head">
+            <h3>Review Overview</h3>
+            <div className="dropdown mini-glass">Last 7 days
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><polyline points="6 9 12 15 18 9" /></svg>
+            </div>
+          </div>
+          <div className="donut-wrap">
+            <div className="donut"><div className="donut-center"><b>1,248</b><span>Total Reviews</span></div></div>
+            <div className="legend">
+              <div className="legend-row"><span className="legend-dot" style={{ background: "var(--purple)" }}></span><span className="lbl">5 Stars</span><b>620 (50%)</b></div>
+              <div className="legend-row"><span className="legend-dot" style={{ background: "var(--blue)" }}></span><span className="lbl">4 Stars</span><b>320 (26%)</b></div>
+              <div className="legend-row"><span className="legend-dot" style={{ background: "#b46cff" }}></span><span className="lbl">3 Stars</span><b>180 (14%)</b></div>
+              <div className="legend-row"><span className="legend-dot" style={{ background: "var(--orange)" }}></span><span className="lbl">2 Stars</span><b>80 (6%)</b></div>
+              <div className="legend-row"><span className="legend-dot" style={{ background: "var(--red)" }}></span><span className="lbl">1 Star</span><b>48 (4%)</b></div>
+            </div>
+          </div>
+          <div className="view-analytics"><span className="link">View all analytics →</span></div>
+        </LiquidCard>
+
+        <LiquidCard>
+          <div className="section-head">
+            <h3>Recent Reviews</h3>
+            <span className="link">View all</span>
+          </div>
+          {recentReviews.map((r) => (
+            <div className="review-row" key={r.name}>
+              <div className="rev-avatar">{r.flag === "G" ? "🇬" : "🇫"}</div>
+              <div className="rev-mid">
+                <span className="rev-name">{r.name} <span className="rev-time">· {r.time}</span></span>
+                <div className="rev-stars" style={r.stars <= 1 ? { color: "var(--red)" } : undefined}>
+                  {"★".repeat(r.stars)}{"☆".repeat(5 - r.stars)}
+                </div>
+                <div className="rev-text">{r.text}</div>
+              </div>
+              <span className={`rev-tag tag-${r.tag}`}>{r.tag[0].toUpperCase() + r.tag.slice(1)}</span>
+            </div>
+          ))}
+        </LiquidCard>
+      </div>
+
+      {/* AI suggestions */}
+      <LiquidCard className="section-card">
+        <div className="section-head">
+          <h3>AI Suggestions <span className="pro-tag">PRO</span></h3>
+        </div>
+        <div className="ai-grid">
+          {aiSuggestions.map((a) => (
+            <div className="ai-card mini-glass" key={a.label}>
+              <div className="ai-icon" style={{ background: a.bg, color: a.color }}>
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>{a.icon}</svg>
+              </div>
+              <b>{a.label}</b>
+              <div className="sub">{a.sub}</div>
+              <div className="cta">{a.cta}</div>
+            </div>
+          ))}
+        </div>
+      </LiquidCard>
+
+      {/* bottom nav */}
+      <div className="bottom-nav mini-glass">
+        <div className="nav-item active">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></svg>
+          Home
+        </div>
+        <div className="nav-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
+          Reviews
+        </div>
+        <div className="nav-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" /></svg>
+          AI Center
+        </div>
+        <div className="nav-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></svg>
+          Analytics
+        </div>
+        <div className="nav-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>
+          Automation
+        </div>
+        <div className="nav-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6" /><circle cx="12" cy="12" r="1.6" /><circle cx="19" cy="12" r="1.6" /></svg>
+          More
+        </div>
+      </div>
+
+      <div className="fab">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" /></svg>
+      </div>
     </div>
   );
 }
