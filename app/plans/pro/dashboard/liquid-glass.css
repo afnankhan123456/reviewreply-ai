@@ -98,18 +98,9 @@ body{
   -webkit-mask-composite:xor;mask-composite:exclude;
 }
 .card .rightGlow{
-  position:absolute;inset:0;z-index:4;pointer-events:none;border-radius:inherit;padding:1px;
-  background:conic-gradient(at calc(100% - 30px) 30px,
-    transparent 0deg 100deg,
-    rgba(255,255,255,.06) 108deg,
-    rgba(255,255,255,.85) 116deg,
-    rgba(255,255,255,.50) 126deg,
-    rgba(255,255,255,.15) 140deg,
-    transparent 155deg 360deg);
-  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;mask-composite:exclude;
-  filter:blur(.15px);
-  opacity:.85;
+  position:absolute;top:-6%;right:-14%;width:42%;height:62%;z-index:2;pointer-events:none;border-radius:50%;
+  background:radial-gradient(ellipse at 65% 30%,rgba(255,255,255,.38),rgba(255,255,255,.12) 45%,transparent 72%);
+  filter:blur(13px);opacity:.9;
 }
 .card .content{position:relative;z-index:5}
 
