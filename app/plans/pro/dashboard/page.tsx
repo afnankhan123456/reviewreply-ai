@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
 /* Reusable wrapper that gives any section the layered iOS liquid-glass surface */
@@ -35,15 +35,16 @@ function Spark({ color, path }: { color: string; path: string }) {
   );
 }
 
-const statCards = [
+/* Static spark paths — sirf visual trend line ke liye, values API se aati hain */
+const statMeta = [
   {
+    key: "totalReviews",
     icon: "purple",
     label: "Total Reviews",
-    value: "1,248",
-    delta: "↑ 12%",
     deltaClass: "green",
     path: "M0 20 Q 20 8 40 15 T 80 13 T 94 9",
     color: "#ae47ff",
+    format: (d: any) => d.totalReviews ?? 0,
     svg: (
       <svg viewBox="0 0 24 24" fill="none">
         <path d="M5.2 5.25h13.6c1.02 0 1.85.83 1.85 1.85v6.36c0 1.02-.83 1.85-1.85 1.85h-5.98l-2.72 2.27v-2.27H5.2a1.85 1.85 0 0 1-1.85-1.85V7.1c0-1.02.83-1.85 1.85-1.85Z" stroke="#fff" strokeWidth={1.65} strokeLinejoin="round" />
@@ -54,13 +55,13 @@ const statCards = [
     ),
   },
   {
+    key: "avgRating",
     icon: "gold",
     label: "Average Rating",
-    value: "4.3",
-    delta: "→ 0.3",
     deltaClass: "amber",
     path: "M0 12 Q 20 22 40 14 T 80 18 T 94 22",
     color: "#e9b52a",
+    format: (d: any) => d.avgRating ?? 0,
     svg: (
       <svg viewBox="0 0 24 24" fill="none">
         <path d="m12 3.8 2.1 4.37 4.83.7-3.49 3.39.82 4.8L12 14.8l-4.26 2.26.82-4.8-3.49-3.39 4.83-.7L12 3.8Z" stroke="#fff" strokeWidth={1.45} strokeLinejoin="round" />
@@ -68,13 +69,13 @@ const statCards = [
     ),
   },
   {
+    key: "newReviews",
     icon: "green",
     label: "New Reviews",
-    value: "32",
-    delta: "↑ 8%",
     deltaClass: "green",
     path: "M0 22 Q 20 16 40 18 T 80 6 T 94 10",
     color: "#34d399",
+    format: (d: any) => d.newReviews ?? 0,
     svg: (
       <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
@@ -82,13 +83,13 @@ const statCards = [
     ),
   },
   {
+    key: "responseRate",
     icon: "blue",
     label: "Response Rate",
-    value: "86%",
-    delta: "↑ 5%",
     deltaClass: "green",
     path: "M0 18 Q 20 10 40 14 T 80 8 T 94 12",
     color: "#4da3ff",
+    format: (d: any) => `${d.responseRate ?? 0}%`,
     svg: (
       <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
         <polyline points="9 10 4 15 9 20" />
@@ -97,13 +98,13 @@ const statCards = [
     ),
   },
   {
+    key: "lowRatingCount",
     icon: "red",
     label: "Low Rating Reviews",
-    value: "18",
-    delta: "↓ 6%",
     deltaClass: "red",
     path: "M0 8 Q 20 14 40 10 T 80 18 T 94 14",
     color: "#ef5a6f",
+    format: (d: any) => d.lowRatingCount ?? 0,
     svg: (
       <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
         <circle cx="12" cy="8" r="4" />
@@ -114,18 +115,11 @@ const statCards = [
 ];
 
 const quickActions = [
-  { label: "Reply to Reviews", sub: "Reply to pending reviews", icon: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /> },
-  { label: "AI Reply", sub: "Generate AI replies", icon: <path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" fill="currentColor" /> },
-  { label: "Analyze Reviews", sub: "Get AI insights", icon: <><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></> },
-  { label: "Create Report", sub: "Download reports", icon: <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></> },
-  { label: "Connect Platform", sub: "Add review sources", icon: <><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1" /><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1" /></> },
-];
-
-const recentReviews = [
-  { name: "John D.", time: "5 min ago", stars: 5, text: "Great service and amazing support! Highly recommend.", tag: "replied", flag: "G" },
-  { name: "Sarah M.", time: "15 min ago", stars: 4, text: "Good experience overall. The team was helpful.", tag: "pending", flag: "F" },
-  { name: "Michael T.", time: "1 hour ago", stars: 1, text: "Poor communication and slow response time.", tag: "negative", flag: "G" },
-  { name: "Emily R.", time: "2 hours ago", stars: 5, text: "Excellent product and customer service!", tag: "replied", flag: "G" },
+  { label: "Reply to Reviews", sub: "Reply to pending reviews", href: "/plans/pro/dashboard/reviews", icon: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /> },
+  { label: "AI Reply", sub: "Generate AI replies", href: "/plans/pro/dashboard/ai-reply-center", icon: <path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" fill="currentColor" /> },
+  { label: "Analyze Reviews", sub: "Get AI insights", href: "/plans/pro/dashboard/analytics", icon: <><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></> },
+  { label: "Create Report", sub: "Download reports", href: "/plans/pro/dashboard/reports", icon: <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></> },
+  { label: "Connect Platform", sub: "Add review sources", href: "/plans/pro/dashboard/connect-app", icon: <><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1" /><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1" /></> },
 ];
 
 const aiSuggestions = [
@@ -178,7 +172,78 @@ function BottomNav() {
   );
 }
 
+function getGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return "Good Morning";
+  if (hour < 17) return "Good Afternoon";
+  if (hour < 21) return "Good Evening";
+  return "Good Night";
+}
+
 export default function Page() {
+  const [data, setData] = useState<any>(null);
+  const [alerts, setAlerts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchOverview();
+    fetchAlerts();
+  }, []);
+
+  const fetchOverview = async () => {
+    try {
+      const res = await fetch("/api/pro/dashboard/overview");
+      const json = await res.json();
+      if (json.success) {
+        setData(json.data);
+      } else {
+        setError(json.error || "Failed to load dashboard");
+      }
+    } catch (e) {
+      setError("Failed to load dashboard");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchAlerts = async () => {
+    try {
+      const res = await fetch("/api/pro/dashboard/alerts");
+      const json = await res.json();
+      if (json.success) setAlerts(json.alerts || []);
+    } catch (e) {
+      // alerts optional — dashboard ko block mat karo
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="page-wrap">
+        <p style={{ color: "var(--text-dim)", padding: "40px" }}>Loading your dashboard...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="page-wrap">
+        <p style={{ color: "#ef5a6f", padding: "40px" }}>{error}</p>
+      </div>
+    );
+  }
+
+  const totalReviews = data?.totalReviews ?? 0;
+  const starBreakdown = data?.starBreakdown ?? [5, 4, 3, 2, 1].map((stars: number) => ({ stars, count: 0, percent: 0 }));
+  const recentReviews = data?.recentReviews ?? [];
+  const legendColors: Record<number, string> = {
+    5: "var(--purple)",
+    4: "var(--blue)",
+    3: "#b46cff",
+    2: "var(--orange)",
+    1: "var(--red)",
+  };
+
   return (
     <div className="page-wrap">
       {/* SVG filter used by every card's .refract layer */}
@@ -192,7 +257,7 @@ export default function Page() {
       {/* header */}
       <div className="header-row">
         <div>
-          <h1>Good Night, aiengineer! 🌙</h1>
+          <h1>{getGreeting()}, {data?.userName || "there"}! 🌙</h1>
           <p>Here&apos;s what&apos;s happening with your reviews today.</p>
         </div>
         <button className="btn-primary">
@@ -203,17 +268,13 @@ export default function Page() {
         </button>
       </div>
 
-      {/* stat cards */}
+      {/* stat cards — real KPI Summary data */}
       <div className="stats">
-        {statCards.map((s) => (
+        {statMeta.map((s) => (
           <LiquidCard key={s.label} className="stat-card">
             <div className={`icon ${s.icon}`}>{s.svg}</div>
             <p className="title">{s.label}</p>
-            <p className="value">{s.value}</p>
-            <p className={`change ${s.deltaClass}`}>
-              <span className="arrow accent">{s.delta.split(" ")[0]}</span>
-              <strong className="accent">{s.delta.split(" ")[1]}</strong> vs last 7 days
-            </p>
+            <p className="value">{s.format(data)}</p>
             <Spark color={s.color} path={s.path} />
           </LiquidCard>
         ))}
@@ -232,15 +293,42 @@ export default function Page() {
         </div>
         <div className="actions-grid">
           {quickActions.map((a) => (
-            <LiquidCard className="action-card" key={a.label}>
-              <div className="action-icon">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>{a.icon}</svg>
-              </div>
-              <b>{a.label}</b>
-              <div className="sub">{a.sub} →</div>
-            </LiquidCard>
+            <a href={a.href} key={a.label} style={{ textDecoration: "none", color: "inherit" }}>
+              <LiquidCard className="action-card">
+                <div className="action-icon">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>{a.icon}</svg>
+                </div>
+                <b>{a.label}</b>
+                <div className="sub">{a.sub} →</div>
+              </LiquidCard>
+            </a>
           ))}
         </div>
+      </LiquidCard>
+
+      {/* Alerts — low rating reviews jinpe turant dhyan chahiye */}
+      <LiquidCard className="section-card">
+        <div className="section-head">
+          <h3>⚠️ Alerts</h3>
+          <span className="link">{alerts.length} needs attention</span>
+        </div>
+        {alerts.length === 0 ? (
+          <p style={{ color: "var(--text-dim)", fontSize: 13 }}>No low-rating alerts right now. 🎉</p>
+        ) : (
+          alerts.slice(0, 5).map((a) => (
+            <div className="review-row" key={a.id}>
+              <div className="rev-avatar">⚠️</div>
+              <div className="rev-mid">
+                <span className="rev-name">{a.reviewerName}</span>
+                <div className="rev-stars" style={{ color: "var(--red)" }}>
+                  {"★".repeat(a.rating)}{"☆".repeat(5 - a.rating)}
+                </div>
+                <div className="rev-text">{a.comment}</div>
+              </div>
+              <span className="rev-tag tag-negative">{a.source || "Review"}</span>
+            </div>
+          ))
+        )}
       </LiquidCard>
 
       {/* two column: overview + recent reviews */}
@@ -248,31 +336,36 @@ export default function Page() {
         <LiquidCard>
           <div className="section-head">
             <h3>Review Overview</h3>
-            <div className="dropdown mini-glass">Last 7 days
+            <div className="dropdown mini-glass">All time
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}><polyline points="6 9 12 15 18 9" /></svg>
             </div>
           </div>
           <div className="donut-wrap">
-            <div className="donut"><div className="donut-center"><b>1,248</b><span>Total Reviews</span></div></div>
+            <div className="donut"><div className="donut-center"><b>{totalReviews}</b><span>Total Reviews</span></div></div>
             <div className="legend">
-              <div className="legend-row"><span className="legend-dot" style={{ background: "var(--purple)" }}></span><span className="lbl">5 Stars</span><b>620 (50%)</b></div>
-              <div className="legend-row"><span className="legend-dot" style={{ background: "var(--blue)" }}></span><span className="lbl">4 Stars</span><b>320 (26%)</b></div>
-              <div className="legend-row"><span className="legend-dot" style={{ background: "#b46cff" }}></span><span className="lbl">3 Stars</span><b>180 (14%)</b></div>
-              <div className="legend-row"><span className="legend-dot" style={{ background: "var(--orange)" }}></span><span className="lbl">2 Stars</span><b>80 (6%)</b></div>
-              <div className="legend-row"><span className="legend-dot" style={{ background: "var(--red)" }}></span><span className="lbl">1 Star</span><b>48 (4%)</b></div>
+              {starBreakdown.map((s: any) => (
+                <div className="legend-row" key={s.stars}>
+                  <span className="legend-dot" style={{ background: legendColors[s.stars] }}></span>
+                  <span className="lbl">{s.stars} Stars</span>
+                  <b>{s.count} ({s.percent}%)</b>
+                </div>
+              ))}
             </div>
           </div>
-          <div className="view-analytics"><span className="link">View all analytics →</span></div>
+          <div className="view-analytics"><a href="/plans/pro/dashboard/analytics" className="link">View all analytics →</a></div>
         </LiquidCard>
 
         <LiquidCard>
           <div className="section-head">
-            <h3>Recent Reviews</h3>
-            <span className="link">View all</span>
+            <h3>Recent Activity</h3>
+            <a href="/plans/pro/dashboard/reviews" className="link">View all</a>
           </div>
-          {recentReviews.map((r) => (
-            <div className="review-row" key={r.name}>
-              <div className="rev-avatar">{r.flag === "G" ? "🇬" : "🇫"}</div>
+          {recentReviews.length === 0 && (
+            <p style={{ color: "var(--text-dim)", fontSize: 13 }}>No reviews yet.</p>
+          )}
+          {recentReviews.map((r: any) => (
+            <div className="review-row" key={r.id}>
+              <div className="rev-avatar">{(r.name || "?").charAt(0).toUpperCase()}</div>
               <div className="rev-mid">
                 <span className="rev-name">{r.name} <span className="rev-time">· {r.time}</span></span>
                 <div className="rev-stars" style={r.stars <= 1 ? { color: "var(--red)" } : undefined}>
