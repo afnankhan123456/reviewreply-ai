@@ -1,3 +1,6 @@
+"use client";
+
+import { useLayoutEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
 /* Reusable wrapper that gives any section the layered iOS liquid-glass surface */
@@ -132,6 +135,48 @@ const aiSuggestions = [
   { label: "Improve Rating", sub: "Get AI recommendations to improve rating", cta: "Get tips →", bg: "rgba(52,211,153,.18)", color: "#34d399", icon: <><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></> },
 ];
 
+const navItems = [
+  { label: "Home", icon: <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /> },
+  { label: "Reviews", icon: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /> },
+  { label: "AI Center", icon: <path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" fill="currentColor" /> },
+  { label: "Analytics", icon: <><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></> },
+  { label: "Automation", icon: <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /> },
+  { label: "More", icon: <><circle cx="5" cy="12" r="1.6" fill="currentColor" /><circle cx="12" cy="12" r="1.6" fill="currentColor" /><circle cx="19" cy="12" r="1.6" fill="currentColor" /></> },
+];
+
+function BottomNav() {
+  const [active, setActive] = useState(0);
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [blob, setBlob] = useState({ left: 0, width: 0 });
+
+  useLayoutEffect(() => {
+    const el = itemRefs.current[active];
+    if (el) setBlob({ left: el.offsetLeft, width: el.offsetWidth });
+  }, [active]);
+
+  return (
+    <div className="bottom-nav mini-glass">
+      <div
+        className="nav-blob"
+        style={{ transform: `translateX(${blob.left}px)`, width: blob.width }}
+      ></div>
+      {navItems.map((item, i) => (
+        <div
+          key={item.label}
+          ref={(el) => { itemRefs.current[i] = el; }}
+          className={`nav-item${i === active ? " active" : ""}`}
+          onClick={() => setActive(i)}
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+            {item.icon}
+          </svg>
+          {item.label}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 export default function Page() {
   return (
     <div className="page-wrap">
@@ -259,33 +304,8 @@ export default function Page() {
         </div>
       </LiquidCard>
 
-      {/* bottom nav */}
-      <div className="bottom-nav mini-glass">
-        <div className="nav-item active">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></svg>
-          Home
-        </div>
-        <div className="nav-item">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
-          Reviews
-        </div>
-        <div className="nav-item">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" /></svg>
-          AI Center
-        </div>
-        <div className="nav-item">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></svg>
-          Analytics
-        </div>
-        <div className="nav-item">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" /></svg>
-          Automation
-        </div>
-        <div className="nav-item">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><circle cx="5" cy="12" r="1.6" /><circle cx="12" cy="12" r="1.6" /><circle cx="19" cy="12" r="1.6" /></svg>
-          More
-        </div>
-      </div>
+      {/* bottom nav — sliding liquid blob behind the active item */}
+      <BottomNav />
 
       <div className="fab">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" /></svg>
