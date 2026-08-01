@@ -124,7 +124,7 @@ body{
 
 /* ============ STAT CARDS ============ */
 .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:20px;align-items:stretch}
-.stat-card{padding:16px}
+.stat-card{padding:16px; height:100px;}
 .icon{
   position:relative;width:32px;height:32px;border-radius:9px;display:grid;place-items:center;overflow:hidden;margin-bottom:10px;
   border:1px solid rgba(255,255,255,.19);
