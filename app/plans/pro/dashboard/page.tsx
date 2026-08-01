@@ -20,6 +20,7 @@ function LiquidCard({
       <div className="specular"></div>
       <div className="edgeLight"></div>
       <div className="rim"></div>
+      <div className="rightGlow"></div>
       <div className="content">{children}</div>
     </div>
   );
