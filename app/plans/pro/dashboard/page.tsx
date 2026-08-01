@@ -231,13 +231,13 @@ export default function Page() {
         </div>
         <div className="actions-grid">
           {quickActions.map((a) => (
-            <div className="action-card mini-glass" key={a.label}>
+            <LiquidCard className="action-card" key={a.label}>
               <div className="action-icon">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>{a.icon}</svg>
               </div>
               <b>{a.label}</b>
               <div className="sub">{a.sub} →</div>
-            </div>
+            </LiquidCard>
           ))}
         </div>
       </LiquidCard>
@@ -292,14 +292,14 @@ export default function Page() {
         </div>
         <div className="ai-grid">
           {aiSuggestions.map((a) => (
-            <div className="ai-card mini-glass" key={a.label}>
+            <LiquidCard className="ai-card" key={a.label}>
               <div className="ai-icon" style={{ background: a.bg, color: a.color }}>
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>{a.icon}</svg>
               </div>
               <b>{a.label}</b>
               <div className="sub">{a.sub}</div>
               <div className="cta">{a.cta}</div>
-            </div>
+            </LiquidCard>
           ))}
         </div>
       </LiquidCard>

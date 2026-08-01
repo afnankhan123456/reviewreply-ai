@@ -156,7 +156,8 @@ body{
 /* ============ QUICK ACTIONS ============ */
 .section-card{margin-bottom:20px}
 .actions-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
-.action-card{padding:16px;display:flex;flex-direction:column;gap:10px}
+.action-card{padding:16px}
+.action-card .content{display:flex;flex-direction:column;gap:10px}
 .action-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;background:rgba(174,71,255,.16);color:#c78bff}
 .action-card b{font-size:13.5px;font-weight:600}
 .action-card .sub{font-size:12px;color:var(--text-dim)}
@@ -200,7 +201,8 @@ body{
 
 /* ============ AI SUGGESTIONS ============ */
 .ai-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
-.ai-card{padding:16px;display:flex;flex-direction:column;gap:8px;min-height:120px}
+.ai-card{padding:16px;min-height:120px}
+.ai-card .content{display:flex;flex-direction:column;gap:8px;height:100%}
 .ai-icon{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;margin-bottom:2px}
 .ai-card b{font-size:13.5px}
 .ai-card .sub{font-size:12px;color:var(--text-dim);line-height:1.4;flex:1}
