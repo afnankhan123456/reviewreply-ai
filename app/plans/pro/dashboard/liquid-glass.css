@@ -227,6 +227,7 @@ body{
   transition:color .3s ease;background:none;border:none;
 }
 .nav-item.active{color:#fff}
+.bottom-nav.mini-glass:hover{transform:translateX(-50%)}
 .fab{
   position:fixed;bottom:22px;right:26px;width:52px;height:52px;border-radius:50%;
   display:flex;align-items:center;justify-content:center;cursor:pointer;
