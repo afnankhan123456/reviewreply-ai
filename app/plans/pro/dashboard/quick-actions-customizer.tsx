@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { ReactNode, CSSProperties } from "react";
 
 export const QUICK_ACTION_COLORS: { key: string; value: string }[] = [
   { key: "purple", value: "#ae47ff" },
@@ -24,6 +24,8 @@ export default function QuickActionsCustomizer({
   onColorChange,
   onStyleChange,
   onSizeChange,
+  onClose,
+  style,
 }: {
   actions: ActionMeta[];
   order: string[];
@@ -36,6 +38,8 @@ export default function QuickActionsCustomizer({
   onColorChange: (label: string, colorKey: string) => void;
   onStyleChange: (style: "glass" | "solid" | "minimal") => void;
   onSizeChange: (size: "compact" | "comfortable") => void;
+  onClose?: () => void;
+  style?: CSSProperties;
 }) {
   const orderedActions = order
     .map((label) => actions.find((a) => a.label === label))
@@ -44,9 +48,14 @@ export default function QuickActionsCustomizer({
   return (
     <div
       className="mini-glass qa-customizer"
-      style={{ position: "absolute", top: "115%", right: 0, zIndex: 20, padding: 14, width: 260, cursor: "default" }}
-      onClick={(e) => e.stopPropagation()}
+      style={{ zIndex: 999, padding: 14, width: 260, cursor: "default", ...style }}
     >
+      <div className="qa-customizer-head">
+        <span>Customize Quick Actions</span>
+        {onClose && (
+          <button type="button" className="qa-close" onClick={onClose} aria-label="Close">✕</button>
+        )}
+      </div>
       {/* --- show / hide + reorder --- */}
       <p className="qa-customizer-label">Actions</p>
       {orderedActions.map((a, i) => (

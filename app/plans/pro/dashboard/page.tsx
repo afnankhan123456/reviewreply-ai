@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import QuickActionsCustomizer, { QUICK_ACTION_COLORS } from "./quick-actions-customizer";
@@ -183,6 +184,24 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [customizeOpen, setCustomizeOpen] = useState(false);
+  const [customizePos, setCustomizePos] = useState<{ top: number; left: number } | null>(null);
+  const customizeBtnRef = useRef<HTMLDivElement>(null);
+  const customizePanelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!customizeOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (
+        customizePanelRef.current && !customizePanelRef.current.contains(target) &&
+        customizeBtnRef.current && !customizeBtnRef.current.contains(target)
+      ) {
+        setCustomizeOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [customizeOpen]);
   const [hiddenActions, setHiddenActions] = useState<string[]>([]);
   const [actionOrder, setActionOrder] = useState<string[]>(quickActions.map((a) => a.label));
   const [actionColors, setActionColors] = useState<Record<string, string>>({});
@@ -404,26 +423,43 @@ export default function Page() {
       <LiquidCard className="section-card">
         <div className="section-head">
           <h3>Quick Actions</h3>
-          <div className="dropdown mini-glass" onClick={() => setCustomizeOpen((v) => !v)} style={{ position: "relative" }}>
+          <div
+            className="dropdown mini-glass"
+            ref={customizeBtnRef}
+            onClick={() => {
+              if (!customizeOpen && customizeBtnRef.current) {
+                const rect = customizeBtnRef.current.getBoundingClientRect();
+                setCustomizePos({ top: rect.bottom + 8, left: Math.max(8, rect.right - 260) });
+              }
+              setCustomizeOpen((v) => !v);
+            }}
+            style={{ position: "relative" }}
+          >
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
               <path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6" />
             </svg>
             Customize
-            {customizeOpen && (
-              <QuickActionsCustomizer
-                actions={quickActions}
-                order={actionOrder}
-                hidden={hiddenActions}
-                colors={actionColors}
-                cardStyle={cardStyle}
-                cardSize={cardSize}
-                onToggleHidden={toggleAction}
-                onMove={moveAction}
-                onColorChange={changeActionColor}
-                onStyleChange={changeCardStyle}
-                onSizeChange={changeCardSize}
-              />
-            )}
+            {customizeOpen && customizePos && typeof document !== "undefined" &&
+              createPortal(
+                <div ref={customizePanelRef}>
+                  <QuickActionsCustomizer
+                    actions={quickActions}
+                    order={actionOrder}
+                    hidden={hiddenActions}
+                    colors={actionColors}
+                    cardStyle={cardStyle}
+                    cardSize={cardSize}
+                    onToggleHidden={toggleAction}
+                    onMove={moveAction}
+                    onColorChange={changeActionColor}
+                    onStyleChange={changeCardStyle}
+                    onSizeChange={changeCardSize}
+                    onClose={() => setCustomizeOpen(false)}
+                    style={{ position: "fixed", top: customizePos.top, left: customizePos.left }}
+                  />
+                </div>,
+                document.body
+              )}
           </div>
         </div>
         <div className="actions-grid">

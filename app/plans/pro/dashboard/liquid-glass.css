@@ -240,6 +240,8 @@ body{
 
 /* ---- Quick Actions: Customize panel ---- */
 .qa-customizer{max-height:360px;overflow-y:auto}
+.qa-customizer-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;font-size:11.5px;font-weight:700;color:var(--text)}
+.qa-close{width:18px;height:18px;border-radius:6px;border:none;background:rgba(255,255,255,.08);color:var(--text-dim);font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .qa-customizer-label{margin:0 0 6px;font-size:10.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--text-dimmer)}
 .qa-row{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:4px 2px}
 .qa-row-check{display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer}
