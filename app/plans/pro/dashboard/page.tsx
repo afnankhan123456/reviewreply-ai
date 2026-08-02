@@ -2,17 +2,20 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
+import { getAutoReplyMode, setAutoReplyMode } from "./ai-reply-center/actions";
 
 /* Reusable wrapper that gives any section the layered iOS liquid-glass surface */
 function LiquidCard({
   className = "",
   children,
+  ...rest
 }: {
   className?: string;
   children: ReactNode;
+  [key: string]: any;
 }) {
   return (
-    <div className={`card ${className}`}>
+    <div className={`card ${className}`} {...rest}>
       <div className="volume"></div>
       <div className="refract"></div>
       <div className="cornerBloom"></div>
@@ -122,14 +125,6 @@ const quickActions = [
   { label: "Connect Platform", sub: "Add review sources", href: "/plans/pro/dashboard/connect-app", icon: <><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1" /><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1" /></> },
 ];
 
-const aiSuggestions = [
-  { label: "Enable Auto Reply", sub: "Automatically reply to common reviews", cta: "Set up →", bg: "rgba(245,166,35,.18)", color: "#f5a623", icon: <path d="M13 2L3 14h7l-1 8 11-14h-7z" fill="currentColor" /> },
-  { label: "Create Templates", sub: "Save time with reusable reply templates", cta: "Create now →", bg: "rgba(255,255,255,.08)", color: "var(--text-dim)", icon: <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></> },
-  { label: "Analyze Sentiment", sub: "Understand customer sentiment better", cta: "Analyze →", bg: "rgba(174,71,255,.18)", color: "#c78bff", icon: <><circle cx="12" cy="12" r="10" /><path d="M8 14s1.5 2 4 2 4-2 4-2" /><line x1="9" y1="9" x2="9.01" y2="9" /><line x1="15" y1="9" x2="15.01" y2="9" /></> },
-  { label: "Generate Report", sub: "Get detailed insights about your reviews", cta: "Generate →", bg: "rgba(77,163,255,.18)", color: "#4da3ff", icon: <><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></> },
-  { label: "Improve Rating", sub: "Get AI recommendations to improve rating", cta: "Get tips →", bg: "rgba(52,211,153,.18)", color: "#34d399", icon: <><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></> },
-];
-
 const navItems = [
   { label: "Home", icon: <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /> },
   { label: "Reviews", icon: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /> },
@@ -206,6 +201,56 @@ export default function Page() {
   };
 
   const visibleActions = quickActions.filter((a) => !hiddenActions.includes(a.label));
+
+  const [autoReplyOn, setAutoReplyOn] = useState(false);
+  const [templates, setTemplates] = useState<string[]>([]);
+  const [templateIdx, setTemplateIdx] = useState(0);
+  const [reportLoading, setReportLoading] = useState(false);
+
+  useEffect(() => {
+    getAutoReplyMode().then((res: any) => {
+      if (res?.success) setAutoReplyOn(res.mode === "auto");
+    });
+    fetch("/api/standard/ai-reply-center/templates")
+      .then((r) => r.json())
+      .then((d) => { if (d.success) setTemplates(d.templates); })
+      .catch(() => {});
+  }, []);
+
+  const handleToggleAutoReply = async () => {
+    const newMode = autoReplyOn ? "manual" : "auto";
+    setAutoReplyOn(!autoReplyOn); // optimistic
+    const res: any = await setAutoReplyMode(newMode);
+    if (!res?.success) setAutoReplyOn(autoReplyOn); // revert on failure
+  };
+
+  const shuffleTemplate = () => {
+    if (templates.length === 0) return;
+    setTemplateIdx((i) => (i + 1) % templates.length);
+  };
+
+  const handleGenerateReport = async () => {
+    setReportLoading(true);
+    try {
+      window.open("/api/standard/reports/export?format=csv", "_blank");
+    } finally {
+      setTimeout(() => setReportLoading(false), 1200);
+    }
+  };
+
+  // ✅ Sentiment insight — existing star breakdown se hi nikala, koi extra API nahi
+  const totalForInsight = data?.totalReviews ?? 0;
+  const positivePct = data?.starBreakdown
+    ? Math.round(((data.starBreakdown.find((s: any) => s.stars === 5)?.count || 0) + (data.starBreakdown.find((s: any) => s.stars === 4)?.count || 0)) / (totalForInsight || 1) * 100)
+    : 0;
+  const sentimentInsight = totalForInsight > 0
+    ? `${positivePct}% reviews positive hain (4-5★)`
+    : "Abhi data nahi hai";
+
+  // ✅ Rating tip — response rate ke hisaab se dynamic suggestion
+  const ratingTip = (data?.responseRate ?? 0) < 70
+    ? "24 ghante ke andar reply karne se rating badh sakti hai"
+    : "Aap achha response rate maintain kar rahe ho 👍";
 
   const fetchOverview = async () => {
     try {
@@ -421,22 +466,65 @@ export default function Page() {
         </LiquidCard>
       </div>
 
-      {/* AI suggestions */}
+      {/* AI suggestions — real, actionable insights (Quick Actions se alag, yaha koi navigation nahi) */}
       <LiquidCard className="section-card">
         <div className="section-head">
           <h3>AI Suggestions <span className="pro-tag">PRO</span></h3>
         </div>
         <div className="ai-grid">
-          {aiSuggestions.map((a) => (
-            <LiquidCard className="ai-card" key={a.label}>
-              <div className="ai-icon" style={{ background: a.bg, color: a.color }}>
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>{a.icon}</svg>
+          <LiquidCard className="ai-card">
+            <div className="ai-head">
+              <div className="ai-icon" style={{ background: "rgba(245,166,35,.18)", color: "#f5a623" }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h7l-1 8 11-14h-7z" /></svg>
               </div>
-              <b>{a.label}</b>
-              <div className="sub">{a.sub}</div>
-              <div className="cta">{a.cta}</div>
-            </LiquidCard>
-          ))}
+              <b>Auto Reply</b>
+              <label className="toggle-switch" style={{ marginLeft: "auto" }}>
+                <input type="checkbox" checked={autoReplyOn} onChange={handleToggleAutoReply} />
+                <span className="toggle-track"><span className="toggle-thumb"></span></span>
+              </label>
+            </div>
+            <div className="sub">{autoReplyOn ? "AI khud reply bhej raha hai" : "Turant on karo, click karke"}</div>
+          </LiquidCard>
+
+          <LiquidCard className="ai-card" onClick={shuffleTemplate} style={{ cursor: "pointer" }}>
+            <div className="ai-head">
+              <div className="ai-icon" style={{ background: "rgba(255,255,255,.08)", color: "var(--text-dim)" }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
+              </div>
+              <b>Template Tip</b>
+            </div>
+            <div className="sub">{templates[templateIdx] || "Loading..."}</div>
+          </LiquidCard>
+
+          <LiquidCard className="ai-card">
+            <div className="ai-head">
+              <div className="ai-icon" style={{ background: "rgba(174,71,255,.18)", color: "#c78bff" }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10" /><path d="M8 14s1.5 2 4 2 4-2 4-2" /></svg>
+              </div>
+              <b>Sentiment</b>
+            </div>
+            <div className="sub">{sentimentInsight}</div>
+          </LiquidCard>
+
+          <LiquidCard className="ai-card" onClick={handleGenerateReport} style={{ cursor: "pointer" }}>
+            <div className="ai-head">
+              <div className="ai-icon" style={{ background: "rgba(77,163,255,.18)", color: "#4da3ff" }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></svg>
+              </div>
+              <b>Report</b>
+            </div>
+            <div className="sub">{reportLoading ? "Downloading..." : "Click karo, CSV turant download hoga"}</div>
+          </LiquidCard>
+
+          <LiquidCard className="ai-card">
+            <div className="ai-head">
+              <div className="ai-icon" style={{ background: "rgba(52,211,153,.18)", color: "#34d399" }}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>
+              </div>
+              <b>Rating Tip</b>
+            </div>
+            <div className="sub">{ratingTip}</div>
+          </LiquidCard>
         </div>
       </LiquidCard>
 
