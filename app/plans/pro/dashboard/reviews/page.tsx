@@ -2,10 +2,25 @@
 
 import React, { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { 
-  Search, Filter, RefreshCw, CheckCircle, XCircle, 
-  Star, ThumbsUp, ThumbsDown, MoreHorizontal, Share2
-} from 'lucide-react';
+import { Search, Filter, RefreshCw, Share2, X } from 'lucide-react';
+import { getTagSummary } from './actions';
+
+/* Same liquid-glass wrapper jo home page pe use hota hai */
+function LiquidCard({ className = "", children, ...rest }: { className?: string; children: React.ReactNode; [key: string]: any }) {
+  return (
+    <div className={`card ${className}`} {...rest}>
+      <div className="volume"></div>
+      <div className="refract"></div>
+      <div className="cornerBloom"></div>
+      <div className="bodyShade"></div>
+      <div className="specular"></div>
+      <div className="edgeLight"></div>
+      <div className="rim"></div>
+      <div className="rightGlow"></div>
+      <div className="content">{children}</div>
+    </div>
+  );
+}
 
 export default function ReviewsPage() {
   const { data: authSession } = useSession();
@@ -17,7 +32,7 @@ export default function ReviewsPage() {
   const [lastSynced, setLastSynced] = useState('Loading...');
   const [unansweredCount, setUnansweredCount] = useState(0);
   const [isSyncing, setIsSyncing] = useState(false);
-  
+
   const [reviews, setReviews] = useState<any[]>([]);
   const [showReplyModal, setShowReplyModal] = useState(false);
   const [selectedReviewId, setSelectedReviewId] = useState<string | null>(null);
@@ -26,38 +41,32 @@ export default function ReviewsPage() {
 
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
-  // ✅ Theme state
-  const [theme, setTheme] = useState<"light" | "dark">("dark");
-
-  // ✅ Share modal state
-  const [shareMenu, setShareMenu] = useState<{
-    open: boolean;
-    name: string;
-    text: string;
-    rating: number;
-  }>({
-    open: false,
-    name: '',
-    text: '',
-    rating: 0,
+  const [shareMenu, setShareMenu] = useState<{ open: boolean; name: string; text: string; rating: number }>({
+    open: false, name: '', text: '', rating: 0,
   });
 
-  // ✅ NEW: Templates state (Reply modal ke andar)
   const [templates, setTemplates] = useState<string[]>([]);
   const [templatesLoading, setTemplatesLoading] = useState(true);
   const [templateCategory, setTemplateCategory] = useState('All');
   const [selectedTemplate, setSelectedTemplate] = useState('');
 
-  useEffect(() => {
-    const saved = localStorage.getItem("theme");
-    if (saved === "light" || saved === "dark") {
-      setTheme(saved);
-    }
-  }, []);
+  // ✅ Response Rate / Avg Rating — home ke overview API se reuse
+  const [stats, setStats] = useState<any>(null);
+
+  // ✅ Tags & Categories
+  const [tagSummary, setTagSummary] = useState<{ tag: string; count: number }[]>([]);
+  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+
+  // ✅ Custom Review Filters — rating + source combine karke apna filter banana
+  const [customOpen, setCustomOpen] = useState(false);
+  const [customRating, setCustomRating] = useState<number | null>(null);
+  const [customSource, setCustomSource] = useState<string | null>(null);
 
   useEffect(() => {
     fetchDashboardData();
     fetchTemplates();
+    fetchStats();
+    fetchTags();
   }, []);
 
   useEffect(() => {
@@ -73,18 +82,16 @@ export default function ReviewsPage() {
         fetch('/api/standard/reviews/list'),
         fetch('/api/standard/reviews/unanswered-count')
       ]);
-
       const reviewsData = await reviewsRes.json();
       if (reviewsData.success) setReviews(reviewsData.reviews);
-
       const countData = await countRes.json();
       setUnansweredCount(countData.count || 0);
+      setLastSynced(new Date().toLocaleTimeString());
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     }
   };
 
-  // ✅ NEW: Fetch templates for the reply modal
   const fetchTemplates = async () => {
     try {
       const res = await fetch('/api/standard/ai-reply-center/templates');
@@ -95,6 +102,19 @@ export default function ReviewsPage() {
     } finally {
       setTemplatesLoading(false);
     }
+  };
+
+  const fetchStats = async () => {
+    try {
+      const res = await fetch('/api/pro/dashboard/overview');
+      const json = await res.json();
+      if (json.success) setStats(json.data);
+    } catch (e) {}
+  };
+
+  const fetchTags = async () => {
+    const res: any = await getTagSummary();
+    if (res?.success) setTagSummary(res.summary);
   };
 
   const handleSyncNow = async () => {
@@ -117,19 +137,13 @@ export default function ReviewsPage() {
 
   const handleReplySubmit = async () => {
     if (!canReply || !selectedReviewId || !replyText.trim()) return;
-
     try {
       const res = await fetch('/api/standard/reviews/reply', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          reviewId: selectedReviewId,
-          replyText: replyText,
-        }),
+        body: JSON.stringify({ reviewId: selectedReviewId, replyText }),
       });
-
       const data = await res.json();
-
       if (data.success) {
         setToast({ message: '✅ Reply sent successfully!', type: 'success' });
         setShowReplyModal(false);
@@ -147,13 +161,11 @@ export default function ReviewsPage() {
     }
   };
 
-  // ✅ NEW: Template select handler — no AI, direct text set
   const handleSelectTemplate = (tpl: string) => {
     setSelectedTemplate(tpl);
     setReplyText(tpl);
   };
 
-  // ✅ NEW: Filtered templates by category (same logic as AI Reply Center)
   const filteredTemplates = templates.filter((tpl) => {
     if (templateCategory === 'All') return true;
     if (templateCategory === 'Positive') return tpl.includes('Positive') || tpl.includes('glowing') || tpl.includes('5-star') || tpl.includes('enjoyed') || tpl.includes('thrilled');
@@ -163,53 +175,20 @@ export default function ReviewsPage() {
     return true;
   });
 
-  // ✅ NEW: Open share modal
-  const handleShare = (name: string, text: string, rating: number) => {
-    setShareMenu({ open: true, name, text, rating });
-  };
+  const handleShare = (name: string, text: string, rating: number) => setShareMenu({ open: true, name, text, rating });
+  const closeShareMenu = () => setShareMenu((prev) => ({ ...prev, open: false }));
 
-  // ✅ Close share modal
-  const closeShareMenu = () => {
-    setShareMenu((prev) => ({ ...prev, open: false }));
-  };
-
-  // ✅ Perform share action
-  const shareCurrentReview = async (
-    platform: 'whatsapp' | 'x' | 'linkedin' | 'facebook' | 'copy'
-  ) => {
+  const shareCurrentReview = async (platform: 'whatsapp' | 'x' | 'linkedin' | 'facebook' | 'copy') => {
     if (!shareMenu.open) return;
-
     const shareText = `${shareMenu.rating}★ review from ${shareMenu.name}: "${shareMenu.text}"`;
     const pageUrl = window.location.href;
     const combinedText = `${shareText}\n${pageUrl}`;
-
     try {
-      if (platform === 'whatsapp') {
-        window.open(
-          `https://web.whatsapp.com/send?text=${encodeURIComponent(combinedText)}`,
-          '_blank',
-          'noopener,noreferrer'
-        );
-      } else if (platform === 'x') {
-        window.open(
-          `https://twitter.com/intent/tweet?text=${encodeURIComponent(combinedText)}`,
-          '_blank',
-          'noopener,noreferrer'
-        );
-      } else if (platform === 'linkedin') {
-        window.open(
-          `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(pageUrl)}`,
-          '_blank',
-          'noopener,noreferrer'
-        );
-      } else if (platform === 'facebook') {
-        window.open(
-          `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`,
-          '_blank',
-          'noopener,noreferrer'
-        );
-      } else {
-        // copy
+      if (platform === 'whatsapp') window.open(`https://web.whatsapp.com/send?text=${encodeURIComponent(combinedText)}`, '_blank', 'noopener,noreferrer');
+      else if (platform === 'x') window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(combinedText)}`, '_blank', 'noopener,noreferrer');
+      else if (platform === 'linkedin') window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(pageUrl)}`, '_blank', 'noopener,noreferrer');
+      else if (platform === 'facebook') window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`, '_blank', 'noopener,noreferrer');
+      else {
         if (navigator.clipboard?.writeText) {
           await navigator.clipboard.writeText(combinedText);
           setToast({ message: 'Review copied to clipboard!', type: 'success' });
@@ -224,15 +203,15 @@ export default function ReviewsPage() {
     }
   };
 
+  // ✅ Search + preset sentiment filter + custom filter (rating/source combine) + tag filter — sab ek saath
   const filteredReviews = reviews.filter((review) => {
     const name = review.author || review.reviewerName || '';
     const text = review.text || review.comment || '';
     const source = review.source || '';
     const rating = review.rating || 0;
+    const tags = review.tags || [];
 
-    const matchesSearch =
-      name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      text.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = name.toLowerCase().includes(searchTerm.toLowerCase()) || text.toLowerCase().includes(searchTerm.toLowerCase());
 
     let matchesSentiment = true;
     if (filterSentiment === 'Positive') matchesSentiment = rating >= 4;
@@ -241,398 +220,250 @@ export default function ReviewsPage() {
     else if (filterSentiment === 'Google') matchesSentiment = source.toLowerCase() === 'google';
     else if (filterSentiment === 'Facebook') matchesSentiment = source.toLowerCase() === 'facebook';
 
-    return matchesSearch && matchesSentiment;
+    const matchesCustomRating = customRating === null || rating === customRating;
+    const matchesCustomSource = customSource === null || source.toLowerCase() === customSource.toLowerCase();
+    const matchesTag = !selectedTag || tags.includes(selectedTag);
+
+    return matchesSearch && matchesSentiment && matchesCustomRating && matchesCustomSource && matchesTag;
   });
 
-  // ✅ Common theme classes
-  const bgMain = theme === "light" ? "bg-gray-50" : "bg-[#0B0E14]";
-  const textMain = theme === "light" ? "text-gray-900" : "text-gray-200";
-  const bgCard = theme === "light" ? "bg-white border-gray-200" : "bg-[#11141C] border-[#1F2430]";
-  const bgSubCard = theme === "light" ? "bg-gray-50 border-gray-200" : "bg-[#181D27] border-[#2A303C]";
-  const textPrimary = theme === "light" ? "text-gray-900" : "text-white";
-  const textSecondary = theme === "light" ? "text-gray-600" : "text-gray-400";
-  const textMuted = theme === "light" ? "text-gray-400" : "text-gray-500";
-  const inputBg = theme === "light" ? "bg-white border-gray-300 text-gray-900 placeholder-gray-400" : "bg-[#181D27] border-[#2A303C] text-gray-300 placeholder-gray-500";
-  const buttonBg = theme === "light" ? "bg-gray-100 border-gray-300 text-gray-700 hover:bg-gray-200" : "bg-[#181D27] border-[#2A303C] text-gray-400 hover:text-white hover:bg-[#222633]";
-  const pillInactive = theme === "light" ? "bg-gray-100 text-gray-600 border-gray-300" : "bg-[#1F2430] text-gray-400 border-[#2A303C]";
-  const pillActive = "bg-indigo-500/20 text-indigo-400 border-indigo-500/30";
-  const tableHeaderBg = theme === "light" ? "bg-gray-50/50" : "bg-[#181D27]/50";
-  const rowHover = theme === "light" ? "hover:bg-gray-100" : "hover:bg-[#181D27]";
-  const borderLight = theme === "light" ? "border-gray-200" : "border-[#1F2430]";
-  const divider = theme === "light" ? "divide-gray-200" : "divide-[#1F2430]";
-  const modalBg = theme === "light" ? "bg-white border-gray-200" : "bg-[#11141C] border-[#1F2430]";
+  const responseRate = stats?.responseRate ?? 0;
+  const avgRating = stats?.avgRating ?? 0;
 
   return (
-    <div className={`flex-1 flex flex-col p-6 overflow-y-auto transition-colors duration-300 ${bgMain} ${textMain}`}>
-      
-      {/* Toast Notification */}
+    <div className="page-wrap">
       {toast && (
-        <div 
-          className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg text-sm font-medium transition-all duration-300 ${
-            toast.type === 'success' ? 'bg-green-600 text-white' : 'bg-red-600 text-white'
-          }`}
-        >
+        <div style={{
+          position: "fixed", top: 18, right: 18, zIndex: 50, padding: "10px 16px", borderRadius: 12,
+          fontSize: 13, fontWeight: 600, color: "#fff",
+          background: toast.type === 'success' ? "#2fbf82" : "#ef5a6f",
+          boxShadow: "0 8px 20px rgba(0,0,0,.4)",
+        }}>
           {toast.message}
         </div>
       )}
 
-      {/* Page Header */}
-      <div className="flex justify-between items-center mb-6">
+      {/* header — Review Dashboard */}
+      <div className="header-row">
         <div>
-          <h1 className={`text-2xl font-bold ${textPrimary}`}>Reviews</h1>
-          <p className={`text-sm ${textSecondary}`}>Manage, filter, and sync all your customer reviews.</p>
+          <h1>Reviews</h1>
+          <p>Manage, filter, aur sync karo apne saare customer reviews — ek hi jagah (Unified Inbox).</p>
         </div>
+        <button className="btn-primary" onClick={handleSyncNow} disabled={isSyncing}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.5}>
+            <polyline points="23 4 23 10 17 10" /><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+          </svg>
+          {isSyncing ? "Syncing..." : "Sync Now"}
+        </button>
       </div>
 
-      {/* Top Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 mb-6">
-        
-        {/* Card 1: Search & Filter */}
-        <div className={`${bgCard} border rounded-xl p-4 flex flex-col gap-3`}>
-          <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium`}>
-            <Search size={14} /> Review Search & Filter
+      {/* Rating Overview + Response Rate Tracking + Unanswered — stat row */}
+      <div className="stats">
+        <LiquidCard className="stat-card">
+          <div className="stat-head"><p className="title">Total Reviews</p></div>
+          <p className="value">{stats?.totalReviews ?? reviews.length}</p>
+        </LiquidCard>
+        <LiquidCard className="stat-card">
+          <div className="stat-head"><p className="title">Average Rating</p></div>
+          <p className="value">{avgRating}</p>
+        </LiquidCard>
+        <LiquidCard className="stat-card">
+          <div className="stat-head"><p className="title">Response Rate</p></div>
+          <p className="value">{responseRate}%</p>
+        </LiquidCard>
+        <LiquidCard className="stat-card">
+          <div className="stat-head"><p className="title">Unanswered</p></div>
+          <p className="value" style={{ color: unansweredCount > 0 ? "#ef5a6f" : "#fff" }}>{unansweredCount}</p>
+        </LiquidCard>
+        <LiquidCard className="stat-card">
+          <div className="stat-head"><p className="title">Last Synced</p></div>
+          <p className="value" style={{ fontSize: 13 }}>{lastSynced}</p>
+        </LiquidCard>
+      </div>
+
+      {/* Review Search & Filter + Custom Filters */}
+      <LiquidCard className="section-card">
+        <div className="section-head">
+          <h3>Search & Filter</h3>
+          <div className="dropdown mini-glass" onClick={() => setCustomOpen((v) => !v)} style={{ position: "relative" }}>
+            <Filter size={13} /> Custom Filter
+            {customOpen && (
+              <div className="mini-glass" style={{ position: "absolute", top: "115%", right: 0, zIndex: 20, padding: 12, width: 220, cursor: "default" }} onClick={(e) => e.stopPropagation()}>
+                <p style={{ fontSize: 11, color: "var(--text-dim)", marginBottom: 6 }}>Rating</p>
+                <div style={{ display: "flex", gap: 6, marginBottom: 10, flexWrap: "wrap" }}>
+                  {[5, 4, 3, 2, 1].map((r) => (
+                    <span key={r} onClick={() => setCustomRating(customRating === r ? null : r)}
+                      style={{ fontSize: 11, padding: "4px 8px", borderRadius: 999, cursor: "pointer", background: customRating === r ? "rgba(174,71,255,.3)" : "rgba(255,255,255,.06)" }}>
+                      {r}★
+                    </span>
+                  ))}
+                </div>
+                <p style={{ fontSize: 11, color: "var(--text-dim)", marginBottom: 6 }}>Source</p>
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                  {["Google", "Facebook"].map((s) => (
+                    <span key={s} onClick={() => setCustomSource(customSource === s ? null : s)}
+                      style={{ fontSize: 11, padding: "4px 8px", borderRadius: 999, cursor: "pointer", background: customSource === s ? "rgba(174,71,255,.3)" : "rgba(255,255,255,.06)" }}>
+                      {s}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
-          <div className="flex gap-2">
-            <div className={`flex-1 border rounded-lg flex items-center px-3 py-2 ${inputBg}`}>
-              <Search size={16} className={`${textMuted} mr-2`} />
-              <input 
-                type="text" 
-                placeholder="Search reviews..." 
-                className="bg-transparent border-none outline-none text-sm w-full"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <button className={`${buttonBg} border rounded-lg px-3 py-2`}>
-              <Filter size={16} />
-            </button>
+        </div>
+        <div style={{ display: "flex", gap: 8, marginBottom: 10 }}>
+          <div className="mini-glass" style={{ flex: 1, display: "flex", alignItems: "center", gap: 8, padding: "9px 12px" }}>
+            <Search size={14} style={{ color: "var(--text-dim)" }} />
+            <input
+              type="text" placeholder="Search reviews..."
+              style={{ background: "transparent", border: "none", outline: "none", fontSize: 13, color: "#fff", width: "100%" }}
+              value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
-          <div className="flex flex-wrap gap-1.5">
-            {['Positive', 'Negative', 'Google', 'All'].map((sentiment) => (
-              <span 
-                key={sentiment}
-                className={`text-[10px] px-2 py-0.5 rounded-full cursor-pointer transition-colors ${
-                  filterSentiment === sentiment 
-                    ? sentiment === 'Positive' ? 'bg-green-500/20 text-green-400 border border-green-500/30'
-                    : sentiment === 'Negative' ? 'bg-red-500/20 text-red-400 border border-red-500/30'
-                    : sentiment === 'Google' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
-                    : 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30'
-                    : pillInactive
-                }`}
-                onClick={() => setFilterSentiment(sentiment)}
-              >
-                {sentiment}
+        </div>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+          {['All', 'Positive', 'Negative', 'Neutral', 'Google', 'Facebook'].map((s) => (
+            <span key={s} className={`rev-tag`} onClick={() => setFilterSentiment(s)}
+              style={{ cursor: "pointer", background: filterSentiment === s ? "rgba(174,71,255,.28)" : "rgba(255,255,255,.06)", color: filterSentiment === s ? "#c78bff" : "var(--text-dim)" }}>
+              {s}
+            </span>
+          ))}
+          {(customRating !== null || customSource !== null) && (
+            <span className="rev-tag" onClick={() => { setCustomRating(null); setCustomSource(null); }} style={{ cursor: "pointer", background: "rgba(239,90,111,.18)", color: "#ff8e9a" }}>
+              Clear Custom ✕
+            </span>
+          )}
+        </div>
+      </LiquidCard>
+
+      {/* Review Tags & Categories */}
+      {tagSummary.length > 0 && (
+        <LiquidCard className="section-card">
+          <div className="section-head"><h3>Tags & Categories</h3></div>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+            <span className="rev-tag" onClick={() => setSelectedTag(null)}
+              style={{ cursor: "pointer", background: !selectedTag ? "rgba(174,71,255,.28)" : "rgba(255,255,255,.06)", color: !selectedTag ? "#c78bff" : "var(--text-dim)" }}>
+              All
+            </span>
+            {tagSummary.map((t) => (
+              <span key={t.tag} className="rev-tag" onClick={() => setSelectedTag(selectedTag === t.tag ? null : t.tag)}
+                style={{ cursor: "pointer", background: selectedTag === t.tag ? "rgba(174,71,255,.28)" : "rgba(255,255,255,.06)", color: selectedTag === t.tag ? "#c78bff" : "var(--text-dim)" }}>
+                {t.tag} · {t.count}
               </span>
             ))}
           </div>
-        </div>
+        </LiquidCard>
+      )}
 
-        {/* Card 2: Unanswered Reviews */}
-        <div className={`${bgCard} border rounded-xl p-4 flex flex-col justify-between`}>
-          <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium`}>
-            <XCircle size={14} /> Unanswered Reviews
-          </div>
-          <div className="flex items-end justify-between mt-2">
-            <div className={`text-4xl font-bold ${textPrimary}`}>{unansweredCount}</div>
-            <div className="text-[10px] text-yellow-400 flex items-center gap-1">
-              <span className="w-1.5 h-1.5 bg-yellow-400 rounded-full"></span> Awaiting Reply
-            </div>
-          </div>
-          {canReply && (
-            <button className="w-full mt-3 bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-400 text-xs py-1.5 rounded-lg transition-colors">
-              Reply Now →
-            </button>
+      {/* Unified Inbox — Review Management list */}
+      <LiquidCard className="section-card">
+        <div className="section-head">
+          <h3>Review Management</h3>
+          <span className="link">{filteredReviews.length} reviews</span>
+        </div>
+        <div className="alerts-scroll" style={{ maxHeight: 420 }}>
+          {filteredReviews.length === 0 && (
+            <p style={{ color: "var(--text-dim)", fontSize: 13 }}>No matching reviews found.</p>
           )}
+          {filteredReviews.map((review, index) => {
+            const name = review.author || review.reviewerName || 'Anonymous';
+            const text = review.text || review.comment || '';
+            const rating = review.rating || 0;
+            const sentiment = rating >= 4 ? 'Positive' : rating >= 3 ? 'Neutral' : 'Negative';
+            const status = review.replied ? 'replied' : 'pending';
+            return (
+              <div className="review-row" key={review.id || index}>
+                <div className="rev-avatar">{name.charAt(0).toUpperCase()}</div>
+                <div className="rev-mid">
+                  <span className="rev-name">{name} <span className="rev-time">· {review.source}</span></span>
+                  <div className="rev-stars" style={rating <= 2 ? { color: "var(--red)" } : undefined}>
+                    {"★".repeat(rating)}{"☆".repeat(5 - rating)}
+                  </div>
+                  <div className="rev-text">{text}</div>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
+                  <span className={`rev-tag tag-${status === 'replied' ? 'replied' : sentiment === 'Negative' ? 'negative' : 'pending'}`}>
+                    {status === 'replied' ? 'Replied' : sentiment}
+                  </span>
+                  {status !== 'replied' && canReply && (
+                    <button className="btn-primary" style={{ padding: "5px 10px", fontSize: 11 }}
+                      onClick={() => { setSelectedReviewId(review.id); setSelectedReviewText(text); setReplyText(''); setSelectedTemplate(''); setTemplateCategory('All'); setShowReplyModal(true); }}>
+                      Reply
+                    </button>
+                  )}
+                  <div className="mini-glass" style={{ width: 26, height: 26, display: "flex", alignItems: "center", justifyContent: "center" }}
+                    onClick={() => handleShare(name, text, rating)}>
+                    <Share2 size={12} />
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
+      </LiquidCard>
 
-        {/* Card 3: Google Review Sync */}
-        <div className={`${bgCard} border rounded-xl p-4 flex flex-col justify-between`}>
-          <div className="flex items-center justify-between">
-            <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium`}>
-              <RefreshCw size={14} /> Google Review Sync
-            </div>
-            <span className="bg-blue-500/20 text-blue-400 text-[10px] font-bold px-2 py-0.5 rounded-full border border-blue-500/30">
-              500
-            </span>
-          </div>
-          <div className={`text-[10px] ${textMuted} mt-2`}>Last synced: {lastSynced}</div>
-        </div>
-
-      </div>
-
-      {/* Reviews Table */}
-      <div className={`${bgCard} border rounded-xl overflow-hidden flex flex-col`}>
-        
-        {/* Header */}
-        <div className={`grid grid-cols-12 gap-4 px-6 py-3 border-b ${borderLight} ${tableHeaderBg} text-[10px] text-gray-400 font-medium uppercase tracking-wider shrink-0`}>
-          <div className="col-span-4">Customer & Review</div>
-          <div className="col-span-1 text-center">Rating</div>
-          <div className="col-span-2 text-center">Sentiment</div>
-          <div className="col-span-2 text-center">Source</div>
-          <div className="col-span-3 text-center">Status / Action</div>
-        </div>
-
-        <div className={`h-[600px] overflow-y-auto custom-scroll ${divider}`}>
-          {filteredReviews.length > 0 ? (
-            filteredReviews.map((review, index) => (
-              <ReviewRow 
-                key={index}
-                reviewId={review.id}
-                reviewText={review.text || review.comment}
-                name={review.author || review.reviewerName}
-                text={review.text || review.comment}
-                rating={review.rating}
-                sentiment={review.rating >= 4 ? 'Positive' : review.rating >= 3 ? 'Neutral' : 'Negative'}
-                source={review.source}
-                status={review.replied ? 'Replied' : 'Unanswered'}
-                canReply={canReply}
-                onReplyClick={(id, text) => {
-                  setSelectedReviewId(id);
-                  setSelectedReviewText(text);
-                  setReplyText('');
-                  setSelectedTemplate('');
-                  setTemplateCategory('All');
-                  setShowReplyModal(true);
-                }}
-                onShareClick={handleShare}
-                theme={theme}
-              />
-            ))
-          ) : (
-            <div className={`p-6 text-center ${textMuted} text-sm`}>No matching reviews found.</div>
-          )}
-        </div>
-
-        <div className={`flex justify-between items-center px-6 py-4 border-t ${borderLight} text-[10px] ${textMuted} shrink-0`}>
-          <span>Showing {filteredReviews.length} reviews</span>
-          <div className="flex gap-2">
-            <button className={`px-3 py-1 rounded ${theme === "light" ? "bg-gray-200 text-gray-700 hover:bg-gray-300" : "bg-[#1F2430] hover:bg-[#2A303C] text-gray-400"}`}>Previous</button>
-            <button className={`px-3 py-1 rounded ${theme === "light" ? "bg-gray-200 text-gray-700 hover:bg-gray-300" : "bg-[#1F2430] hover:bg-[#2A303C] text-gray-400"}`}>Next</button>
-          </div>
-        </div>
-
-      </div>
-
-      {/* Reply Modal — ✅ UPDATED: template picker added */}
+      {/* Reply Modal */}
       {showReplyModal && canReply && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
-          <div className={`${modalBg} border rounded-xl p-6 w-[640px] max-h-[85vh] overflow-y-auto shadow-2xl`}>
-            <h3 className={`text-lg font-medium ${textPrimary} mb-3`}>Reply to Review</h3>
-            
-            <div className={`${bgSubCard} border rounded-lg p-3 mb-4`}>
-              <p className={`text-xs ${textSecondary} mb-1`}>Original Review:</p>
-              <p className={`text-sm ${textPrimary}`}>{selectedReviewText}</p>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.7)", backdropFilter: "blur(6px)", zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <LiquidCard style={{ width: 620, maxHeight: "85vh", overflowY: "auto" }}>
+            <div className="section-head">
+              <h3>Reply to Review</h3>
+              <X size={16} style={{ cursor: "pointer" }} onClick={() => setShowReplyModal(false)} />
             </div>
-
-            {/* ✅ NEW: Template category filter */}
-            <p className={`text-xs ${textSecondary} mb-2`}>Choose a template category:</p>
-            <div className="flex flex-wrap gap-2 mb-3">
+            <div className="mini-glass" style={{ padding: 12, marginBottom: 14 }}>
+              <p style={{ fontSize: 11, color: "var(--text-dim)", marginBottom: 4 }}>Original Review:</p>
+              <p style={{ fontSize: 13 }}>{selectedReviewText}</p>
+            </div>
+            <p style={{ fontSize: 12, color: "var(--text-dim)", marginBottom: 8 }}>Choose a template category:</p>
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 10 }}>
               {['All', 'General', 'Positive', 'Negative', 'Professional'].map((cat) => (
-                <button
-                  key={cat}
-                  className={`text-[10px] px-3 py-1 rounded-full border transition-colors ${
-                    templateCategory === cat ? pillActive : pillInactive
-                  }`}
-                  onClick={() => setTemplateCategory(cat)}
-                >
+                <span key={cat} className="rev-tag" onClick={() => setTemplateCategory(cat)}
+                  style={{ cursor: "pointer", background: templateCategory === cat ? "rgba(174,71,255,.28)" : "rgba(255,255,255,.06)", color: templateCategory === cat ? "#c78bff" : "var(--text-dim)" }}>
                   {cat}
-                </button>
+                </span>
               ))}
             </div>
-
-            {/* ✅ NEW: Template list */}
-            <div className={`space-y-1.5 max-h-[180px] overflow-y-auto custom-scroll mb-4 pr-1`}>
-              {templatesLoading && (
-                <div className={`text-xs ${textMuted}`}>Loading templates...</div>
-              )}
-              {!templatesLoading && filteredTemplates.length === 0 && (
-                <div className={`text-xs ${textMuted}`}>No templates in this category.</div>
-              )}
+            <div style={{ maxHeight: 160, overflowY: "auto", marginBottom: 14 }} className="alerts-scroll">
+              {templatesLoading && <div style={{ fontSize: 12, color: "var(--text-dim)" }}>Loading templates...</div>}
+              {!templatesLoading && filteredTemplates.length === 0 && <div style={{ fontSize: 12, color: "var(--text-dim)" }}>No templates in this category.</div>}
               {filteredTemplates.map((tpl, idx) => (
-                <div
-                  key={idx}
-                  onClick={() => handleSelectTemplate(tpl)}
-                  className={`text-xs px-3 py-2 rounded-lg border cursor-pointer transition-colors ${
-                    selectedTemplate === tpl
-                      ? 'bg-indigo-500/20 border-indigo-500/40 text-indigo-300'
-                      : theme === "light"
-                        ? "bg-gray-50 border-gray-200 hover:bg-gray-100 text-gray-700"
-                        : "bg-[#181D27] border-[#2A303C] hover:bg-[#222633] text-gray-300"
-                  }`}
-                >
+                <div key={idx} onClick={() => handleSelectTemplate(tpl)} className="mini-glass"
+                  style={{ padding: "8px 10px", fontSize: 12, marginBottom: 6, cursor: "pointer", background: selectedTemplate === tpl ? "rgba(174,71,255,.22)" : undefined }}>
                   {tpl}
                 </div>
               ))}
             </div>
-
-            <p className={`text-xs ${textSecondary} mb-1`}>Final reply (aap edit bhi kar sakte ho):</p>
+            <p style={{ fontSize: 12, color: "var(--text-dim)", marginBottom: 6 }}>Final reply (edit bhi kar sakte ho):</p>
             <textarea
-              className={`w-full border rounded-lg p-3 text-sm focus:outline-none focus:border-indigo-500 resize-none ${inputBg}`}
-              rows={4}
-              placeholder="Select a template above, or write your own reply..."
-              value={replyText}
-              onChange={(e) => setReplyText(e.target.value)}
+              rows={4} placeholder="Select a template above, or write your own reply..."
+              value={replyText} onChange={(e) => setReplyText(e.target.value)}
+              style={{ width: "100%", background: "rgba(255,255,255,.05)", border: "1px solid rgba(255,255,255,.1)", borderRadius: 10, padding: 12, fontSize: 13, color: "#fff", resize: "none" }}
             />
-            <div className="flex justify-end gap-3 mt-4">
-              <button
-                className={`px-4 py-2 rounded-lg transition-colors ${
-                  theme === "light" 
-                    ? "bg-gray-200 text-gray-700 hover:bg-gray-300" 
-                    : "bg-[#1F2430] text-gray-400 hover:bg-[#2A303C]"
-                }`}
-                onClick={() => {
-                  setShowReplyModal(false);
-                  setReplyText('');
-                  setSelectedReviewId(null);
-                  setSelectedReviewText('');
-                  setSelectedTemplate('');
-                  setTemplateCategory('All');
-                }}
-              >
-                Cancel
-              </button>
-              <button
-                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                onClick={handleReplySubmit}
-                disabled={!replyText.trim()}
-              >
-                Send Reply
-              </button>
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: 10, marginTop: 14 }}>
+              <div className="mini-glass" style={{ padding: "9px 16px", fontSize: 13 }} onClick={() => setShowReplyModal(false)}>Cancel</div>
+              <button className="btn-primary" disabled={!replyText.trim()} onClick={handleReplySubmit}>Send Reply</button>
             </div>
-          </div>
+          </LiquidCard>
         </div>
       )}
 
       {/* Share Modal */}
       {shareMenu.open && (
-        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
-          <div className={`${modalBg} border rounded-xl p-6 w-[420px] shadow-2xl`}>
-            <h3 className={`text-lg font-medium ${textPrimary} mb-2`}>Share Review</h3>
-            <p className={`text-sm ${textSecondary} mb-4 line-clamp-2`}>
-              {shareMenu.name} · {shareMenu.rating}★
-            </p>
-
-            <div className="grid grid-cols-2 gap-3">
-              <button
-                className="px-4 py-2 rounded-lg bg-green-600 hover:bg-green-500 text-white text-sm"
-                onClick={() => shareCurrentReview('whatsapp')}
-              >
-                WhatsApp
-              </button>
-
-              <button
-                className="px-4 py-2 rounded-lg bg-black hover:bg-zinc-800 text-white text-sm"
-                onClick={() => shareCurrentReview('x')}
-              >
-                X
-              </button>
-
-              <button
-                className="px-4 py-2 rounded-lg bg-blue-700 hover:bg-blue-600 text-white text-sm"
-                onClick={() => shareCurrentReview('linkedin')}
-              >
-                LinkedIn
-              </button>
-
-              <button
-                className="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-sm"
-                onClick={() => shareCurrentReview('facebook')}
-              >
-                Facebook
-              </button>
-
-              <button
-                className={`col-span-2 px-4 py-2 rounded-lg text-sm ${
-                  theme === 'light'
-                    ? 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                    : 'bg-[#1F2430] text-gray-300 hover:bg-[#2A303C]'
-                }`}
-                onClick={() => shareCurrentReview('copy')}
-              >
-                Copy Text
-              </button>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.7)", backdropFilter: "blur(6px)", zIndex: 50, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <LiquidCard style={{ width: 380 }}>
+            <div className="section-head"><h3>Share Review</h3></div>
+            <p style={{ fontSize: 12, color: "var(--text-dim)", marginBottom: 14 }}>{shareMenu.name} · {shareMenu.rating}★</p>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+              <div className="mini-glass" style={{ padding: "9px", textAlign: "center", fontSize: 12 }} onClick={() => shareCurrentReview('whatsapp')}>WhatsApp</div>
+              <div className="mini-glass" style={{ padding: "9px", textAlign: "center", fontSize: 12 }} onClick={() => shareCurrentReview('x')}>X</div>
+              <div className="mini-glass" style={{ padding: "9px", textAlign: "center", fontSize: 12 }} onClick={() => shareCurrentReview('linkedin')}>LinkedIn</div>
+              <div className="mini-glass" style={{ padding: "9px", textAlign: "center", fontSize: 12 }} onClick={() => shareCurrentReview('facebook')}>Facebook</div>
+              <div className="mini-glass" style={{ padding: "9px", textAlign: "center", fontSize: 12, gridColumn: "span 2" }} onClick={() => shareCurrentReview('copy')}>Copy Text</div>
             </div>
-
-            <button
-              className={`mt-4 w-full px-4 py-2 rounded-lg text-sm ${
-                theme === 'light'
-                  ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  : 'bg-[#1F2430] text-gray-400 hover:bg-[#2A303C]'
-              }`}
-              onClick={closeShareMenu}
-            >
-              Cancel
-            </button>
-          </div>
+            <div className="mini-glass" style={{ marginTop: 10, padding: "9px", textAlign: "center", fontSize: 12 }} onClick={closeShareMenu}>Cancel</div>
+          </LiquidCard>
         </div>
       )}
-    </div>
-  );
-}
-
-function ReviewRow({ reviewId, reviewText, name, text, rating, sentiment, source, status, canReply, onReplyClick, onShareClick, theme }: any) {
-  const rowBg = theme === "light" ? "hover:bg-gray-100" : "hover:bg-[#181D27]";
-  const nameColor = theme === "light" ? "text-gray-900" : "text-white";
-  const textColor = theme === "light" ? "text-gray-600" : "text-gray-400";
-  const avatarBg = "bg-blue-900 text-blue-300";
-
-  return (
-    <div className={`grid grid-cols-12 gap-4 px-6 py-4 transition-colors ${rowBg}`}>
-      <div className="col-span-4 flex flex-col gap-1">
-        <div className="flex items-center gap-2">
-          <div className={`w-6 h-6 rounded-full ${avatarBg} flex items-center justify-center text-[10px] font-bold`}>
-            {name.split(' ').map((n: string) => n[0]).join('')}
-          </div>
-          <span className={`text-xs font-medium ${nameColor}`}>{name}</span>
-        </div>
-        <div className={`text-[11px] ${textColor} line-clamp-2`}>{text}</div>
-      </div>
-      <div className="col-span-1 flex items-center justify-center gap-1">
-        <div className="flex text-[10px] text-yellow-500">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <span key={i}>{i < rating ? '★' : '☆'}</span>
-          ))}
-        </div>
-      </div>
-      <div className="col-span-2 flex items-center justify-center">
-        <span className={`text-[10px] px-2 py-0.5 rounded-full border ${
-          sentiment === 'Positive' ? 'bg-green-500/20 text-green-400 border-green-500/30' :
-          sentiment === 'Negative' ? 'bg-red-500/20 text-red-400 border-red-500/30' :
-          'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
-        }`}>
-          {sentiment}
-        </span>
-      </div>
-      <div className="col-span-2 flex items-center justify-center">
-        <span className={`text-[10px] px-2 py-0.5 rounded-full border ${
-          source === 'Google' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
-          'bg-purple-500/10 text-purple-400 border-purple-500/20'
-        }`}>
-          {source}
-        </span>
-      </div>
-      <div className="col-span-3 flex items-center justify-center flex-wrap gap-1.5">
-        <span className={`text-[10px] px-2 py-0.5 rounded-full ${
-          status === 'Replied' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'
-        }`}>
-          {status}
-        </span>
-        {status === 'Unanswered' && canReply && (
-          <button 
-            className="text-[10px] bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-0.5 rounded"
-            onClick={() => onReplyClick(reviewId, reviewText)}
-          >
-            Reply
-          </button>
-        )}
-        <button
-          className={`flex items-center justify-center w-5 h-5 rounded ${theme === "light" ? "bg-gray-100 hover:bg-gray-200 text-gray-500" : "bg-[#1F2430] hover:bg-[#2A303C] text-gray-400"}`}
-          onClick={() => onShareClick(name, text, rating)}
-          title="Share this review"
-        >
-          <Share2 size={12} />
-        </button>
-      </div>
     </div>
   );
 }
