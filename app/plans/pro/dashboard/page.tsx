@@ -184,24 +184,6 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [customizeOpen, setCustomizeOpen] = useState(false);
-  const [customizePos, setCustomizePos] = useState<{ top: number; left: number } | null>(null);
-  const customizeBtnRef = useRef<HTMLDivElement>(null);
-  const customizePanelRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!customizeOpen) return;
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as Node;
-      if (
-        customizePanelRef.current && !customizePanelRef.current.contains(target) &&
-        customizeBtnRef.current && !customizeBtnRef.current.contains(target)
-      ) {
-        setCustomizeOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [customizeOpen]);
   const [hiddenActions, setHiddenActions] = useState<string[]>([]);
   const [actionOrder, setActionOrder] = useState<string[]>(quickActions.map((a) => a.label));
   const [actionColors, setActionColors] = useState<Record<string, string>>({});
@@ -233,42 +215,25 @@ export default function Page() {
     if (savedSize === "compact" || savedSize === "comfortable") setCardSize(savedSize);
   }, []);
 
-  const toggleAction = (label: string) => {
-    setHiddenActions((prev) => {
-      const next = prev.includes(label) ? prev.filter((l) => l !== label) : [...prev, label];
-      localStorage.setItem("hiddenQuickActions", JSON.stringify(next));
-      return next;
-    });
-  };
-
-  const moveAction = (label: string, dir: -1 | 1) => {
-    setActionOrder((prev) => {
-      const idx = prev.indexOf(label);
-      const newIdx = idx + dir;
-      if (newIdx < 0 || newIdx >= prev.length) return prev;
-      const next = [...prev];
-      [next[idx], next[newIdx]] = [next[newIdx], next[idx]];
-      localStorage.setItem("quickActionsOrder", JSON.stringify(next));
-      return next;
-    });
-  };
-
-  const changeActionColor = (label: string, colorKey: string) => {
-    setActionColors((prev) => {
-      const next = { ...prev, [label]: colorKey };
-      localStorage.setItem("quickActionsColors", JSON.stringify(next));
-      return next;
-    });
-  };
-
-  const changeCardStyle = (style: "glass" | "solid" | "minimal") => {
-    setCardStyle(style);
-    localStorage.setItem("quickActionsCardStyle", style);
-  };
-
-  const changeCardSize = (size: "compact" | "comfortable") => {
-    setCardSize(size);
-    localStorage.setItem("quickActionsCardSize", size);
+  /* Modal ka "Save Changes" dabane par hi ye chalta hai — tab tak dashboard untouched rehta hai */
+  const applyQuickActionsCustomize = (prefs: {
+    order: string[];
+    hidden: string[];
+    colors: Record<string, string>;
+    cardStyle: "glass" | "solid" | "minimal";
+    cardSize: "compact" | "comfortable";
+  }) => {
+    setActionOrder(prefs.order);
+    localStorage.setItem("quickActionsOrder", JSON.stringify(prefs.order));
+    setHiddenActions(prefs.hidden);
+    localStorage.setItem("hiddenQuickActions", JSON.stringify(prefs.hidden));
+    setActionColors(prefs.colors);
+    localStorage.setItem("quickActionsColors", JSON.stringify(prefs.colors));
+    setCardStyle(prefs.cardStyle);
+    localStorage.setItem("quickActionsCardStyle", prefs.cardStyle);
+    setCardSize(prefs.cardSize);
+    localStorage.setItem("quickActionsCardSize", prefs.cardSize);
+    setCustomizeOpen(false);
   };
 
   const visibleActions = actionOrder
@@ -425,42 +390,27 @@ export default function Page() {
           <h3>Quick Actions</h3>
           <div
             className="dropdown mini-glass"
-            ref={customizeBtnRef}
-            onClick={() => {
-              if (!customizeOpen && customizeBtnRef.current) {
-                const rect = customizeBtnRef.current.getBoundingClientRect();
-                setCustomizePos({ top: rect.bottom + 8, left: Math.max(8, rect.right - 260) });
-              }
-              setCustomizeOpen((v) => !v);
-            }}
-            style={{ position: "relative" }}
+            onClick={() => setCustomizeOpen(true)}
           >
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
               <path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6" />
             </svg>
             Customize
-            {customizeOpen && customizePos && typeof document !== "undefined" &&
-              createPortal(
-                <div ref={customizePanelRef}>
-                  <QuickActionsCustomizer
-                    actions={quickActions}
-                    order={actionOrder}
-                    hidden={hiddenActions}
-                    colors={actionColors}
-                    cardStyle={cardStyle}
-                    cardSize={cardSize}
-                    onToggleHidden={toggleAction}
-                    onMove={moveAction}
-                    onColorChange={changeActionColor}
-                    onStyleChange={changeCardStyle}
-                    onSizeChange={changeCardSize}
-                    onClose={() => setCustomizeOpen(false)}
-                    style={{ position: "fixed", top: customizePos.top, left: customizePos.left }}
-                  />
-                </div>,
-                document.body
-              )}
           </div>
+          {customizeOpen && typeof document !== "undefined" &&
+            createPortal(
+              <QuickActionsCustomizer
+                actions={quickActions}
+                order={actionOrder}
+                hidden={hiddenActions}
+                colors={actionColors}
+                cardStyle={cardStyle}
+                cardSize={cardSize}
+                onSave={applyQuickActionsCustomize}
+                onCancel={() => setCustomizeOpen(false)}
+              />,
+              document.body
+            )}
         </div>
         <div className="actions-grid">
           {visibleActions.map((a) => (
