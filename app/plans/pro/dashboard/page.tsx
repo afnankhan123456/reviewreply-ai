@@ -2,6 +2,8 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
+import Link from "next/link";
+import QuickActionsCustomizer, { QUICK_ACTION_COLORS } from "./quick-actions-customizer";
 import { getAutoReplyMode, setAutoReplyMode } from "./ai-reply-center/actions";
 
 /* Reusable wrapper that gives any section the layered iOS liquid-glass surface */
@@ -182,6 +184,10 @@ export default function Page() {
   const [error, setError] = useState<string | null>(null);
   const [customizeOpen, setCustomizeOpen] = useState(false);
   const [hiddenActions, setHiddenActions] = useState<string[]>([]);
+  const [actionOrder, setActionOrder] = useState<string[]>(quickActions.map((a) => a.label));
+  const [actionColors, setActionColors] = useState<Record<string, string>>({});
+  const [cardStyle, setCardStyle] = useState<"glass" | "solid" | "minimal">("glass");
+  const [cardSize, setCardSize] = useState<"compact" | "comfortable">("comfortable");
 
   useEffect(() => {
     fetchOverview();
@@ -190,6 +196,22 @@ export default function Page() {
     if (saved) {
       try { setHiddenActions(JSON.parse(saved)); } catch (e) {}
     }
+    const savedOrder = localStorage.getItem("quickActionsOrder");
+    if (savedOrder) {
+      try {
+        const parsed = JSON.parse(savedOrder);
+        const validLabels = quickActions.map((a) => a.label);
+        if (Array.isArray(parsed) && parsed.every((l) => validLabels.includes(l))) setActionOrder(parsed);
+      } catch (e) {}
+    }
+    const savedColors = localStorage.getItem("quickActionsColors");
+    if (savedColors) {
+      try { setActionColors(JSON.parse(savedColors)); } catch (e) {}
+    }
+    const savedStyle = localStorage.getItem("quickActionsCardStyle");
+    if (savedStyle === "glass" || savedStyle === "solid" || savedStyle === "minimal") setCardStyle(savedStyle);
+    const savedSize = localStorage.getItem("quickActionsCardSize");
+    if (savedSize === "compact" || savedSize === "comfortable") setCardSize(savedSize);
   }, []);
 
   const toggleAction = (label: string) => {
@@ -200,7 +222,42 @@ export default function Page() {
     });
   };
 
-  const visibleActions = quickActions.filter((a) => !hiddenActions.includes(a.label));
+  const moveAction = (label: string, dir: -1 | 1) => {
+    setActionOrder((prev) => {
+      const idx = prev.indexOf(label);
+      const newIdx = idx + dir;
+      if (newIdx < 0 || newIdx >= prev.length) return prev;
+      const next = [...prev];
+      [next[idx], next[newIdx]] = [next[newIdx], next[idx]];
+      localStorage.setItem("quickActionsOrder", JSON.stringify(next));
+      return next;
+    });
+  };
+
+  const changeActionColor = (label: string, colorKey: string) => {
+    setActionColors((prev) => {
+      const next = { ...prev, [label]: colorKey };
+      localStorage.setItem("quickActionsColors", JSON.stringify(next));
+      return next;
+    });
+  };
+
+  const changeCardStyle = (style: "glass" | "solid" | "minimal") => {
+    setCardStyle(style);
+    localStorage.setItem("quickActionsCardStyle", style);
+  };
+
+  const changeCardSize = (size: "compact" | "comfortable") => {
+    setCardSize(size);
+    localStorage.setItem("quickActionsCardSize", size);
+  };
+
+  const visibleActions = actionOrder
+    .map((label) => quickActions.find((a) => a.label === label))
+    .filter((a): a is typeof quickActions[number] => !!a && !hiddenActions.includes(a.label));
+
+  const getActionColorValue = (label: string) =>
+    QUICK_ACTION_COLORS.find((c) => c.key === (actionColors[label] || "purple"))?.value || "#ae47ff";
 
   const [autoReplyOn, setAutoReplyOn] = useState(false);
   const [templates, setTemplates] = useState<string[]>([]);
@@ -353,38 +410,35 @@ export default function Page() {
             </svg>
             Customize
             {customizeOpen && (
-              <div
-                className="mini-glass"
-                style={{ position: "absolute", top: "115%", right: 0, zIndex: 20, padding: 10, width: 200, cursor: "default" }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                {quickActions.map((a) => (
-                  <label key={a.label} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, padding: "6px 4px", cursor: "pointer" }}>
-                    <input
-                      type="checkbox"
-                      checked={!hiddenActions.includes(a.label)}
-                      onChange={() => toggleAction(a.label)}
-                    />
-                    {a.label}
-                  </label>
-                ))}
-              </div>
+              <QuickActionsCustomizer
+                actions={quickActions}
+                order={actionOrder}
+                hidden={hiddenActions}
+                colors={actionColors}
+                cardStyle={cardStyle}
+                cardSize={cardSize}
+                onToggleHidden={toggleAction}
+                onMove={moveAction}
+                onColorChange={changeActionColor}
+                onStyleChange={changeCardStyle}
+                onSizeChange={changeCardSize}
+              />
             )}
           </div>
         </div>
         <div className="actions-grid">
           {visibleActions.map((a) => (
-            <a href={a.href} key={a.label} style={{ textDecoration: "none", color: "inherit" }}>
-              <LiquidCard className="action-card">
+            <Link href={a.href} key={a.label} style={{ textDecoration: "none", color: "inherit" }}>
+              <LiquidCard className={`action-card style-${cardStyle} size-${cardSize}`}>
                 <div className="action-head">
-                  <div className="action-icon">
+                  <div className="action-icon" style={{ background: `${getActionColorValue(a.label)}29`, color: getActionColorValue(a.label) }}>
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>{a.icon}</svg>
                   </div>
                   <b>{a.label}</b>
                 </div>
                 <div className="sub">{a.sub} →</div>
               </LiquidCard>
-            </a>
+            </Link>
           ))}
         </div>
       </LiquidCard>
@@ -437,13 +491,13 @@ export default function Page() {
               ))}
             </div>
           </div>
-          <div className="view-analytics"><a href="/plans/pro/dashboard/analytics" className="link">View all analytics →</a></div>
+          <div className="view-analytics"><Link href="/plans/pro/dashboard/analytics" className="link">View all analytics →</Link></div>
         </LiquidCard>
 
         <LiquidCard>
           <div className="section-head">
             <h3>Recent Activity</h3>
-            <a href="/plans/pro/dashboard/reviews" className="link">View all</a>
+            <Link href="/plans/pro/dashboard/reviews" className="link">View all</Link>
           </div>
           {recentReviews.length === 0 && (
             <p style={{ color: "var(--text-dim)", fontSize: 13 }}>No reviews yet.</p>
