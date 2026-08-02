@@ -121,11 +121,11 @@ const statMeta = [
 ];
 
 const quickActions = [
-  { label: "Reply to Reviews", sub: "Reply to pending reviews", href: "/plans/pro/dashboard/reviews", icon: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /> },
-  { label: "AI Reply", sub: "Generate AI replies", href: "/plans/pro/dashboard/ai-reply-center", icon: <path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" fill="currentColor" /> },
-  { label: "Analyze Reviews", sub: "Get AI insights", href: "/plans/pro/dashboard/analytics", icon: <><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></> },
-  { label: "Create Report", sub: "Download reports", href: "/plans/pro/dashboard/reports", icon: <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></> },
-  { label: "Connect Platform", sub: "Add review sources", href: "/plans/pro/dashboard/connect-app", icon: <><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1" /><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1" /></> },
+  { label: "Reply to Reviews", sub: "Reply to pending reviews", href: "/plans/pro/dashboard/reviews", defaultColor: "blue", icon: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /> },
+  { label: "AI Reply", sub: "Generate AI replies", href: "/plans/pro/dashboard/ai-reply-center", defaultColor: "purple", icon: <path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" fill="currentColor" /> },
+  { label: "Analyze Reviews", sub: "Get AI insights", href: "/plans/pro/dashboard/analytics", defaultColor: "green", icon: <><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></> },
+  { label: "Create Report", sub: "Download reports", href: "/plans/pro/dashboard/reports", defaultColor: "orange", icon: <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></> },
+  { label: "Connect Platform", sub: "Add review sources", href: "/plans/pro/dashboard/connect-app", defaultColor: "blue", icon: <><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1" /><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1" /></> },
 ];
 
 const navItems = [
@@ -240,8 +240,12 @@ export default function Page() {
     .map((label) => quickActions.find((a) => a.label === label))
     .filter((a): a is typeof quickActions[number] => !!a && !hiddenActions.includes(a.label));
 
-  const getActionColorValue = (label: string) =>
-    QUICK_ACTION_COLORS.find((c) => c.key === (actionColors[label] || "purple"))?.value || "#ae47ff";
+  const getActionColorValue = (label: string) => {
+    const override = actionColors[label];
+    const action = quickActions.find((a) => a.label === label);
+    const colorKey = override && override !== "default" ? override : action?.defaultColor || "purple";
+    return QUICK_ACTION_COLORS.find((c) => c.key === colorKey)?.value || "#ae47ff";
+  };
 
   const [autoReplyOn, setAutoReplyOn] = useState(false);
   const [templates, setTemplates] = useState<string[]>([]);
@@ -413,19 +417,23 @@ export default function Page() {
             )}
         </div>
         <div className="actions-grid">
-          {visibleActions.map((a) => (
-            <Link href={a.href} key={a.label} style={{ textDecoration: "none", color: "inherit" }}>
-              <LiquidCard className={`action-card style-${cardStyle} size-${cardSize}`}>
-                <div className="action-head">
-                  <div className="action-icon" style={{ background: `${getActionColorValue(a.label)}29`, color: getActionColorValue(a.label) }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>{a.icon}</svg>
+          {visibleActions.map((a) => {
+            const colorValue = getActionColorValue(a.label);
+            return (
+              <Link href={a.href} key={a.label} style={{ textDecoration: "none", color: "inherit" }}>
+                <LiquidCard
+                  className={`action-card style-${cardStyle} size-${cardSize} themed`}
+                  style={{ ["--action-color" as any]: colorValue }}
+                >
+                  <div className="action-icon-badge">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>{a.icon}</svg>
                   </div>
                   <b>{a.label}</b>
-                </div>
-                <div className="sub">{a.sub} →</div>
-              </LiquidCard>
-            </Link>
-          ))}
+                  <div className="sub">{a.sub} →</div>
+                </LiquidCard>
+              </Link>
+            );
+          })}
         </div>
       </LiquidCard>
 

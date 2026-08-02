@@ -11,7 +11,7 @@ export const QUICK_ACTION_COLORS: { key: string; value: string }[] = [
   { key: "red", value: "#ef5a6f" },
 ];
 
-type ActionMeta = { label: string; sub: string; icon: ReactNode };
+type ActionMeta = { label: string; sub: string; icon: ReactNode; defaultColor?: string };
 
 export type QuickActionsPrefs = {
   order: string[];
@@ -94,7 +94,11 @@ export default function QuickActionsCustomizer({
               <div className="qa-row-controls">
                 <span
                   className="qa-swatch"
-                  style={{ background: QUICK_ACTION_COLORS.find((c) => c.key === draftColors[a.label])?.value || "#ae47ff" }}
+                  style={{
+                    background: QUICK_ACTION_COLORS.find(
+                      (c) => c.key === (draftColors[a.label] && draftColors[a.label] !== "default" ? draftColors[a.label] : a.defaultColor || "purple")
+                    )?.value || "#ae47ff",
+                  }}
                 ></span>
                 <button type="button" className="qa-arrow" disabled={i === 0} onClick={() => move(a.label, -1)}>▲</button>
                 <button type="button" className="qa-arrow" disabled={i === orderedActions.length - 1} onClick={() => move(a.label, 1)}>▼</button>
@@ -104,23 +108,36 @@ export default function QuickActionsCustomizer({
 
           {/* --- per-action color pickers --- */}
           <p className="qa-customizer-label" style={{ marginTop: 14 }}>Colors</p>
-          {orderedActions.map((a) => (
-            <div className="qa-color-row" key={`color-${a.label}`}>
-              <span className="qa-color-name">{a.label}</span>
-              <div className="qa-swatch-group">
-                {QUICK_ACTION_COLORS.map((c) => (
+          {orderedActions.map((a) => {
+            const effectiveKey = draftColors[a.label] && draftColors[a.label] !== "default"
+              ? draftColors[a.label]
+              : (a.defaultColor || "purple");
+            const isDefault = !draftColors[a.label] || draftColors[a.label] === "default";
+            return (
+              <div className="qa-color-row" key={`color-${a.label}`}>
+                <span className="qa-color-name">{a.label}</span>
+                <div className="qa-swatch-group">
                   <button
                     type="button"
-                    key={c.key}
-                    className={`qa-swatch-btn${(draftColors[a.label] || "purple") === c.key ? " active" : ""}`}
-                    style={{ background: c.value }}
-                    onClick={() => changeColor(a.label, c.key)}
-                    aria-label={c.key}
-                  ></button>
-                ))}
+                    className={`qa-swatch-btn qa-swatch-default${isDefault ? " active" : ""}`}
+                    onClick={() => changeColor(a.label, "default")}
+                    aria-label="default"
+                    title="Default"
+                  >↺</button>
+                  {QUICK_ACTION_COLORS.map((c) => (
+                    <button
+                      type="button"
+                      key={c.key}
+                      className={`qa-swatch-btn${!isDefault && effectiveKey === c.key ? " active" : ""}`}
+                      style={{ background: c.value }}
+                      onClick={() => changeColor(a.label, c.key)}
+                      aria-label={c.key}
+                    ></button>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
 
           {/* --- card style --- */}
           <p className="qa-customizer-label" style={{ marginTop: 14 }}>Card Style</p>
