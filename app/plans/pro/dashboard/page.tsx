@@ -32,7 +32,31 @@ function LiquidCard({
   );
 }
 
-function Spark({ color, path }: { color: string; path: string }) {
+/* Real din-wise data se dynamic sparkline path banata hai — normalize karke min/max ke hisaab se upar/niche */
+function buildSparkPath(values: number[]) {
+  const w = 94, h = 30, padY = 3;
+  if (!values || values.length === 0) return `M0 ${h / 2} L${w} ${h / 2}`;
+  if (values.length === 1) return `M0 ${h / 2} L${w} ${h / 2}`;
+  const min = Math.min(...values);
+  const max = Math.max(...values);
+  const range = max - min || 1;
+  const stepX = w / (values.length - 1);
+  const pts = values.map((v, i) => ({
+    x: i * stepX,
+    y: padY + (1 - (v - min) / range) * (h - padY * 2),
+  }));
+  let d = `M${pts[0].x.toFixed(1)} ${pts[0].y.toFixed(1)}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const cur = pts[i], next = pts[i + 1];
+    d += ` Q${cur.x.toFixed(1)} ${cur.y.toFixed(1)} ${((cur.x + next.x) / 2).toFixed(1)} ${((cur.y + next.y) / 2).toFixed(1)}`;
+  }
+  const lastPt = pts[pts.length - 1];
+  d += ` T${lastPt.x.toFixed(1)} ${lastPt.y.toFixed(1)}`;
+  return d;
+}
+
+function Spark({ color, values }: { color: string; values: number[] }) {
+  const path = buildSparkPath(values);
   return (
     <svg className="spark" viewBox="0 0 94 30" preserveAspectRatio="none">
       <path d={path} fill="none" stroke={color} strokeWidth={6} opacity={0.25} filter="blur(3px)" />
@@ -48,7 +72,6 @@ const statMeta = [
     icon: "purple",
     label: "Total Reviews",
     deltaClass: "green",
-    path: "M0 20 Q 20 8 40 15 T 80 13 T 94 9",
     color: "#ae47ff",
     format: (d: any) => d.totalReviews ?? 0,
     svg: (
@@ -65,7 +88,6 @@ const statMeta = [
     icon: "gold",
     label: "Average Rating",
     deltaClass: "amber",
-    path: "M0 12 Q 20 22 40 14 T 80 18 T 94 22",
     color: "#e9b52a",
     format: (d: any) => d.avgRating ?? 0,
     svg: (
@@ -79,7 +101,6 @@ const statMeta = [
     icon: "green",
     label: "New Reviews",
     deltaClass: "green",
-    path: "M0 22 Q 20 16 40 18 T 80 6 T 94 10",
     color: "#34d399",
     format: (d: any) => d.newReviews ?? 0,
     svg: (
@@ -93,7 +114,6 @@ const statMeta = [
     icon: "blue",
     label: "Response Rate",
     deltaClass: "green",
-    path: "M0 18 Q 20 10 40 14 T 80 8 T 94 12",
     color: "#4da3ff",
     format: (d: any) => `${d.responseRate ?? 0}%`,
     svg: (
@@ -108,7 +128,6 @@ const statMeta = [
     icon: "red",
     label: "Low Rating Reviews",
     deltaClass: "red",
-    path: "M0 8 Q 20 14 40 10 T 80 18 T 94 14",
     color: "#ef5a6f",
     format: (d: any) => d.lowRatingCount ?? 0,
     svg: (
@@ -383,7 +402,7 @@ export default function Page() {
               <p className="title">{s.label}</p>
             </div>
             <p className="value">{s.format(data)}</p>
-            <Spark color={s.color} path={s.path} />
+            <Spark color={s.color} values={data?.trend?.[s.key] ?? []} />
           </LiquidCard>
         ))}
       </div>
