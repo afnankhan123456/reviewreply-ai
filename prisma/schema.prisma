@@ -66,6 +66,7 @@ model User {
   teamMembersOwned    TeamMember[]        @relation("TeamOwner")
   teamMembershipOf    TeamMember[]        @relation("TeamMembership")
   articleFeedback     ArticleFeedback[]
+  quickActionsPrefs   Json?
 }
 
 model BusinessLocation {
