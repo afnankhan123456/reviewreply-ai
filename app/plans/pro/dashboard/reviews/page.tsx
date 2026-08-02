@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { Search, Filter, RefreshCw, Share2, X } from 'lucide-react';
 import { getTagSummary } from './actions';
@@ -232,6 +233,7 @@ export default function ReviewsPage() {
 
   return (
     <div className="page-wrap">
+      <Link href="/plans/pro/dashboard" className="link" style={{ display: "inline-flex", alignItems: "center", gap: 6, marginBottom: 16 }}>← Back to Dashboard</Link>
       {toast && (
         <div style={{
           position: "fixed", top: 18, right: 18, zIndex: 50, padding: "10px 16px", borderRadius: 12,
