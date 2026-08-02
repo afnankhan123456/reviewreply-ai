@@ -4,8 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSession, signIn } from 'next-auth/react';
 import {
-  CheckCircle, Clock,
-  ExternalLink, Mail, Building2, X, PlugZap
+  CheckCircle, Clock, ExternalLink, Mail, Building2, X, PlugZap, ArrowLeft
 } from 'lucide-react';
 import {
   getConnectionStatus,
@@ -15,6 +14,22 @@ import {
   saveSelectedLocation,
   removeSelectedLocation,
 } from './actions';
+
+function LiquidCard({ className = "", children, ...rest }: { className?: string; children: React.ReactNode; [key: string]: any }) {
+  return (
+    <div className={`card ${className}`} {...rest}>
+      <div className="volume"></div>
+      <div className="refract"></div>
+      <div className="cornerBloom"></div>
+      <div className="bodyShade"></div>
+      <div className="specular"></div>
+      <div className="edgeLight"></div>
+      <div className="rim"></div>
+      <div className="rightGlow"></div>
+      <div className="content">{children}</div>
+    </div>
+  );
+}
 
 export default function ConnectAppPage() {
   const { data: authSession } = useSession();
@@ -34,26 +49,14 @@ export default function ConnectAppPage() {
   const [locationsUsed, setLocationsUsed] = useState<number>(0);
   const [savingLocationId, setSavingLocationId] = useState<string | null>(null);
 
-  // ✅ Theme state
-  const [theme, setTheme] = useState<"light" | "dark">("dark");
-
-  useEffect(() => {
-    const saved = localStorage.getItem("theme");
-    if (saved === "light" || saved === "dark") {
-      setTheme(saved);
-    }
-  }, []);
-
   useEffect(() => {
     if (!isOwner) {
       setLoading(false);
       return;
     }
-
     const fetchConnectionStatus = async () => {
       setLoading(true);
       const result = await getConnectionStatus();
-
       if (result.success) {
         setIsGmailConnected(result.gmailConnected ?? false);
         setEmailLimit(result.alertEmailsLimit ?? 0);
@@ -64,37 +67,12 @@ export default function ConnectAppPage() {
       } else {
         console.error('Failed to fetch status:', result.error);
       }
-
       const selectedResult = await getSelectedLocations();
-      if (selectedResult.success) {
-        setSelectedLocations(selectedResult.locations || []);
-      }
-
+      if (selectedResult.success) setSelectedLocations(selectedResult.locations || []);
       setLoading(false);
     };
-
     fetchConnectionStatus();
   }, [isOwner]);
-
-  // ✅ Common theme classes
-  const bgMain = theme === "light" ? "bg-gray-50" : "bg-[#0B0E14]";
-  const bgCard = theme === "light" ? "bg-white border-gray-200" : "bg-[#11141C] border-[#1F2430]";
-  const bgSubCard = theme === "light" ? "bg-gray-50 border-gray-200" : "bg-[#181D27] border-[#2A303C]";
-  const textPrimary = theme === "light" ? "text-gray-900" : "text-white";
-  const textSecondary = theme === "light" ? "text-gray-600" : "text-gray-400";
-  const textMuted = theme === "light" ? "text-gray-500" : "text-gray-500";
-  const borderCard = theme === "light" ? "border-gray-200" : "border-[#1F2430]";
-  const borderSubCard = theme === "light" ? "border-gray-200" : "border-[#2A303C]";
-  const iconBg = theme === "light" ? "bg-gray-100 border-gray-200" : "bg-[#181D27] border-[#2A303C]";
-  const connectedGreen = "text-green-400"; // keep accent
-  const disconnectedRed = "text-red-400"; // keep accent
-  const pillGreenConnected = "bg-green-500/10 border-green-500/30 text-green-400 hover:bg-green-500/20";
-  const pillRedDisconnect = "bg-red-500/10 border-red-500/30 text-red-400 hover:bg-red-500/20";
-  const pillDisabled = "bg-gray-800 border-gray-700 text-gray-500 cursor-not-allowed opacity-60";
-  const fetchButton = "bg-green-500/10 border-green-500/30 text-green-400 hover:bg-green-500/20";
-  const selectedLocBg = theme === "light" ? "bg-green-50 border-green-200 text-green-700" : "bg-green-500/10 border-green-500/40 text-green-400";
-  const removeButton = theme === "light" ? "bg-red-100 text-red-600 hover:bg-red-200" : "bg-red-600/20 text-red-400 hover:bg-red-600/30";
-  const locItemBg = theme === "light" ? "bg-gray-50 border-gray-200" : "bg-[#181D27] border-[#2A303C]";
 
   const toggleConnection = async () => {
     const action = isGmailConnected ? 'disconnect' : 'connect';
@@ -111,11 +89,8 @@ export default function ConnectAppPage() {
     setLoadingLocations(true);
     setLocationError(null);
     const result = await getGoogleBusinessLocations();
-    if (result.success) {
-      setLocations(result.locations);
-    } else {
-      setLocationError(result.error || 'Failed to fetch locations');
-    }
+    if (result.success) setLocations(result.locations);
+    else setLocationError(result.error || 'Failed to fetch locations');
     setLoadingLocations(false);
   };
 
@@ -126,12 +101,9 @@ export default function ConnectAppPage() {
       setLocationError(`You can only connect ${locationsLimit} location(s) on your current plan.`);
       return;
     }
-
     setSavingLocationId(location.id);
     setLocationError(null);
-
     const result = await saveSelectedLocation(location.id, location.title, location.address);
-
     if (result.success) {
       setSelectedLocations((prev) => [...prev, location]);
       setIsGoogleConnected(true);
@@ -139,20 +111,16 @@ export default function ConnectAppPage() {
     } else {
       setLocationError(result.error || 'Failed to save location');
     }
-
     setSavingLocationId(null);
   };
 
   const handleRemoveLocation = async (locationId: string) => {
     setSavingLocationId(locationId);
     const result = await removeSelectedLocation(locationId);
-
     if (result.success) {
       setSelectedLocations((prev) => prev.filter((loc) => loc.id !== locationId));
       setLocationsUsed(result.locationsUsed ?? Math.max(0, selectedLocations.length - 1));
-      if (selectedLocations.length - 1 === 0) {
-        setIsGoogleConnected(false);
-      }
+      if (selectedLocations.length - 1 === 0) setIsGoogleConnected(false);
     } else {
       alert(result.error || 'Failed to remove location');
     }
@@ -160,21 +128,15 @@ export default function ConnectAppPage() {
   };
 
   if (loading) {
-    return (
-      <div className={`flex-1 flex items-center justify-center ${bgMain} ${textSecondary}`}>
-        Loading connection status...
-      </div>
-    );
+    return <div className="page-wrap"><p style={{ color: "var(--text-dim)", padding: 40 }}>Loading connection status...</p></div>;
   }
 
   if (!isOwner) {
     return (
-      <div className={`flex-1 flex flex-col items-center justify-center ${bgMain} text-center p-6`}>
-        <PlugZap size={40} className="text-gray-600 mb-3" />
-        <h2 className={`text-lg font-medium ${textPrimary}`}>Access Denied</h2>
-        <p className={`text-sm ${textSecondary} mt-1`}>
-          Only the account owner can manage app connections.
-        </p>
+      <div className="page-wrap" style={{ textAlign: "center", paddingTop: 80 }}>
+        <PlugZap size={40} style={{ color: "var(--text-dimmer)", marginBottom: 12 }} />
+        <h2 style={{ fontSize: 17, fontWeight: 600 }}>Access Denied</h2>
+        <p style={{ fontSize: 13, color: "var(--text-dim)", marginTop: 4 }}>Only the account owner can manage app connections.</p>
       </div>
     );
   }
@@ -182,208 +144,144 @@ export default function ConnectAppPage() {
   const remaining = Math.max(0, emailLimit - emailsUsed);
 
   return (
-    <div className={`flex-1 flex flex-col p-6 overflow-y-auto transition-colors duration-300 ${bgMain}`}>
-      <Link href="/plans/pro/dashboard" className={`inline-flex items-center gap-1 text-sm mb-4 hover:opacity-80 ${textSecondary}`}>← Back to Dashboard</Link>
+    <div className="page-wrap">
+      <div className="header-row">
+        <div>
+          <Link href="/plans/pro/dashboard" className="link" style={{ display: "inline-flex", alignItems: "center", gap: 4, marginBottom: 8, fontSize: 12 }}>
+            <ArrowLeft size={13} /> Back to Dashboard
+          </Link>
+          <h1>Connect App</h1>
+          <p>Manage your Gmail and Google Business connections.</p>
+        </div>
+      </div>
 
-      <header className="mb-8">
-        <h1 className={`text-2xl font-bold ${textPrimary} flex items-center gap-2`}>
-          Connect App
-        </h1>
-        <p className={`text-sm ${textSecondary} mt-1`}>Manage your Gmail and Google Business connections.</p>
-      </header>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="two-col">
         {/* Gmail Card */}
-        <div className={`${bgCard} border rounded-xl p-5 hover:border-[#2A303C] transition-colors`}>
-          <div className="flex items-start justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center border ${iconBg}`}>
-                <Mail size={24} className={textPrimary} />
+        <LiquidCard>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <div className="mini-glass" style={{ width: 44, height: 44, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Mail size={20} />
               </div>
               <div>
-                <h3 className={`font-medium ${textPrimary}`}>Gmail</h3>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className={`w-1.5 h-1.5 rounded-full ${isGmailConnected ? 'bg-green-500' : 'bg-red-500'}`}></span>
-                  <span className={`text-xs ${isGmailConnected ? connectedGreen : disconnectedRed}`}>
-                    {isGmailConnected ? 'Connected' : 'Disconnected'}
-                  </span>
+                <h3 style={{ fontSize: 14, fontWeight: 600, margin: 0 }}>Gmail</h3>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
+                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: isGmailConnected ? "#34d399" : "#ef5a6f" }}></span>
+                  <span style={{ fontSize: 11, color: isGmailConnected ? "#57e39a" : "#ff8e9a" }}>{isGmailConnected ? 'Connected' : 'Disconnected'}</span>
                 </div>
               </div>
             </div>
-
-            <button
-              onClick={toggleConnection}
-              disabled={isGmailConnected}
-              className={`p-2 rounded border transition-colors text-xs font-medium ${
-                isGmailConnected
-                  ? pillDisabled
-                  : isGmailConnected
-                    ? pillRedDisconnect
-                    : pillGreenConnected
-              }`}
-            >
+            <div className="mini-glass" style={{ padding: "7px 12px", fontSize: 11, opacity: isGmailConnected ? 0.6 : 1, cursor: isGmailConnected ? "default" : "pointer" }} onClick={!isGmailConnected ? toggleConnection : undefined}>
               {isGmailConnected ? 'Already Connected' : 'Connect'}
-            </button>
-          </div>
-
-          <div className={`flex items-center justify-between pt-4 border-t ${borderCard}`}>
-            <div className={`flex items-center gap-2 text-[10px] ${textMuted}`}>
-              <Clock size={12} />
-              <span>Last sync: {isGmailConnected ? "Just now" : "N/A"}</span>
             </div>
-
+          </div>
+          <div style={{ display: "flex", justifyContent: "space-between", paddingTop: 12, borderTop: "1px solid rgba(255,255,255,.08)" }}>
+            <span style={{ fontSize: 10.5, color: "var(--text-dimmer)", display: "flex", alignItems: "center", gap: 4 }}>
+              <Clock size={11} /> Last sync: {isGmailConnected ? "Just now" : "N/A"}
+            </span>
             {isGmailConnected ? (
-              <div className={`flex items-center gap-1 text-[10px] ${connectedGreen}`}>
-                <CheckCircle size={12} />
-                <span>Active</span>
-              </div>
+              <span style={{ fontSize: 10.5, color: "#57e39a", display: "flex", alignItems: "center", gap: 4 }}><CheckCircle size={11} /> Active</span>
             ) : (
-              <div className={`flex items-center gap-1 text-[10px] ${disconnectedRed} cursor-pointer hover:underline`} onClick={toggleConnection}>
-                <ExternalLink size={12} />
-                <span>Connect</span>
-              </div>
+              <span style={{ fontSize: 10.5, color: "#ff8e9a", display: "flex", alignItems: "center", gap: 4, cursor: "pointer" }} onClick={toggleConnection}><ExternalLink size={11} /> Connect</span>
             )}
           </div>
-        </div>
+        </LiquidCard>
 
         {/* Google Business Card */}
-        <div className={`${bgCard} border rounded-xl p-5 hover:border-[#2A303C] transition-colors`}>
-          <div className="flex items-start justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className={`w-12 h-12 rounded-xl flex items-center justify-center border ${iconBg}`}>
-                <Building2 size={24} className={textPrimary} />
+        <LiquidCard>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 14, flexWrap: "wrap", gap: 10 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <div className="mini-glass" style={{ width: 44, height: 44, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Building2 size={20} />
               </div>
               <div>
-                <h3 className={`font-medium ${textPrimary}`}>Google Business</h3>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className={`w-1.5 h-1.5 rounded-full ${isGoogleConnected ? 'bg-green-500' : 'bg-red-500'}`}></span>
-                  <span className={`text-xs ${isGoogleConnected ? connectedGreen : disconnectedRed}`}>
-                    {isGoogleConnected ? 'Connected' : 'Disconnected'}
-                  </span>
+                <h3 style={{ fontSize: 14, fontWeight: 600, margin: 0 }}>Google Business</h3>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 4 }}>
+                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: isGoogleConnected ? "#34d399" : "#ef5a6f" }}></span>
+                  <span style={{ fontSize: 11, color: isGoogleConnected ? "#57e39a" : "#ff8e9a" }}>{isGoogleConnected ? 'Connected' : 'Disconnected'}</span>
                 </div>
               </div>
             </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handleConnectGoogleBusiness}
-                disabled={loadingLocations}
-                className="p-2 rounded border transition-colors text-xs font-medium bg-green-500/10 border-green-500/30 text-green-400 hover:bg-green-500/20 disabled:opacity-50"
-              >
+            <div style={{ display: "flex", gap: 8 }}>
+              <div className="mini-glass" style={{ padding: "7px 12px", fontSize: 11, opacity: loadingLocations ? 0.6 : 1 }} onClick={!loadingLocations ? handleConnectGoogleBusiness : undefined}>
                 {loadingLocations ? 'Loading...' : 'Fetch Locations'}
-              </button>
-
-              <button
-                onClick={() =>
-                  signIn("google", {
-                    callbackUrl: "/plans/pro/dashboard/connect-app",
-                  })
-                }
-                className="p-2 rounded border transition-colors text-xs font-medium bg-blue-500/10 border-blue-500/30 text-blue-400 hover:bg-blue-500/20"
-                title="Refresh your Google Business permission if locations stop loading"
-              >
-                Reconnect Business
-              </button>
+              </div>
+              <div className="mini-glass" style={{ padding: "7px 12px", fontSize: 11 }}
+                onClick={() => signIn("google", { callbackUrl: "/plans/pro/dashboard/connect-app" })}
+                title="Refresh your Google Business permission if locations stop loading">
+                Reconnect
+              </div>
             </div>
           </div>
 
           {locationError?.includes('No Google access token') && (
-            <p className="text-xs text-yellow-400 mb-2">
-              Your Google Business access expired. Click "Reconnect Business" above to restore it.
-            </p>
+            <p style={{ fontSize: 11, color: "#e9b52a", marginBottom: 8 }}>Your Google Business access expired. Click "Reconnect" above to restore it.</p>
           )}
 
-          {/* Plan limit indicator */}
-          <div className="flex items-center justify-between mb-3 px-1">
-            <span className={`text-xs ${textSecondary}`}>Locations connected</span>
-            <span className={`text-xs font-medium ${isLimitReached ? 'text-yellow-400' : textPrimary}`}>
-              {selectedLocations.length} / {locationsLimit}
-            </span>
+          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 10, fontSize: 11 }}>
+            <span style={{ color: "var(--text-dim)" }}>Locations connected</span>
+            <span style={{ color: isLimitReached ? "#e9b52a" : "#fff", fontWeight: 600 }}>{selectedLocations.length} / {locationsLimit}</span>
           </div>
 
-          {locationError && (
-            <p className="text-xs text-red-400 mb-2">{locationError}</p>
-          )}
+          {locationError && <p style={{ fontSize: 11, color: "#ff8e9a", marginBottom: 8 }}>{locationError}</p>}
 
-          {/* Already selected locations */}
           {selectedLocations.length > 0 && (
-            <div className="space-y-2 mb-3">
+            <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 10 }}>
               {selectedLocations.map((loc) => (
-                <div
-                  key={loc.id}
-                  className={`flex items-center justify-between p-2 rounded-lg border ${selectedLocBg} text-xs`}
-                >
+                <div key={loc.id} className="mini-glass" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: 10, background: "rgba(52,211,153,.08)" }}>
                   <div>
-                    <p className={textPrimary}>{loc.title}</p>
-                    <p className={textMuted}>{loc.address}</p>
+                    <p style={{ fontSize: 12, margin: 0 }}>{loc.title}</p>
+                    <p style={{ fontSize: 10.5, color: "var(--text-dim)", margin: 0 }}>{loc.address}</p>
                   </div>
-                  <button
-                    onClick={() => handleRemoveLocation(loc.id)}
-                    disabled={savingLocationId === loc.id}
-                    className={`p-1.5 rounded ${removeButton} disabled:opacity-50`}
-                    title="Remove location"
-                  >
+                  <div style={{ padding: 6, cursor: savingLocationId === loc.id ? "default" : "pointer", opacity: savingLocationId === loc.id ? 0.5 : 1 }} onClick={() => savingLocationId !== loc.id && handleRemoveLocation(loc.id)}>
                     <X size={12} />
-                  </button>
+                  </div>
                 </div>
               ))}
             </div>
           )}
 
-          {/* Fetched locations list to pick from */}
           {locations.length > 0 && (
-            <div className="space-y-2 mt-2 max-h-48 overflow-y-auto">
-              {locations
-                .filter((loc) => !selectedLocations.some((sel) => sel.id === loc.id))
-                .map((loc) => (
-                  <div
-                    key={loc.id}
-                    className={`flex items-center justify-between p-2 rounded-lg border ${locItemBg} text-xs`}
-                  >
-                    <div>
-                      <p className={textPrimary}>{loc.title}</p>
-                      <p className={textMuted}>{loc.address}</p>
-                    </div>
-                    <button
-                      onClick={() => handleSelectLocation(loc)}
-                      disabled={isLimitReached || savingLocationId === loc.id}
-                      className={`px-2 py-1 rounded text-[10px] transition ${
-                        isLimitReached
-                          ? 'bg-gray-700 text-gray-400 cursor-not-allowed'
-                          : 'bg-indigo-600 text-white hover:bg-indigo-500'
-                      }`}
-                    >
-                      {savingLocationId === loc.id
-                        ? 'Saving...'
-                        : isLimitReached
-                          ? 'Limit reached'
-                          : 'Select'}
-                    </button>
+            <div className="alerts-scroll" style={{ display: "flex", flexDirection: "column", gap: 6, maxHeight: 190 }}>
+              {locations.filter((loc) => !selectedLocations.some((sel) => sel.id === loc.id)).map((loc) => (
+                <div key={loc.id} className="mini-glass" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: 10 }}>
+                  <div>
+                    <p style={{ fontSize: 12, margin: 0 }}>{loc.title}</p>
+                    <p style={{ fontSize: 10.5, color: "var(--text-dim)", margin: 0 }}>{loc.address}</p>
                   </div>
-                ))}
+                  <div
+                    onClick={() => !isLimitReached && savingLocationId !== loc.id && handleSelectLocation(loc)}
+                    style={{
+                      padding: "5px 10px", borderRadius: 8, fontSize: 10.5,
+                      background: isLimitReached ? "rgba(255,255,255,.05)" : "rgba(174,71,255,.25)",
+                      color: isLimitReached ? "var(--text-dimmer)" : "#c78bff",
+                      cursor: isLimitReached ? "not-allowed" : "pointer",
+                    }}
+                  >
+                    {savingLocationId === loc.id ? 'Saving...' : isLimitReached ? 'Limit reached' : 'Select'}
+                  </div>
+                </div>
+              ))}
             </div>
           )}
-        </div>
+        </LiquidCard>
       </div>
 
       {isGmailConnected && (
-        <div className={`mt-6 ${bgCard} border rounded-xl p-5`}>
-          <h3 className={`font-medium ${textPrimary} mb-4`}>Email Usage</h3>
-          <div className="space-y-3">
-            <div className="flex justify-between text-sm">
-              <span className={textSecondary}>Total Limit</span>
-              <span className={textPrimary}>{emailLimit} / month</span>
+        <LiquidCard className="section-card">
+          <div className="section-head"><h3>Email Usage</h3></div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13 }}>
+              <span style={{ color: "var(--text-dim)" }}>Total Limit</span><span>{emailLimit} / month</span>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className={textSecondary}>Used</span>
-              <span className={textPrimary}>{emailsUsed}</span>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13 }}>
+              <span style={{ color: "var(--text-dim)" }}>Used</span><span>{emailsUsed}</span>
             </div>
-            <div className="flex justify-between text-sm">
-              <span className={textSecondary}>Remaining</span>
-              <span className={textPrimary}>{remaining}</span>
+            <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13 }}>
+              <span style={{ color: "var(--text-dim)" }}>Remaining</span><span>{remaining}</span>
             </div>
           </div>
-        </div>
+        </LiquidCard>
       )}
     </div>
   );
