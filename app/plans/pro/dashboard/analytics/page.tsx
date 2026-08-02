@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { 
   BarChart3, TrendingUp, TrendingDown, PieChart, 
   Star, ThumbsUp, ThumbsDown, Minus, RefreshCw
@@ -98,6 +99,7 @@ export default function AnalyticsPage() {
 
   return (
     <div className={`flex-1 flex flex-col p-6 overflow-y-auto transition-colors duration-300 ${bgMain} ${textMain}`}>
+      <Link href="/plans/pro/dashboard" className={`inline-flex items-center gap-1 text-sm mb-4 hover:opacity-80 ${textSecondary}`}>← Back to Dashboard</Link>
       
       {/* Page Header */}
       <div className="flex justify-between items-center mb-6">
