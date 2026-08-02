@@ -225,6 +225,40 @@ body{
 .action-card .sub{font-size:10.5px;color:var(--text-dim)}
 @media(max-width:1000px){.actions-grid{grid-template-columns:repeat(2,1fr)}}
 
+/* ---- Quick Actions: customizable card style variants ---- */
+.action-card.style-solid{background:rgba(255,255,255,.06)!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;border:1px solid rgba(255,255,255,.1)!important;box-shadow:0 6px 16px rgba(0,0,0,.35)!important}
+.action-card.style-solid .volume,.action-card.style-solid .refract,.action-card.style-solid .cornerBloom,.action-card.style-solid .rightGlow,.action-card.style-solid .edgeLight{display:none}
+.action-card.style-minimal{background:transparent!important;border:none!important;box-shadow:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.action-card.style-minimal .volume,.action-card.style-minimal .refract,.action-card.style-minimal .cornerBloom,.action-card.style-minimal .specular,.action-card.style-minimal .edgeLight,.action-card.style-minimal .rim,.action-card.style-minimal .rightGlow,.action-card.style-minimal .bodyShade{display:none}
+
+/* ---- Quick Actions: customizable card size variants ---- */
+.action-card.size-compact{padding:7px;height:78px}
+.action-card.size-compact .action-icon{width:18px;height:18px}
+.action-card.size-compact .action-icon svg{width:9px;height:9px}
+.action-card.size-compact b{font-size:10px}
+.action-card.size-compact .sub{font-size:9px}
+
+/* ---- Quick Actions: Customize panel ---- */
+.qa-customizer{max-height:360px;overflow-y:auto}
+.qa-customizer-label{margin:0 0 6px;font-size:10.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--text-dimmer)}
+.qa-row{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:4px 2px}
+.qa-row-check{display:flex;align-items:center;gap:8px;font-size:12px;cursor:pointer}
+.qa-row-controls{display:flex;align-items:center;gap:4px}
+.qa-swatch{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.qa-arrow{width:20px;height:20px;border-radius:6px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.05);color:var(--text-dim);font-size:9px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.qa-arrow:disabled{opacity:.3;cursor:default}
+.qa-color-row{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:4px 2px}
+.qa-color-name{font-size:11px;color:var(--text-dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:110px}
+.qa-swatch-group{display:flex;gap:5px}
+.qa-swatch-btn{width:15px;height:15px;border-radius:50%;border:2px solid transparent;cursor:pointer;padding:0}
+.qa-swatch-btn.active{border-color:#fff}
+.qa-pill-group{display:flex;gap:6px;flex-wrap:wrap}
+.qa-pill{
+  font-size:11px;font-weight:600;color:var(--text-dim);cursor:pointer;
+  padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);
+}
+.qa-pill.active{background:linear-gradient(135deg,#a561f6,#7b2db9);color:#fff;border-color:transparent}
+
 /* ============ TWO COLUMN: OVERVIEW + RECENT REVIEWS ============ */
 .two-col{display:grid;grid-template-columns:1fr 1.3fr;gap:18px;margin-bottom:20px}
 .two-col .card{padding:14px}
