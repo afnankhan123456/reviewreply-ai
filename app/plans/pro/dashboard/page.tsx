@@ -297,10 +297,12 @@ export default function Page() {
           {quickActions.map((a) => (
             <a href={a.href} key={a.label} style={{ textDecoration: "none", color: "inherit" }}>
               <LiquidCard className="action-card">
-                <div className="action-icon">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>{a.icon}</svg>
+                <div className="action-head">
+                  <div className="action-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>{a.icon}</svg>
+                  </div>
+                  <b>{a.label}</b>
                 </div>
-                <b>{a.label}</b>
                 <div className="sub">{a.sub} →</div>
               </LiquidCard>
             </a>
