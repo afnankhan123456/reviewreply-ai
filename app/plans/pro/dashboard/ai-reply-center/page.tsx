@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import {
   Sparkles, BarChart3, MessageSquare, RefreshCw,
   ThumbsUp, Copy, CheckCircle, Clock, Check, X, Settings2
@@ -192,6 +193,7 @@ export default function AIReplyCenterPage() {
     <div className={`flex-1 flex flex-col p-6 overflow-y-auto transition-colors duration-300 ${
       theme === "light" ? "bg-gray-50 text-gray-900" : "bg-[#0B0E14] text-gray-200"
     }`}>
+      <Link href="/plans/pro/dashboard" className={`inline-flex items-center gap-1 text-sm mb-4 hover:opacity-80 ${textSecondary}`}>← Back to Dashboard</Link>
 
       {/* Page Header */}
       <div className="flex justify-between items-center mb-6">
