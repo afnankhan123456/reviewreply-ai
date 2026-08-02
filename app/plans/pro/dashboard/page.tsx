@@ -353,19 +353,21 @@ export default function Page() {
         {alerts.length === 0 ? (
           <p style={{ color: "var(--text-dim)", fontSize: 13 }}>No low-rating alerts right now. 🎉</p>
         ) : (
-          alerts.slice(0, 5).map((a) => (
-            <div className="review-row" key={a.id}>
-              <div className="rev-avatar">⚠️</div>
-              <div className="rev-mid">
-                <span className="rev-name">{a.reviewerName}</span>
-                <div className="rev-stars" style={{ color: "var(--red)" }}>
-                  {"★".repeat(a.rating)}{"☆".repeat(5 - a.rating)}
+          <div className="alerts-scroll">
+            {alerts.slice(0, 10).map((a) => (
+              <div className="review-row" key={a.id}>
+                <div className="rev-avatar">⚠️</div>
+                <div className="rev-mid">
+                  <span className="rev-name">{a.reviewerName}</span>
+                  <div className="rev-stars" style={{ color: "var(--red)" }}>
+                    {"★".repeat(a.rating)}{"☆".repeat(5 - a.rating)}
+                  </div>
+                  <div className="rev-text">{a.comment}</div>
                 </div>
-                <div className="rev-text">{a.comment}</div>
+                <span className="rev-tag tag-negative">{a.source || "Review"}</span>
               </div>
-              <span className="rev-tag tag-negative">{a.source || "Review"}</span>
-            </div>
-          ))
+            ))}
+          </div>
         )}
       </LiquidCard>
 
