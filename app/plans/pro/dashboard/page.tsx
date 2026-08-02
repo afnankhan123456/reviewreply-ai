@@ -185,11 +185,27 @@ export default function Page() {
   const [alerts, setAlerts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [customizeOpen, setCustomizeOpen] = useState(false);
+  const [hiddenActions, setHiddenActions] = useState<string[]>([]);
 
   useEffect(() => {
     fetchOverview();
     fetchAlerts();
+    const saved = localStorage.getItem("hiddenQuickActions");
+    if (saved) {
+      try { setHiddenActions(JSON.parse(saved)); } catch (e) {}
+    }
   }, []);
+
+  const toggleAction = (label: string) => {
+    setHiddenActions((prev) => {
+      const next = prev.includes(label) ? prev.filter((l) => l !== label) : [...prev, label];
+      localStorage.setItem("hiddenQuickActions", JSON.stringify(next));
+      return next;
+    });
+  };
+
+  const visibleActions = quickActions.filter((a) => !hiddenActions.includes(a.label));
 
   const fetchOverview = async () => {
     try {
@@ -286,15 +302,33 @@ export default function Page() {
       <LiquidCard className="section-card">
         <div className="section-head">
           <h3>Quick Actions</h3>
-          <div className="dropdown mini-glass">
+          <div className="dropdown mini-glass" onClick={() => setCustomizeOpen((v) => !v)} style={{ position: "relative" }}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
               <path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6" />
             </svg>
             Customize
+            {customizeOpen && (
+              <div
+                className="mini-glass"
+                style={{ position: "absolute", top: "115%", right: 0, zIndex: 20, padding: 10, width: 200, cursor: "default" }}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {quickActions.map((a) => (
+                  <label key={a.label} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 12, padding: "6px 4px", cursor: "pointer" }}>
+                    <input
+                      type="checkbox"
+                      checked={!hiddenActions.includes(a.label)}
+                      onChange={() => toggleAction(a.label)}
+                    />
+                    {a.label}
+                  </label>
+                ))}
+              </div>
+            )}
           </div>
         </div>
         <div className="actions-grid">
-          {quickActions.map((a) => (
+          {visibleActions.map((a) => (
             <a href={a.href} key={a.label} style={{ textDecoration: "none", color: "inherit" }}>
               <LiquidCard className="action-card">
                 <div className="action-head">
