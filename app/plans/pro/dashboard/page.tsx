@@ -403,19 +403,21 @@ export default function Page() {
           {recentReviews.length === 0 && (
             <p style={{ color: "var(--text-dim)", fontSize: 13 }}>No reviews yet.</p>
           )}
-          {recentReviews.map((r: any) => (
-            <div className="review-row" key={r.id}>
-              <div className="rev-avatar">{(r.name || "?").charAt(0).toUpperCase()}</div>
-              <div className="rev-mid">
-                <span className="rev-name">{r.name} <span className="rev-time">· {r.time}</span></span>
-                <div className="rev-stars" style={r.stars <= 1 ? { color: "var(--red)" } : undefined}>
-                  {"★".repeat(r.stars)}{"☆".repeat(5 - r.stars)}
+          <div className="alerts-scroll">
+            {recentReviews.map((r: any) => (
+              <div className="review-row" key={r.id}>
+                <div className="rev-avatar">{(r.name || "?").charAt(0).toUpperCase()}</div>
+                <div className="rev-mid">
+                  <span className="rev-name">{r.name} <span className="rev-time">· {r.time}</span></span>
+                  <div className="rev-stars" style={r.stars <= 1 ? { color: "var(--red)" } : undefined}>
+                    {"★".repeat(r.stars)}{"☆".repeat(5 - r.stars)}
+                  </div>
+                  <div className="rev-text">{r.text}</div>
                 </div>
-                <div className="rev-text">{r.text}</div>
+                <span className={`rev-tag tag-${r.tag}`}>{r.tag[0].toUpperCase() + r.tag.slice(1)}</span>
               </div>
-              <span className={`rev-tag tag-${r.tag}`}>{r.tag[0].toUpperCase() + r.tag.slice(1)}</span>
-            </div>
-          ))}
+            ))}
+          </div>
         </LiquidCard>
       </div>
 
