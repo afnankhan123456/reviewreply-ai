@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useSession, signIn } from 'next-auth/react';
 import {
   CheckCircle, Clock,
@@ -182,6 +183,7 @@ export default function ConnectAppPage() {
 
   return (
     <div className={`flex-1 flex flex-col p-6 overflow-y-auto transition-colors duration-300 ${bgMain}`}>
+      <Link href="/plans/pro/dashboard" className={`inline-flex items-center gap-1 text-sm mb-4 hover:opacity-80 ${textSecondary}`}>← Back to Dashboard</Link>
 
       <header className="mb-8">
         <h1 className={`text-2xl font-bold ${textPrimary} flex items-center gap-2`}>
