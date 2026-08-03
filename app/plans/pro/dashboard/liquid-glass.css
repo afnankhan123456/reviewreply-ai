@@ -528,3 +528,20 @@ svg{display:block}
   width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.08);
   display:flex;align-items:center;justify-content:center;color:var(--text);margin-top:auto;flex-shrink:0;
 }
+
+/* ---- Help Center cards: whole-card color theming (same technique as Quick Actions) ---- */
+.help-card.themed{
+  position:relative;
+  border:1px solid color-mix(in srgb, var(--action-color, #ae47ff) 45%, rgba(255,255,255,.1))!important;
+  box-shadow:
+    0 22px 42px rgba(0,0,0,.70),
+    0 0 34px color-mix(in srgb, var(--action-color, #ae47ff) 20%, transparent),
+    inset 0 1px 0 rgba(255,255,255,.13);
+}
+.help-card.themed::after{
+  content:"";position:absolute;inset:0;z-index:2;pointer-events:none;border-radius:inherit;
+  background:radial-gradient(180px 140px at 15% 0%, color-mix(in srgb, var(--action-color, #ae47ff) 24%, transparent), transparent 72%);
+  mix-blend-mode:screen;
+}
+.help-card.themed .content{position:relative;z-index:3}
+
