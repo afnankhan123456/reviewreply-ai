@@ -1,0 +1,15 @@
+name: Auto Sync Reviews Cron
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+jobs:
+  trigger-auto-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call auto-sync endpoint
+        run: |
+          curl -f -X GET "https://www.reviewreply-ai.in/api/auto-sync" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
