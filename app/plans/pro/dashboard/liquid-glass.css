@@ -430,3 +430,78 @@ body{
 }
 
 svg{display:block}
+
+/* ============ HELP CENTER: Knowledge Base / Priority Support / Ticket System ============ */
+.help-search{
+  position:relative;margin-bottom:18px;
+}
+.help-search input{
+  width:100%;padding:12px 14px 12px 40px;border-radius:14px;
+  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);
+  color:var(--text);font-size:13.5px;outline:none;
+}
+.help-search input:focus{border-color:rgba(174,71,255,.5)}
+.help-search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--text-dimmer)}
+
+.kb-category{margin-bottom:10px;overflow:hidden}
+.kb-category-head{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  padding:14px 4px;cursor:pointer;
+}
+.kb-category-head .left{display:flex;align-items:center;gap:10px}
+.kb-category-icon{
+  width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.kb-category-title{font-size:13.5px;font-weight:700;color:var(--text)}
+.kb-category-count{font-size:11px;color:var(--text-dimmer);font-weight:500}
+.kb-chevron{color:var(--text-dim);transition:transform .25s ease;flex-shrink:0}
+.kb-chevron.open{transform:rotate(180deg)}
+.kb-articles{display:flex;flex-direction:column;padding:0 4px 8px 46px}
+.kb-article{
+  padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06);
+}
+.kb-article:last-child{border-bottom:none}
+.kb-article-q{font-size:12.5px;font-weight:600;color:var(--text)}
+.kb-article-a{font-size:12px;color:var(--text-dim);margin-top:4px;line-height:1.5}
+
+.priority-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+@media(max-width:700px){.priority-grid{grid-template-columns:1fr}}
+.priority-stat{padding:16px;border-radius:16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08)}
+.priority-stat .val{font-size:20px;font-weight:800;color:var(--text)}
+.priority-stat .lbl{font-size:11.5px;color:var(--text-dim);margin-top:2px}
+.priority-perk{display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.priority-perk:last-child{border-bottom:none}
+.priority-perk-icon{
+  width:30px;height:30px;border-radius:9px;background:rgba(174,71,255,.15);color:var(--purple);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.priority-perk-title{font-size:13px;font-weight:600;color:var(--text)}
+.priority-perk-sub{font-size:12px;color:var(--text-dim);margin-top:2px}
+.priority-contact-btn{
+  width:100%;justify-content:center;margin-top:16px;
+}
+
+.ticket-tabs{display:flex;gap:8px;margin-bottom:16px}
+.ticket-tab{
+  padding:7px 14px;border-radius:999px;font-size:12px;font-weight:600;cursor:pointer;
+  background:rgba(255,255,255,.05);color:var(--text-dim);border:1px solid rgba(255,255,255,.08);
+}
+.ticket-tab.active{background:linear-gradient(135deg,#a561f6,#7b2db9);color:#fff;border-color:transparent}
+.ticket-row{cursor:pointer;transition:background .15s ease}
+.ticket-row:hover{background:rgba(255,255,255,.03)}
+.ticket-empty{color:var(--text-dim);font-size:13px;padding:20px 0;text-align:center}
+
+.ticket-detail-overlay{
+  position:fixed;inset:0;z-index:999;
+  background:rgba(0,0,0,.65);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;padding:20px;
+}
+.ticket-detail-card{
+  width:420px;max-width:100%;background:#151517;border:1px solid rgba(255,255,255,.1);
+  border-radius:20px;padding:20px;box-shadow:0 30px 70px rgba(0,0,0,.6);
+}
+.ticket-detail-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.ticket-detail-row:last-of-type{border-bottom:none}
+.ticket-detail-label{font-size:11.5px;color:var(--text-dimmer);font-weight:600;text-transform:uppercase;letter-spacing:.3px}
+.ticket-detail-value{font-size:13px;color:var(--text);font-weight:600}
+.ticket-detail-desc{font-size:12.5px;color:var(--text-dim);line-height:1.6;margin-top:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.06)}
