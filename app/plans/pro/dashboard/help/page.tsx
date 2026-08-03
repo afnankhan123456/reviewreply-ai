@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode, type CSSProperties } from "react";
 import Link from "next/link";
 import {
   BookOpen, Bug, ArrowLeft, ArrowRight, X, Search,
@@ -8,9 +8,9 @@ import {
 } from "lucide-react";
 import "../liquid-glass.css";
 
-function LiquidCard({ className = "", children, onClick }: { className?: string; children: ReactNode; onClick?: () => void }) {
+function LiquidCard({ className = "", children, onClick, style }: { className?: string; children: ReactNode; onClick?: () => void; style?: CSSProperties }) {
   return (
-    <div className={`card ${className}`} onClick={onClick} style={onClick ? { cursor: "pointer" } : undefined}>
+    <div className={`card ${className}`} onClick={onClick} style={{ ...(onClick ? { cursor: "pointer" } : {}), ...style }}>
       <div className="volume"></div>
       <div className="refract"></div>
       <div className="cornerBloom"></div>
