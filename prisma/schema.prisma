@@ -67,6 +67,12 @@ model User {
   teamMembershipOf    TeamMember[]        @relation("TeamMembership")
   articleFeedback     ArticleFeedback[]
   quickActionsPrefs   Json?
+  // ✅ NAYE FIELDS — Appearance / Settings ke liye
+  themeMode           String              @default("dark")
+  accentColor         String              @default("#ae47ff")
+  fontSize            String              @default("md")
+  fontWeight          String              @default("normal")
+  language            String              @default("en")
 }
 
 model BusinessLocation {
