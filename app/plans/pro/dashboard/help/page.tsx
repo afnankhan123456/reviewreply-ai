@@ -3,7 +3,7 @@
 import { useState, useEffect, type ReactNode } from "react";
 import Link from "next/link";
 import {
-  BookOpen, Bug, ArrowLeft, X, Search,
+  BookOpen, Bug, ArrowLeft, ArrowRight, X, Search,
   Zap, ShieldCheck, MessageCircle, Headphones, Ticket,
 } from "lucide-react";
 import "../liquid-glass.css";
@@ -175,30 +175,40 @@ export default function HelpCenterPage() {
             </div>
           </div>
 
-          <div className="ai-grid">
-            <LiquidCard className="ai-card" onClick={() => setActiveSection("knowledge")}>
-              <div className="ai-icon" style={{ background: "rgba(77,163,255,.18)", color: "var(--blue)" }}><BookOpen size={16} /></div>
+          <div className="help-grid">
+            <LiquidCard className="help-card" onClick={() => setActiveSection("knowledge")}>
+              <BookOpen size={110} className="help-card-illustration" style={{ color: "var(--blue)" }} />
+              <div className="help-card-icon" style={{ background: "linear-gradient(135deg,#4da3ff,#2d6fd6)" }}><BookOpen size={20} color="#fff" /></div>
               <b>Knowledge Base</b>
               <div className="sub">Guides and answers organized by topic.</div>
+              <div className="help-card-arrow"><ArrowRight size={15} /></div>
             </LiquidCard>
 
-            <LiquidCard className="ai-card" onClick={() => setShowBugModal(true)}>
-              <div className="ai-icon" style={{ background: "rgba(239,90,111,.18)", color: "var(--red)" }}><Bug size={16} /></div>
+            <LiquidCard className="help-card" onClick={() => setShowBugModal(true)}>
+              <Bug size={110} className="help-card-illustration" style={{ color: "var(--red)" }} />
+              <div className="help-card-icon" style={{ background: "linear-gradient(135deg,#f0707f,#c8394f)" }}><Bug size={20} color="#fff" /></div>
               <b>Bug Reporting</b>
               <div className="sub">Found an issue? Report it in seconds.</div>
+              <div className="help-card-arrow"><ArrowRight size={15} /></div>
             </LiquidCard>
 
-            <LiquidCard className="ai-card" onClick={() => setActiveSection("priority")}>
-              <div className="ai-icon" style={{ background: "rgba(174,71,255,.18)", color: "var(--purple)" }}><Headphones size={16} /></div>
+            <LiquidCard className="help-card" onClick={() => setActiveSection("priority")}>
+              <Headphones size={110} className="help-card-illustration" style={{ color: "var(--purple)" }} />
+              <div className="help-card-icon" style={{ background: "linear-gradient(135deg,#a561f6,#7b2db9)" }}><Headphones size={20} color="#fff" /></div>
               <b>Priority Support</b>
-              <div className="sub">Faster response times, just for Pro.</div>
-              <span className="pro-tag" style={{ marginTop: 6, alignSelf: "flex-start" }}>PRO</span>
+              <div className="sub">Get priority help from our expert team.</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: "auto" }}>
+                <span className="pro-tag">PRO</span>
+                <div className="help-card-arrow"><ArrowRight size={15} /></div>
+              </div>
             </LiquidCard>
 
-            <LiquidCard className="ai-card" onClick={() => setActiveSection("tickets")}>
-              <div className="ai-icon" style={{ background: "rgba(52,211,153,.18)", color: "var(--green)" }}><Ticket size={16} /></div>
+            <LiquidCard className="help-card" onClick={() => setActiveSection("tickets")}>
+              <Ticket size={110} className="help-card-illustration" style={{ color: "var(--green)" }} />
+              <div className="help-card-icon" style={{ background: "linear-gradient(135deg,#34d399,#1f9d74)" }}><Ticket size={20} color="#fff" /></div>
               <b>Support Ticket System</b>
               <div className="sub">Track and manage all your submitted tickets.</div>
+              <div className="help-card-arrow"><ArrowRight size={15} /></div>
             </LiquidCard>
           </div>
         </>
