@@ -403,13 +403,6 @@ export default function Page() {
           <p>Here&apos;s what&apos;s happening with your reviews today.</p>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <button className="btn-primary">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.5}>
-              <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-            New Action
-          </button>
-
           <div className="profile-wrap" ref={profileRef}>
             <button className="profile-trigger mini-glass" onClick={() => setProfileOpen((v) => !v)}>
               {authSession?.user?.image ? (
