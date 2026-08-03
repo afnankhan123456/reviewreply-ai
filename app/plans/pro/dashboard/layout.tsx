@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import "./liquid-glass.css";
+import ThemeProvider from "./ThemeProvider";
 
 export default function RootLayout({
   children,
@@ -36,5 +37,9 @@ export default function RootLayout({
     );
   }
 
-  return <>{children}</>;
+  return (
+    <ThemeProvider>
+      {children}
+    </ThemeProvider>
+  );
 }
