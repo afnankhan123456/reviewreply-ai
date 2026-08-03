@@ -416,7 +416,9 @@ export default function Page() {
             </button>
 
             {profileOpen && (
-              <div className="profile-menu mini-glass">
+              <>
+                <div className="profile-menu-overlay" onClick={() => setProfileOpen(false)} />
+                <div className="profile-menu">
                 <Link href="/plans/pro/dashboard/settings" className="profile-menu-item" onClick={() => setProfileOpen(false)}>
                   <Settings size={15} /> Settings
                 </Link>
@@ -429,7 +431,8 @@ export default function Page() {
                 >
                   <LogOut size={15} /> Logout
                 </button>
-              </div>
+                </div>
+              </>
             )}
           </div>
         </div>

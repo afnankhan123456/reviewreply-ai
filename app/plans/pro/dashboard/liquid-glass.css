@@ -394,10 +394,15 @@ body{
   background:linear-gradient(135deg,#a561f6,#7b2db9);
 }
 .profile-chevron{color:var(--text-dim)}
+.profile-menu-overlay{
+  position:fixed;inset:0;z-index:99;
+  background:rgba(0,0,0,.65);backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+}
 .profile-menu{
   position:absolute;top:calc(100% + 8px);right:0;z-index:100;width:190px;
   padding:6px;border-radius:14px;
   display:flex;flex-direction:column;gap:2px;
+  background:#151517;border:1px solid rgba(255,255,255,.1);box-shadow:0 30px 70px rgba(0,0,0,.6);
 }
 .profile-menu-item{
   display:flex;align-items:center;gap:10px;width:100%;
