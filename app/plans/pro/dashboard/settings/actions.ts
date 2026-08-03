@@ -52,3 +52,86 @@ export async function saveGooglePlaceId(placeId: string) {
     return { message: 'Failed to save Place ID. Please try again.' };
   }
 }
+
+// ✅ Naya function: Appearance settings (theme/accent/font/language) load karne ke liye
+export async function getAppearanceSettings() {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return { error: 'Unauthorized' };
+    }
+
+    const { ownerId } = await resolveOwnerAndRole(session.user.id);
+
+    const user = await prisma.user.findUnique({
+      where: { id: ownerId },
+      select: {
+        themeMode: true,
+        accentColor: true,
+        fontSize: true,
+        fontWeight: true,
+        language: true,
+      },
+    });
+
+    if (!user) {
+      return { error: 'User not found' };
+    }
+
+    return {
+      success: true,
+      themeMode: user.themeMode || 'dark',
+      accentColor: user.accentColor || '#ae47ff',
+      fontSize: user.fontSize || 'md',
+      fontWeight: user.fontWeight || 'normal',
+      language: user.language || 'en',
+    };
+  } catch (error) {
+    console.error('Error fetching appearance settings:', error);
+    return { error: 'Failed to fetch appearance settings' };
+  }
+}
+
+// ✅ Naya function: Appearance settings save/update karne ke liye
+export async function saveAppearanceSettings(data: {
+  themeMode?: string;
+  accentColor?: string;
+  fontSize?: string;
+  fontWeight?: string;
+  language?: string;
+}) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return { error: 'Unauthorized' };
+    }
+
+    const { ownerId, role } = await resolveOwnerAndRole(session.user.id);
+    if (role !== 'OWNER') {
+      return { error: 'Only the account owner can update settings.' };
+    }
+
+    const updated = await prisma.user.update({
+      where: { id: ownerId },
+      data: {
+        ...(data.themeMode ? { themeMode: data.themeMode } : {}),
+        ...(data.accentColor ? { accentColor: data.accentColor } : {}),
+        ...(data.fontSize ? { fontSize: data.fontSize } : {}),
+        ...(data.fontWeight ? { fontWeight: data.fontWeight } : {}),
+        ...(data.language ? { language: data.language } : {}),
+      },
+      select: {
+        themeMode: true,
+        accentColor: true,
+        fontSize: true,
+        fontWeight: true,
+        language: true,
+      },
+    });
+
+    return { success: true, ...updated };
+  } catch (error) {
+    console.error('Error saving appearance settings:', error);
+    return { error: 'Failed to save appearance settings' };
+  }
+}
