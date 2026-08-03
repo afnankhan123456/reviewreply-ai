@@ -4,6 +4,8 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import type { ReactNode } from "react";
 import Link from "next/link";
+import { useSession, signOut } from "next-auth/react";
+import { ChevronDown, LogOut, Settings, HelpCircle } from "lucide-react";
 import QuickActionsCustomizer, { QUICK_ACTION_COLORS } from "./quick-actions-customizer";
 import { getAutoReplyMode, setAutoReplyMode } from "./ai-reply-center/actions";
 
@@ -198,6 +200,10 @@ function getGreeting() {
 }
 
 export default function Page() {
+  const { data: authSession } = useSession();
+  const [profileOpen, setProfileOpen] = useState(false);
+  const profileRef = useRef<HTMLDivElement>(null);
+
   const [data, setData] = useState<any>(null);
   const [alerts, setAlerts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -232,6 +238,17 @@ export default function Page() {
     if (savedStyle === "glass" || savedStyle === "solid" || savedStyle === "minimal") setCardStyle(savedStyle);
     const savedSize = localStorage.getItem("quickActionsCardSize");
     if (savedSize === "compact" || savedSize === "comfortable") setCardSize(savedSize);
+  }, []);
+
+  /* Profile dropdown ke bahar click hone par band ho jaye */
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
+        setProfileOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   /* Modal ka "Save Changes" dabane par hi ye chalta hai — tab tak dashboard untouched rehta hai */
@@ -385,12 +402,44 @@ export default function Page() {
           <h1>{getGreeting()}, {data?.userName || "there"}! 🌙</h1>
           <p>Here&apos;s what&apos;s happening with your reviews today.</p>
         </div>
-        <button className="btn-primary">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.5}>
-            <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
-          </svg>
-          New Action
-        </button>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <button className="btn-primary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2.5}>
+              <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
+            </svg>
+            New Action
+          </button>
+
+          <div className="profile-wrap" ref={profileRef}>
+            <button className="profile-trigger mini-glass" onClick={() => setProfileOpen((v) => !v)}>
+              {authSession?.user?.image ? (
+                <img src={authSession.user.image} alt="Profile" className="profile-avatar-img" />
+              ) : (
+                <div className="profile-avatar-fallback">
+                  {(data?.userName || "U").charAt(0).toUpperCase()}
+                </div>
+              )}
+              <ChevronDown size={14} className="profile-chevron" />
+            </button>
+
+            {profileOpen && (
+              <div className="profile-menu mini-glass">
+                <Link href="/plans/pro/dashboard/settings" className="profile-menu-item" onClick={() => setProfileOpen(false)}>
+                  <Settings size={15} /> Settings
+                </Link>
+                <Link href="/plans/pro/dashboard/help" className="profile-menu-item" onClick={() => setProfileOpen(false)}>
+                  <HelpCircle size={15} /> Help Center
+                </Link>
+                <button
+                  className="profile-menu-item danger"
+                  onClick={() => signOut({ callbackUrl: "/login" })}
+                >
+                  <LogOut size={15} /> Logout
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       {/* stat cards — real KPI Summary data */}
