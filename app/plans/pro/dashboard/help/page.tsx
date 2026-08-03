@@ -2,7 +2,10 @@
 
 import { useState, useEffect, type ReactNode } from "react";
 import Link from "next/link";
-import { HelpCircle, BookOpen, Mail, Bug, ArrowLeft, Clock, X } from "lucide-react";
+import {
+  BookOpen, Bug, ArrowLeft, X, Search,
+  Zap, ShieldCheck, MessageCircle, Headphones, Ticket,
+} from "lucide-react";
 import "../liquid-glass.css";
 
 function LiquidCard({ className = "", children, onClick }: { className?: string; children: ReactNode; onClick?: () => void }) {
@@ -21,16 +24,56 @@ function LiquidCard({ className = "", children, onClick }: { className?: string;
   );
 }
 
-const faqs = [
-  { q: "How do I connect my Google Business account?", a: "Go to Quick Actions → Connect Platform → Connect." },
-  { q: "How many reviews can I sync per month?", a: "Your Pro plan limit is shown on the dashboard, resetting every billing cycle." },
-  { q: "Can I change my plan later?", a: "Yes, you can upgrade or downgrade from the Pricing page at any time." },
-  { q: "How do I reply to a review?", a: "Use the Reviews page or the AI Reply Center to respond directly." },
-  { q: "How are email alerts triggered?", a: "When a low-rating review (1-2 stars) is synced, an alert is sent if Gmail is connected." },
+/* ---------- Knowledge Base content ---------- */
+const knowledgeBase = [
+  {
+    category: "Getting Started",
+    icon: <BookOpen size={15} />,
+    color: "var(--blue)",
+    bg: "rgba(77,163,255,.18)",
+    articles: [
+      { q: "How do I connect my Google Business account?", a: "Go to Quick Actions → Connect Platform → Connect, then sign in with your Google Business account." },
+      { q: "How many reviews can I sync per month?", a: "Your Pro plan limit is shown on the dashboard, resetting every billing cycle." },
+      { q: "Can I change my plan later?", a: "Yes, you can upgrade or downgrade from the Pricing page at any time." },
+    ],
+  },
+  {
+    category: "Reviews & Replies",
+    icon: <MessageCircle size={15} />,
+    color: "var(--green)",
+    bg: "rgba(52,211,153,.18)",
+    articles: [
+      { q: "How do I reply to a review?", a: "Use the Reviews page or the AI Reply Center to respond directly." },
+      { q: "How are email alerts triggered?", a: "When a low-rating review (1-2 stars) is synced, an alert is sent if Gmail is connected." },
+      { q: "Can I automate replies?", a: "Yes — enable Auto Reply in the AI Reply Center to respond automatically using your saved tone and templates." },
+    ],
+  },
+  {
+    category: "Analytics & Reports",
+    icon: <Zap size={15} />,
+    color: "var(--orange)",
+    bg: "rgba(245,166,35,.18)",
+    articles: [
+      { q: "Where can I see rating trends?", a: "The Analytics page shows total reviews, rating trends, and sentiment breakdown over time." },
+      { q: "How do I export my data?", a: "Use Create Report to download your data as CSV or PDF." },
+    ],
+  },
+  {
+    category: "Account & Billing",
+    icon: <ShieldCheck size={15} />,
+    color: "var(--purple)",
+    bg: "rgba(174,71,255,.18)",
+    articles: [
+      { q: "How do I update my payment method?", a: "Go to Settings → Billing to update your card or view invoices." },
+      { q: "Who can I contact for billing issues?", a: "Email afnank6789@gmail.com — Pro plan billing questions are answered with priority." },
+    ],
+  },
 ];
 
 export default function HelpCenterPage() {
   const [activeSection, setActiveSection] = useState<string | null>(null);
+
+  // Bug reporting
   const [showBugModal, setShowBugModal] = useState(false);
   const [bugFeature, setBugFeature] = useState("");
   const [bugIssueType, setBugIssueType] = useState("");
@@ -38,8 +81,16 @@ export default function HelpCenterPage() {
   const [customFeature, setCustomFeature] = useState("");
   const [customIssueType, setCustomIssueType] = useState("");
   const [submittingBug, setSubmittingBug] = useState(false);
+
+  // Support ticket system
   const [userTickets, setUserTickets] = useState<any[]>([]);
   const [loadingTickets, setLoadingTickets] = useState(false);
+  const [ticketFilter, setTicketFilter] = useState<"all" | "open" | "resolved">("all");
+  const [selectedTicket, setSelectedTicket] = useState<any | null>(null);
+
+  // Knowledge base
+  const [kbQuery, setKbQuery] = useState("");
+  const [openCategory, setOpenCategory] = useState<string | null>(knowledgeBase[0].category);
 
   useEffect(() => { fetchUserTickets(); }, []);
 
@@ -87,6 +138,24 @@ export default function HelpCenterPage() {
     }
   };
 
+  const filteredTickets = userTickets.filter((t) => {
+    if (ticketFilter === "open") return t.status === "Open";
+    if (ticketFilter === "resolved") return t.status !== "Open";
+    return true;
+  });
+
+  const filteredKb = knowledgeBase
+    .map((cat) => ({
+      ...cat,
+      articles: cat.articles.filter(
+        (a) =>
+          !kbQuery.trim() ||
+          a.q.toLowerCase().includes(kbQuery.toLowerCase()) ||
+          a.a.toLowerCase().includes(kbQuery.toLowerCase())
+      ),
+    }))
+    .filter((cat) => cat.articles.length > 0);
+
   return (
     <div className="page-wrap">
       <svg width="0" height="0" style={{ position: "absolute" }}>
@@ -102,41 +171,34 @@ export default function HelpCenterPage() {
           <div className="header-row">
             <div>
               <h1>Help Center</h1>
-              <p>Find answers, documentation, and support.</p>
+              <p>Find answers, get priority help, and track your support tickets.</p>
             </div>
           </div>
 
           <div className="ai-grid">
-            <LiquidCard className="ai-card" onClick={() => setActiveSection("faqs")}>
-              <div className="ai-icon" style={{ background: "rgba(77,163,255,.18)", color: "var(--blue)" }}><HelpCircle size={16} /></div>
-              <b>FAQs</b>
-              <div className="sub">Common questions and quick answers.</div>
+            <LiquidCard className="ai-card" onClick={() => setActiveSection("knowledge")}>
+              <div className="ai-icon" style={{ background: "rgba(77,163,255,.18)", color: "var(--blue)" }}><BookOpen size={16} /></div>
+              <b>Knowledge Base</b>
+              <div className="sub">Guides and answers organized by topic.</div>
             </LiquidCard>
-
-            <LiquidCard className="ai-card" onClick={() => setActiveSection("docs")}>
-              <div className="ai-icon" style={{ background: "rgba(52,211,153,.18)", color: "var(--green)" }}><BookOpen size={16} /></div>
-              <b>Documentation</b>
-              <div className="sub">Step-by-step guides to get started.</div>
-            </LiquidCard>
-
-            <a href="mailto:afnank6789@gmail.com" style={{ textDecoration: "none", color: "inherit" }}>
-              <LiquidCard className="ai-card">
-                <div className="ai-icon" style={{ background: "rgba(245,166,35,.18)", color: "var(--orange)" }}><Mail size={16} /></div>
-                <b>Contact Support</b>
-                <div className="sub">Email us at afnank6789@gmail.com</div>
-              </LiquidCard>
-            </a>
 
             <LiquidCard className="ai-card" onClick={() => setShowBugModal(true)}>
               <div className="ai-icon" style={{ background: "rgba(239,90,111,.18)", color: "var(--red)" }}><Bug size={16} /></div>
-              <b>Report a Bug</b>
-              <div className="sub">Found an issue? Let us know.</div>
+              <b>Bug Reporting</b>
+              <div className="sub">Found an issue? Report it in seconds.</div>
+            </LiquidCard>
+
+            <LiquidCard className="ai-card" onClick={() => setActiveSection("priority")}>
+              <div className="ai-icon" style={{ background: "rgba(174,71,255,.18)", color: "var(--purple)" }}><Headphones size={16} /></div>
+              <b>Priority Support</b>
+              <div className="sub">Faster response times, just for Pro.</div>
+              <span className="pro-tag" style={{ marginTop: 6, alignSelf: "flex-start" }}>PRO</span>
             </LiquidCard>
 
             <LiquidCard className="ai-card" onClick={() => setActiveSection("tickets")}>
-              <div className="ai-icon" style={{ background: "rgba(174,71,255,.18)", color: "var(--purple)" }}><Clock size={16} /></div>
-              <b>My Tickets</b>
-              <div className="sub">Track the status of your submitted bug reports.</div>
+              <div className="ai-icon" style={{ background: "rgba(52,211,153,.18)", color: "var(--green)" }}><Ticket size={16} /></div>
+              <b>Support Ticket System</b>
+              <div className="sub">Track and manage all your submitted tickets.</div>
             </LiquidCard>
           </div>
         </>
@@ -146,41 +208,127 @@ export default function HelpCenterPage() {
             <ArrowLeft size={14} /> Back to Help Center
           </button>
 
-          {activeSection === "faqs" && (
+          {/* ---------------- KNOWLEDGE BASE ---------------- */}
+          {activeSection === "knowledge" && (
             <LiquidCard className="section-card">
-              <h3 style={{ margin: "0 0 16px" }}>FAQs</h3>
-              {faqs.map((faq, idx) => (
-                <div key={idx} style={{ padding: "12px 0", borderBottom: idx < faqs.length - 1 ? "1px solid rgba(255,255,255,.07)" : "none" }}>
-                  <div style={{ fontWeight: 600, fontSize: 13.5 }}>{faq.q}</div>
-                  <div style={{ color: "var(--text-dim)", fontSize: 12.5, marginTop: 4 }}>{faq.a}</div>
-                </div>
-              ))}
-            </LiquidCard>
-          )}
+              <h3 style={{ margin: "0 0 16px" }}>Knowledge Base</h3>
 
-          {activeSection === "docs" && (
-            <LiquidCard className="section-card">
-              <h3 style={{ margin: "0 0 16px" }}>Documentation</h3>
-              <div style={{ display: "flex", flexDirection: "column", gap: 16, fontSize: 13, color: "var(--text-dim)", lineHeight: 1.6 }}>
-                <div><b style={{ color: "var(--text)" }}>1. Connect Google Business</b><br />Use Quick Actions → Connect Platform to link your Google Business location.</div>
-                <div><b style={{ color: "var(--text)" }}>2. Sync Reviews</b><br />Reviews sync automatically. You can also trigger a manual sync from the dashboard.</div>
-                <div><b style={{ color: "var(--text)" }}>3. Reply to Reviews</b><br />Use Reviews or AI Reply Center to respond — auto, draft-approve, or fully manual.</div>
-                <div><b style={{ color: "var(--text)" }}>4. View Analytics</b><br />The Analytics page shows total reviews, rating trends, and sentiment breakdown.</div>
-                <div><b style={{ color: "var(--text)" }}>5. Export Reports</b><br />Use Create Report to download your data as CSV or PDF.</div>
+              <div className="help-search">
+                <Search size={15} />
+                <input
+                  type="text"
+                  placeholder="Search articles..."
+                  value={kbQuery}
+                  onChange={(e) => setKbQuery(e.target.value)}
+                />
               </div>
+
+              {filteredKb.length === 0 ? (
+                <p style={{ color: "var(--text-dim)", fontSize: 13 }}>No articles match your search.</p>
+              ) : (
+                filteredKb.map((cat) => {
+                  const isOpen = openCategory === cat.category;
+                  return (
+                    <div key={cat.category} className="kb-category">
+                      <div className="kb-category-head" onClick={() => setOpenCategory(isOpen ? null : cat.category)}>
+                        <div className="left">
+                          <div className="kb-category-icon" style={{ background: cat.bg, color: cat.color }}>{cat.icon}</div>
+                          <div>
+                            <div className="kb-category-title">{cat.category}</div>
+                            <div className="kb-category-count">{cat.articles.length} article{cat.articles.length !== 1 ? "s" : ""}</div>
+                          </div>
+                        </div>
+                        <svg className={`kb-chevron ${isOpen ? "open" : ""}`} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+                          <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                      </div>
+                      {isOpen && (
+                        <div className="kb-articles">
+                          {cat.articles.map((a, idx) => (
+                            <div key={idx} className="kb-article">
+                              <div className="kb-article-q">{a.q}</div>
+                              <div className="kb-article-a">{a.a}</div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              )}
             </LiquidCard>
           )}
 
+          {/* ---------------- PRIORITY SUPPORT ---------------- */}
+          {activeSection === "priority" && (
+            <LiquidCard className="section-card">
+              <h3 style={{ margin: "0 0 16px", display: "flex", alignItems: "center", gap: 8 }}>
+                Priority Support <span className="pro-tag">PRO</span>
+              </h3>
+
+              <div className="priority-grid">
+                <div className="priority-stat">
+                  <div className="val">&lt; 4 hrs</div>
+                  <div className="lbl">Average response time</div>
+                </div>
+                <div className="priority-stat">
+                  <div className="val">24/7</div>
+                  <div className="lbl">Ticket monitoring</div>
+                </div>
+                <div className="priority-stat">
+                  <div className="val">Top</div>
+                  <div className="lbl">Queue priority</div>
+                </div>
+              </div>
+
+              <div className="priority-perk">
+                <div className="priority-perk-icon"><Zap size={15} /></div>
+                <div>
+                  <div className="priority-perk-title">Expedited fixes</div>
+                  <div className="priority-perk-sub">Bugs reported by Pro users are triaged and resolved ahead of standard and basic plans.</div>
+                </div>
+              </div>
+              <div className="priority-perk">
+                <div className="priority-perk-icon"><MessageCircle size={15} /></div>
+                <div>
+                  <div className="priority-perk-title">Direct email line</div>
+                  <div className="priority-perk-sub">Reach the team directly instead of a general support queue.</div>
+                </div>
+              </div>
+              <div className="priority-perk">
+                <div className="priority-perk-icon"><ShieldCheck size={15} /></div>
+                <div>
+                  <div className="priority-perk-title">Dedicated billing help</div>
+                  <div className="priority-perk-sub">Billing and account issues are handled with priority for Pro members.</div>
+                </div>
+              </div>
+
+              <a href="mailto:afnank6789@gmail.com" style={{ textDecoration: "none" }}>
+                <button className="btn-primary priority-contact-btn">
+                  <MessageCircle size={14} /> Contact Priority Support
+                </button>
+              </a>
+            </LiquidCard>
+          )}
+
+          {/* ---------------- SUPPORT TICKET SYSTEM ---------------- */}
           {activeSection === "tickets" && (
             <LiquidCard className="section-card">
-              <h3 style={{ margin: "0 0 16px" }}>My Tickets</h3>
+              <h3 style={{ margin: "0 0 16px" }}>Support Ticket System</h3>
+
+              <div className="ticket-tabs">
+                <div className={`ticket-tab ${ticketFilter === "all" ? "active" : ""}`} onClick={() => setTicketFilter("all")}>All</div>
+                <div className={`ticket-tab ${ticketFilter === "open" ? "active" : ""}`} onClick={() => setTicketFilter("open")}>Open</div>
+                <div className={`ticket-tab ${ticketFilter === "resolved" ? "active" : ""}`} onClick={() => setTicketFilter("resolved")}>Resolved</div>
+              </div>
+
               {loadingTickets ? (
                 <p style={{ color: "var(--text-dim)", fontSize: 13 }}>Loading your tickets...</p>
-              ) : userTickets.length === 0 ? (
-                <p style={{ color: "var(--text-dim)", fontSize: 13 }}>No tickets submitted yet.</p>
+              ) : filteredTickets.length === 0 ? (
+                <div className="ticket-empty">No tickets in this view yet.</div>
               ) : (
-                userTickets.map((t) => (
-                  <div key={t.id} className="review-row">
+                filteredTickets.map((t) => (
+                  <div key={t.id} className="review-row ticket-row" onClick={() => setSelectedTicket(t)}>
                     <div className="rev-mid">
                       <div style={{ display: "flex", gap: 8, marginBottom: 4 }}>
                         <span className="rev-tag tag-pending">{t.feature}</span>
@@ -197,6 +345,40 @@ export default function HelpCenterPage() {
         </>
       )}
 
+      {/* ---------------- TICKET DETAIL OVERLAY ---------------- */}
+      {selectedTicket && (
+        <div className="ticket-detail-overlay" onClick={() => setSelectedTicket(null)}>
+          <div className="ticket-detail-card" onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+              <h3 style={{ margin: 0, fontSize: 15 }}>Ticket Details</h3>
+              <button onClick={() => setSelectedTicket(null)} className="qa-close"><X size={12} /></button>
+            </div>
+
+            <div className="ticket-detail-row">
+              <span className="ticket-detail-label">Feature</span>
+              <span className="ticket-detail-value">{selectedTicket.feature}</span>
+            </div>
+            <div className="ticket-detail-row">
+              <span className="ticket-detail-label">Issue Type</span>
+              <span className="ticket-detail-value">{selectedTicket.issueType}</span>
+            </div>
+            <div className="ticket-detail-row">
+              <span className="ticket-detail-label">Status</span>
+              <span className={`rev-tag ${selectedTicket.status === "Open" ? "tag-pending" : "tag-replied"}`}>{selectedTicket.status}</span>
+            </div>
+            {selectedTicket.createdAt && (
+              <div className="ticket-detail-row">
+                <span className="ticket-detail-label">Submitted</span>
+                <span className="ticket-detail-value">{new Date(selectedTicket.createdAt).toLocaleDateString()}</span>
+              </div>
+            )}
+
+            <div className="ticket-detail-desc">{selectedTicket.description}</div>
+          </div>
+        </div>
+      )}
+
+      {/* ---------------- REPORT A BUG MODAL ---------------- */}
       {showBugModal && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.65)", backdropFilter: "blur(4px)", zIndex: 999, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
           <div style={{ width: 420, maxWidth: "100%", background: "#151517", border: "1px solid rgba(255,255,255,.1)", borderRadius: 20, padding: 20, boxShadow: "0 30px 70px rgba(0,0,0,.6)" }}>
