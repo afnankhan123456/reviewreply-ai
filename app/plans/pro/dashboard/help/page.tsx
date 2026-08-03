@@ -176,7 +176,7 @@ export default function HelpCenterPage() {
           </div>
 
           <div className="help-grid">
-            <LiquidCard className="help-card" onClick={() => setActiveSection("knowledge")}>
+            <LiquidCard className="help-card themed" style={{ ["--action-color" as any]: "#4da3ff" }} onClick={() => setActiveSection("knowledge")}>
               <BookOpen size={110} className="help-card-illustration" style={{ color: "var(--blue)" }} />
               <div className="help-card-icon" style={{ background: "linear-gradient(135deg,#4da3ff,#2d6fd6)" }}><BookOpen size={20} color="#fff" /></div>
               <b>Knowledge Base</b>
@@ -184,7 +184,7 @@ export default function HelpCenterPage() {
               <div className="help-card-arrow"><ArrowRight size={15} /></div>
             </LiquidCard>
 
-            <LiquidCard className="help-card" onClick={() => setShowBugModal(true)}>
+            <LiquidCard className="help-card themed" style={{ ["--action-color" as any]: "#ef5a6f" }} onClick={() => setShowBugModal(true)}>
               <Bug size={110} className="help-card-illustration" style={{ color: "var(--red)" }} />
               <div className="help-card-icon" style={{ background: "linear-gradient(135deg,#f0707f,#c8394f)" }}><Bug size={20} color="#fff" /></div>
               <b>Bug Reporting</b>
@@ -192,7 +192,7 @@ export default function HelpCenterPage() {
               <div className="help-card-arrow"><ArrowRight size={15} /></div>
             </LiquidCard>
 
-            <LiquidCard className="help-card" onClick={() => setActiveSection("priority")}>
+            <LiquidCard className="help-card themed" style={{ ["--action-color" as any]: "#ae47ff" }} onClick={() => setActiveSection("priority")}>
               <Headphones size={110} className="help-card-illustration" style={{ color: "var(--purple)" }} />
               <div className="help-card-icon" style={{ background: "linear-gradient(135deg,#a561f6,#7b2db9)" }}><Headphones size={20} color="#fff" /></div>
               <b>Priority Support</b>
@@ -203,7 +203,7 @@ export default function HelpCenterPage() {
               </div>
             </LiquidCard>
 
-            <LiquidCard className="help-card" onClick={() => setActiveSection("tickets")}>
+            <LiquidCard className="help-card themed" style={{ ["--action-color" as any]: "#34d399" }} onClick={() => setActiveSection("tickets")}>
               <Ticket size={110} className="help-card-illustration" style={{ color: "var(--green)" }} />
               <div className="help-card-icon" style={{ background: "linear-gradient(135deg,#34d399,#1f9d74)" }}><Ticket size={20} color="#fff" /></div>
               <b>Support Ticket System</b>
