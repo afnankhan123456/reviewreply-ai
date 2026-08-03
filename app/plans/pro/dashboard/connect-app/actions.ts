@@ -24,7 +24,7 @@ export async function getConnectionStatus() {
         gmailConnected: true,
         alertEmailsLimit: true,
         alertEmailsSent: true,
-        googleConnected: true,
+        googleBusinessConnected: true,
         locationsUsed: true,
         locationsLimit: true,
       }
@@ -39,7 +39,7 @@ export async function getConnectionStatus() {
       gmailConnected: user.gmailConnected ?? false,
       alertEmailsLimit: user.alertEmailsLimit ?? 100,
       alertEmailsSent: user.alertEmailsSent ?? 0,
-      googleConnected: user.googleConnected ?? false,
+      googleConnected: user.googleBusinessConnected ?? false,
       locationsUsed: user.locationsUsed ?? 0,
       locationsLimit: user.locationsLimit ?? 1,
     };
