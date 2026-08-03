@@ -27,14 +27,30 @@ function LiquidCard({ className = "", children, onClick, style }: { className?: 
 /* ---------- Knowledge Base content ---------- */
 const knowledgeBase = [
   {
-    category: "Getting Started",
+    category: "Dashboard Overview",
     icon: <BookOpen size={15} />,
     color: "var(--blue)",
     bg: "rgba(77,163,255,.18)",
     articles: [
+      { q: "What do the stat cards on my dashboard mean?", a: "The top cards show your key numbers at a glance — total reviews, average rating, reply rate, and recent trend — updated automatically as new reviews sync in." },
       { q: "How do I connect my Google Business account?", a: "Go to Quick Actions → Connect Platform → Connect, then sign in with your Google Business account." },
       { q: "How many reviews can I sync per month?", a: "Your Pro plan limit is shown on the dashboard, resetting every billing cycle." },
       { q: "Can I change my plan later?", a: "Yes, you can upgrade or downgrade from the Pricing page at any time." },
+    ],
+  },
+  {
+    category: "Quick Actions",
+    icon: <Zap size={15} />,
+    color: "var(--purple)",
+    bg: "rgba(174,71,255,.18)",
+    articles: [
+      { q: "What is Quick Actions for?", a: "It's the shortcut panel on your dashboard — one tap takes you straight to the most common tasks: replying to reviews, generating AI replies, checking analytics, creating reports, or connecting a new platform." },
+      { q: "Reply to Reviews — what does this do?", a: "Opens the Reviews page filtered to your pending reviews so you can reply to them directly." },
+      { q: "AI Reply — what does this do?", a: "Opens the AI Reply Center, where AI-generated draft replies are suggested for your reviews based on your saved tone." },
+      { q: "Analyze Reviews — what does this do?", a: "Opens Analytics, where you get AI-powered insights into rating trends and customer sentiment." },
+      { q: "Create Report — what does this do?", a: "Opens the Reports page so you can download your review data as a CSV or PDF." },
+      { q: "Connect Platform — what does this do?", a: "Opens Connect Platform, where you add or manage review sources like Google Business." },
+      { q: "How do I customize my Quick Actions?", a: "Click the Customize button above the Quick Actions grid. You can reorder cards, hide ones you don't use, change each card's color, and switch between glass, solid, or minimal card styles." },
     ],
   },
   {
@@ -324,7 +340,10 @@ export default function HelpCenterPage() {
           {/* ---------------- SUPPORT TICKET SYSTEM ---------------- */}
           {activeSection === "tickets" && (
             <LiquidCard className="section-card">
-              <h3 style={{ margin: "0 0 16px" }}>Support Ticket System</h3>
+              <h3 style={{ margin: "0 0 6px" }}>Support Ticket System</h3>
+              <p style={{ margin: "0 0 16px", fontSize: 12.5, color: "var(--text-dim)" }}>
+                Every ticket you submit from <b style={{ color: "var(--text)" }}>Bug Reporting</b> shows up here — track its status and see whether our team has actioned it yet.
+              </p>
 
               <div className="ticket-tabs">
                 <div className={`ticket-tab ${ticketFilter === "all" ? "active" : ""}`} onClick={() => setTicketFilter("all")}>All</div>
@@ -335,7 +354,7 @@ export default function HelpCenterPage() {
               {loadingTickets ? (
                 <p style={{ color: "var(--text-dim)", fontSize: 13 }}>Loading your tickets...</p>
               ) : filteredTickets.length === 0 ? (
-                <div className="ticket-empty">No tickets in this view yet.</div>
+                <div className="ticket-empty">No tickets yet — submit one from Bug Reporting and it'll appear here.</div>
               ) : (
                 filteredTickets.map((t) => (
                   <div key={t.id} className="review-row ticket-row" onClick={() => setSelectedTicket(t)}>
