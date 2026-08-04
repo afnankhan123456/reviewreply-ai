@@ -734,7 +734,7 @@ export default function Page() {
             <div className="sub">{autoReplyOn ? "AI khud reply bhej raha hai" : "Turant on karo, click karke"}</div>
           </LiquidCard>
 
-          <LiquidCard className="ai-card themed" style={{ ["--action-color" as any]: "#14b8a6" }} onClick={shuffleTemplate} style2={{}}>
+          <LiquidCard className="ai-card themed" style={{ ["--action-color" as any]: "#14b8a6" }} onClick={shuffleTemplate}>
             <div className="ai-head">
               <div className="ai-icon" style={{ background: "rgba(255,255,255,.08)", color: "var(--text-dim)" }}>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
