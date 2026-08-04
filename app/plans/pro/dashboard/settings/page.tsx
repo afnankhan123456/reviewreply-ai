@@ -3,7 +3,7 @@
 import { useState, useEffect, type ReactNode } from "react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { ArrowLeft, MapPin, Sun, Moon, Palette, Globe, Type, Bold, ChevronRight } from "lucide-react";
+import { ArrowLeft, MapPin, Sun, Moon, Palette, ChevronRight } from "lucide-react";
 import "../liquid-glass.css";
 import { saveGooglePlaceId, getGooglePlaceId } from "./actions";
 import { useDashboardTheme } from "../ThemeProvider";
@@ -53,8 +53,8 @@ export default function SettingsPage() {
   const isOwner = (authSession?.user as any)?.teamRole === "OWNER";
 
   const {
-    themeMode, accentColor, fontSize, fontWeight, language,
-    setThemeMode, setAccentColor, setFontSize, setFontWeight, setLanguage,
+    themeMode, accentColor,
+    setThemeMode, setAccentColor,
     t,
   } = useDashboardTheme();
 
@@ -150,28 +150,6 @@ export default function SettingsPage() {
             />
           </div>
         </SettingsRow>
-
-        <SettingsRow icon={<Globe size={14} />} iconClass="blue" label={t("language")}>
-          <select className="settings-select" value={language} onChange={(e) => setLanguage(e.target.value as any)}>
-            <option value="en">English</option>
-            <option value="hi">हिन्दी</option>
-          </select>
-        </SettingsRow>
-
-        <SettingsRow icon={<Type size={14} />} iconClass="green" label={t("fontSize")}>
-          <div className="segmented">
-            <button className={fontSize === "sm" ? "active" : ""} onClick={() => setFontSize("sm")}>{t("small")}</button>
-            <button className={fontSize === "md" ? "active" : ""} onClick={() => setFontSize("md")}>{t("medium")}</button>
-            <button className={fontSize === "lg" ? "active" : ""} onClick={() => setFontSize("lg")}>{t("large")}</button>
-          </div>
-        </SettingsRow>
-
-        <SettingsRow icon={<Bold size={14} />} iconClass="red" label={t("fontWeight")}>
-          <div className="segmented">
-            <button className={fontWeight === "normal" ? "active" : ""} onClick={() => setFontWeight("normal")}>{t("normal")}</button>
-            <button className={fontWeight === "bold" ? "active" : ""} onClick={() => setFontWeight("bold")}>{t("bold")}</button>
-          </div>
-        </SettingsRow>
       </LiquidCard>
 
       {/* ============ GOOGLE PLACE ID ============ */}
@@ -216,5 +194,3 @@ export default function SettingsPage() {
     </div>
   );
 }
-
-
