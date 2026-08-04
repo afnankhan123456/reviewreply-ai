@@ -4,63 +4,53 @@ import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
 import { resolveOwnerAndRole } from '@/lib/getEffectiveOwner';
+import { getAllPossibleTags } from '@/lib/autoTag';
 
-function slugify(input: string) {
-  return input
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-');
+async function getCycleStart(userId: string) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { monthlyResetDate: true, createdAt: true },
+  });
+  return user?.monthlyResetDate || user?.createdAt || new Date(0);
 }
 
-export async function getMySlug() {
+// ✅ Tags & Categories summary — Reviews page ke andar hi dikhane ke liye
+export async function getTagSummary() {
   try {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id) return { error: 'Unauthorized' };
+    if (!session?.user?.id) {
+      return { error: 'Unauthorized' };
+    }
 
     const { ownerId } = await resolveOwnerAndRole(session.user.id);
+    const cycleStart = await getCycleStart(ownerId);
 
-    const user = await prisma.user.findUnique({
-      where: { id: ownerId },
-      select: { slug: true },
+    const reviews = await prisma.review.findMany({
+      where: { userId: ownerId, createdAt: { gte: cycleStart } },
+      select: { tags: true },
     });
 
-    return { success: true, slug: user?.slug || null };
+    const allTags = getAllPossibleTags();
+    const tagCountMap: Record<string, number> = {};
+    let untaggedCount = 0;
+
+    for (const r of reviews) {
+      if (r.tags.length === 0) {
+        untaggedCount++;
+      }
+      for (const t of r.tags) {
+        tagCountMap[t] = (tagCountMap[t] || 0) + 1;
+      }
+    }
+
+    const summary = allTags
+      .map((tag) => ({ tag, count: tagCountMap[tag] || 0 }))
+      .filter((t) => t.count > 0)
+      .sort((a, b) => b.count - a.count);
+
+    return { success: true, summary, totalCount: reviews.length, untaggedCount };
   } catch (error) {
-    console.error('Error fetching slug:', error);
-    return { error: 'Failed to fetch slug' };
-  }
-}
-
-export async function saveSlug(desiredSlug: string) {
-  try {
-    const session = await getServerSession(authOptions);
-    if (!session?.user?.id) return { error: 'Unauthorized' };
-
-    const { ownerId, role } = await resolveOwnerAndRole(session.user.id);
-    if (role === 'VIEW_ONLY') {
-      return { error: 'You have view-only access and cannot change this.' };
-    }
-
-    const cleanSlug = slugify(desiredSlug);
-    if (!cleanSlug || cleanSlug.length < 3) {
-      return { error: 'Slug must be at least 3 characters (letters, numbers, hyphens only).' };
-    }
-
-    const existing = await prisma.user.findUnique({ where: { slug: cleanSlug } });
-    if (existing && existing.id !== ownerId) {
-      return { error: 'This URL is already taken. Please choose another.' };
-    }
-
-    await prisma.user.update({
-      where: { id: ownerId },
-      data: { slug: cleanSlug },
-    });
-
-    return { success: true, slug: cleanSlug };
-  } catch (error) {
-    console.error('Error saving slug:', error);
-    return { error: 'Failed to save slug' };
+    console.error('Error fetching tag summary:', error);
+    return { error: 'Failed to fetch tag summary' };
   }
 }
