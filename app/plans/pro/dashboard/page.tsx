@@ -10,6 +10,7 @@ import QuickActionsCustomizer, { QUICK_ACTION_COLORS } from "./quick-actions-cus
 import { getAutoReplyMode, setAutoReplyMode } from "./ai-reply-center/actions";
 import { sendReviewRequestEmail, getReviewLink } from "./requests/actions";
 import { getMySlug, saveSlug } from "./review-page/actions";
+import { getTeamData } from "./team/actions";
 
 /* Reusable wrapper that gives any section the layered iOS liquid-glass surface */
 function LiquidCard({
@@ -149,6 +150,7 @@ const quickActions = [
   { label: "Analyze Reviews", sub: "Get AI insights", href: "/plans/pro/dashboard/analytics", defaultColor: "green", icon: <><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></> },
   { label: "Create Report", sub: "Download reports", href: "/plans/pro/dashboard/reports", defaultColor: "orange", icon: <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></> },
   { label: "Connect Platform", sub: "Add review sources", href: "/plans/pro/dashboard/connect-app", defaultColor: "blue", icon: <><path d="M10 13a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1" /><path d="M14 11a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1" /></> },
+  { label: "Team Members", sub: "Manage your team", href: "/plans/pro/dashboard/team", defaultColor: "red", icon: <><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M23 21v-2a4 4 0 0 0-3-3.87" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /></> },
 ];
 
 const navItems = [
@@ -217,6 +219,9 @@ export default function Page() {
   const [cardStyle, setCardStyle] = useState<"glass" | "solid" | "minimal">("glass");
   const [cardSize, setCardSize] = useState<"compact" | "comfortable">("comfortable");
 
+  // ✅ Team summary — Quick Actions ke "Team Members" card ke live count ke liye
+  const [teamSummary, setTeamSummary] = useState<{ used: number; limit: number } | null>(null);
+
   // Email Review Requests
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [emailName, setEmailName] = useState("");
@@ -241,6 +246,9 @@ export default function Page() {
   useEffect(() => {
     fetchOverview();
     fetchAlerts();
+    getTeamData().then((res: any) => {
+      if (res?.success) setTeamSummary({ used: res.membersUsed ?? 0, limit: res.membersLimit ?? 2 });
+    });
     const saved = localStorage.getItem("hiddenQuickActions");
     if (saved) {
       try { setHiddenActions(JSON.parse(saved)); } catch (e) {}
@@ -250,7 +258,11 @@ export default function Page() {
       try {
         const parsed = JSON.parse(savedOrder);
         const validLabels = quickActions.map((a) => a.label);
-        if (Array.isArray(parsed) && parsed.every((l) => validLabels.includes(l))) setActionOrder(parsed);
+        if (Array.isArray(parsed) && parsed.every((l) => validLabels.includes(l))) {
+          // Naye add hue quick actions (jaise "Team Members") ko purane saved order ke end me jod do
+          const missing = validLabels.filter((l) => !parsed.includes(l));
+          setActionOrder(missing.length ? [...parsed, ...missing] : parsed);
+        }
       } catch (e) {}
     }
     const savedColors = localStorage.getItem("quickActionsColors");
@@ -528,10 +540,10 @@ export default function Page() {
         </div>
       </div>
 
-      {/* stat cards — real KPI Summary data */}
+      {/* stat cards — real KPI Summary data — ✅ har card apna alag themed color */}
       <div className="stats">
         {statMeta.map((s) => (
-          <LiquidCard key={s.label} className="stat-card">
+          <LiquidCard key={s.label} className="stat-card themed" style={{ ["--action-color" as any]: s.color }}>
             <div className="stat-head">
               <div className={`icon ${s.icon}`}>{s.svg}</div>
               <p className="title">{s.label}</p>
@@ -542,8 +554,8 @@ export default function Page() {
         ))}
       </div>
 
-      {/* quick actions */}
-      <LiquidCard className="section-card">
+      {/* quick actions — ✅ wrapper card ko bhi apna alag themed color */}
+      <LiquidCard className="section-card themed" style={{ ["--action-color" as any]: "#ff2d95" }}>
         <div className="section-head">
           <h3>Quick Actions</h3>
           <div
@@ -573,6 +585,7 @@ export default function Page() {
         <div className="actions-grid">
           {visibleActions.map((a) => {
             const colorValue = getActionColorValue(a.label);
+            const isTeam = a.label === "Team Members";
             return (
               <Link href={a.href} key={a.label} style={{ textDecoration: "none", color: "inherit" }}>
                 <LiquidCard
@@ -582,7 +595,7 @@ export default function Page() {
                   <div className="action-icon-badge">
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>{a.icon}</svg>
                   </div>
-                  <b>{a.label}</b>
+                  <b>{isTeam && teamSummary ? `${teamSummary.used}/${teamSummary.limit} Team Members` : a.label}</b>
                   <div className="sub">{a.sub} →</div>
                 </LiquidCard>
               </Link>
@@ -591,9 +604,9 @@ export default function Page() {
         </div>
       </LiquidCard>
 
-      {/* Alerts (left) + Email Review Requests / QR Code Generator (right, stacked) */}
+      {/* Alerts (left) + Email Review Requests / QR Code Generator (right, stacked) — ✅ Alerts wrapper ko bhi alag color */}
       <div className="alerts-row">
-        <LiquidCard className="section-card">
+        <LiquidCard className="section-card themed" style={{ ["--action-color" as any]: "#ff6b35" }}>
           <div className="section-head">
             <h3>⚠️ Alerts</h3>
             <span className="link">{alerts.length} needs attention</span>
@@ -651,9 +664,9 @@ export default function Page() {
         </div>
       </div>
 
-      {/* two column: overview + recent reviews */}
+      {/* two column: overview + recent reviews — ✅ dono ko apna alag color */}
       <div className="two-col">
-        <LiquidCard>
+        <LiquidCard className="themed" style={{ ["--action-color" as any]: "#22d3ee" }}>
           <div className="section-head">
             <h3>Review Overview</h3>
             <div className="dropdown mini-glass">All time
@@ -675,7 +688,7 @@ export default function Page() {
           <div className="view-analytics"><Link href="/plans/pro/dashboard/analytics" className="link">View all analytics →</Link></div>
         </LiquidCard>
 
-        <LiquidCard>
+        <LiquidCard className="themed" style={{ ["--action-color" as any]: "#a3e635" }}>
           <div className="section-head">
             <h3>Recent Activity</h3>
             <Link href="/plans/pro/dashboard/reviews" className="link">View all</Link>
@@ -701,13 +714,13 @@ export default function Page() {
         </LiquidCard>
       </div>
 
-      {/* AI suggestions — real, actionable insights (Quick Actions se alag, yaha koi navigation nahi) */}
-      <LiquidCard className="section-card">
+      {/* AI suggestions — ✅ wrapper + har inner ai-card apna alag color */}
+      <LiquidCard className="section-card themed" style={{ ["--action-color" as any]: "#7c6cff" }}>
         <div className="section-head">
           <h3>AI Suggestions <span className="pro-tag">PRO</span></h3>
         </div>
         <div className="ai-grid">
-          <LiquidCard className="ai-card">
+          <LiquidCard className="ai-card themed" style={{ ["--action-color" as any]: "#f5a623" }}>
             <div className="ai-head">
               <div className="ai-icon" style={{ background: "rgba(245,166,35,.18)", color: "#f5a623" }}>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h7l-1 8 11-14h-7z" /></svg>
@@ -721,7 +734,7 @@ export default function Page() {
             <div className="sub">{autoReplyOn ? "AI khud reply bhej raha hai" : "Turant on karo, click karke"}</div>
           </LiquidCard>
 
-          <LiquidCard className="ai-card" onClick={shuffleTemplate} style={{ cursor: "pointer" }}>
+          <LiquidCard className="ai-card themed" style={{ ["--action-color" as any]: "#14b8a6" }} onClick={shuffleTemplate} style2={{}}>
             <div className="ai-head">
               <div className="ai-icon" style={{ background: "rgba(255,255,255,.08)", color: "var(--text-dim)" }}>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" /></svg>
@@ -731,7 +744,7 @@ export default function Page() {
             <div className="sub">{templates[templateIdx] || "Loading..."}</div>
           </LiquidCard>
 
-          <LiquidCard className="ai-card">
+          <LiquidCard className="ai-card themed" style={{ ["--action-color" as any]: "#c78bff" }}>
             <div className="ai-head">
               <div className="ai-icon" style={{ background: "rgba(174,71,255,.18)", color: "#c78bff" }}>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10" /><path d="M8 14s1.5 2 4 2 4-2 4-2" /></svg>
@@ -741,7 +754,7 @@ export default function Page() {
             <div className="sub">{sentimentInsight}</div>
           </LiquidCard>
 
-          <LiquidCard className="ai-card" onClick={handleGenerateReport} style={{ cursor: "pointer" }}>
+          <LiquidCard className="ai-card themed" style={{ ["--action-color" as any]: "#60a5fa" }} onClick={handleGenerateReport}>
             <div className="ai-head">
               <div className="ai-icon" style={{ background: "rgba(77,163,255,.18)", color: "#4da3ff" }}>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><line x1="18" y1="20" x2="18" y2="10" /><line x1="12" y1="20" x2="12" y2="4" /><line x1="6" y1="20" x2="6" y2="14" /></svg>
@@ -751,7 +764,7 @@ export default function Page() {
             <div className="sub">{reportLoading ? "Downloading..." : "Click karo, CSV turant download hoga"}</div>
           </LiquidCard>
 
-          <LiquidCard className="ai-card">
+          <LiquidCard className="ai-card themed" style={{ ["--action-color" as any]: "#eab308" }}>
             <div className="ai-head">
               <div className="ai-icon" style={{ background: "rgba(52,211,153,.18)", color: "#34d399" }}>
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}><polyline points="23 6 13.5 15.5 8.5 10.5 1 18" /><polyline points="17 6 23 6 23 12" /></svg>
@@ -763,7 +776,7 @@ export default function Page() {
         </div>
       </LiquidCard>
 
-      {/* bottom nav — sliding liquid blob behind the active item */}
+      {/* bottom nav — sliding liquid blob behind the active item — ❌ isko color/font change se chhod diya, "footer wala card" jaisa hi hai */}
       <BottomNav />
 
       <div className="fab">
