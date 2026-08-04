@@ -681,3 +681,6 @@ html.light-mode .segmented{background:rgba(0,0,0,.05)}
   padding:7px 10px;border-radius:10px;font-size:calc(12.5px * var(--font-scale));font-weight:600;cursor:pointer;outline:none;
 }
 html.light-mode .settings-select{background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.1)}
+
+
+
