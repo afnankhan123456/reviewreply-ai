@@ -74,10 +74,10 @@ function Spark({ color, values }: { color: string; values: number[] }) {
 const statMeta = [
   {
     key: "totalReviews",
-    icon: "purple",
+    icon: "blue",                    // ← purple → blue
     label: "Total Reviews",
     deltaClass: "green",
-    color: "#ae47ff",
+    color: "#4da3ff",                // ← #ae47ff → #4da3ff
     format: (d: any) => d.totalReviews ?? 0,
     svg: (
       <svg viewBox="0 0 24 24" fill="none">
