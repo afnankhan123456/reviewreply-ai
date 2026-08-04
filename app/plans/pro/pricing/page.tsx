@@ -4,6 +4,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 
+const ALLOWED_PRO_EMAIL = "afnankh6789@gmail.com";
+
 const pricingPlans = [
   {
     id: "monthly",
@@ -49,8 +51,11 @@ const pricingPlans = [
 
 export default function ProPricingPage() {
   const router = useRouter();
-  const { update } = useSession();
+  const { data: session, status, update } = useSession();
   const [activatingPlan, setActivatingPlan] = useState<string | null>(null);
+
+  const userEmail = session?.user?.email;
+  const isAllowed = userEmail === ALLOWED_PRO_EMAIL;
 
   const handleChoosePlan = async (plan: (typeof pricingPlans)[number]) => {
     try {
@@ -76,6 +81,44 @@ export default function ProPricingPage() {
       setActivatingPlan(null);
     }
   };
+
+  if (status === "loading") {
+    return (
+      <main className="min-h-screen bg-black text-white flex items-center justify-center">
+        <p className="text-sm text-gray-400">Checking your session...</p>
+      </main>
+    );
+  }
+
+  if (!isAllowed) {
+    return (
+      <main className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-4 text-center relative overflow-hidden">
+        <div className="absolute top-[10%] left-[-200px] w-[700px] h-[700px] rounded-full bg-amber-500/20 blur-[140px] pointer-events-none" />
+        <div className="absolute top-[5%] right-[-200px] w-[700px] h-[700px] rounded-full bg-violet-600/20 blur-[140px] pointer-events-none" />
+
+        <div className="relative z-10">
+          <p className="text-sm font-semibold tracking-widest text-amber-300 mb-4">
+            PRO PLAN
+          </p>
+          <h1 className="text-4xl sm:text-5xl font-bold mb-4">
+            Coming{" "}
+            <span className="bg-gradient-to-r from-amber-400 to-violet-400 bg-clip-text text-transparent">
+              Soon
+            </span>
+          </h1>
+          <p className="text-zinc-400 max-w-md mx-auto">
+            The Pro plan is not available yet. We&apos;re putting the finishing touches on it — check back soon.
+          </p>
+          <button
+            onClick={() => router.push("/plans")}
+            className="mt-8 rounded-xl bg-gradient-to-r from-amber-500 to-violet-600 px-6 py-3 font-semibold text-white transition hover:opacity-90"
+          >
+            Back to Plans
+          </button>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="min-h-screen bg-black text-white py-16 px-4 sm:px-6 relative overflow-hidden">
