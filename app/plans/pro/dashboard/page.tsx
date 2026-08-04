@@ -5,10 +5,11 @@ import { createPortal } from "react-dom";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { ChevronDown, LogOut, Settings, HelpCircle, Mail, QrCode, X } from "lucide-react";
+import { ChevronDown, LogOut, Settings, HelpCircle, Mail, QrCode, X, Globe, Copy, ExternalLink } from "lucide-react";
 import QuickActionsCustomizer, { QUICK_ACTION_COLORS } from "./quick-actions-customizer";
 import { getAutoReplyMode, setAutoReplyMode } from "./ai-reply-center/actions";
 import { sendReviewRequestEmail, getReviewLink } from "./requests/actions";
+import { getMySlug, saveSlug } from "./review-page/actions";
 
 /* Reusable wrapper that gives any section the layered iOS liquid-glass surface */
 function LiquidCard({
@@ -228,6 +229,15 @@ export default function Page() {
   const [qrLoading, setQrLoading] = useState(false);
   const [qrLink, setQrLink] = useState("");
 
+  // Public Review Page
+  const [showReviewPageModal, setShowReviewPageModal] = useState(false);
+  const [slugInput, setSlugInput] = useState("");
+  const [savedSlug, setSavedSlug] = useState<string | null>(null);
+  const [slugLoading, setSlugLoading] = useState(false);
+  const [slugSaving, setSlugSaving] = useState(false);
+  const [slugMessage, setSlugMessage] = useState("");
+  const [slugCopied, setSlugCopied] = useState(false);
+
   useEffect(() => {
     fetchOverview();
     fetchAlerts();
@@ -359,9 +369,44 @@ export default function Page() {
       setQrLink(result.reviewLink);
       setShowQrModal(true);
     } else {
-      setEmailResultMsg(""); // no-op, keeps state clean
       alert(result.error || "Failed to get review link");
     }
+  };
+
+  // ✅ Public Review Page handlers
+  const handleOpenReviewPage = async () => {
+    setShowReviewPageModal(true);
+    setSlugLoading(true);
+    setSlugMessage("");
+    const result: any = await getMySlug();
+    if (result.success && result.slug) {
+      setSavedSlug(result.slug);
+      setSlugInput(result.slug);
+    }
+    setSlugLoading(false);
+  };
+
+  const handleSaveSlug = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSlugSaving(true);
+    setSlugMessage("");
+    const result: any = await saveSlug(slugInput);
+    if (result.success) {
+      setSavedSlug(result.slug);
+      setSlugMessage("Saved successfully!");
+    } else {
+      setSlugMessage(result.error || "Failed to save");
+    }
+    setSlugSaving(false);
+  };
+
+  const publicReviewUrl = savedSlug ? `${typeof window !== "undefined" ? window.location.origin : ""}/r/${savedSlug}` : "";
+
+  const handleCopySlugUrl = async () => {
+    if (!publicReviewUrl) return;
+    await navigator.clipboard.writeText(publicReviewUrl);
+    setSlugCopied(true);
+    setTimeout(() => setSlugCopied(false), 2000);
   };
 
   // ✅ Sentiment insight — existing star breakdown se hi nikala, koi extra API nahi
@@ -584,14 +629,25 @@ export default function Page() {
             <div className="side-cta">Send Email →</div>
           </LiquidCard>
 
-          <LiquidCard className="side-card themed" style={{ ["--action-color" as any]: "#34d399" }} onClick={handleOpenQr}>
-            <div className="side-card-icon" style={{ background: "linear-gradient(135deg,#34d399,#1f9d74)" }}>
-              <QrCode size={17} color="#fff" />
-            </div>
-            <b>QR Code Generator</b>
-            <div className="sub">Generate a scannable QR code for your review link.</div>
-            <div className="side-cta">{qrLoading ? "Loading..." : "Generate QR →"}</div>
-          </LiquidCard>
+          <div className="side-card-row">
+            <LiquidCard className="side-card themed" style={{ ["--action-color" as any]: "#34d399" }} onClick={handleOpenQr}>
+              <div className="side-card-icon" style={{ background: "linear-gradient(135deg,#34d399,#1f9d74)" }}>
+                <QrCode size={17} color="#fff" />
+              </div>
+              <b>QR Code</b>
+              <div className="sub">Scannable review QR code.</div>
+              <div className="side-cta">{qrLoading ? "Loading..." : "Generate →"}</div>
+            </LiquidCard>
+
+            <LiquidCard className="side-card themed" style={{ ["--action-color" as any]: "#ae47ff" }} onClick={handleOpenReviewPage}>
+              <div className="side-card-icon" style={{ background: "linear-gradient(135deg,#a561f6,#7b2db9)" }}>
+                <Globe size={17} color="#fff" />
+              </div>
+              <b>Public Review Page</b>
+              <div className="sub">Shareable page for your reviews.</div>
+              <div className="side-cta">{savedSlug ? "Manage →" : "Set up →"}</div>
+            </LiquidCard>
+          </div>
         </div>
       </div>
 
@@ -766,6 +822,58 @@ export default function Page() {
               />
             </div>
             <p style={{ fontSize: 11, marginTop: 12, color: "var(--text-dim)", wordBreak: "break-all" }}>{qrLink}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Public Review Page Modal */}
+      {showReviewPageModal && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.65)", backdropFilter: "blur(4px)", zIndex: 999, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }} onClick={() => setShowReviewPageModal(false)}>
+          <div style={{ width: 420, maxWidth: "100%", background: "var(--card-bg)", border: "1px solid rgba(255,255,255,.1)", borderRadius: 20, padding: 20, boxShadow: "0 30px 70px rgba(0,0,0,.6)" }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+              <h3 style={{ margin: 0, fontSize: 15 }}>Public Review Page</h3>
+              <button onClick={() => setShowReviewPageModal(false)} className="qa-close"><X size={12} /></button>
+            </div>
+            <p style={{ fontSize: 12, color: "var(--text-dim)", margin: "0 0 16px" }}>
+              Share a public page showcasing your customer reviews — no website needed.
+            </p>
+
+            {slugLoading ? (
+              <p style={{ color: "var(--text-dim)", fontSize: 13 }}>Loading...</p>
+            ) : (
+              <form onSubmit={handleSaveSlug}>
+                <label style={{ fontSize: 12, color: "var(--text-dim)", display: "block", marginBottom: 6 }}>Your page URL</label>
+                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+                  <span style={{ fontSize: 12.5, color: "var(--text-dimmer)", whiteSpace: "nowrap" }}>/r/</span>
+                  <input
+                    type="text" required value={slugInput} onChange={(e) => setSlugInput(e.target.value)} placeholder="your-business-name"
+                    style={{ flex: 1, padding: 10, borderRadius: 10, background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.1)", color: "var(--text)", fontSize: 13 }}
+                  />
+                </div>
+
+                <button type="submit" disabled={slugSaving} className="btn-primary" style={{ width: "100%", justifyContent: "center", opacity: slugSaving ? 0.6 : 1 }}>
+                  {slugSaving ? "Saving..." : savedSlug ? "Update URL" : "Save URL"}
+                </button>
+
+                {slugMessage && (
+                  <p style={{ fontSize: 12, marginTop: 10, color: slugMessage.toLowerCase().includes("saved") ? "var(--green)" : "var(--red)" }}>
+                    {slugMessage}
+                  </p>
+                )}
+
+                {savedSlug && (
+                  <div style={{ marginTop: 16, padding: 12, borderRadius: 12, background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.08)" }}>
+                    <div style={{ fontSize: 11.5, color: "var(--text-dimmer)", marginBottom: 6 }}>Your public page</div>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <span style={{ flex: 1, fontSize: 12, color: "var(--text)", wordBreak: "break-all" }}>{publicReviewUrl}</span>
+                      <button type="button" onClick={handleCopySlugUrl} className="qa-close" title="Copy link"><Copy size={12} /></button>
+                      <a href={publicReviewUrl} target="_blank" rel="noopener noreferrer" className="qa-close" title="Open page"><ExternalLink size={12} /></a>
+                    </div>
+                    {slugCopied && <div style={{ fontSize: 11, color: "var(--green)", marginTop: 6 }}>Copied!</div>}
+                  </div>
+                )}
+              </form>
+            )}
           </div>
         </div>
       )}
