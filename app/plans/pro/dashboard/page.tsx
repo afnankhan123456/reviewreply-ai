@@ -74,10 +74,10 @@ function Spark({ color, values }: { color: string; values: number[] }) {
 const statMeta = [
   {
     key: "totalReviews",
-    icon: "blue",                    // ← purple → blue
+    icon: "purple",
     label: "Total Reviews",
     deltaClass: "green",
-    color: "#4da3ff",                // ← #ae47ff → #4da3ff
+    color: "#4da3ff",
     format: (d: any) => d.totalReviews ?? 0,
     svg: (
       <svg viewBox="0 0 24 24" fill="none">
@@ -93,7 +93,7 @@ const statMeta = [
     icon: "gold",
     label: "Average Rating",
     deltaClass: "amber",
-    color: "#e9b52a",
+    color: "#4da3ff",
     format: (d: any) => d.avgRating ?? 0,
     svg: (
       <svg viewBox="0 0 24 24" fill="none">
@@ -106,7 +106,7 @@ const statMeta = [
     icon: "green",
     label: "New Reviews",
     deltaClass: "green",
-    color: "#34d399",
+    color: "#4da3ff",
     format: (d: any) => d.newReviews ?? 0,
     svg: (
       <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
@@ -133,7 +133,7 @@ const statMeta = [
     icon: "red",
     label: "Low Rating Reviews",
     deltaClass: "red",
-    color: "#ef5a6f",
+    color: "#4da3ff",
     format: (d: any) => d.lowRatingCount ?? 0,
     svg: (
       <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth={2}>
@@ -540,7 +540,7 @@ export default function Page() {
         </div>
       </div>
 
-      {/* stat cards — real KPI Summary data — ✅ har card apna alag themed color */}
+      {/* stat cards — real KPI Summary data — ✅ har card ka color ab light blue (#4da3ff) hai, lekin icons apne original colors mein hain */}
       <div className="stats">
         {statMeta.map((s) => (
           <LiquidCard key={s.label} className="stat-card themed" style={{ ["--action-color" as any]: s.color }}>
