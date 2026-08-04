@@ -1,8 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { CheckCircle2, Feather, Crown, Zap, ArrowRight, Gift, Sparkles } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { CheckCircle2, Feather, Crown, Zap, ArrowRight, Gift, Sparkles, X } from "lucide-react";
+
+const ALLOWED_PRO_EMAIL = "afnankh6789@gmail.com";
 
 const basicFeatures = [
   "1 Business Location",
@@ -79,6 +84,19 @@ const proFeatures = [
 ];
 
 export default function PlansPage() {
+  const { data: session } = useSession();
+  const router = useRouter();
+  const [showComingSoon, setShowComingSoon] = useState(false);
+
+  const handleProClick = () => {
+    const userEmail = session?.user?.email;
+    if (userEmail === ALLOWED_PRO_EMAIL) {
+      router.push("/plans/pro/pricing");
+    } else {
+      setShowComingSoon(true);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black text-white px-4 md:px-10 py-6 relative overflow-hidden">
 
@@ -242,7 +260,7 @@ export default function PlansPage() {
           </Link>
 
           {/* PRO */}
-          <Link href="/plans/pro/pricing" className="h-full">
+          <div onClick={handleProClick} className="h-full">
 
             <div className="bg-zinc-900/60 backdrop-blur-sm border border-zinc-800 rounded-3xl p-8 hover:border-yellow-500 transition-all cursor-pointer h-full flex flex-col">
 
@@ -276,7 +294,7 @@ export default function PlansPage() {
 
             </div>
 
-          </Link>
+          </div>
 
         </div>
 
@@ -315,6 +333,38 @@ export default function PlansPage() {
         </div>
 
       </div>
+
+      {/* COMING SOON MODAL */}
+      {showComingSoon && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
+          <div className="relative bg-zinc-900 border border-yellow-500/40 rounded-2xl p-8 max-w-sm w-full text-center">
+
+            <button
+              onClick={() => setShowComingSoon(false)}
+              className="absolute top-4 right-4 text-zinc-500 hover:text-white transition-all"
+            >
+              <X size={18} />
+            </button>
+
+            <div className="w-12 h-12 mx-auto rounded-xl bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center mb-5">
+              <Zap size={20} className="text-yellow-400" />
+            </div>
+
+            <h3 className="text-2xl font-bold mb-2">Coming Soon</h3>
+            <p className="text-zinc-400 text-sm">
+              The Pro plan is not available yet. We&apos;re putting the finishing touches on it — check back soon.
+            </p>
+
+            <button
+              onClick={() => setShowComingSoon(false)}
+              className="mt-6 w-full bg-yellow-500 hover:bg-yellow-600 text-black font-semibold py-3 rounded-xl transition-all"
+            >
+              Okay
+            </button>
+
+          </div>
+        </div>
+      )}
 
     </div>
   );
