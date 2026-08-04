@@ -5,9 +5,10 @@ import { createPortal } from "react-dom";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
-import { ChevronDown, LogOut, Settings, HelpCircle } from "lucide-react";
+import { ChevronDown, LogOut, Settings, HelpCircle, Mail, QrCode, X } from "lucide-react";
 import QuickActionsCustomizer, { QUICK_ACTION_COLORS } from "./quick-actions-customizer";
 import { getAutoReplyMode, setAutoReplyMode } from "./ai-reply-center/actions";
+import { sendReviewRequestEmail, getReviewLink } from "./requests/actions";
 
 /* Reusable wrapper that gives any section the layered iOS liquid-glass surface */
 function LiquidCard({
@@ -215,6 +216,18 @@ export default function Page() {
   const [cardStyle, setCardStyle] = useState<"glass" | "solid" | "minimal">("glass");
   const [cardSize, setCardSize] = useState<"compact" | "comfortable">("comfortable");
 
+  // Email Review Requests
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [emailName, setEmailName] = useState("");
+  const [emailValue, setEmailValue] = useState("");
+  const [emailSending, setEmailSending] = useState(false);
+  const [emailResultMsg, setEmailResultMsg] = useState("");
+
+  // QR Code Generator
+  const [showQrModal, setShowQrModal] = useState(false);
+  const [qrLoading, setQrLoading] = useState(false);
+  const [qrLink, setQrLink] = useState("");
+
   useEffect(() => {
     fetchOverview();
     fetchAlerts();
@@ -316,6 +329,38 @@ export default function Page() {
       window.open("/api/standard/reports/export?format=csv", "_blank");
     } finally {
       setTimeout(() => setReportLoading(false), 1200);
+    }
+  };
+
+  // ✅ Email Review Requests handler
+  const handleSendEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setEmailSending(true);
+    setEmailResultMsg("");
+    const result = await sendReviewRequestEmail(emailName, emailValue);
+    setEmailResultMsg(result.message);
+    setEmailSending(false);
+    if (result.message?.toLowerCase().includes("sent")) {
+      setTimeout(() => {
+        setShowEmailModal(false);
+        setEmailName("");
+        setEmailValue("");
+        setEmailResultMsg("");
+      }, 1200);
+    }
+  };
+
+  // ✅ QR Code Generator handler
+  const handleOpenQr = async () => {
+    setQrLoading(true);
+    const result = await getReviewLink();
+    setQrLoading(false);
+    if (result.success && result.reviewLink) {
+      setQrLink(result.reviewLink);
+      setShowQrModal(true);
+    } else {
+      setEmailResultMsg(""); // no-op, keeps state clean
+      alert(result.error || "Failed to get review link");
     }
   };
 
@@ -501,32 +546,54 @@ export default function Page() {
         </div>
       </LiquidCard>
 
-      {/* Alerts — low rating reviews jinpe turant dhyan chahiye */}
-      <LiquidCard className="section-card">
-        <div className="section-head">
-          <h3>⚠️ Alerts</h3>
-          <span className="link">{alerts.length} needs attention</span>
-        </div>
-        {alerts.length === 0 ? (
-          <p style={{ color: "var(--text-dim)", fontSize: 13 }}>No low-rating alerts right now. 🎉</p>
-        ) : (
-          <div className="alerts-scroll">
-            {alerts.slice(0, 10).map((a) => (
-              <div className="review-row" key={a.id}>
-                <div className="rev-avatar">⚠️</div>
-                <div className="rev-mid">
-                  <span className="rev-name">{a.reviewerName}</span>
-                  <div className="rev-stars" style={{ color: "var(--red)" }}>
-                    {"★".repeat(a.rating)}{"☆".repeat(5 - a.rating)}
-                  </div>
-                  <div className="rev-text">{a.comment}</div>
-                </div>
-                <span className="rev-tag tag-negative">{a.source || "Review"}</span>
-              </div>
-            ))}
+      {/* Alerts (left) + Email Review Requests / QR Code Generator (right, stacked) */}
+      <div className="alerts-row">
+        <LiquidCard className="section-card">
+          <div className="section-head">
+            <h3>⚠️ Alerts</h3>
+            <span className="link">{alerts.length} needs attention</span>
           </div>
-        )}
-      </LiquidCard>
+          {alerts.length === 0 ? (
+            <p style={{ color: "var(--text-dim)", fontSize: 13 }}>No low-rating alerts right now. 🎉</p>
+          ) : (
+            <div className="alerts-scroll">
+              {alerts.slice(0, 10).map((a) => (
+                <div className="review-row" key={a.id}>
+                  <div className="rev-avatar">⚠️</div>
+                  <div className="rev-mid">
+                    <span className="rev-name">{a.reviewerName}</span>
+                    <div className="rev-stars" style={{ color: "var(--red)" }}>
+                      {"★".repeat(a.rating)}{"☆".repeat(5 - a.rating)}
+                    </div>
+                    <div className="rev-text">{a.comment}</div>
+                  </div>
+                  <span className="rev-tag tag-negative">{a.source || "Review"}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </LiquidCard>
+
+        <div className="alerts-side">
+          <LiquidCard className="side-card themed" style={{ ["--action-color" as any]: "#4da3ff" }} onClick={() => setShowEmailModal(true)}>
+            <div className="side-card-icon" style={{ background: "linear-gradient(135deg,#4da3ff,#2d6fd6)" }}>
+              <Mail size={17} color="#fff" />
+            </div>
+            <b>Email Review Requests</b>
+            <div className="sub">Send a review request email to a customer.</div>
+            <div className="side-cta">Send Email →</div>
+          </LiquidCard>
+
+          <LiquidCard className="side-card themed" style={{ ["--action-color" as any]: "#34d399" }} onClick={handleOpenQr}>
+            <div className="side-card-icon" style={{ background: "linear-gradient(135deg,#34d399,#1f9d74)" }}>
+              <QrCode size={17} color="#fff" />
+            </div>
+            <b>QR Code Generator</b>
+            <div className="sub">Generate a scannable QR code for your review link.</div>
+            <div className="side-cta">{qrLoading ? "Loading..." : "Generate QR →"}</div>
+          </LiquidCard>
+        </div>
+      </div>
 
       {/* two column: overview + recent reviews */}
       <div className="two-col">
@@ -646,6 +713,62 @@ export default function Page() {
       <div className="fab">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4z" /></svg>
       </div>
+
+      {/* Email Review Request Modal */}
+      {showEmailModal && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.65)", backdropFilter: "blur(4px)", zIndex: 999, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }} onClick={() => setShowEmailModal(false)}>
+          <div style={{ width: 420, maxWidth: "100%", background: "var(--card-bg)", border: "1px solid rgba(255,255,255,.1)", borderRadius: 20, padding: 20, boxShadow: "0 30px 70px rgba(0,0,0,.6)" }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+              <h3 style={{ margin: 0, fontSize: 15 }}>Send Review Request</h3>
+              <button onClick={() => setShowEmailModal(false)} className="qa-close"><X size={12} /></button>
+            </div>
+
+            <form onSubmit={handleSendEmail}>
+              <label style={{ fontSize: 12, color: "var(--text-dim)", display: "block", marginBottom: 6 }}>Customer Name</label>
+              <input
+                type="text" required value={emailName} onChange={(e) => setEmailName(e.target.value)} placeholder="John Doe"
+                style={{ width: "100%", marginBottom: 12, padding: 10, borderRadius: 10, background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.1)", color: "var(--text)", fontSize: 13 }}
+              />
+
+              <label style={{ fontSize: 12, color: "var(--text-dim)", display: "block", marginBottom: 6 }}>Customer Email</label>
+              <input
+                type="email" required value={emailValue} onChange={(e) => setEmailValue(e.target.value)} placeholder="customer@example.com"
+                style={{ width: "100%", marginBottom: 16, padding: 10, borderRadius: 10, background: "rgba(255,255,255,.04)", border: "1px solid rgba(255,255,255,.1)", color: "var(--text)", fontSize: 13 }}
+              />
+
+              <button type="submit" disabled={emailSending} className="btn-primary" style={{ width: "100%", justifyContent: "center", opacity: emailSending ? 0.6 : 1 }}>
+                {emailSending ? "Sending..." : "Send Review Request"}
+              </button>
+
+              {emailResultMsg && (
+                <p style={{ fontSize: 12, marginTop: 10, color: emailResultMsg.toLowerCase().includes("sent") ? "var(--green)" : "var(--red)" }}>
+                  {emailResultMsg}
+                </p>
+              )}
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* QR Code Modal */}
+      {showQrModal && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,.65)", backdropFilter: "blur(4px)", zIndex: 999, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }} onClick={() => setShowQrModal(false)}>
+          <div style={{ width: 340, maxWidth: "100%", background: "var(--card-bg)", border: "1px solid rgba(255,255,255,.1)", borderRadius: 20, padding: 20, boxShadow: "0 30px 70px rgba(0,0,0,.6)", textAlign: "center" }} onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+              <h3 style={{ margin: 0, fontSize: 15 }}>Review QR Code</h3>
+              <button onClick={() => setShowQrModal(false)} className="qa-close"><X size={12} /></button>
+            </div>
+
+            <div style={{ background: "#fff", padding: 12, borderRadius: 12, display: "inline-block" }}>
+              <img
+                src={`https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(qrLink)}`}
+                alt="Review QR Code" width={220} height={220}
+              />
+            </div>
+            <p style={{ fontSize: 11, marginTop: 12, color: "var(--text-dim)", wordBreak: "break-all" }}>{qrLink}</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
