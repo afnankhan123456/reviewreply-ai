@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 
-const ALLOWED_PRO_EMAIL = "afnankh6789@gmail.com";
+const ALLOWED_PRO_EMAIL = "afnank6789@gmail.com";
 
 const pricingPlans = [
   {
