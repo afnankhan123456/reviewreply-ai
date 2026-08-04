@@ -7,7 +7,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { CheckCircle2, Feather, Crown, Zap, ArrowRight, Gift, Sparkles, X } from "lucide-react";
 
-const ALLOWED_PRO_EMAIL = "afnankh6789@gmail.com";
+const ALLOWED_PRO_EMAIL = "afnank6789@gmail.com";
 
 const basicFeatures = [
   "1 Business Location",
