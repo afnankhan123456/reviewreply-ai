@@ -582,7 +582,8 @@ export default function Page() {
               document.body
             )}
         </div>
-        <div className="actions-grid">
+        {/* ✅ YAHAN CHANGE HUA HAI - inline style add ki gayi hai */}
+        <div className="actions-grid" style={{ gridTemplateColumns: "repeat(6, 1fr)" }}>
           {visibleActions.map((a) => {
             const colorValue = getActionColorValue(a.label);
             const isTeam = a.label === "Team Members";
