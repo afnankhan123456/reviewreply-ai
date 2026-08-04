@@ -1,12 +1,10 @@
 "use client";
 
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import { createPortal } from "react-dom";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { useSession, signOut } from "next-auth/react";
 import { ChevronDown, LogOut, Settings, HelpCircle, Mail, QrCode, X, Globe, Copy, ExternalLink } from "lucide-react";
-import QuickActionsCustomizer, { QUICK_ACTION_COLORS } from "./quick-actions-customizer";
 import { getAutoReplyMode, setAutoReplyMode } from "./ai-reply-center/actions";
 import { sendReviewRequestEmail, getReviewLink } from "./requests/actions";
 import { getMySlug, saveSlug } from "./review-page/actions";
@@ -212,7 +210,6 @@ export default function Page() {
   const [alerts, setAlerts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [customizeOpen, setCustomizeOpen] = useState(false);
   const [hiddenActions, setHiddenActions] = useState<string[]>([]);
   const [actionOrder, setActionOrder] = useState<string[]>(quickActions.map((a) => a.label));
   const [actionColors, setActionColors] = useState<Record<string, string>>({});
@@ -286,27 +283,6 @@ export default function Page() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  /* Modal ka "Save Changes" dabane par hi ye chalta hai — tab tak dashboard untouched rehta hai */
-  const applyQuickActionsCustomize = (prefs: {
-    order: string[];
-    hidden: string[];
-    colors: Record<string, string>;
-    cardStyle: "glass" | "solid" | "minimal";
-    cardSize: "compact" | "comfortable";
-  }) => {
-    setActionOrder(prefs.order);
-    localStorage.setItem("quickActionsOrder", JSON.stringify(prefs.order));
-    setHiddenActions(prefs.hidden);
-    localStorage.setItem("hiddenQuickActions", JSON.stringify(prefs.hidden));
-    setActionColors(prefs.colors);
-    localStorage.setItem("quickActionsColors", JSON.stringify(prefs.colors));
-    setCardStyle(prefs.cardStyle);
-    localStorage.setItem("quickActionsCardStyle", prefs.cardStyle);
-    setCardSize(prefs.cardSize);
-    localStorage.setItem("quickActionsCardSize", prefs.cardSize);
-    setCustomizeOpen(false);
-  };
-
   const visibleActions = actionOrder
     .map((label) => quickActions.find((a) => a.label === label))
     .filter((a): a is typeof quickActions[number] => !!a && !hiddenActions.includes(a.label));
@@ -315,7 +291,14 @@ export default function Page() {
     const override = actionColors[label];
     const action = quickActions.find((a) => a.label === label);
     const colorKey = override && override !== "default" ? override : action?.defaultColor || "purple";
-    return QUICK_ACTION_COLORS.find((c) => c.key === colorKey)?.value || "#ae47ff";
+    const map: Record<string, string> = {
+      purple: "#ae47ff",
+      blue: "#4da3ff",
+      green: "#34d399",
+      orange: "#f5a623",
+      red: "#ef5a6f",
+    };
+    return map[colorKey] || "#ae47ff";
   };
 
   const [autoReplyOn, setAutoReplyOn] = useState(false);
@@ -540,7 +523,7 @@ export default function Page() {
         </div>
       </div>
 
-      {/* stat cards — real KPI Summary data — ✅ har card ka color ab light blue (#4da3ff) hai, lekin icons apne original colors mein hain */}
+      {/* stat cards — real KPI Summary data — har card ka color light blue (#4da3ff) hai, icons apne original colors mein hain */}
       <div className="stats">
         {statMeta.map((s) => (
           <LiquidCard key={s.label} className="stat-card themed" style={{ ["--action-color" as any]: s.color }}>
@@ -554,35 +537,11 @@ export default function Page() {
         ))}
       </div>
 
-      {/* quick actions — ✅ main wrapper card ab purple hai */}
+      {/* quick actions — main wrapper card purple hai — ✅ Customize button/modal hata diya gaya hai */}
       <LiquidCard className="section-card themed" style={{ ["--action-color" as any]: "#ae47ff" }}>
         <div className="section-head">
           <h3>Quick Actions</h3>
-          <div
-            className="dropdown mini-glass"
-            onClick={() => setCustomizeOpen(true)}
-          >
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-              <path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6" />
-            </svg>
-            Customize
-          </div>
-          {customizeOpen && typeof document !== "undefined" &&
-            createPortal(
-              <QuickActionsCustomizer
-                actions={quickActions}
-                order={actionOrder}
-                hidden={hiddenActions}
-                colors={actionColors}
-                cardStyle={cardStyle}
-                cardSize={cardSize}
-                onSave={applyQuickActionsCustomize}
-                onCancel={() => setCustomizeOpen(false)}
-              />,
-              document.body
-            )}
         </div>
-        {/* ✅ YAHAN CHANGE HUA HAI - inline style add ki gayi hai */}
         <div className="actions-grid" style={{ gridTemplateColumns: "repeat(6, 1fr)" }}>
           {visibleActions.map((a) => {
             const colorValue = getActionColorValue(a.label);
@@ -605,7 +564,7 @@ export default function Page() {
         </div>
       </LiquidCard>
 
-      {/* Alerts (left) + Email Review Requests / QR Code Generator (right, stacked) — ✅ Alerts main wrapper card ab purple hai */}
+      {/* Alerts (left) + Email Review Requests / QR Code Generator (right, stacked) — Alerts main wrapper card purple hai */}
       <div className="alerts-row">
         <LiquidCard className="section-card themed" style={{ ["--action-color" as any]: "#ae47ff" }}>
           <div className="section-head">
@@ -665,7 +624,7 @@ export default function Page() {
         </div>
       </div>
 
-      {/* two column: overview + recent reviews — ✅ dono ko apna alag color */}
+      {/* two column: overview + recent reviews */}
       <div className="two-col">
         <LiquidCard className="themed" style={{ ["--action-color" as any]: "#22d3ee" }}>
           <div className="section-head">
@@ -715,7 +674,7 @@ export default function Page() {
         </LiquidCard>
       </div>
 
-      {/* AI suggestions — ✅ wrapper waisa hi, andar ke 5 ai-card ab sab light green hain */}
+      {/* AI suggestions — wrapper waisa hi, andar ke 5 ai-card sab light green hain */}
       <LiquidCard className="section-card themed" style={{ ["--action-color" as any]: "#7c6cff" }}>
         <div className="section-head">
           <h3>AI Suggestions <span className="pro-tag">PRO</span></h3>
@@ -777,7 +736,7 @@ export default function Page() {
         </div>
       </LiquidCard>
 
-      {/* bottom nav — sliding liquid blob behind the active item — ❌ isko color/font change se chhod diya, "footer wala card" jaisa hi hai */}
+      {/* bottom nav — sliding liquid blob behind the active item */}
       <BottomNav />
 
       <div className="fab">
