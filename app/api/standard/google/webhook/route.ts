@@ -19,6 +19,19 @@ export async function GET(request: Request) {
 // POST request for receiving new reviews and auto-replying
 export async function POST(request: Request) {
   try {
+    // 0. SECURITY CHECK — verify this request actually came from Google.
+    // Same shared secret used in GET, sent this time as a header instead of
+    // a query param (Google/your relay must send this on every push).
+    const incomingToken = request.headers.get('x-webhook-token');
+
+    if (!incomingToken || incomingToken !== process.env.GOOGLE_WEBHOOK_VERIFY_TOKEN) {
+      console.warn('Rejected webhook POST: invalid or missing verify token');
+      return NextResponse.json(
+        { success: false, message: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     const body = await request.json();
     console.log('Google Webhook Received:', body);
 
@@ -28,12 +41,36 @@ export async function POST(request: Request) {
     const comment = body.comment || '';
     const source = 'google';
     const reviewDate = new Date();
+    const googleLocationId = body.locationId; // must be sent by Google/your relay
 
-    // 2. Save the new review to database (comment field used)
+    if (!googleLocationId) {
+      console.warn('Rejected webhook POST: missing locationId in payload');
+      return NextResponse.json(
+        { success: false, message: 'Missing locationId' },
+        { status: 400 }
+      );
+    }
+
+    // 2. Map the incoming location to the real business + real owner.
+    // No more hardcoded userId — it now comes from the DB record that
+    // actually owns this Google location.
+    const businessLocation = await prisma.businessLocation.findUnique({
+      where: { googleLocationId },
+    });
+
+    if (!businessLocation) {
+      console.warn(`Rejected webhook POST: unknown locationId ${googleLocationId}`);
+      return NextResponse.json(
+        { success: false, message: 'Unknown business location' },
+        { status: 404 }
+      );
+    }
+
+    // 3. Save the new review to database (comment field used)
     const newReview = await prisma.review.create({
       data: {
-        userId: "cmr1wiait0001jv04cbasfye3", // Replace with actual userId
-        businessLocationId: null,
+        userId: businessLocation.userId,
+        businessLocationId: businessLocation.id,
         reviewerName,
         rating,
         comment,
@@ -47,7 +84,7 @@ export async function POST(request: Request) {
 
     console.log(`✅ New review saved: ${newReview.id}`);
 
-    // 3. Generate AI reply using OpenRouter
+    // 4. Generate AI reply using OpenRouter
     const aiResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -72,7 +109,7 @@ export async function POST(request: Request) {
     const data = await aiResponse.json();
     const replyText = data.choices?.[0]?.message?.content || 'Thank you for your feedback!';
 
-    // 4. Update the review with AI reply
+    // 5. Update the review with AI reply
     await prisma.review.update({
       where: { id: newReview.id },
       data: {
