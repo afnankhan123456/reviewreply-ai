@@ -206,7 +206,10 @@ export const authOptions = {
       return token;
     },
     async session({ session, token }: any) {
-      session.accessToken = token.accessToken;
+      // 🔒 accessToken jaan-boojh kar session mein NAHI dala — session client-side
+      // (useSession) ko bhi visible hota hai. Google Business ka raw access token
+      // sirf server-side code ko chahiye hota hai, wahan getToken() se lo (jaisa
+      // app/api/google-business/route.ts aur app/api/google-reviews/route.ts mein hai).
       session.isAdmin = token.isAdmin;
       session.referralCode = token.referralCode;
       if (session.user) {
