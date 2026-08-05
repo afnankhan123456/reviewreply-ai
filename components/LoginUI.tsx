@@ -113,7 +113,7 @@ function LoginHero() {
         />
         <div className="absolute -top-40 right-[-200px] w-[900px] h-[900px] rounded-full bg-gradient-to-br from-[#ff2d55] via-[#c81e3a] to-transparent opacity-20 blur-[80px] pointer-events-none" />
 
-        <div className="relative z-10 flex flex-col lg:flex-row items-center gap-20 lg:gap-28 max-w-7xl mx-auto w-full">
+        <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-32 xl:gap-40 max-w-7xl mx-auto w-full">
           <div className="max-w-3xl">
             <div className="flex items-center gap-3 mb-4">
               <img src="/ai-logo.png" alt={`${APP_NAME} logo`} className="w-16 h-16 object-contain" />
