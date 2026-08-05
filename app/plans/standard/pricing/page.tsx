@@ -2,7 +2,6 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { useSession } from "next-auth/react";
 
 const pricingPlans = [
   {
@@ -49,34 +48,13 @@ const pricingPlans = [
 
 export default function StandardPricingPage() {
   const router = useRouter();
-  const { update } = useSession();
   const [activatingPlan, setActivatingPlan] = useState<string | null>(null);
 
-  const handleChoosePlan = async (plan: (typeof pricingPlans)[number]) => {
-    try {
-      setActivatingPlan(plan.id);
-
-      const res = await fetch("/api/activate-standard-plan", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan: plan.id, tier: "standard" }),
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
-        // ✅ FIX: session refresh karo taaki naya plan turant reflect ho,
-        // warna dashboard layout purana plan dekh kar wapas /plans bhej deta hai
-        await update();
-        router.push(`/plans/standard/dashboard?plan=${plan.id}&days=${plan.days}`);
-      } else {
-        alert(data.error || "Failed to activate plan");
-      }
-    } catch (err) {
-      alert("Something went wrong");
-    } finally {
-      setActivatingPlan(null);
-    }
+  // ✅ Ab yaha se direct plan activate nahi hota — pehle checkout page pe
+  // bhejte hai jaha PayPal se payment lene ke baad hi plan activate hoga.
+  const handleChoosePlan = (plan: (typeof pricingPlans)[number]) => {
+    setActivatingPlan(plan.id);
+    router.push(`/plans/standard/checkout?plan=${plan.id}&amount=${plan.finalPrice}`);
   };
 
   return (
