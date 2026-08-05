@@ -1,6 +1,6 @@
 import GoogleProvider from "next-auth/providers/google";
 import { prisma } from "@/lib/prisma";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { resolveOwnerAndRole } from "@/lib/getEffectiveOwner";
 import { activatePendingPlanIfDue } from "@/lib/planQueue";
 
@@ -13,6 +13,20 @@ function generateReferralCode() {
     code += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   return code;
+}
+
+// 🔒 Best-effort client IP for referral-abuse detection.
+// Not spoof-proof (headers can be faked), but enough to flag obvious
+// same-IP repeat signups for manual review before any payout.
+async function getClientIp(): Promise<string | null> {
+  try {
+    const headersList = await headers();
+    const forwardedFor = headersList.get("x-forwarded-for");
+    if (forwardedFor) return forwardedFor.split(",")[0].trim();
+    return headersList.get("x-real-ip");
+  } catch {
+    return null;
+  }
 }
 
 async function trackReferralSignup(referrerCode: string) {
@@ -96,10 +110,18 @@ export const authOptions = {
             },
           });
           if (referrerCodeFromCookie) {
+            const signupIp = await getClientIp();
+            // Same IP already used for a referral signup before? Flag it —
+            // still counted (manual payout review will catch it), just marked.
+            const priorSignupFromSameIp = signupIp
+              ? await prisma.referralSignup.findFirst({ where: { signupIp } })
+              : null;
             await prisma.referralSignup.create({
               data: {
                 signupEmail: user.email,
                 referrerEmail: referrer?.email || referrerCodeFromCookie,
+                signupIp,
+                flagged: Boolean(priorSignupFromSameIp),
               },
             });
             await trackReferralSignup(referrerCodeFromCookie);
@@ -120,10 +142,16 @@ export const authOptions = {
               },
             });
             if (!alreadyTracked) {
+              const signupIp = await getClientIp();
+              const priorSignupFromSameIp = signupIp
+                ? await prisma.referralSignup.findFirst({ where: { signupIp } })
+                : null;
               await prisma.referralSignup.create({
                 data: {
                   signupEmail: user.email,
                   referrerEmail: referrer?.email || referrerCodeFromCookie,
+                  signupIp,
+                  flagged: Boolean(priorSignupFromSameIp),
                 },
               });
               await trackReferralSignup(referrerCodeFromCookie);
