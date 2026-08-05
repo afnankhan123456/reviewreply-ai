@@ -27,8 +27,8 @@ function GoogleCard() {
     <div className="w-full bg-black/40 backdrop-blur-md border border-[#ff2d55]/30 rounded-3xl p-6 shadow-[0_0_60px_-15px_rgba(255,45,85,0.35)]">
       <div className="flex flex-col items-center text-center mb-5">
         <img
-          src="https://www.svgrepo.com/show/475656/google-color.svg"
-          alt="Google"
+          src="/ai-logo.png"
+          alt={`${APP_NAME} logo`}
           className="w-14 h-14 mb-4"
         />
         <h2 className="text-xl font-black text-white mb-2">Continue with Google</h2>
