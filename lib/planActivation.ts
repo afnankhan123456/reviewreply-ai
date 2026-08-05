@@ -18,8 +18,10 @@ type Tier = "basic" | "standard";
  * chalu hai) queue me daal deta hai taaki purane plan ke khatam hone ke
  * agle din se automatically start ho jaye.
  *
- * Ye function payment ke baad (PayPal verify se) aur bina-payment wale
- * `/api/activate-plan` route, dono se call hota hai.
+ * ✅ FIX: Ab is function ko sirf un routes se hi call hona chahiye jinhone
+ * pehle PayPal se orderID verify kar liya ho (status === "COMPLETED").
+ * Koi bhi naya caller add karte waqt payment-verification zaroor add karo —
+ * ye function khud koi payment check nahi karta.
  */
 export async function activateOrQueuePlan(
   email: string,
