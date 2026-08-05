@@ -2,6 +2,8 @@
 
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
+import { getToken } from 'next-auth/jwt';
+import { cookies, headers } from 'next/headers';
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
 import { resolveOwnerAndRole } from '@/lib/getEffectiveOwner';
 
@@ -111,13 +113,20 @@ export async function getGoogleBusinessLocations() {
       return { error: 'Only the account owner can manage connections.' };
     }
 
-    if (!session.accessToken) {
+    // 🔒 accessToken ab session mein nahi hota (client ko expose nahi hona chahiye).
+    // Yahan server-side JWT se direct nikalte hain.
+    const jwt: any = await getToken({
+      req: { cookies: cookies(), headers: headers() } as any,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+
+    if (!jwt?.accessToken) {
       return { error: 'No Google access token found. Please login again.' };
     }
 
     const accountsResponse = await fetch(
       'https://mybusinessaccountmanagement.googleapis.com/v1/accounts',
-      { headers: { Authorization: `Bearer ${session.accessToken}` } }
+      { headers: { Authorization: `Bearer ${jwt.accessToken}` } }
     );
     const accountsData = await accountsResponse.json();
 
@@ -129,7 +138,7 @@ export async function getGoogleBusinessLocations() {
 
     const locationsResponse = await fetch(
       `https://mybusinessbusinessinformation.googleapis.com/v1/${accountName}/locations`,
-      { headers: { Authorization: `Bearer ${session.accessToken}` } }
+      { headers: { Authorization: `Bearer ${jwt.accessToken}` } }
     );
     const locationsData = await locationsResponse.json();
     const locations = locationsData.locations || [];
