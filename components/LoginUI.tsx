@@ -31,7 +31,9 @@ function GoogleCard() {
           alt={`${APP_NAME} logo`}
           className="w-14 h-14 mb-4"
         />
-        <h2 className="text-xl font-black text-white mb-2">Continue with Google</h2>
+        <h2 className="text-xl font-black text-white mb-2">
+          Continue with Google to access <span className="text-blue-400">ReviewReply AI</span>
+        </h2>
         <p className="text-xs text-gray-400 leading-relaxed max-w-xs">
           Securely sign in with your Google account to connect your Business Profile and get started.
         </p>
