@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { activateOrQueuePlan } from "@/lib/planActivation";
+import { getExpectedPrice, isAmountValid } from "@/lib/planPricing";
 
 export async function POST(req: any) {
   try {
@@ -15,10 +16,21 @@ export async function POST(req: any) {
 
     const body = await req.json();
     const { orderID, planType, tier } = body;
+    const planTier = tier === "standard" ? "standard" : "basic";
 
     if (!orderID || !planType) {
       return NextResponse.json(
         { success: false, error: "Missing orderID or planType" },
+        { status: 400 }
+      );
+    }
+
+    // ✅ FIX: planType ka sahi price server-side table se pata karo — client
+    // se aaya amount is baar bhi trust nahi karna.
+    const expectedPrice = getExpectedPrice(planTier, planType);
+    if (expectedPrice === null) {
+      return NextResponse.json(
+        { success: false, error: "Invalid plan type" },
         { status: 400 }
       );
     }
@@ -65,8 +77,18 @@ export async function POST(req: any) {
       );
     }
 
-    // 3) Payment confirm ho gaya — ab plan activate ya queue karo
-    const planTier = tier === "standard" ? "standard" : "basic";
+    // ✅ FIX: PayPal se asal me jitna paisa charge hua hai, wo us plan ke
+    // sahi price se match hona chahiye — warna order tampered hai.
+    const paidAmount = orderData.purchase_units?.[0]?.amount?.value;
+    if (!paidAmount || !isAmountValid(paidAmount, expectedPrice)) {
+      console.log("PayPal amount mismatch:", { paidAmount, expectedPrice, planType, planTier });
+      return NextResponse.json(
+        { success: false, error: "Payment amount does not match plan price" },
+        { status: 400 }
+      );
+    }
+
+    // 3) Payment confirm ho gaya aur amount sahi hai — ab plan activate ya queue karo
     const result = await activateOrQueuePlan(token.email, planType, planTier);
 
     return NextResponse.json({
