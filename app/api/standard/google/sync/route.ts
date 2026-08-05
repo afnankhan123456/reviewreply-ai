@@ -3,9 +3,10 @@ import { NextResponse } from 'next/server';
 
 // GET request handler for Vercel Cron Job (Auto-sync)
 export async function GET(request: Request) {
-  // Check if it's a Vercel Cron request (Optional security header)
+  // Check if it's a Vercel Cron request (mandatory security header)
+  // Fail-safe: agar CRON_SECRET set hi nahi hai to route hamesha reject karo.
   const authHeader = request.headers.get('authorization');
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!process.env.CRON_SECRET || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
