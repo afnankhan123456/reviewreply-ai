@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { getToken } from "next-auth/jwt";
+import { activateOrQueuePlan } from "@/lib/planActivation";
 
 export async function POST(req: any) {
   try {
@@ -15,36 +15,74 @@ export async function POST(req: any) {
 
     const body = await req.json();
     const planType = body.plan; // "monthly", "quarterly", "halfyearly", "yearly"
+    const orderID = body.orderID;
 
-    const durations: Record<string, number> = {
-      monthly: 30,
-      quarterly: 90,
-      halfyearly: 180,
-      yearly: 360,
-    };
-
-    if (!planType || !durations[planType]) {
-      return NextResponse.json({ success: false, error: "Invalid plan type" }, { status: 400 });
+    // ✅ FIX: bina verified PayPal payment ke Standard plan activate nahi hoga.
+    // Pehle orderID zaroori hai, phir PayPal se seedha verify karo ki
+    // payment sach me COMPLETED hai — client pe bharosa nahi karna.
+    if (!orderID) {
+      return NextResponse.json(
+        { success: false, error: "Missing orderID — payment verification required" },
+        { status: 400 }
+      );
     }
 
-    const start = new Date();
-    const end = new Date(start.getTime() + durations[planType] * 24 * 60 * 60 * 1000);
+    const auth = Buffer.from(
+      `${process.env.PAYPAL_CLIENT_ID}:${process.env.PAYPAL_SECRET}`
+    ).toString("base64");
 
-    await prisma.user.update({
-      where: { email: token.email },
-      data: {
-        plan: "standard",
-        subscriptionStatus: "active",
-        subscriptionStart: start,
-        subscriptionEnd: end,
-        reviewsUsed: 0,
-        monthlyResetDate: start,
-        alertEmailsLimit: 500,
-        locationsLimit: 2,
+    const tokenRes = await fetch("https://api-m.sandbox.paypal.com/v1/oauth2/token", {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${auth}`,
+        "Content-Type": "application/x-www-form-urlencoded",
       },
+      body: "grant_type=client_credentials",
     });
 
-    return NextResponse.json({ success: true, message: "Standard plan activated" });
+    const tokenData = await tokenRes.json();
+
+    if (!tokenData.access_token) {
+      return NextResponse.json(
+        { success: false, error: "PayPal authentication failed" },
+        { status: 500 }
+      );
+    }
+
+    const orderRes = await fetch(
+      `https://api-m.sandbox.paypal.com/v2/checkout/orders/${orderID}`,
+      {
+        headers: { Authorization: `Bearer ${tokenData.access_token}` },
+      }
+    );
+
+    const orderData = await orderRes.json();
+
+    if (orderData.status !== "COMPLETED") {
+      return NextResponse.json(
+        { success: false, error: "Payment not completed" },
+        { status: 400 }
+      );
+    }
+
+    try {
+      // ✅ Ab manual prisma.user.update ki jagah shared activateOrQueuePlan
+      // use karte hai — taaki queue-logic (agar purana plan chalu hai) bhi sahi se lage.
+      const result = await activateOrQueuePlan(token.email, planType, "standard");
+      return NextResponse.json({
+        success: true,
+        queued: result.queued,
+        message: result.queued
+          ? "Naya plan queue ho gaya hai — purane plan ke khatam hone ke agle din se shuru hoga"
+          : "Standard plan activated",
+        plan: result.plan,
+      });
+    } catch (e: any) {
+      return NextResponse.json(
+        { success: false, error: e.message || "Invalid plan type" },
+        { status: 400 }
+      );
+    }
   } catch (error) {
     return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
   }
