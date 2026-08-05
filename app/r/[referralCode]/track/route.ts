@@ -43,9 +43,21 @@ export async function GET(
     });
 
     // 4. ✅ FIXED: Use absolute URL for redirect
-    return NextResponse.redirect(
+    const response = NextResponse.redirect(
       new URL(`/r/${referralCode}`, request.url).toString()
     );
+
+    // 🔒 Set the referrer cookie here, server-side, as httpOnly.
+    // Client JS can no longer read or forge this value directly.
+    response.cookies.set("referrerCode", referralCode, {
+      path: "/",
+      maxAge: 60 * 60 * 24, // 24 hours
+      httpOnly: true,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
+    });
+
+    return response;
 
   } catch (error) {
     console.error("Error tracking referral click:", error);
