@@ -2,8 +2,104 @@
 
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
+import { getToken } from 'next-auth/jwt';
+import { cookies, headers } from 'next/headers';
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
 import { resolveOwnerAndRole } from '@/lib/getEffectiveOwner';
+
+export async function getConnectionStatus() {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return { error: 'Unauthorized' };
+    }
+
+    const { ownerId, role } = await resolveOwnerAndRole(session.user.id);
+
+    if (role !== 'OWNER') {
+      return { error: 'Only the account owner can manage connections.' };
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: ownerId },
+      select: {
+        gmailConnected: true,
+        alertEmailsLimit: true,
+        alertEmailsSent: true,
+        googleBusinessConnected: true,
+        locationsUsed: true,
+        locationsLimit: true,
+      }
+    });
+
+    if (!user) {
+      return { error: 'User not found' };
+    }
+
+    return {
+      success: true,
+      gmailConnected: user.gmailConnected ?? false,
+      alertEmailsLimit: user.alertEmailsLimit ?? 100,
+      alertEmailsSent: user.alertEmailsSent ?? 0,
+      googleConnected: user.googleBusinessConnected ?? false,
+      locationsUsed: user.locationsUsed ?? 0,
+      locationsLimit: user.locationsLimit ?? 1,
+    };
+  } catch (error) {
+    console.error('Error fetching status:', error);
+    return { error: 'Failed to fetch connection status' };
+  }
+}
+
+export async function toggleGmail(action: 'connect' | 'disconnect') {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) {
+      return { error: 'Unauthorized' };
+    }
+
+    const { ownerId, role } = await resolveOwnerAndRole(session.user.id);
+
+    if (role !== 'OWNER') {
+      return { error: 'Only the account owner can manage connections.' };
+    }
+
+    const currentUser = await prisma.user.findUnique({
+      where: { id: ownerId },
+      select: { gmailConnected: true, plan: true }
+    });
+
+    if (!currentUser) {
+      return { error: 'User not found' };
+    }
+
+    const isStandard = currentUser.plan?.startsWith('standard');
+    const isPro = currentUser.plan?.startsWith('pro');
+
+    const alertLimit = isPro ? 450 : isStandard ? 450 : 100;
+    const criticalLimit = isPro ? 50 : isStandard ? 50 : 0;
+
+    const updatedUser = await prisma.user.update({
+      where: { id: ownerId },
+      data: {
+        gmailConnected: action === 'connect',
+        alertEmailsLimit: action === 'connect' ? alertLimit : 0,
+        criticalEmailsLimit: action === 'connect' ? criticalLimit : 0,
+      },
+      select: { gmailConnected: true, alertEmailsLimit: true }
+    });
+
+    return {
+      success: true,
+      message: action === 'connect' ? 'Gmail Connected!' : 'Gmail Disconnected!',
+      gmailConnected: updatedUser.gmailConnected,
+      alertEmailsLimit: updatedUser.alertEmailsLimit,
+    };
+  } catch (error) {
+    console.error('Error toggling Gmail:', error);
+    return { error: 'Failed to update Gmail connection' };
+  }
+}
 
 export async function getGoogleBusinessLocations() {
   try {
@@ -18,13 +114,20 @@ export async function getGoogleBusinessLocations() {
       return { error: 'Only the account owner can manage connections.' };
     }
 
-    if (!session.accessToken) {
+    // 🔒 accessToken ab session mein nahi hota (client ko expose nahi hona chahiye).
+    // Yahan server-side JWT se direct nikalte hain.
+    const jwt: any = await getToken({
+      req: { cookies: cookies(), headers: headers() } as any,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+
+    if (!jwt?.accessToken) {
       return { error: 'No Google access token found. Please login again.' };
     }
 
     const accountsResponse = await fetch(
       'https://mybusinessaccountmanagement.googleapis.com/v1/accounts',
-      { headers: { Authorization: `Bearer ${session.accessToken}` } }
+      { headers: { Authorization: `Bearer ${jwt.accessToken}` } }
     );
     const accountsData = await accountsResponse.json();
 
@@ -36,7 +139,7 @@ export async function getGoogleBusinessLocations() {
 
     const locationsResponse = await fetch(
       `https://mybusinessbusinessinformation.googleapis.com/v1/${accountName}/locations`,
-      { headers: { Authorization: `Bearer ${session.accessToken}` } }
+      { headers: { Authorization: `Bearer ${jwt.accessToken}` } }
     );
     const locationsData = await locationsResponse.json();
     const locations = locationsData.locations || [];
@@ -55,6 +158,7 @@ export async function getGoogleBusinessLocations() {
   }
 }
 
+// Naya function: user ki already-selected locations laane ke liye (page load par)
 export async function getSelectedLocations() {
   try {
     const session = await getServerSession(authOptions);
@@ -112,12 +216,14 @@ export async function saveSelectedLocation(locationId: string, businessName: str
       return { error: 'User not found' };
     }
 
+    // Check karo ki ye location pehle se kisi user ke against saved hai ya nahi
     const existingLocation = await prisma.businessLocation.findUnique({
       where: { googleLocationId: locationId },
     });
 
     const isNewLocationForUser = !existingLocation || existingLocation.userId !== userId;
 
+    // Sirf tabhi limit check karo jab ye ek NAYI location ho is user ke liye
     if (isNewLocationForUser && user.locationsUsed >= user.locationsLimit) {
       return {
         error: `Your plan allows only ${user.locationsLimit} location(s). Remove a location before adding a new one.`,
@@ -158,6 +264,7 @@ export async function saveSelectedLocation(locationId: string, businessName: str
   }
 }
 
+// Naya function: selected location remove karne ke liye (dusri location select karne ki jagah banane ke liye)
 export async function removeSelectedLocation(locationId: string) {
   try {
     const session = await getServerSession(authOptions);
