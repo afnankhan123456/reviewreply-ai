@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { activateOrQueuePlan } from "@/lib/planActivation";
+import { getExpectedPrice, isAmountValid } from "@/lib/planPricing";
 
 export async function POST(req: any) {
   try {
@@ -24,6 +25,15 @@ export async function POST(req: any) {
     if (!orderID) {
       return NextResponse.json(
         { success: false, error: "Missing orderID — payment verification required" },
+        { status: 400 }
+      );
+    }
+
+    // ✅ FIX: planType ka sahi price server-side table se pata karo
+    const expectedPrice = getExpectedPrice(tier, planType);
+    if (expectedPrice === null) {
+      return NextResponse.json(
+        { success: false, error: "Invalid plan type" },
         { status: 400 }
       );
     }
@@ -62,6 +72,16 @@ export async function POST(req: any) {
     if (orderData.status !== "COMPLETED") {
       return NextResponse.json(
         { success: false, error: "Payment not completed" },
+        { status: 400 }
+      );
+    }
+
+    // ✅ FIX: PayPal se asal me jitna paisa charge hua hai, wo plan ke sahi
+    // price se match hona chahiye — warna order tampered hai.
+    const paidAmount = orderData.purchase_units?.[0]?.amount?.value;
+    if (!paidAmount || !isAmountValid(paidAmount, expectedPrice)) {
+      return NextResponse.json(
+        { success: false, error: "Payment amount does not match plan price" },
         { status: 400 }
       );
     }
