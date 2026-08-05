@@ -3,8 +3,9 @@ import { prisma } from "../../../lib/prisma";
 import { syncUserReviews } from "../../../lib/syncReviews";
 
 export async function GET(req: Request) {
+  // Fail-safe: agar CRON_SECRET set hi nahi hai to route hamesha reject karo.
   const authHeader = req.headers.get('authorization');
-  if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!process.env.CRON_SECRET || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
