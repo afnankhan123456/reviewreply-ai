@@ -16,6 +16,55 @@ export async function POST(req: any) {
     const body = await req.json();
     const planType = body.plan;
     const tier = body.tier === "standard" ? "standard" : "basic";
+    const orderID = body.orderID;
+
+    // ✅ FIX: bina verified PayPal payment ke plan activate nahi hoga.
+    // Pehle orderID zaroori hai, phir PayPal se seedha verify karo ki
+    // payment sach me COMPLETED hai — client pe bharosa nahi karna.
+    if (!orderID) {
+      return NextResponse.json(
+        { success: false, error: "Missing orderID — payment verification required" },
+        { status: 400 }
+      );
+    }
+
+    const auth = Buffer.from(
+      `${process.env.PAYPAL_CLIENT_ID}:${process.env.PAYPAL_SECRET}`
+    ).toString("base64");
+
+    const tokenRes = await fetch("https://api-m.sandbox.paypal.com/v1/oauth2/token", {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${auth}`,
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: "grant_type=client_credentials",
+    });
+
+    const tokenData = await tokenRes.json();
+
+    if (!tokenData.access_token) {
+      return NextResponse.json(
+        { success: false, error: "PayPal authentication failed" },
+        { status: 500 }
+      );
+    }
+
+    const orderRes = await fetch(
+      `https://api-m.sandbox.paypal.com/v2/checkout/orders/${orderID}`,
+      {
+        headers: { Authorization: `Bearer ${tokenData.access_token}` },
+      }
+    );
+
+    const orderData = await orderRes.json();
+
+    if (orderData.status !== "COMPLETED") {
+      return NextResponse.json(
+        { success: false, error: "Payment not completed" },
+        { status: 400 }
+      );
+    }
 
     try {
       const result = await activateOrQueuePlan(token.email, planType, tier);
