@@ -1,7 +1,67 @@
 import GoogleSignInButton from "@/app/components/GoogleSignInButton";
-import { MessageSquareText, ShieldCheck, Sparkles, BarChart3, Info } from "lucide-react";
+import { MessageSquareText, ShieldCheck, Sparkles, BarChart3, Info, RefreshCw, Star } from "lucide-react";
 
 const APP_NAME = "ReviewReply AI"; // ⚠️ must be IDENTICAL to the name on OAuth consent screen
+
+// ✅ NEW: Google sign-in card (replaces the old "Get Started" pill button)
+function GoogleCard() {
+  const points = [
+    {
+      icon: ShieldCheck,
+      title: "Secure & Trusted",
+      desc: "We use Google's secure authentication to protect your data.",
+    },
+    {
+      icon: RefreshCw,
+      title: "Instant Connection",
+      desc: "Quickly connect your Google Business Profile in just a few clicks.",
+    },
+    {
+      icon: Star,
+      title: "All-in-One Dashboard",
+      desc: "Manage reviews, replies, and reputation from a single powerful dashboard.",
+    },
+  ];
+
+  return (
+    <div className="w-full bg-black/40 backdrop-blur-md border border-[#ff2d55]/30 rounded-3xl p-6 shadow-[0_0_60px_-15px_rgba(255,45,85,0.35)]">
+      <div className="flex flex-col items-center text-center mb-5">
+        <img
+          src="https://www.svgrepo.com/show/475656/google-color.svg"
+          alt="Google"
+          className="w-14 h-14 mb-4"
+        />
+        <h2 className="text-xl font-black text-white mb-2">Continue with Google</h2>
+        <p className="text-xs text-gray-400 leading-relaxed max-w-xs">
+          Securely sign in with your Google account to connect your Business Profile and get started.
+        </p>
+      </div>
+
+      <div className="border-t border-white/10 pt-5 space-y-4 mb-6">
+        {points.map(({ icon: Icon, title, desc }) => (
+          <div key={title} className="flex items-start gap-3">
+            <div className="w-8 h-8 rounded-full bg-[#ff2d55]/10 border border-[#ff2d55]/30 flex items-center justify-center shrink-0">
+              <Icon className="w-4 h-4 text-[#ff2d55]" />
+            </div>
+            <div>
+              <h3 className="text-white text-sm font-bold">{title}</h3>
+              <p className="text-gray-400 text-xs leading-relaxed">{desc}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <GoogleSignInButton className="w-full bg-white hover:bg-gray-100 transition-all text-[#111827] text-sm font-bold py-3.5 rounded-xl shadow-sm flex items-center justify-center gap-2">
+        <img
+          src="https://www.svgrepo.com/show/475656/google-color.svg"
+          alt="Google"
+          className="w-5 h-5"
+        />
+        Continue with Google
+      </GoogleSignInButton>
+    </div>
+  );
+}
 
 function LoginHero() {
   return (
@@ -13,10 +73,6 @@ function LoginHero() {
           alt={`${APP_NAME} Background`}
           className="absolute inset-0 w-full h-full object-cover object-top"
         />
-
-        <GoogleSignInButton className="absolute top-3 right-3 z-20 bg-white text-[#111827] text-[11px] font-bold px-3 py-1.5 rounded-full shadow-sm">
-          Get Started
-        </GoogleSignInButton>
 
         <div className="relative z-10 flex flex-col items-center text-center">
           <div className="flex items-center gap-2 mb-2">
@@ -36,10 +92,15 @@ function LoginHero() {
             </p>
           </div>
 
-          <p className="text-[11px] font-semibold text-gray-200 leading-snug max-w-xs">
+          <p className="text-[11px] font-semibold text-gray-200 leading-snug max-w-xs mb-5">
             {APP_NAME} is an AI-powered Google Business Profile review management platform
             that helps businesses manage and reply to Google reviews with AI.
           </p>
+
+          {/* ✅ NEW: Google sign-in card */}
+          <div className="w-full max-w-xs">
+            <GoogleCard />
+          </div>
         </div>
       </div>
 
@@ -52,38 +113,41 @@ function LoginHero() {
         />
         <div className="absolute -top-40 right-[-200px] w-[900px] h-[900px] rounded-full bg-gradient-to-br from-[#ff2d55] via-[#c81e3a] to-transparent opacity-20 blur-[80px] pointer-events-none" />
 
-        <GoogleSignInButton className="absolute top-6 right-10 lg:right-20 z-20 bg-white hover:bg-gray-100 transition-all text-[#111827] text-sm font-bold px-5 py-2.5 rounded-full shadow-sm">
-          Get Started
-        </GoogleSignInButton>
-
-        <div className="relative z-10 max-w-3xl">
-          <div className="flex items-center gap-3 mb-4">
-            <img src="/ai-logo.png" alt={`${APP_NAME} logo`} className="w-11 h-11 object-contain" />
-            <h1 className="text-3xl font-black tracking-tight text-white">{APP_NAME}</h1>
-          </div>
-
-          {/* 👇 EXPLICIT PURPOSE – added for verification */}
-          <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-6 py-4 mb-6 inline-block">
-            <div className="flex items-center gap-2 text-[#ff2d55] mb-2">
-              <Info className="w-4 h-4" />
-              <span className="text-xs font-black uppercase tracking-widest">App Purpose</span>
+        <div className="relative z-10 flex flex-col lg:flex-row items-center gap-12 lg:gap-16 max-w-7xl mx-auto w-full">
+          <div className="max-w-3xl">
+            <div className="flex items-center gap-3 mb-4">
+              <img src="/ai-logo.png" alt={`${APP_NAME} logo`} className="w-11 h-11 object-contain" />
+              <h1 className="text-3xl font-black tracking-tight text-white">{APP_NAME}</h1>
             </div>
-            <p className="text-sm font-semibold text-white leading-relaxed max-w-lg">
-              {APP_NAME} is an AI-powered Google Business Profile review management platform.
-              We help businesses automatically sync Google reviews, generate AI-powered replies,
-              and manage their online reputation – all from a single dashboard.
+
+            {/* 👇 EXPLICIT PURPOSE – added for verification */}
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-6 py-4 mb-6 inline-block">
+              <div className="flex items-center gap-2 text-[#ff2d55] mb-2">
+                <Info className="w-4 h-4" />
+                <span className="text-xs font-black uppercase tracking-widest">App Purpose</span>
+              </div>
+              <p className="text-sm font-semibold text-white leading-relaxed max-w-lg">
+                {APP_NAME} is an AI-powered Google Business Profile review management platform.
+                We help businesses automatically sync Google reviews, generate AI-powered replies,
+                and manage their online reputation – all from a single dashboard.
+              </p>
+            </div>
+
+            <p className="text-base font-semibold text-gray-200 leading-relaxed max-w-lg mb-2">
+              {APP_NAME} is an AI-powered Google Business Profile review management platform
+              that helps businesses manage and reply to Google reviews with AI.
+            </p>
+            <p className="text-sm text-gray-400 leading-relaxed max-w-lg mb-4">
+              Securely connect your Google Business Profile, automatically sync customer reviews,
+              generate AI-powered replies, publish responses, and manage your online reputation —
+              all from one dashboard.
             </p>
           </div>
 
-          <p className="text-base font-semibold text-gray-200 leading-relaxed max-w-lg mb-2">
-            {APP_NAME} is an AI-powered Google Business Profile review management platform
-            that helps businesses manage and reply to Google reviews with AI.
-          </p>
-          <p className="text-sm text-gray-400 leading-relaxed max-w-lg mb-4">
-            Securely connect your Google Business Profile, automatically sync customer reviews,
-            generate AI-powered replies, publish responses, and manage your online reputation —
-            all from one dashboard.
-          </p>
+          {/* ✅ NEW: Google sign-in card */}
+          <div className="w-full max-w-sm shrink-0">
+            <GoogleCard />
+          </div>
         </div>
       </div>
     </>
