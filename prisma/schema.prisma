@@ -168,6 +168,8 @@ model ReferralSignup {
   referrerEmail  String
   signupEmail    String
   signupDate     DateTime @default(now())
+  signupIp       String?
+  flagged        Boolean  @default(false)
   user           User?    @relation(fields: [referrerEmail], references: [email])
 }
 
