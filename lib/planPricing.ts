@@ -16,6 +16,28 @@ export const PLAN_PRICES: Record<"basic" | "standard", Record<string, number>> =
   },
 };
 
+// ✅ FIX (Bug 11): startup sanity check — koi bhi price ek reasonable
+// min/max range se bahar nahi hona chahiye. Typo (jaise ek extra/missing
+// zero) ko CI/build/startup pe hi pakad lena hai, production mein nahi.
+const MIN_PLAN_PRICE = 5;
+const MAX_PLAN_PRICE = 500;
+
+function assertPlanPricesInRange() {
+  for (const tier of Object.keys(PLAN_PRICES) as Array<keyof typeof PLAN_PRICES>) {
+    for (const [planType, price] of Object.entries(PLAN_PRICES[tier])) {
+      if (price < MIN_PLAN_PRICE || price > MAX_PLAN_PRICE) {
+        throw new Error(
+          `Invalid plan price for ${tier}/${planType}: $${price}. ` +
+          `Expected a value between $${MIN_PLAN_PRICE} and $${MAX_PLAN_PRICE}. ` +
+          `Check lib/planPricing.ts for a possible typo.`
+        );
+      }
+    }
+  }
+}
+
+assertPlanPricesInRange();
+
 export function getExpectedPrice(
   tier: "basic" | "standard",
   planType: string
