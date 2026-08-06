@@ -74,7 +74,8 @@ export async function POST(req: Request) {
     const tokenData = await tokenResponse.json();
 
     if (!tokenData.access_token) {
-      console.log("PayPal Token Error");
+      // ✅ FIX (Bug 10): poora tokenData object nahi, sirf error field log karo
+      console.error("PayPal Token Error:", tokenData?.error || "unknown");
       return NextResponse.json(
         { error: "Failed to get PayPal access token" },
         { status: 500 }
@@ -115,7 +116,8 @@ export async function POST(req: Request) {
     const orderData = await orderResponse.json();
 
     if (!orderData.links) {
-      console.log("PayPal Order Error");
+      // ✅ FIX (Bug 10): poora orderData object nahi
+      console.error("PayPal Order Error:", orderData?.name || "unknown");
       return NextResponse.json(
         { error: "Failed to create PayPal order" },
         { status: 500 }
@@ -144,5 +146,3 @@ export async function POST(req: Request) {
     );
   }
 }
-
-
