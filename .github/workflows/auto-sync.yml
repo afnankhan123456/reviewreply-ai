@@ -12,4 +12,4 @@ jobs:
       - name: Call auto-sync endpoint
         run: |
           curl -f -X GET "https://www.reviewreply-ai.in/api/auto-sync" \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET_AUTO_SYNC }}"
