@@ -44,7 +44,7 @@ export default function TemplatePage() {
   // Stats calculations
   const totalTemplates = templates.length;
   const positiveCount = templates.filter((t) => t.category === "positive").length;
-  const aiGeneratedCount = 0;   // placeholder – AI generate feature baad mein
+  const aiGeneratedCount = templates.filter((t) => t.isAiGenerated).length;
   const replyTemplatesCount = totalTemplates;
 
   // =========== Create / Edit handlers ===========
