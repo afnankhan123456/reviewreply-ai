@@ -14,6 +14,7 @@ export default function UnansweredPage() {
   const [reviews, setReviews] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [repliesToday, setRepliesToday] = useState(0);
 
   // View modal state
   const [selectedReview, setSelectedReview] = useState<any | null>(null);
@@ -30,6 +31,7 @@ export default function UnansweredPage() {
         const data = await res.json();
         if (data.success) {
           setReviews(data.unanswered || []);
+          setRepliesToday(data.repliedToday || 0);
         }
       } catch (err) {
         console.error("Failed to load unanswered reviews", err);
@@ -43,7 +45,6 @@ export default function UnansweredPage() {
   // Stats from real data
   const pendingCount = reviews.length;
   const lowRatingCount = reviews.filter((r) => r.rating <= 2).length;
-  const repliesToday = 0; // Placeholder – can be computed later
 
   // Filter by search
   const filteredReviews = reviews.filter(
