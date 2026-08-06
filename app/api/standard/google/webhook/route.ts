@@ -185,6 +185,7 @@ export async function POST(request: Request) {
         reviewReply: replyText,
         replied: true,
         aiReplied: true,
+        repliedAt: new Date(),
       },
     });
 
