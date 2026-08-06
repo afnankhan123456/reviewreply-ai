@@ -52,7 +52,8 @@ export async function GET(request: Request) {
     });
 
   } catch (error) {
-    console.error('Google Sync Error:', error);
+    // ✅ FIX (Bug 10): sirf error message log karo
+    console.error('Google Sync Error:', error instanceof Error ? error.message : 'unknown');
     return NextResponse.json({ 
       success: false, 
       message: 'Failed to sync Google reviews' 
