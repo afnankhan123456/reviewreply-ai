@@ -106,3 +106,65 @@ export function buildExpiryWarningEmail(daysLeft: number, planName: string) {
     <p>Please renew your subscription to avoid interruption in review syncing, alerts, and reports.</p>
   `;
 }
+
+function escapeHtml(str: string) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/**
+ * Jab auto-reply filter ko koi AI-generated reply suspicious lage (URL,
+ * banned keyword, weird formatting, ya rate/pattern spike), to woh reply
+ * auto-post nahi hoti — draft me fallback ho jaati hai aur owner ko yeh
+ * email jaati hai taaki woh turant review kar sake.
+ */
+export function buildSuspiciousAutoReplyEmail(details: {
+  reviewerName: string;
+  reviewText: string;
+  aiReply: string;
+  reasons: string[];
+}) {
+  const reasonsList = details.reasons.map((r) => `<li>${escapeHtml(r)}</li>`).join('');
+  return `
+    <h2>🚩 An AI reply was blocked before auto-posting</h2>
+    <p>One of your reviews got an AI-generated reply that looked suspicious, so we <strong>did not post it automatically</strong>. It's saved as a draft in your dashboard, waiting for your approval.</p>
+    <p><strong>Reviewer:</strong> ${escapeHtml(details.reviewerName || 'Unknown')}</p>
+    <p><strong>Review:</strong><br/>${escapeHtml(details.reviewText || '(no text)')}</p>
+    <p><strong>Draft reply that was blocked:</strong><br/>${escapeHtml(details.aiReply || '')}</p>
+    <p><strong>Why it was flagged:</strong></p>
+    <ul>${reasonsList}</ul>
+    <p>Please log in to your dashboard to review, edit, or approve this reply.</p>
+  `;
+}
+
+/**
+ * Suspicious auto-reply alert — yeh security-critical hai isliye normal
+ * alert/critical email quota se bypass karke turant bhejta hai (sirf
+ * gmailConnected check karta hai). Failure silently ignore ho jaati hai
+ * taaki cron job block na ho.
+ */
+export async function sendSuspiciousReplyAlert(
+  userId: string,
+  details: { reviewerName: string; reviewText: string; aiReply: string; reasons: string[] }
+) {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) return { sent: false, reason: 'User not found' };
+  if (!user.gmailConnected) return { sent: false, reason: 'Gmail not connected' };
+
+  try {
+    const transporter = getTransporter();
+    await transporter.sendMail({
+      from: `"ReviewReply Alerts" <${process.env.GMAIL_USER}>`,
+      to: user.email,
+      subject: '🚩 Action needed: an AI reply was blocked before posting',
+      html: buildSuspiciousAutoReplyEmail(details),
+    });
+    return { sent: true };
+  } catch (error) {
+    console.error('Failed to send suspicious-reply alert to', user.email, error);
+    return { sent: false, reason: 'Email send failed' };
+  }
+}
