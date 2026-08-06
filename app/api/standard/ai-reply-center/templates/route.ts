@@ -1,9 +1,51 @@
 import { NextResponse } from 'next/server';
+import { getToken } from 'next-auth/jwt';
 import { prisma } from '@/lib/prisma';
 import { getCachedOrFetch } from '@/app/lib/cache'; // ✅ New import
 
-export async function GET() {
+// ---- Simple in-memory rate limiter (per user) ----
+// NOTE: resets on server/serverless instance restart, per-instance only.
+const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
+const RATE_LIMIT_MAX_REQUESTS = 30;
+const requestLog = new Map<string, number[]>();
+
+function isRateLimited(key: string): boolean {
+  const now = Date.now();
+  const timestamps = (requestLog.get(key) || []).filter(
+    (t) => now - t < RATE_LIMIT_WINDOW_MS
+  );
+  if (timestamps.length >= RATE_LIMIT_MAX_REQUESTS) {
+    requestLog.set(key, timestamps);
+    return true;
+  }
+  timestamps.push(now);
+  requestLog.set(key, timestamps);
+  return false;
+}
+
+export async function GET(req: Request) {
   try {
+    // ✅ FIX: sirf logged-in users hi templates fetch kar sakte hain
+    const token: any = await getToken({
+      req: req as any,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+
+    if (!token?.id) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    // ✅ FIX: per-user rate limit
+    if (isRateLimited(token.id)) {
+      return NextResponse.json(
+        { success: false, error: 'Too many requests' },
+        { status: 429 }
+      );
+    }
+
     // ✅ 1. Use getCachedOrFetch properly with 3 arguments
     const responseData = await getCachedOrFetch(
       'templates',
@@ -389,7 +431,7 @@ export async function GET() {
     console.log('✅ Returning templates' + (responseData ? ' (cached or fresh)' : ''));
     return NextResponse.json(responseData);
   } catch (error) {
-    console.error('Templates API Error:', error);
-    return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
+    console.error('Templates API Error:', error instanceof Error ? error.message : 'unknown');
+    return NextResponse.json({ success: false, error: 'Internal server error' }, { status: 500 });
   }
 }
