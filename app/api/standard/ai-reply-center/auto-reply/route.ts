@@ -4,14 +4,13 @@ import { generateAIReply } from '@/lib/aiReply';
 import { postReplyToGoogle } from '@/lib/googlePostReply';
 
 export async function GET(req: Request) {
-  // Fail-safe: agar CRON_SECRET set hi nahi hai to route hamesha reject karo.
+  // Fail-safe: is route ka apna dedicated secret — sirf isi route ke liye valid.
   const authHeader = req.headers.get('authorization');
-  if (!process.env.CRON_SECRET || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!process.env.CRON_SECRET_AUTO_REPLY || authHeader !== `Bearer ${process.env.CRON_SECRET_AUTO_REPLY}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
-    // Sirf wahi users jinhone Draft ya Auto mode chuna hai, aur jinka subscription active hai
     const users = await prisma.user.findMany({
       where: {
         autoReplyMode: { in: ['draft', 'auto'] },
@@ -23,7 +22,6 @@ export async function GET(req: Request) {
     const results: any[] = [];
 
     for (const user of users) {
-      // Sirf isi user ke unanswered, abhi tak untouched reviews
       const unansweredReviews = await prisma.review.findMany({
         where: { userId: user.id, replied: false, replyStatus: 'none' },
         take: 10,
@@ -43,14 +41,12 @@ export async function GET(req: Request) {
         }
 
         if (user.autoReplyMode === 'draft') {
-          // Sirf draft banao, Google pe post nahi karna — user Approve karega
           await prisma.review.update({
             where: { id: review.id },
             data: { reviewReply: aiResult.reply, replyStatus: 'pending_approval', aiReplied: true },
           });
           results.push({ email: user.email, reviewId: review.id, mode: 'draft', sent: true });
         } else if (user.autoReplyMode === 'auto') {
-          // Seedha Google pe post karo
           await prisma.review.update({
             where: { id: review.id },
             data: { aiReplied: true },
