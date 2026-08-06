@@ -25,15 +25,23 @@ export async function GET(req: any) {
 
     const { ownerId } = await resolveOwnerAndRole(requestingUser.id);
 
-    const user = await prisma.user.findUnique({
-      where: { id: ownerId },
-      include: {
-        reviews: {
-          where: { replied: false },
-          orderBy: { createdAt: "desc" },
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+
+    const [user, repliedToday] = await Promise.all([
+      prisma.user.findUnique({
+        where: { id: ownerId },
+        include: {
+          reviews: {
+            where: { replied: false },
+            orderBy: { createdAt: "desc" },
+          },
         },
-      },
-    });
+      }),
+      prisma.review.count({
+        where: { userId: ownerId, replied: true, repliedAt: { gte: startOfToday } },
+      }),
+    ]);
 
     if (!user) {
       return NextResponse.json({ success: false, error: "User not found" }, { status: 404 });
@@ -42,6 +50,7 @@ export async function GET(req: any) {
     return NextResponse.json({
       success: true,
       unanswered: user.reviews,
+      repliedToday,
     });
   } catch (error) {
     return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
