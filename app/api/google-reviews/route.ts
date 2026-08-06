@@ -34,6 +34,24 @@ export async function GET(req: any) {
       });
     }
 
+    // Is location ka humara internal BusinessLocation record dhoondo
+    const businessLocation = await prisma.businessLocation.findUnique({
+      where: { googleLocationId: locationName },
+    });
+
+    // ✅ FIX: agar location kisi record se linked hai, to check karo ki
+    // wo record isi logged-in user ka hai. Agar match nahi hota, request
+    // reject karo — kisi doosre user ka data yahan se sync nahi hona chahiye.
+    if (businessLocation && businessLocation.userId !== token.id) {
+      console.warn(
+        `Rejected google-reviews sync: location ${locationName} belongs to a different user`
+      );
+      return NextResponse.json(
+        { success: false, error: "You do not have access to this location" },
+        { status: 403 }
+      );
+    }
+
     const reviewsResponse = await fetch(
       `https://mybusiness.googleapis.com/v4/${locationName}/reviews`,
       { headers: { Authorization: `Bearer ${token.accessToken}` } }
@@ -41,11 +59,6 @@ export async function GET(req: any) {
 
     const reviewsData = await reviewsResponse.json();
     const googleReviews = reviewsData.reviews || [];
-
-    // Is location ka humara internal BusinessLocation record dhoondo
-    const businessLocation = await prisma.businessLocation.findUnique({
-      where: { googleLocationId: locationName },
-    });
 
     let savedCount = 0;
 
