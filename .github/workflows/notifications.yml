@@ -12,4 +12,4 @@ jobs:
       - name: Call notifications endpoint
         run: |
           curl -f -X GET "https://www.reviewreply-ai.in/api/cron/notifications" \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET_NOTIFICATIONS }}"
