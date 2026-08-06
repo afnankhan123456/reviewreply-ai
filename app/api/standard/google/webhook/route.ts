@@ -193,7 +193,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true, message: 'Review saved and auto-replied!' }, { status: 200 });
 
   } catch (error) {
-    console.error('Google Webhook Error:', error);
+    // ✅ FIX (Bug 10): sirf error message log karo
+    console.error('Google Webhook Error:', error instanceof Error ? error.message : 'unknown');
     return NextResponse.json({ success: false, message: 'Webhook error' }, { status: 500 });
   }
 }
