@@ -1,6 +1,3 @@
 {
-  "crons": [
-    { "path": "/api/auto-sync", "schedule": "0 0 * * *" },
-    { "path": "/api/reset-monthly-limit", "schedule": "0 0 1 * *" }
-  ]
+  "crons": []
 }
