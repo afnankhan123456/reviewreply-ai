@@ -1,10 +1,5 @@
 import { prisma } from './prisma';
 
-/**
- * Ek review ka reply asal me Google Business Profile pe post karta hai
- * (agar review Google se aayi ho), aur DB ko update karta hai.
- * Non-Google reviews (jaise Facebook) ke liye sirf DB me save hota hai.
- */
 export async function postReplyToGoogle(reviewId: string, replyText: string) {
   const review = await prisma.review.findUnique({
     where: { id: reviewId },
@@ -15,11 +10,10 @@ export async function postReplyToGoogle(reviewId: string, replyText: string) {
     return { success: false, error: 'Review not found' };
   }
 
-  // Google se aayi review nahi hai (jaise Facebook) — sirf local save karo
   if (review.source !== 'google' || !review.googleReviewId) {
     await prisma.review.update({
       where: { id: reviewId },
-      data: { reviewReply: replyText, replied: true, replyStatus: 'posted' },
+      data: { reviewReply: replyText, replied: true, replyStatus: 'posted', repliedAt: new Date() },
     });
     return { success: true };
   }
@@ -34,7 +28,6 @@ export async function postReplyToGoogle(reviewId: string, replyText: string) {
   }
 
   try {
-    // Account resource-name nikalo (jaise "accounts/12345")
     const accountsResponse = await fetch(
       'https://mybusinessaccountmanagement.googleapis.com/v1/accounts',
       { headers: { Authorization: `Bearer ${user.googleAccessToken}` } }
@@ -46,7 +39,7 @@ export async function postReplyToGoogle(reviewId: string, replyText: string) {
       return { success: false, error: 'No Google Business account found' };
     }
 
-    const locationPath = review.businessLocation.googleLocationId; // e.g. "locations/12345"
+    const locationPath = review.businessLocation.googleLocationId;
     const replyUrl = `https://mybusiness.googleapis.com/v4/${accountName}/${locationPath}/reviews/${review.googleReviewId}/reply`;
 
     const replyResponse = await fetch(replyUrl, {
@@ -66,7 +59,7 @@ export async function postReplyToGoogle(reviewId: string, replyText: string) {
 
     await prisma.review.update({
       where: { id: reviewId },
-      data: { reviewReply: replyText, replied: true, replyStatus: 'posted' },
+      data: { reviewReply: replyText, replied: true, replyStatus: 'posted', repliedAt: new Date() },
     });
 
     return { success: true };
