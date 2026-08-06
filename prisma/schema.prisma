@@ -101,6 +101,7 @@ model Review {
   text             String?
   reviewReply      String?
   replied          Boolean  @default(false)
+  repliedAt        DateTime?
   aiReplied        Boolean  @default(false)
   replyStatus      String   @default("none")
   reviewDate       DateTime
@@ -116,6 +117,7 @@ model Template {
   title     String
   content   String
   category  String   @default("general")
+  isAiGenerated Boolean @default(false)
   active    Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
