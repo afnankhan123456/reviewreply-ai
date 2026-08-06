@@ -12,8 +12,4 @@ jobs:
       - name: Call auto-reply endpoint
         run: |
           curl -f -X GET "https://reviewreply-ai-pi.vercel.app/api/standard/ai-reply-center/auto-reply" \
-            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
-
-
-
-
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET_AUTO_REPLY }}"
