@@ -108,6 +108,8 @@ model Review {
   syncedAt         DateTime @default(now())
   createdAt        DateTime @default(now())
   tags             String[] @default([])
+  flaggedForReview Boolean  @default(false)
+  flagReason       String?
 }
 
 model Template {
