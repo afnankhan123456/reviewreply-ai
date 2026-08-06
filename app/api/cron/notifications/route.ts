@@ -7,9 +7,9 @@ import {
 } from '@/lib/notificationEmails';
 
 export async function GET(req: Request) {
-  // Fail-safe: agar CRON_SECRET set hi nahi hai to route hamesha reject karo.
+  // Fail-safe: is route ka apna dedicated secret — sirf isi route ke liye valid.
   const authHeader = req.headers.get('authorization');
-  if (!process.env.CRON_SECRET || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!process.env.CRON_SECRET_NOTIFICATIONS || authHeader !== `Bearer ${process.env.CRON_SECRET_NOTIFICATIONS}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -30,7 +30,6 @@ export async function GET(req: Request) {
   });
 
   for (const user of users) {
-    // 1) Weekly Report — sirf Monday ko, aur agar pichle 7 din me nahi bheji
     if (isMonday) {
       const alreadySentThisWeek =
         user.lastWeeklyReportSent &&
@@ -71,7 +70,6 @@ export async function GET(req: Request) {
       }
     }
 
-    // 2) Plan Expiry — subscriptionEnd se 5 din pehle, ek hi baar per-cycle
     if (user.subscriptionEnd) {
       const daysLeft = Math.ceil(
         (new Date(user.subscriptionEnd).getTime() - now.getTime()) / (1000 * 60 * 60 * 24)
