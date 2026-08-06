@@ -1,16 +1,51 @@
 import { NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
 import { getExpectedPrice } from "@/lib/planPricing";
 
 const PAYPAL_API_BASE = process.env.PAYPAL_API_BASE || "https://api-m.sandbox.paypal.com";
 
+// ---- Simple in-memory rate limiter (per user) ----
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX_REQUESTS = 5; // order creation ko strict rakha
+const requestLog = new Map<string, number[]>();
+
+function isRateLimited(key: string): boolean {
+  const now = Date.now();
+  const timestamps = (requestLog.get(key) || []).filter(
+    (t) => now - t < RATE_LIMIT_WINDOW_MS
+  );
+  if (timestamps.length >= RATE_LIMIT_MAX_REQUESTS) {
+    requestLog.set(key, timestamps);
+    return true;
+  }
+  timestamps.push(now);
+  requestLog.set(key, timestamps);
+  return false;
+}
+
 export async function POST(req: Request) {
   try {
+    // ✅ FIX: sirf logged-in users hi order create kar sakte hain
+    const token: any = await getToken({
+      req: req as any,
+      secret: process.env.NEXTAUTH_SECRET,
+    });
+
+    if (!token?.id) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // ✅ FIX: per-user rate limit
+    if (isRateLimited(token.id)) {
+      return NextResponse.json(
+        { error: "Too many requests, please try again shortly" },
+        { status: 429 }
+      );
+    }
+
     const { planType, tier } = await req.json();
     const planTier = tier === "standard" ? "standard" : "basic";
 
-    // ✅ FIX: client se aaya "amount" ab kabhi use nahi hota — price hamesha
-    // server-side table se nikalta hai, taaki request tamper karke amount
-    // ghata na sake.
     const amount = getExpectedPrice(planTier, planType);
 
     if (amount === null) {
@@ -20,7 +55,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // PAYPAL ACCESS TOKEN
     const auth = Buffer.from(
       `${process.env.PAYPAL_CLIENT_ID}:${process.env.PAYPAL_SECRET}`
     ).toString("base64");
@@ -40,7 +74,7 @@ export async function POST(req: Request) {
     const tokenData = await tokenResponse.json();
 
     if (!tokenData.access_token) {
-      console.log("PayPal Token Error:", tokenData);
+      console.log("PayPal Token Error");
       return NextResponse.json(
         { error: "Failed to get PayPal access token" },
         { status: 500 }
@@ -49,7 +83,6 @@ export async function POST(req: Request) {
 
     const accessToken = tokenData.access_token;
 
-    // CREATE ORDER — server-calculated amount use hoti hai
     const orderResponse = await fetch(
       `${PAYPAL_API_BASE}/v2/checkout/orders`,
       {
@@ -82,7 +115,7 @@ export async function POST(req: Request) {
     const orderData = await orderResponse.json();
 
     if (!orderData.links) {
-      console.log("PayPal Order Error:", orderData);
+      console.log("PayPal Order Error");
       return NextResponse.json(
         { error: "Failed to create PayPal order" },
         { status: 500 }
@@ -104,7 +137,7 @@ export async function POST(req: Request) {
       url: approveLink.href,
     });
   } catch (error) {
-    console.log("PAYPAL ERROR:", error);
+    console.log("PAYPAL ERROR:", error instanceof Error ? error.message : "unknown");
     return NextResponse.json(
       { error: "PayPal Server Error" },
       { status: 500 }
