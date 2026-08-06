@@ -43,6 +43,7 @@ export async function POST(req: any, context: any) {
       data: {
         reviewReply: reply,
         replied: true,
+        repliedAt: new Date(),
       },
     });
 
