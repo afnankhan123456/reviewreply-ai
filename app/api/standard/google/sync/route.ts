@@ -66,3 +66,4 @@ export async function POST(request: Request) {
   // Same logic as GET, but usually for manual user trigger
   return await GET(request);
 }
+
