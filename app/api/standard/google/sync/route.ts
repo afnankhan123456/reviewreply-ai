@@ -4,9 +4,9 @@ import { NextResponse } from 'next/server';
 // GET request handler for Vercel Cron Job (Auto-sync)
 export async function GET(request: Request) {
   // Check if it's a Vercel Cron request (mandatory security header)
-  // Fail-safe: agar CRON_SECRET set hi nahi hai to route hamesha reject karo.
+  // Fail-safe: is route ka apna dedicated secret — sirf isi route ke liye valid.
   const authHeader = request.headers.get('authorization');
-  if (!process.env.CRON_SECRET || authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!process.env.CRON_SECRET_GOOGLE_SYNC || authHeader !== `Bearer ${process.env.CRON_SECRET_GOOGLE_SYNC}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -66,4 +66,3 @@ export async function POST(request: Request) {
   // Same logic as GET, but usually for manual user trigger
   return await GET(request);
 }
-
