@@ -3,6 +3,8 @@ import { getToken } from "next-auth/jwt";
 import { activateOrQueuePlan } from "@/lib/planActivation";
 import { getExpectedPrice, isAmountValid } from "@/lib/planPricing";
 
+const PAYPAL_API_BASE = process.env.PAYPAL_API_BASE || "https://api-m.sandbox.paypal.com";
+
 export async function POST(req: any) {
   try {
     const token: any = await getToken({
@@ -40,7 +42,7 @@ export async function POST(req: any) {
       `${process.env.PAYPAL_CLIENT_ID}:${process.env.PAYPAL_SECRET}`
     ).toString("base64");
 
-    const tokenRes = await fetch("https://api-m.sandbox.paypal.com/v1/oauth2/token", {
+    const tokenRes = await fetch(`${PAYPAL_API_BASE}/v1/oauth2/token`, {
       method: "POST",
       headers: {
         Authorization: `Basic ${auth}`,
@@ -61,7 +63,7 @@ export async function POST(req: any) {
 
     // 2) Order ka status seedha PayPal se verify karo — client pe bharosa nahi karna
     const orderRes = await fetch(
-      `https://api-m.sandbox.paypal.com/v2/checkout/orders/${orderID}`,
+      `${PAYPAL_API_BASE}/v2/checkout/orders/${orderID}`,
       {
         headers: { Authorization: `Bearer ${tokenData.access_token}` },
       }
