@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { generateAIReply } from '@/lib/aiReply';
 import { postReplyToGoogle } from '@/lib/googlePostReply';
+import { filterReply, checkAutoReplyRate, checkRepeatedPattern } from '@/lib/replyFilter';
+import { sendSuspiciousReplyAlert } from '@/lib/notificationEmails';
 
 export async function GET(req: Request) {
   // Fail-safe: is route ka apna dedicated secret — sirf isi route ke liye valid.
@@ -46,7 +48,55 @@ export async function GET(req: Request) {
             data: { reviewReply: aiResult.reply, replyStatus: 'pending_approval', aiReplied: true },
           });
           results.push({ email: user.email, reviewId: review.id, mode: 'draft', sent: true });
-        } else if (user.autoReplyMode === 'auto') {
+          continue;
+        }
+
+        if (user.autoReplyMode === 'auto') {
+          // ===== Auto-post se pehle safety filter =====
+          const contentCheck = filterReply(aiResult.reply!);
+          const rateCheck = await checkAutoReplyRate(user.id);
+          const patternCheck = await checkRepeatedPattern(user.id, aiResult.reply!);
+
+          const allReasons = [
+            ...contentCheck.reasons,
+            ...rateCheck.reasons,
+            ...patternCheck.reasons,
+          ];
+          const isSuspicious = contentCheck.suspicious || rateCheck.suspicious || patternCheck.suspicious;
+
+          if (isSuspicious) {
+            // Suspicious lage to auto-post mat karo — draft mode me fallback
+            // karo taaki owner khud review karke approve/edit kar sake.
+            await prisma.review.update({
+              where: { id: review.id },
+              data: {
+                reviewReply: aiResult.reply,
+                replyStatus: 'pending_approval',
+                aiReplied: true,
+                flaggedForReview: true,
+                flagReason: allReasons.join('; '),
+              },
+            });
+
+            const alert = await sendSuspiciousReplyAlert(user.id, {
+              reviewerName: review.reviewerName,
+              reviewText: review.comment || review.text || '',
+              aiReply: aiResult.reply!,
+              reasons: allReasons,
+            });
+
+            results.push({
+              email: user.email,
+              reviewId: review.id,
+              mode: 'auto',
+              fallbackToDraft: true,
+              reasons: allReasons,
+              alertSent: alert.sent,
+            });
+            continue;
+          }
+
+          // ===== Sab checks clean — auto-post karo =====
           await prisma.review.update({
             where: { id: review.id },
             data: { aiReplied: true },
@@ -69,4 +119,3 @@ export async function GET(req: Request) {
     return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
   }
 }
-
