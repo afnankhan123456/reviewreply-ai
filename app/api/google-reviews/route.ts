@@ -91,7 +91,8 @@ export async function GET(req: any) {
         });
         savedCount++;
       } catch (saveError) {
-        console.error("Error saving review:", r.reviewId, saveError);
+        // ✅ FIX (Bug 10): sirf message log karo
+        console.error("Error saving review:", r.reviewId, saveError instanceof Error ? saveError.message : "unknown");
       }
     }
 
@@ -101,9 +102,11 @@ export async function GET(req: any) {
       saved: savedCount,
     });
   } catch (error) {
+    // ✅ FIX (Bug 10): server pe log karo, client ko raw error mat bhejo
+    console.error("google-reviews sync error:", error instanceof Error ? error.message : "unknown");
     return NextResponse.json({
       success: false,
-      error: String(error),
+      error: "Failed to sync reviews",
     });
   }
 }
