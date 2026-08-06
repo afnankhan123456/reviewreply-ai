@@ -1,6 +1,62 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 
+// ---- Simple in-memory rate limiter ----
+// NOTE: this resets whenever the server/serverless instance restarts and is
+// per-instance only (not shared across multiple instances). Good enough as a
+// first line of defense; swap for Upstash/Redis if you run multiple instances.
+const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
+const RATE_LIMIT_MAX_REQUESTS = 20; // max POSTs per key per window
+const requestLog = new Map<string, number[]>();
+
+function isRateLimited(key: string): boolean {
+  const now = Date.now();
+  const timestamps = (requestLog.get(key) || []).filter(
+    (t) => now - t < RATE_LIMIT_WINDOW_MS
+  );
+
+  if (timestamps.length >= RATE_LIMIT_MAX_REQUESTS) {
+    requestLog.set(key, timestamps);
+    return true;
+  }
+
+  timestamps.push(now);
+  requestLog.set(key, timestamps);
+  return false;
+}
+
+// ---- Basic payload validation ----
+function validatePayload(body: any): { valid: boolean; error?: string } {
+  if (typeof body.locationId !== 'string' || body.locationId.trim() === '') {
+    return { valid: false, error: 'locationId must be a non-empty string' };
+  }
+
+  if (
+    body.rating !== undefined &&
+    (typeof body.rating !== 'number' || body.rating < 1 || body.rating > 5)
+  ) {
+    return { valid: false, error: 'rating must be a number between 1 and 5' };
+  }
+
+  if (body.comment !== undefined) {
+    if (typeof body.comment !== 'string') {
+      return { valid: false, error: 'comment must be a string' };
+    }
+    if (body.comment.length > 5000) {
+      return { valid: false, error: 'comment is too long' };
+    }
+  }
+
+  if (
+    body.authorName !== undefined &&
+    (typeof body.authorName !== 'string' || body.authorName.length > 200)
+  ) {
+    return { valid: false, error: 'authorName must be a string under 200 chars' };
+  }
+
+  return { valid: true };
+}
+
 // GET request for Webhook Verification
 export async function GET(request: Request) {
   const url = new URL(request.url);
@@ -32,10 +88,31 @@ export async function POST(request: Request) {
       );
     }
 
+    // 0b. Rate limit — key by the token itself since that's the only
+    // "identity" we have for the caller. Stops a leaked token from being
+    // used to spam fake reviews / burn OpenRouter credits.
+    if (isRateLimited(incomingToken)) {
+      console.warn('Rejected webhook POST: rate limit exceeded');
+      return NextResponse.json(
+        { success: false, message: 'Too many requests' },
+        { status: 429 }
+      );
+    }
+
     const body = await request.json();
     console.log('Google Webhook Received:', body);
 
-    // 1. Extract review data
+    // 1. Validate the incoming payload shape/values before trusting any of it
+    const validation = validatePayload(body);
+    if (!validation.valid) {
+      console.warn('Rejected webhook POST: invalid payload —', validation.error);
+      return NextResponse.json(
+        { success: false, message: validation.error },
+        { status: 400 }
+      );
+    }
+
+    // 2. Extract review data
     const reviewerName = body.authorName || 'Anonymous';
     const rating = body.rating || 0;
     const comment = body.comment || '';
@@ -43,15 +120,7 @@ export async function POST(request: Request) {
     const reviewDate = new Date();
     const googleLocationId = body.locationId; // must be sent by Google/your relay
 
-    if (!googleLocationId) {
-      console.warn('Rejected webhook POST: missing locationId in payload');
-      return NextResponse.json(
-        { success: false, message: 'Missing locationId' },
-        { status: 400 }
-      );
-    }
-
-    // 2. Map the incoming location to the real business + real owner.
+    // 3. Map the incoming location to the real business + real owner.
     // No more hardcoded userId — it now comes from the DB record that
     // actually owns this Google location.
     const businessLocation = await prisma.businessLocation.findUnique({
@@ -66,7 +135,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // 3. Save the new review to database (comment field used)
+    // 4. Save the new review to database (comment field used)
     const newReview = await prisma.review.create({
       data: {
         userId: businessLocation.userId,
@@ -84,7 +153,7 @@ export async function POST(request: Request) {
 
     console.log(`✅ New review saved: ${newReview.id}`);
 
-    // 4. Generate AI reply using OpenRouter
+    // 5. Generate AI reply using OpenRouter
     const aiResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -109,7 +178,7 @@ export async function POST(request: Request) {
     const data = await aiResponse.json();
     const replyText = data.choices?.[0]?.message?.content || 'Thank you for your feedback!';
 
-    // 5. Update the review with AI reply
+    // 6. Update the review with AI reply
     await prisma.review.update({
       where: { id: newReview.id },
       data: {
