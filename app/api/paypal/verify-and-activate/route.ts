@@ -54,7 +54,8 @@ export async function POST(req: any) {
     const tokenData = await tokenRes.json();
 
     if (!tokenData.access_token) {
-      console.log("PayPal Token Error:", tokenData);
+      // ✅ FIX (Bug 10): poora tokenData object nahi
+      console.error("PayPal Token Error:", tokenData?.error || "unknown");
       return NextResponse.json(
         { success: false, error: "PayPal authentication failed" },
         { status: 500 }
@@ -72,7 +73,8 @@ export async function POST(req: any) {
     const orderData = await orderRes.json();
 
     if (orderData.status !== "COMPLETED") {
-      console.log("PayPal order not completed:", orderData);
+      // ✅ FIX (Bug 10): poora orderData object nahi (payer PII ho sakti hai)
+      console.warn("PayPal order not completed. orderID:", orderID, "status:", orderData.status);
       return NextResponse.json(
         { success: false, error: "Payment not completed" },
         { status: 400 }
@@ -102,7 +104,8 @@ export async function POST(req: any) {
         : "Payment successful — plan activated",
     });
   } catch (error) {
-    console.log("PAYPAL VERIFY ERROR:", error);
-    return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
+    // ✅ FIX (Bug 10): sirf message log, client ko raw error mat bhejo
+    console.error("PAYPAL VERIFY ERROR:", error instanceof Error ? error.message : "unknown");
+    return NextResponse.json({ success: false, error: "Payment verification failed" }, { status: 500 });
   }
 }
