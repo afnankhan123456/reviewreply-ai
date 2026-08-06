@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getExpectedPrice } from "@/lib/planPricing";
 
+const PAYPAL_API_BASE = process.env.PAYPAL_API_BASE || "https://api-m.sandbox.paypal.com";
+
 export async function POST(req: Request) {
   try {
     const { planType, tier } = await req.json();
@@ -24,7 +26,7 @@ export async function POST(req: Request) {
     ).toString("base64");
 
     const tokenResponse = await fetch(
-      "https://api-m.sandbox.paypal.com/v1/oauth2/token",
+      `${PAYPAL_API_BASE}/v1/oauth2/token`,
       {
         method: "POST",
         headers: {
@@ -49,7 +51,7 @@ export async function POST(req: Request) {
 
     // CREATE ORDER — server-calculated amount use hoti hai
     const orderResponse = await fetch(
-      "https://api-m.sandbox.paypal.com/v2/checkout/orders",
+      `${PAYPAL_API_BASE}/v2/checkout/orders`,
       {
         method: "POST",
         headers: {
