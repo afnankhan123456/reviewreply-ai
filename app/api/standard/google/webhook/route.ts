@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { generateAIReply } from '@/lib/aiReply';
 
 // ---- Simple in-memory rate limiter ----
 // NOTE: this resets whenever the server/serverless instance restarts and is
@@ -76,8 +77,6 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   try {
     // 0. SECURITY CHECK — verify this request actually came from Google.
-    // Same shared secret used in GET, sent this time as a header instead of
-    // a query param (Google/your relay must send this on every push).
     const incomingToken = request.headers.get('x-webhook-token');
 
     if (!incomingToken || incomingToken !== process.env.GOOGLE_WEBHOOK_VERIFY_TOKEN) {
@@ -88,9 +87,8 @@ export async function POST(request: Request) {
       );
     }
 
-    // 0b. Rate limit — key by the token itself since that's the only
-    // "identity" we have for the caller. Stops a leaked token from being
-    // used to spam fake reviews / burn OpenRouter credits.
+    // 0b. Global rate limit — key by the token itself. First line of defense
+    // (stops raw request-flooding), NOT the per-user AI-cost limit.
     if (isRateLimited(incomingToken)) {
       console.warn('Rejected webhook POST: rate limit exceeded');
       return NextResponse.json(
@@ -121,8 +119,6 @@ export async function POST(request: Request) {
     const googleLocationId = body.locationId; // must be sent by Google/your relay
 
     // 3. Map the incoming location to the real business + real owner.
-    // No more hardcoded userId — it now comes from the DB record that
-    // actually owns this Google location.
     const businessLocation = await prisma.businessLocation.findUnique({
       where: { googleLocationId },
     });
@@ -143,7 +139,7 @@ export async function POST(request: Request) {
         reviewerName,
         rating,
         comment,
-        text: comment, // ✅ Also save to text field (future compatibility)
+        text: comment,
         source,
         reviewDate,
         replied: false,
@@ -153,36 +149,30 @@ export async function POST(request: Request) {
 
     console.log(`✅ New review saved: ${newReview.id}`);
 
-    // 5. Generate AI reply using OpenRouter
-    const aiResponse = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-3.5-turbo',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a helpful assistant that writes professional, empathetic replies for customer reviews.',
-          },
-          {
-            role: 'user',
-            content: `Write a professional reply for this review: "${comment}"`,
-          },
-        ],
-      }),
+    // 5. Generate AI reply — ✅ FIX: ab seedha OpenRouter call karne ki jagah
+    // shared generateAIReply() use ho raha hai, jisme per-user monthly (500)
+    // aur hourly (20) limit already built-in hai. Agar us user ka limit
+    // khatam ho chuka hai, to yahan AI call hi nahi hogi — review phir bhi
+    // save rahega, bas auto-reply skip ho jayegi.
+    const aiResult = await generateAIReply(businessLocation.userId, {
+      reviewText: comment,
+      reviewerName,
+      rating,
     });
 
-    const data = await aiResponse.json();
-    const replyText = data.choices?.[0]?.message?.content || 'Thank you for your feedback!';
+    if (!aiResult.success) {
+      console.warn(`Auto-reply skipped for review ${newReview.id}:`, aiResult.error);
+      return NextResponse.json(
+        { success: true, message: 'Review saved, auto-reply skipped', reason: aiResult.error },
+        { status: 200 }
+      );
+    }
 
     // 6. Update the review with AI reply
     await prisma.review.update({
       where: { id: newReview.id },
       data: {
-        reviewReply: replyText,
+        reviewReply: aiResult.reply,
         replied: true,
         aiReplied: true,
         repliedAt: new Date(),
@@ -194,7 +184,6 @@ export async function POST(request: Request) {
     return NextResponse.json({ success: true, message: 'Review saved and auto-replied!' }, { status: 200 });
 
   } catch (error) {
-    // ✅ FIX (Bug 10): sirf error message log karo
     console.error('Google Webhook Error:', error instanceof Error ? error.message : 'unknown');
     return NextResponse.json({ success: false, message: 'Webhook error' }, { status: 500 });
   }
