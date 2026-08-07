@@ -93,7 +93,19 @@ export async function POST(req: any) {
     }
 
     // 3) Payment confirm ho gaya aur amount sahi hai — ab plan activate ya queue karo
-    const result = await activateOrQueuePlan(token.email, planType, planTier);
+    // ✅ NAYA FIX: orderID ab activateOrQueuePlan ko bhi diya ja raha hai —
+    // taaki wahi function replay-protection (UsedPaypalOrder check) kare.
+    let result;
+    try {
+      result = await activateOrQueuePlan(token.email, planType, planTier, orderID);
+    } catch (e: any) {
+      // Agar ye orderID already use ho chuka hai, to yahan error aayega
+      console.warn("Plan activation blocked:", e?.message || e);
+      return NextResponse.json(
+        { success: false, error: e?.message || "Plan activation failed" },
+        { status: 400 }
+      );
+    }
 
     return NextResponse.json({
       success: true,
