@@ -2,30 +2,30 @@ import { NextResponse } from "next/server";
 import { prisma } from "../../../lib/prisma";
 import { getToken } from "next-auth/jwt";
 
+// NOTE: Ye route sirf "review sync limit" (reviewsUsed / reviewsLimit) check
+// karta hai — "AI reply limit" isme cover NAHI hoti. AI reply ka apna alag
+// per-user monthly/hourly limit hai, jo generateAIReply() (lib/aiReply.ts)
+// mein handle hota hai. Naam se confuse mat hona ke "check-limit" sab kuch
+// cover karta hai.
 export async function POST(req: any) {
   try {
     const token: any = await getToken({
       req,
       secret: process.env.NEXTAUTH_SECRET,
     });
-
     if (!token?.id) {
       return NextResponse.json({ success: false, error: "Unauthorized" }, { status: 401 });
     }
-
     const userId = token.id; // request body se nahi, session se
-
     const user = await prisma.user.findUnique({
       where: { id: userId },
     });
-
     if (!user) {
       return NextResponse.json({
         success: false,
         error: "User not found",
       });
     }
-
     // 🔁 Monthly reset logic
     if (user.monthlyResetDate) {
       const now = new Date();
@@ -44,9 +44,7 @@ export async function POST(req: any) {
         user.monthlyResetDate = now;
       }
     }
-
     const limitReached = user.reviewsUsed >= user.reviewsLimit;
-
     return NextResponse.json({
       success: true,
       reviewsUsed: user.reviewsUsed,
