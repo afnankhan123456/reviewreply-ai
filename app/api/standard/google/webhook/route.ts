@@ -1,29 +1,64 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { generateAIReply } from '@/lib/aiReply';
+import { Redis } from '@upstash/redis';
 
-// ---- Simple in-memory rate limiter ----
-// NOTE: this resets whenever the server/serverless instance restarts and is
-// per-instance only (not shared across multiple instances). Good enough as a
-// first line of defense; swap for Upstash/Redis if you run multiple instances.
-const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
+// ---- Rate limiter (shared across all serverless instances via Upstash Redis) ----
+// Pehle ye limit ek in-memory Map mein tha, jo Vercel jaisi serverless hosting
+// mein multiple instances ke case mein reliable nahi tha (har instance ka apna
+// alag counter ban jata tha, to real limit "20 x instances" ho sakta tha).
+// Ab counter Redis (shared/external storage) mein rakha ja raha hai, taaki
+// sab instances ek hi counter share karein aur "20/minute" ka limit globally
+// sahi se enforce ho.
+const RATE_LIMIT_WINDOW_SECONDS = 60; // 1 minute
 const RATE_LIMIT_MAX_REQUESTS = 20; // max POSTs per key per window
-const requestLog = new Map<string, number[]>();
 
-function isRateLimited(key: string): boolean {
+const redis =
+  process.env.KV_REST_API_URL && process.env.KV_REST_API_TOKEN
+    ? new Redis({
+        url: process.env.KV_REST_API_URL,
+        token: process.env.KV_REST_API_TOKEN,
+      })
+    : null;
+
+// Fallback: agar env vars kisi wajah se missing hon (e.g. local dev bina
+// .env ke), to purane in-memory tareeke pe fallback karo taaki app kabhi
+// crash na ho — bas ye fallback multi-instance safe nahi hai.
+const fallbackRequestLog = new Map<string, number[]>();
+
+function isRateLimitedInMemory(key: string): boolean {
   const now = Date.now();
-  const timestamps = (requestLog.get(key) || []).filter(
-    (t) => now - t < RATE_LIMIT_WINDOW_MS
+  const timestamps = (fallbackRequestLog.get(key) || []).filter(
+    (t) => now - t < RATE_LIMIT_WINDOW_SECONDS * 1000
   );
 
   if (timestamps.length >= RATE_LIMIT_MAX_REQUESTS) {
-    requestLog.set(key, timestamps);
+    fallbackRequestLog.set(key, timestamps);
     return true;
   }
 
   timestamps.push(now);
-  requestLog.set(key, timestamps);
+  fallbackRequestLog.set(key, timestamps);
   return false;
+}
+
+async function isRateLimited(key: string): Promise<boolean> {
+  if (!redis) {
+    console.warn('KV_REST_API_URL/TOKEN missing — falling back to per-instance in-memory rate limit');
+    return isRateLimitedInMemory(key);
+  }
+
+  const redisKey = `webhook-rate-limit:${key}`;
+
+  // INCR is atomic — safe even if multiple instances hit it at the same time
+  const count = await redis.incr(redisKey);
+
+  // Pehli request pe expiry set karo taaki window reset ho jaye
+  if (count === 1) {
+    await redis.expire(redisKey, RATE_LIMIT_WINDOW_SECONDS);
+  }
+
+  return count > RATE_LIMIT_MAX_REQUESTS;
 }
 
 // ---- Basic payload validation ----
@@ -89,7 +124,7 @@ export async function POST(request: Request) {
 
     // 0b. Global rate limit — key by the token itself. First line of defense
     // (stops raw request-flooding), NOT the per-user AI-cost limit.
-    if (isRateLimited(incomingToken)) {
+    if (await isRateLimited(incomingToken)) {
       console.warn('Rejected webhook POST: rate limit exceeded');
       return NextResponse.json(
         { success: false, message: 'Too many requests' },
