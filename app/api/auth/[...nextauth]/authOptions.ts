@@ -90,6 +90,10 @@ export const authOptions = {
           ? await prisma.user.findUnique({ where: { referralCode: referrerCodeFromCookie } })
           : null;
 
+        // ✅ FIX: khud apne referral code se signup na kar sake (self-referral abuse)
+        const isSelfReferral =
+          referrer && referrer.email.toLowerCase() === user.email.toLowerCase();
+
         if (!existingUser) {
           const referralCode = generateReferralCode();
           await prisma.user.create({
@@ -109,12 +113,19 @@ export const authOptions = {
               referralCode,
             },
           });
-          if (referrerCodeFromCookie) {
+          if (referrerCodeFromCookie && !isSelfReferral) {
             const signupIp = await getClientIp();
-            // Same IP already used for a referral signup before? Flag it —
-            // still counted (manual payout review will catch it), just marked.
+            // ✅ FIX: pehle sirf "same IP se koi bhi signup" dekhta tha —
+            // ab specifically "isi referrer ke against same IP se pehle bhi
+            // signup hua hai" check karta hai, jo asli referral-farming
+            // pattern ko zyada accurately pakadta hai.
             const priorSignupFromSameIp = signupIp
-              ? await prisma.referralSignup.findFirst({ where: { signupIp } })
+              ? await prisma.referralSignup.findFirst({
+                  where: {
+                    signupIp,
+                    referrerEmail: referrer?.email || referrerCodeFromCookie,
+                  },
+                })
               : null;
             await prisma.referralSignup.create({
               data: {
@@ -124,7 +135,11 @@ export const authOptions = {
                 flagged: Boolean(priorSignupFromSameIp),
               },
             });
-            await trackReferralSignup(referrerCodeFromCookie);
+            // ✅ FIX: flagged signups ka stats-counter (jo future payout ka
+            // basis ban sakta hai) increment nahi hoga — sirf clean signups count honge.
+            if (!priorSignupFromSameIp) {
+              await trackReferralSignup(referrerCodeFromCookie);
+            }
           }
         } else {
           const updateData: any = {
@@ -134,7 +149,7 @@ export const authOptions = {
             updateData.referralCode = generateReferralCode();
           }
           await prisma.user.update({ where: { email: user.email }, data: updateData });
-          if (referrerCodeFromCookie) {
+          if (referrerCodeFromCookie && !isSelfReferral) {
             const alreadyTracked = await prisma.referralSignup.findFirst({
               where: {
                 signupEmail: user.email,
@@ -144,7 +159,12 @@ export const authOptions = {
             if (!alreadyTracked) {
               const signupIp = await getClientIp();
               const priorSignupFromSameIp = signupIp
-                ? await prisma.referralSignup.findFirst({ where: { signupIp } })
+                ? await prisma.referralSignup.findFirst({
+                    where: {
+                      signupIp,
+                      referrerEmail: referrer?.email || referrerCodeFromCookie,
+                    },
+                  })
                 : null;
               await prisma.referralSignup.create({
                 data: {
@@ -154,7 +174,9 @@ export const authOptions = {
                   flagged: Boolean(priorSignupFromSameIp),
                 },
               });
-              await trackReferralSignup(referrerCodeFromCookie);
+              if (!priorSignupFromSameIp) {
+                await trackReferralSignup(referrerCodeFromCookie);
+              }
             }
           }
         }
@@ -214,7 +236,6 @@ export const authOptions = {
           const updateData: any = {
             googleAccessToken: account.access_token,
             googleConnected: true,
-            // ✅ FIX: token kab expire hoga, wo bhi save karo — taaki refresh logic ko pata chale
             googleTokenExpiresAt: account.expires_at
               ? new Date(account.expires_at * 1000)
               : new Date(Date.now() + 3600 * 1000),
@@ -234,10 +255,6 @@ export const authOptions = {
       return token;
     },
     async session({ session, token }: any) {
-      // 🔒 accessToken jaan-boojh kar session mein NAHI dala — session client-side
-      // (useSession) ko bhi visible hota hai. Google Business ka raw access token
-      // sirf server-side code ko chahiye hota hai, wahan getToken() se lo (jaisa
-      // app/api/google-business/route.ts aur app/api/google-reviews/route.ts mein hai).
       session.isAdmin = token.isAdmin;
       session.referralCode = token.referralCode;
       if (session.user) {
@@ -249,7 +266,6 @@ export const authOptions = {
       return session;
     },
     async redirect({ baseUrl, url }: any) {
-      // Team invite accept link ko wapas usi jagah bhejo (dashboard tak khud pahunch jayega)
       if (url.startsWith(`${baseUrl}/api/team/accept`) || url.includes("/api/team/accept")) {
         return url.startsWith(baseUrl) ? url : `${baseUrl}${url.startsWith("/") ? url : `/${url}`}`;
       }
