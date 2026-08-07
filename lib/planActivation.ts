@@ -22,14 +22,35 @@ type Tier = "basic" | "standard";
  * pehle PayPal se orderID verify kar liya ho (status === "COMPLETED").
  * Koi bhi naya caller add karte waqt payment-verification zaroor add karo —
  * ye function khud koi payment check nahi karta.
+ *
+ * ✅ NAYA FIX (Payment Replay Protection): orderID ab yahan bhi liya jata hai
+ * aur activation se PEHLE `UsedPaypalOrder` table mein unique-create try hota
+ * hai. Agar wahi orderID pehle se exist karta hai, matlab ye payment already
+ * use ho chuki hai — activation reject ho jayega, chahe PayPal khud us order
+ * ko "COMPLETED" hi kyun na bataye (kyunki COMPLETED status hamesha wahi
+ * rehta hai, ek hi orderID dobara bhi COMPLETED hi dikhega).
  */
 export async function activateOrQueuePlan(
   email: string,
   planType: string,
-  tier: Tier
+  tier: Tier,
+  orderID: string
 ) {
   if (!durations[planType]) {
     throw new Error("Invalid plan type");
+  }
+
+  if (!orderID) {
+    throw new Error("Missing orderID");
+  }
+
+  // ✅ Replay check: is orderID ka pehle se koi record hai kya
+  const alreadyUsed = await prisma.usedPaypalOrder.findUnique({
+    where: { orderId: orderID },
+  });
+
+  if (alreadyUsed) {
+    throw new Error("This payment has already been used to activate a plan.");
   }
 
   const combinedPlan = `${tier}-${planType}`;
@@ -45,6 +66,18 @@ export async function activateOrQueuePlan(
   if (!currentUser) {
     throw new Error("User not found");
   }
+
+  // ✅ orderID ko turant "used" mark kar do (activation se pehle) — taaki
+  // agar isi orderID se do requests almost-same-time pe aayein (race
+  // condition), to unique constraint hi doosri request ko fail kar de.
+  await prisma.usedPaypalOrder.create({
+    data: {
+      orderId: orderID,
+      userEmail: email,
+      planType,
+      tier,
+    },
+  });
 
   const oldPlanStillActive =
     currentUser.subscriptionEnd && new Date(currentUser.subscriptionEnd) > new Date();
