@@ -269,3 +269,15 @@ model ArticleFeedback {
 
   @@unique([articleId, userId])
 }
+
+// ✅ NAYA MODEL — Payment replay/reuse rokne ke liye.
+// Har verified PayPal orderID yahan ek baar save hoga; dobara wahi orderID
+// use karne ki koshish is table ke unique constraint se hi reject ho jayegi.
+model UsedPaypalOrder {
+  id        String   @id @default(cuid())
+  orderId   String   @unique
+  userEmail String
+  planType  String
+  tier      String
+  createdAt DateTime @default(now())
+}
