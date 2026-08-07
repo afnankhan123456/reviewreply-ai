@@ -96,23 +96,34 @@ export const authOptions = {
 
         if (!existingUser) {
           const referralCode = generateReferralCode();
-          await prisma.user.create({
-            data: {
-              name: user.name || "",
-              email: user.email,
-              image: user.image || "",
-              plan: "basic",
-              subscriptionStatus: "active",
-              reviewsUsed: 0,
-              reviewsLimit: 100,
-              locationsUsed: 0,
-              locationsLimit: 1,
-              googleConnected: false,
-              createdAt: new Date(),
-              lastLogin: new Date(),
-              referralCode,
-            },
-          });
+
+          // ✅ FIX (Bug #5): naya user create hote waqt error aaye to login
+          // FAIL karna hai — warna login "success" dikh jayega par DB mein
+          // user record banega hi nahi, jisse har API call "User not found"
+          // dega. Isliye ye create call apne alag try/catch mein hai.
+          try {
+            await prisma.user.create({
+              data: {
+                name: user.name || "",
+                email: user.email,
+                image: user.image || "",
+                plan: "basic",
+                subscriptionStatus: "active",
+                reviewsUsed: 0,
+                reviewsLimit: 100,
+                locationsUsed: 0,
+                locationsLimit: 1,
+                googleConnected: false,
+                createdAt: new Date(),
+                lastLogin: new Date(),
+                referralCode,
+              },
+            });
+          } catch (createError) {
+            console.error("SIGN IN ERROR (user create failed):", createError);
+            return false;
+          }
+
           if (referrerCodeFromCookie && !isSelfReferral) {
             const signupIp = await getClientIp();
             // ✅ FIX: pehle sirf "same IP se koi bhi signup" dekhta tha —
@@ -182,6 +193,12 @@ export const authOptions = {
         }
         return true;
       } catch (error) {
+        // ✅ FIX (Bug #5): naye-user creation ka critical error upar hi
+        // `return false` se handle ho chuka hai. Ye bahar wala catch sirf
+        // non-critical cheezein (referral tracking, cookie read, etc.)
+        // pakadta hai — existing (already-DB-mein-maujood) users ko isi
+        // wajah se login se block nahi karna chahiye, isliye yahan `true`
+        // hi rehne diya hai.
         console.log("SIGN IN ERROR:", error);
         return true;
       }
