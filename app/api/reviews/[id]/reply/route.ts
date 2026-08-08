@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { prisma } from "../../../../../lib/prisma";
 import { getToken } from "next-auth/jwt";
+import { postReplyToGoogle } from "../../../../../lib/googlePostReply";
 
 export async function POST(req: any, context: any) {
   try {
@@ -38,16 +39,26 @@ export async function POST(req: any, context: any) {
       return NextResponse.json({ success: false, error: "Forbidden" }, { status: 403 });
     }
 
-    await prisma.review.update({
+    // ✅ Standard plan ki tarah — ab yahan bhi real Google-post hoga,
+    // aur fail hone par sach me fail bolega (pehle sirf DB update hota tha)
+    const result = await postReplyToGoogle(context.params.id, reply);
+
+    if (!result.success) {
+      return NextResponse.json(
+        { success: false, error: result.error || "Failed to post reply to Google" },
+        { status: 502 }
+      );
+    }
+
+    const updatedReview = await prisma.review.findUnique({
       where: { id: context.params.id },
-      data: {
-        reviewReply: reply,
-        replied: true,
-        repliedAt: new Date(),
-      },
     });
 
-    return NextResponse.json({ success: true, message: "Reply saved successfully" });
+    return NextResponse.json({
+      success: true,
+      message: "Reply saved successfully",
+      data: updatedReview,
+    });
   } catch (error) {
     return NextResponse.json({ success: false, error: String(error) }, { status: 500 });
   }
