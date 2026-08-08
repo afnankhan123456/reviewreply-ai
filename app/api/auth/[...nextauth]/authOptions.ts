@@ -1,8 +1,20 @@
 import GoogleProvider from "next-auth/providers/google";
+import { decode } from "next-auth/jwt";
 import { prisma } from "@/lib/prisma";
 import { cookies, headers } from "next/headers";
 import { resolveOwnerAndRole } from "@/lib/getEffectiveOwner";
 import { activatePendingPlanIfDue } from "@/lib/planQueue";
+
+// ✅ NAYA: login ke baad plan-active users ko seedha unke dashboard bhejne
+// ke liye ek chhota helper — decide karta hai konsa dashboard route sahi hai.
+function resolvePlanDashboardPath(plan: string | null | undefined, subscriptionEnd: any): string | null {
+  if (!plan || !subscriptionEnd) return null;
+  const isActive = new Date(subscriptionEnd).getTime() > Date.now();
+  if (!isActive) return null;
+  if (plan.startsWith("standard")) return "/plans/standard/dashboard";
+  if (plan.startsWith("basic")) return "/plans/basic/dashbord";
+  return null;
+}
 
 const adminEmail = process.env.ADMIN_EMAIL;
 
@@ -280,6 +292,11 @@ export const authOptions = {
         session.user.ownerId = token.ownerId || token.id;
         session.user.teamRole = token.teamRole || "OWNER";
         session.user.plan = token.plan || "basic";
+        // ✅ NAYA: client-side (app/plans/page.tsx) ko bhi active-plan check
+        // karne ke liye subscriptionEnd/subscriptionStatus chahiye — pehle
+        // ye session par expose hi nahi ho rahe the, sirf token me the.
+        session.user.subscriptionEnd = token.subscriptionEnd || null;
+        session.user.subscriptionStatus = token.subscriptionStatus || "active";
       }
       return session;
     },
@@ -288,6 +305,35 @@ export const authOptions = {
         return url.startsWith(baseUrl) ? url : `${baseUrl}${url.startsWith("/") ? url : `/${url}`}`;
       }
       if (url.includes("admin=true")) return `${baseUrl}/admin`;
+
+      // ✅ NAYA: agar login karne wale user ke paas already active plan hai,
+      // to plan-choice page (/plans) ki jagah seedha uske dashboard par bhejo.
+      // Session-token abhi is cookie me already fresh hai (jwt callback
+      // redirect se pehle chal chuka hota hai), isliye yahan alag se DB call
+      // ki zaroorat nahi — bas usi cookie ko decode kar rahe hain.
+      try {
+        const cookieStore = await cookies();
+        const cookieName =
+          process.env.NODE_ENV === "production"
+            ? "__Secure-next-auth.session-token"
+            : "next-auth.session-token";
+        const rawToken = cookieStore.get(cookieName)?.value;
+
+        if (rawToken) {
+          const decoded: any = await decode({
+            token: rawToken,
+            secret: process.env.NEXTAUTH_SECRET as string,
+          });
+
+          const dashboardPath = resolvePlanDashboardPath(decoded?.plan, decoded?.subscriptionEnd);
+          if (dashboardPath) {
+            return `${baseUrl}${dashboardPath}`;
+          }
+        }
+      } catch (err) {
+        console.log("Redirect plan-check error:", err);
+      }
+
       return `${baseUrl}/plans`;
     },
   },
