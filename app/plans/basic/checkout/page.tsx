@@ -25,7 +25,7 @@ function CheckoutContent() {
   const handleSuccess = () => {
     setDone(true);
     setTimeout(() => {
-      router.push("/plans/basic/dashbord");
+      router.push("/plans/basic/dashbord?paid=1");
     }, 1200);
   };
 
