@@ -78,6 +78,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        {/* Shown AI conversion tracking pixel — sabhi pages pe load hoga */}
+        <script defer src="https://shown.io/metrics/nW3oNDM20a" type="text/javascript"></script>
         <Providers>{children}</Providers>
       </body>
     </html>
