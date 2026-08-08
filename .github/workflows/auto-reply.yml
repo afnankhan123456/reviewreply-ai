@@ -1,15 +1,13 @@
 name: Auto Reply Cron
-
 on:
   schedule:
     - cron: '0 * * * *'
   workflow_dispatch:
-
 jobs:
   trigger-auto-reply:
     runs-on: ubuntu-latest
     steps:
       - name: Call auto-reply endpoint
         run: |
-          curl -f -X GET "https://reviewreply-ai-pi.vercel.app/api/standard/ai-reply-center/auto-reply" \
+          curl -f -X GET "https://www.reviewreply-ai.in/api/standard/ai-reply-center/auto-reply" \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET_AUTO_REPLY }}"
