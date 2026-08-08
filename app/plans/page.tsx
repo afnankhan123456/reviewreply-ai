@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useSession } from "next-auth/react";
@@ -84,9 +84,32 @@ const proFeatures = [
 ];
 
 export default function PlansPage() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [showComingSoon, setShowComingSoon] = useState(false);
+
+  // ✅ NAYA: safety-net — agar (kisi bhi wajah se, e.g. back button) ye
+  // page load ho jaye jabki user ke paas already ek active plan hai, to
+  // usse yahan ruk kar plan-cards dikhane ki jagah turant uske dashboard
+  // par bhej do. Primary redirect authOptions.ts ke `redirect` callback
+  // me hota hai — ye sirf backup hai.
+  useEffect(() => {
+    if (status !== "authenticated") return;
+
+    const plan = (session?.user as any)?.plan as string | undefined;
+    const subscriptionEnd = (session?.user as any)?.subscriptionEnd as string | null | undefined;
+
+    if (!plan || !subscriptionEnd) return;
+
+    const isActive = new Date(subscriptionEnd).getTime() > Date.now();
+    if (!isActive) return;
+
+    if (plan.startsWith("standard")) {
+      router.replace("/plans/standard/dashboard");
+    } else if (plan.startsWith("basic")) {
+      router.replace("/plans/basic/dashbord");
+    }
+  }, [status, session, router]);
 
   const handleProClick = () => {
     const userEmail = session?.user?.email;
