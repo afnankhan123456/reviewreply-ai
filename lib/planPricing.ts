@@ -3,7 +3,7 @@
 
 export const PLAN_PRICES: Record<"basic" | "standard", Record<string, number>> = {
   basic: {
-    "1m": 0.01,
+    "1m": 9,
     "3m": 24,
     "6m": 45,
     "12m": 88,
@@ -19,10 +19,7 @@ export const PLAN_PRICES: Record<"basic" | "standard", Record<string, number>> =
 // ✅ FIX (Bug 11): startup sanity check — koi bhi price ek reasonable
 // min/max range se bahar nahi hona chahiye. Typo (jaise ek extra/missing
 // zero) ko CI/build/startup pe hi pakad lena hai, production mein nahi.
-// ⚠️ TEMPORARY: basic/1m ko $0.01 pe test karne ke liye MIN_PLAN_PRICE
-// abhi 0.01 kar diya hai. Payment testing complete hone ke baad
-// basic.1m ko real price se update karo aur MIN_PLAN_PRICE wapas 5 kar do.
-const MIN_PLAN_PRICE = 0.01;
+const MIN_PLAN_PRICE = 5;
 const MAX_PLAN_PRICE = 500;
 
 function assertPlanPricesInRange() {
