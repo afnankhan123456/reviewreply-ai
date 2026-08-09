@@ -24,9 +24,9 @@ export default function BasicPricingPage() {
     {
       id: "1m",
       duration: "1 Month",
-      price: "$0.01",
-      amount: "0.01",
-      monthly: "$0.01 / month",
+      price: "$9",
+      amount: "9",
+      monthly: "$9 / month",
       save: "—",
     },
     {
