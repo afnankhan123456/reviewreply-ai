@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "in.reviewreplyai.app",
+        "sha256_cert_fingerprints": ["A9:0B:D5:5E:C6:01:3A:64:CD:1C:9E:6D:05:E2:CA:91:25:6B:1D:0F:A4:E8:D5:D2:03:FC:12:E3:EA:D4:55:F8"]
+      }
+    }]
