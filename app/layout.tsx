@@ -61,6 +61,7 @@ export const metadata = {
   alternates: {
     canonical: "https://www.reviewreply-ai.in",
   },
+  manifest: "/manifest.json",
 };
 
 export const viewport = {
