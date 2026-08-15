@@ -82,6 +82,12 @@ export default function RootLayout({
         {/* Shown AI conversion tracking pixel — sabhi pages pe load hoga */}
         <script defer src="https://shown.io/metrics/nW3oNDM20a" type="text/javascript"></script>
         <Providers>{children}</Providers>
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "if ('serviceWorker' in navigator) { navigator.serviceWorker.register('/service-worker.js'); }",
+          }}
+        />
       </body>
     </html>
   );
