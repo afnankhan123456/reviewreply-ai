@@ -1,0 +1,29 @@
+{
+  "background_color": "#ffffff",
+  "description": "ReviewReply AI is an AI-powered Google Business Profile review management platform. It helps businesses securely connect their Google Business Profile, automatically sync customer reviews, generate AI-powered replies, publish responses, monitor ratings, analyze customer sentiment, and manage online reputation from one dashboard. Google Sign-In is used only to verify identity, connect Business Profile, read reviews, generate AI replies, and publish responses. We never access Gmail, Drive, Calendar, Contacts, Photos, or YouTube.",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "ReviewReply AI",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "ReviewReply AI",
+  "start_url": "/",
+  "theme_color": "#ffffff",
+  "categories": [
+    "Business"
+  ],
+  "icons": [
+    {
+      "src": "https://www.reviewreply-ai.in/og-image.png",
+      "isSquare": false,
+      "isPng": true,
+      "isWebp": false,
+      "isJpg": false,
+      "width": 0,
+      "is512x512": false,
+      "is256x256": false,
+      "is192x192": false
+    }
+  ],
+  "lang": "en"
+}
