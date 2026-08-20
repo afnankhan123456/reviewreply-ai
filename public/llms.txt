@@ -1,0 +1,169 @@
+# ReviewReply AI
+
+> AI-powered Google Business Profile review management platform that automates review replies, tracks sentiment, and helps businesses grow their online reputation.
+
+## About
+
+ReviewReply AI is a review management platform built specifically for Google Business Profile. It centralizes the entire review lifecycle — collecting reviews, generating AI-powered replies, tracking sentiment, and reporting on reputation growth — inside one modern dashboard.
+
+Businesses that receive a high volume of Google reviews often struggle to reply consistently, miss negative reviews that need urgent attention, and waste hours writing responses manually. ReviewReply AI solves this by connecting directly to a business's Google Business Profile, automatically syncing all reviews, and using AI to generate context-aware, brand-aligned replies in seconds — while also giving businesses sentiment analysis and reputation analytics to track performance over time.
+
+Setup takes under 2 minutes: connect the Google Business Profile, reviews sync automatically, and the AI starts generating ready-to-publish replies.
+
+## Core Features
+
+- AI Review Replies — context-aware, brand-aligned responses generated instantly for Google reviews
+- Google Review Sync — automatically imports all reviews from a connected Google Business Profile, no manual entry
+- Sentiment Analysis — AI-powered classification of reviews as positive, neutral, or negative
+- Review Dashboard — unified view of all reviews across multiple business locations
+- Low Rating Alerts — instant notifications when a negative review needs urgent attention
+- Response Tracking — monitors reply rates and response times
+- Smart Analytics — dashboards for tracking sentiment, ratings, and reputation trends
+- Review Tags & Search — organize and filter reviews using custom tags
+- CSV & PDF Export — export review data and reports for stakeholders and audits
+- Monthly Reports — automated reports tracking reputation growth over time
+- Email Notifications — real-time alerts delivered to the inbox for new reviews
+- QR Code Generator — shareable QR codes to help businesses collect more reviews
+- Team Members — collaborate with a team and assign review management roles
+- Priority Support — dedicated support for reputation management
+
+## How It Works
+
+1. Connect Profile — link the Google Business Profile in under 2 minutes
+2. Sync Reviews — all reviews import automatically from Google
+3. AI Generates Replies — personalized, professional responses ready to publish
+4. Monitor & Analyze — track sentiment, ratings, and engagement in real time
+5. Grow Reputation — build customer trust and improve local search visibility
+
+## Who It's For
+
+- Hospitality — restaurants, hotels, and cafes that depend on star ratings
+- Healthcare — clinics, hospitals, and dental practices where trust is critical
+- Retail & Services — salons, gyms, and retail stores competing on local search visibility
+- Agencies & Professionals — marketing agencies and consultants managing reviews for multiple clients
+- Any business, single-location or multi-location enterprise, with a Google Business Profile
+
+## Benefits
+
+- Saves hours every week by automating review reply writing
+- Ensures no negative review goes unnoticed with automated low-rating alerts
+- Generates professional replies in seconds instead of hours
+- Builds stronger reputation through consistent, timely engagement
+- Improves local search visibility, since active review engagement is a signal Google rewards
+- Replaces multiple manual tools and processes with one centralized dashboard
+
+## Why Choose ReviewReply AI
+
+- AI-Powered Automation — set it once and AI handles replies, alerts, and reports automatically
+- Easy Setup, Fast Support — live in minutes, with support available when needed
+- Affordable Pricing — enterprise-grade features at a price accessible to businesses of every size
+- Scalable Platform — works for a single location or scales to hundreds of locations
+
+## Frequently Asked Questions
+
+**What does ReviewReply AI do?**
+It automatically generates AI-powered replies to Google Business Profile reviews and provides sentiment analysis and reputation analytics.
+
+**Does it work with Google Business Profile?**
+Yes, it connects directly to Google Business Profile and automatically syncs all reviews.
+
+**Can it handle multiple business locations?**
+Yes, it supports multi-location and multi-branch review management from a single dashboard.
+
+**Does it flag negative reviews?**
+Yes, low rating alerts instantly notify the business when a negative review needs attention.
+
+**Who is ReviewReply AI built for?**
+Small businesses, restaurants, healthcare providers, retail and service businesses, and marketing agencies managing reviews for multiple clients.
+
+## Links
+
+- Website: https://www.reviewreply-ai.in/
+- Get Started: https://www.reviewreply-ai.in/
+
+## Keywords
+
+Google review management, AI review reply generator, Google Business Profile automation, review sentiment analysis, reputation management software, automatic review replies, multi-location review management, review analytics dashboard
+
+## Pricing Plans
+
+ReviewReply AI offers two plans: Basic (for small businesses) and Standard (for growing businesses, most popular).
+
+### Basic Plan — Perfect for Small Businesses & Startups
+
+Features included:
+- 1 Business Location
+- 100 Reviews Sync / Month
+- Google Review Sync
+- Review Dashboard
+- New Review Email Alerts
+- Unanswered Reviews Tracking
+- Rating Overview
+- Positive & Negative Detection
+- Basic Analytics
+- Low Rating Alerts
+- Monthly PDF Report
+- Review Reply Templates
+- Response Rate Tracking
+- Top 5 Review Keywords
+- Review Search & Filter
+- 30 Days Data History
+- CSV/PDF Export
+
+Basic Plan Pricing:
+- 1 Month: $9 ($9/month)
+- 3 Months: $24 ($8/month, save 11%)
+- 6 Months: $45 ($7.50/month, save 17%)
+- 12 Months: $88 ($7.33/month, save 20%)
+
+### Standard Plan — Best for Growing Businesses (Most Popular)
+
+Features included (in addition to Basic-level features):
+- 2 Business Locations
+- 500 AI Replies / Month
+- Google Business Connection
+- Google Review Sync + Manual Review Sync
+- Review Dashboard & Review Management
+- New Review Email Alerts + Email Notifications
+- Unanswered Reviews Tracking
+- Rating Overview
+- Positive & Negative Detection + Sentiment Analysis
+- Review Tags & Categories
+- Top 20 Review Keywords
+- Review Search & Filter
+- AI Review Reply Generator + AI Reply Center
+- 500 AI Reply Templates
+- Response Rate Tracking
+- Basic Analytics + Advanced Analytics + Analytics Dashboard
+- Low Rating Alerts + Alerts Dashboard
+- Monthly PDF Report + Weekly Performance Report + Reports Dashboard
+- CSV Export + PDF Export
+- QR Code Generator
+- Email Review Requests
+- 2 Team Members + Team Management
+- Dashboard Settings
+- Support Ticket System + Bug Reporting
+- Knowledge Base / Help Center
+- Priority Support
+- Custom Review Filters
+- Unified Inbox
+- Social Media Sharing
+- WhatsApp Review Requests
+- Public Review Page
+
+Standard Plan Pricing:
+- 1 Month: $29 ($29.00/month)
+- 3 Months: $80 (8% off, $26.67/month)
+- 6 Months: $149 (14% off, $24.83/month) — Best Value
+- 12 Months: $269 (22% off, $22.42/month)
+
+### Plan Comparison Summary
+
+- Basic is best suited for single-location small businesses that need core review syncing, tracking, and basic reporting.
+- Standard is best suited for growing businesses with multiple locations that need AI-generated replies, sentiment analysis, team collaboration, and advanced analytics.
+- Standard is the most popular plan and includes everything in Basic plus AI Review Reply Generator, Sentiment Analysis, multi-location support, team management, and priority support.
+
+## Pricing Page
+
+- Pricing: https://www.reviewreply-ai.in/plans/basic/pricing
+- Standard Plan Pricing: https://www.reviewreply-ai.in/plans/standard/pricing
