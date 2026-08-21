@@ -44,7 +44,7 @@ const nextConfig = {
               "style-src 'self' 'unsafe-inline'",
               "img-src 'self' data: https:",
               "font-src 'self' data:",
-              "connect-src 'self' https://openrouter.ai https://api.paypal.com https://accounts.google.com",
+              "connect-src 'self' https://openrouter.ai https://api.paypal.com https://www.paypal.com https://accounts.google.com",
               "frame-src 'self' https://www.paypal.com",
               "frame-ancestors 'none'",
             ].join('; '),
