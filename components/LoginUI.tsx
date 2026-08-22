@@ -3,7 +3,8 @@ import { MessageSquareText, ShieldCheck, Sparkles, BarChart3, Info, RefreshCw, S
 
 const APP_NAME = "ReviewReply AI"; // ⚠️ must be IDENTICAL to the name on OAuth consent screen
 
-// ✅ Google sign-in card (unchanged — used in both mobile and desktop)
+// ✅ Google sign-in card (used in both mobile and desktop)
+// 👇 Logo image replaced with animated video (mix-blend-mode makes black bg invisible)
 function GoogleCard() {
   const points = [
     {
@@ -26,10 +27,14 @@ function GoogleCard() {
   return (
     <div className="w-full bg-black/40 backdrop-blur-md border border-[#ff2d55]/30 rounded-3xl p-6 shadow-[0_0_60px_-15px_rgba(255,45,85,0.35)]">
       <div className="flex flex-col items-center text-center mb-5">
-        <img
-          src="/ai-logo.png"
-          alt={`${APP_NAME} logo`}
-          className="w-14 h-14 mb-4"
+        <video
+          src="/logo-animation-clean.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-14 h-14 mb-4 object-contain"
+          style={{ mixBlendMode: "screen" }}
         />
         <h2 className="text-xl font-black text-white mb-2">
           Continue with Google to access <span className="text-blue-400">ReviewReply AI</span>
@@ -68,7 +73,7 @@ function GoogleCard() {
 function LoginHero() {
   return (
     <>
-      {/* ✅ MOBILE HERO — background + title updated to purple/violet theme */}
+      {/* ✅ MOBILE HERO — purple/violet theme */}
       <div className="flex md:hidden min-h-[100dvh] flex-col justify-center relative bg-black px-5 py-8 overflow-hidden">
         {/* Purple/violet luxury gradient background — no image, pure CSS */}
         <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
@@ -102,7 +107,7 @@ function LoginHero() {
             that helps businesses manage and reply to Google reviews with AI.
           </p>
 
-          {/* ✅ Google sign-in card (unchanged) */}
+          {/* ✅ Google sign-in card (video logo applied automatically via shared component) */}
           <div className="w-full max-w-xs">
             <GoogleCard />
           </div>
@@ -151,7 +156,7 @@ function LoginHero() {
             </p>
           </div>
 
-          {/* ✅ Google sign-in card (unchanged) */}
+          {/* ✅ Google sign-in card (video logo applied automatically via shared component) */}
           <div className="w-full max-w-sm shrink-0">
             <GoogleCard />
           </div>
