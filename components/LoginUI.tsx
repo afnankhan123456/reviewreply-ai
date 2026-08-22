@@ -179,65 +179,109 @@ function WhatItDoes() {
   ];
 
   return (
-    <section className="bg-black px-6 md:px-20 py-16 border-t border-white/5">
-      <h2 className="text-2xl md:text-3xl font-black text-white text-center mb-3">
-        What {APP_NAME} does
-      </h2>
-      <p className="text-gray-400 text-center max-w-2xl mx-auto mb-12 text-sm md:text-base">
-        {APP_NAME} helps business owners and marketing teams manage customer reviews on their
-        Google Business Profile without switching between multiple tools. It reads incoming
-        reviews, drafts AI-generated replies in your brand voice, and lets you publish approved
-        responses directly back to Google — all from one dashboard.
-      </p>
-      <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-        {features.map(({ icon: Icon, title, desc }) => (
-          <div
-            key={title}
-            className="bg-white/5 border border-white/10 rounded-2xl p-6 flex flex-col gap-3"
-          >
-            <Icon className="w-6 h-6 text-[#ff2d55]" />
-            <h3 className="text-white font-bold text-sm">{title}</h3>
-            <p className="text-gray-400 text-xs leading-relaxed">{desc}</p>
-          </div>
-        ))}
+    <section className="relative bg-[#050302] px-6 md:px-20 py-16 md:py-24 border-t border-[#d4af37]/10 overflow-hidden">
+      <style>{`
+        @keyframes goldFloat {
+          0%, 100% { transform: translateY(0px); }
+          50% { transform: translateY(-8px); }
+        }
+        @keyframes goldPulseGlow {
+          0%, 100% { opacity: 0.15; }
+          50% { opacity: 0.35; }
+        }
+        @keyframes fadeInUpGold {
+          from { opacity: 0; transform: translateY(24px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        .gold-card {
+          animation: fadeInUpGold 0.7s ease-out both;
+        }
+        .gold-icon-wrap {
+          animation: goldFloat 4s ease-in-out infinite;
+        }
+        .gold-ambient {
+          animation: goldPulseGlow 5s ease-in-out infinite;
+        }
+      `}</style>
+
+      {/* Ambient luxury glow */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div className="gold-ambient absolute -top-20 left-1/4 w-96 h-96 rounded-full bg-gradient-to-br from-[#d4af37] to-transparent blur-[100px]" />
+        <div className="gold-ambient absolute -bottom-20 right-1/4 w-80 h-80 rounded-full bg-gradient-to-tr from-[#b8860b] to-transparent blur-[100px]" style={{ animationDelay: "1.5s" }} />
+      </div>
+
+      <div className="relative z-10">
+        <h2 className="text-2xl md:text-3xl font-black text-white text-center mb-3">
+          What <span className="text-[#d4af37]">{APP_NAME}</span> does
+        </h2>
+        <p className="text-gray-400 text-center max-w-2xl mx-auto mb-12 text-sm md:text-base">
+          {APP_NAME} helps business owners and marketing teams manage customer reviews on their
+          Google Business Profile without switching between multiple tools. It reads incoming
+          reviews, drafts AI-generated replies in your brand voice, and lets you publish approved
+          responses directly back to Google — all from one dashboard.
+        </p>
+        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          {features.map(({ icon: Icon, title, desc }, idx) => (
+            <div
+              key={title}
+              className="gold-card group relative bg-gradient-to-b from-[#141008] to-[#0a0705] border border-[#d4af37]/25 rounded-2xl p-6 flex flex-col gap-3 hover:border-[#d4af37]/60 hover:shadow-[0_0_40px_-10px_rgba(212,175,55,0.35)] transition-all duration-500 hover:-translate-y-2"
+              style={{ animationDelay: `${idx * 0.15}s` }}
+            >
+              <div className="gold-icon-wrap w-12 h-12 rounded-xl bg-[#d4af37]/10 border border-[#d4af37]/30 flex items-center justify-center">
+                <Icon className="w-6 h-6 text-[#d4af37]" />
+              </div>
+              <h3 className="text-white font-bold text-sm">{title}</h3>
+              <p className="text-gray-400 text-xs leading-relaxed">{desc}</p>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );
 }
 
 function DataUsage() {
+  const items = [
+    {
+      title: "Google Business Profile access",
+      desc: "Used to read your business locations and customer reviews, and to publish the replies you approve. We never post a reply without your review or explicit automation settings.",
+    },
+    {
+      title: "Basic Google profile info",
+      desc: `Used only to create and secure your ${APP_NAME} account (name, email, profile photo). We do not sell or share this data with third parties.`,
+    },
+  ];
+
   return (
-    <section className="bg-black px-6 md:px-20 py-16 border-t border-white/5">
-      <div className="max-w-3xl mx-auto">
+    <section className="relative bg-[#050302] px-6 md:px-20 py-16 md:py-24 border-t border-[#d4af37]/10 overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div className="gold-ambient absolute top-1/3 right-10 w-72 h-72 rounded-full bg-gradient-to-br from-[#d4af37] to-transparent blur-[100px]" style={{ animationDelay: "0.8s" }} />
+      </div>
+
+      <div className="relative z-10 max-w-3xl mx-auto">
         <h2 className="text-2xl md:text-3xl font-black text-white text-center mb-3">
-          Why we ask for Google account access
+          Why we ask for <span className="text-[#d4af37]">Google account access</span>
         </h2>
         <p className="text-gray-400 text-center text-sm md:text-base mb-8">
           {APP_NAME} only requests the minimum Google permissions needed to provide its core
           feature: reading and replying to reviews on your Google Business Profile.
         </p>
         <div className="space-y-4">
-          <div className="flex items-start gap-3 bg-white/5 border border-white/10 rounded-xl p-4">
-            <ShieldCheck className="w-5 h-5 text-[#ff2d55] mt-0.5 shrink-0" />
-            <div>
-              <h3 className="text-white text-sm font-bold">Google Business Profile access</h3>
-              <p className="text-gray-400 text-xs leading-relaxed">
-                Used to read your business locations and customer reviews, and to publish the
-                replies you approve. We never post a reply without your review or explicit
-                automation settings.
-              </p>
+          {items.map(({ title, desc }, idx) => (
+            <div
+              key={title}
+              className="gold-card group flex items-start gap-3 bg-gradient-to-b from-[#141008] to-[#0a0705] border border-[#d4af37]/25 rounded-xl p-4 hover:border-[#d4af37]/60 hover:shadow-[0_0_40px_-10px_rgba(212,175,55,0.35)] transition-all duration-500 hover:-translate-y-1"
+              style={{ animationDelay: `${idx * 0.15}s` }}
+            >
+              <div className="gold-icon-wrap w-9 h-9 rounded-lg bg-[#d4af37]/10 border border-[#d4af37]/30 flex items-center justify-center shrink-0 mt-0.5">
+                <ShieldCheck className="w-4 h-4 text-[#d4af37]" />
+              </div>
+              <div>
+                <h3 className="text-white text-sm font-bold">{title}</h3>
+                <p className="text-gray-400 text-xs leading-relaxed">{desc}</p>
+              </div>
             </div>
-          </div>
-          <div className="flex items-start gap-3 bg-white/5 border border-white/10 rounded-xl p-4">
-            <ShieldCheck className="w-5 h-5 text-[#ff2d55] mt-0.5 shrink-0" />
-            <div>
-              <h3 className="text-white text-sm font-bold">Basic Google profile info</h3>
-              <p className="text-gray-400 text-xs leading-relaxed">
-                Used only to create and secure your {APP_NAME} account (name, email, profile
-                photo). We do not sell or share this data with third parties.
-              </p>
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </section>
