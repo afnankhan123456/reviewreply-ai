@@ -3,7 +3,7 @@ import { MessageSquareText, ShieldCheck, Sparkles, BarChart3, Info, RefreshCw, S
 
 const APP_NAME = "ReviewReply AI"; // ⚠️ must be IDENTICAL to the name on OAuth consent screen
 
-// ✅ NEW: Google sign-in card (replaces the old "Get Started" pill button)
+// ✅ Google sign-in card (unchanged — used in both mobile and desktop)
 function GoogleCard() {
   const points = [
     {
@@ -68,19 +68,21 @@ function GoogleCard() {
 function LoginHero() {
   return (
     <>
-      {/* ✅ MOBILE HERO */}
+      {/* ✅ MOBILE HERO — background + title updated to purple/violet theme */}
       <div className="flex md:hidden min-h-[100dvh] flex-col justify-center relative bg-black px-5 py-8 overflow-hidden">
-        {/* Premium luxury gradient background — no image, pure CSS */}
+        {/* Purple/violet luxury gradient background — no image, pure CSS */}
         <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_60%_at_50%_0%,rgba(255,45,85,0.18),transparent_65%),radial-gradient(ellipse_80%_50%_at_15%_100%,rgba(180,0,60,0.16),transparent_70%)]" />
-          <div className="absolute -top-32 -right-24 w-72 h-72 rounded-full bg-gradient-to-br from-[#ff2d55] to-transparent opacity-20 blur-[80px]" />
-          <div className="absolute -bottom-24 -left-20 w-64 h-64 rounded-full bg-gradient-to-tr from-[#c81e3a] to-transparent opacity-15 blur-[80px]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_60%_at_50%_0%,rgba(141,108,240,0.20),transparent_65%),radial-gradient(ellipse_80%_50%_at_15%_100%,rgba(107,70,193,0.16),transparent_70%)]" />
+          <div className="absolute -top-32 -right-24 w-72 h-72 rounded-full bg-gradient-to-br from-[#8d6cf0] to-transparent opacity-20 blur-[80px]" />
+          <div className="absolute -bottom-24 -left-20 w-64 h-64 rounded-full bg-gradient-to-tr from-[#6b46c1] to-transparent opacity-15 blur-[80px]" />
         </div>
 
         <div className="relative z-10 flex flex-col items-center text-center">
           <div className="flex items-center gap-2 mb-2">
             <img src="/ai-logo.png" alt={`${APP_NAME} logo`} className="w-9 h-9 object-contain" />
-            <h1 className="text-xl font-black tracking-tight text-white">{APP_NAME}</h1>
+            <h1 className="text-xl font-black tracking-tight text-white">
+              ReviewReply <span className="text-[#a78bfa]">AI</span>
+            </h1>
           </div>
 
           {/* 👇 EXPLICIT PURPOSE – added for verification */}
@@ -100,14 +102,14 @@ function LoginHero() {
             that helps businesses manage and reply to Google reviews with AI.
           </p>
 
-          {/* ✅ NEW: Google sign-in card */}
+          {/* ✅ Google sign-in card (unchanged) */}
           <div className="w-full max-w-xs">
             <GoogleCard />
           </div>
         </div>
       </div>
 
-      {/* ✅ DESKTOP HERO */}
+      {/* ✅ DESKTOP HERO — UNCHANGED, exactly as before */}
       <div className="hidden md:flex min-h-[100dvh] flex-col justify-center relative bg-black overflow-hidden px-10 lg:px-20 py-16">
         <img
           src="/main-BG.webp"
@@ -149,7 +151,7 @@ function LoginHero() {
             </p>
           </div>
 
-          {/* ✅ NEW: Google sign-in card */}
+          {/* ✅ Google sign-in card (unchanged) */}
           <div className="w-full max-w-sm shrink-0">
             <GoogleCard />
           </div>
