@@ -70,11 +70,13 @@ function LoginHero() {
     <>
       {/* ✅ MOBILE HERO */}
       <div className="flex md:hidden min-h-[100dvh] flex-col justify-center relative bg-black px-5 py-8 overflow-hidden">
-        <img
-          src="/main-ph.webp"
-          alt={`${APP_NAME} Background`}
-          className="absolute inset-0 w-full h-full object-cover object-top"
-        />
+        {/* Premium luxury gradient background — no image, pure CSS */}
+        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_60%_at_50%_0%,rgba(255,45,85,0.22),transparent_65%),radial-gradient(ellipse_80%_50%_at_15%_100%,rgba(180,0,60,0.2),transparent_70%),radial-gradient(ellipse_70%_50%_at_100%_80%,rgba(255,45,85,0.12),transparent_70%)]" />
+          <div className="absolute -top-32 -right-24 w-72 h-72 rounded-full bg-gradient-to-br from-[#ff2d55] to-transparent opacity-25 blur-[70px]" />
+          <div className="absolute -bottom-24 -left-20 w-64 h-64 rounded-full bg-gradient-to-tr from-[#c81e3a] to-transparent opacity-20 blur-[70px]" />
+          <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:32px_32px]" />
+        </div>
 
         <div className="relative z-10 flex flex-col items-center text-center">
           <div className="flex items-center gap-2 mb-2">
