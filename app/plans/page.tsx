@@ -168,7 +168,7 @@ export default function PlansPage() {
                 </span>
 
                 <span className="bg-violet-600 text-white text-sm font-bold px-3 py-1 rounded-full">
-                  ₹250
+                  20% Lifetime Revenue
                 </span>
 
               </div>
