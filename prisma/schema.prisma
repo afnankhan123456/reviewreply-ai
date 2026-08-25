@@ -73,6 +73,18 @@ model User {
   fontSize            String              @default("md")
   fontWeight          String              @default("normal")
   language            String              @default("en")
+
+  // ================================================
+  // ✅ NAYE RELATIONS — Full Audit System ke liye
+  // ================================================
+  sessions            Session[]
+  loginHistory        LoginHistory[]
+  activityLogs        ActivityLog[]
+  apiUsageLogs        ApiUsageLog[]
+  aiReplyDetails      AiReplyDetail[]
+  auditTrails         AuditTrail[]
+  errorLogs           ErrorLog[]
+  payments            Payment[]
 }
 
 model BusinessLocation {
@@ -110,6 +122,9 @@ model Review {
   tags             String[] @default([])
   flaggedForReview Boolean  @default(false)
   flagReason       String?
+
+  // ✅ NAYA RELATION — AI reply ki detailed audit trail
+  aiReplyDetails   AiReplyDetail[]
 }
 
 model Template {
@@ -270,9 +285,6 @@ model ArticleFeedback {
   @@unique([articleId, userId])
 }
 
-// ✅ NAYA MODEL — Payment replay/reuse rokne ke liye.
-// Har verified PayPal orderID yahan ek baar save hoga; dobara wahi orderID
-// use karne ki koshish is table ke unique constraint se hi reject ho jayegi.
 model UsedPaypalOrder {
   id        String   @id @default(cuid())
   orderId   String   @unique
@@ -280,4 +292,137 @@ model UsedPaypalOrder {
   planType  String
   tier      String
   createdAt DateTime @default(now())
+}
+
+// ========================================================
+// ✅ NAYE MODELS — Full 360° Audit System
+// ========================================================
+
+model Session {
+  id           String    @id @default(cuid())
+  userId       String
+  user         User      @relation(fields: [userId], references: [id])
+  loginAt      DateTime  @default(now())
+  logoutAt     DateTime?
+  durationSec  Int?
+  ipAddress    String?
+  userAgent    String?
+  deviceType   String?
+  browser      String?
+  isActive     Boolean   @default(true)
+
+  @@index([userId])
+}
+
+model LoginHistory {
+  id          String   @id @default(cuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  email       String
+  status      String
+  reason      String?
+  ipAddress   String?
+  userAgent   String?
+  attemptedAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([email])
+}
+
+model ActivityLog {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  sessionId  String?
+  actionType String
+  pageUrl    String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([actionType])
+}
+
+model ApiUsageLog {
+  id           String   @id @default(cuid())
+  userId       String?
+  user         User?    @relation(fields: [userId], references: [id])
+  apiType      String
+  endpoint     String
+  method       String?
+  statusCode   Int?
+  latencyMs    Int?
+  tokensUsed   Int?
+  costUsd      Float?
+  errorMessage String?
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([apiType])
+}
+
+model AiReplyDetail {
+  id             String   @id @default(cuid())
+  reviewId       String
+  review         Review   @relation(fields: [reviewId], references: [id])
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+  modelUsed      String?
+  promptVersion  String?
+  generatedText  String
+  editedText     String?
+  wasEdited      Boolean  @default(false)
+  editedAt       DateTime?
+  confidenceScore Float?
+  tokensUsed     Int?
+  createdAt      DateTime @default(now())
+
+  @@index([reviewId])
+  @@index([userId])
+}
+
+model AuditTrail {
+  id          String   @id @default(cuid())
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  actionType  String
+  targetTable String?
+  targetId    String?
+  oldValue    Json?
+  newValue    Json?
+  ipAddress   String?
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([actionType])
+}
+
+model ErrorLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+  source     String
+  errorType  String?
+  message    String
+  stackTrace String?  @db.Text
+  severity   String   @default("error")
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([source])
+}
+
+model Payment {
+  id            String   @id @default(cuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  provider      String
+  orderId       String?
+  amount        Float
+  currency      String   @default("USD")
+  planType      String?
+  status        String   @default("success")
+  createdAt     DateTime @default(now())
+
+  @@index([userId])
 }
