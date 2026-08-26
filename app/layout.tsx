@@ -1,4 +1,5 @@
 import "./globals.css";
+import Script from "next/script";
 import Providers from "../components/Providers";
 
 export const metadata = {
@@ -79,9 +80,23 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {/* Shown AI conversion tracking pixel — sabhi pages pe load hoga */}
-        <script defer src="https://shown.io/metrics/nW3oNDM20a" type="text/javascript"></script>
+        {/* Shown AI conversion tracking pixel */}
+        <script
+          defer
+          src="https://shown.io/metrics/nW3oNDM20a"
+          type="text/javascript"
+        ></script>
+
+        {/* Affitor Tracking */}
+        <Script
+          src="https://api.affitor.com/js/affitor-tracker.js"
+          data-affitor-program-id="1064"
+          data-affitor-debug="false"
+          strategy="afterInteractive"
+        />
+
         <Providers>{children}</Providers>
+
         <script
           dangerouslySetInnerHTML={{
             __html:
