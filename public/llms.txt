@@ -10,6 +10,10 @@ Businesses that receive a high volume of Google reviews often struggle to reply 
 
 Setup takes under 2 minutes: connect the Google Business Profile, reviews sync automatically, and the AI starts generating ready-to-publish replies.
 
+## Founder
+
+ReviewReply AI was founded by Afnan Khan, a data scientist with deep expertise in machine learning and AI systems. Learn more: https://www.reviewreply-ai.in/about
+
 ## Core Features
 
 - AI Review Replies — context-aware, brand-aligned responses generated instantly for Google reviews
@@ -80,6 +84,7 @@ Small businesses, restaurants, healthcare providers, retail and service business
 
 - Website: https://www.reviewreply-ai.in/
 - Get Started: https://www.reviewreply-ai.in/
+- About / Founder: https://www.reviewreply-ai.in/about
 
 ## Keywords
 
