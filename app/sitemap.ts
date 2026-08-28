@@ -1,8 +1,6 @@
 import type { MetadataRoute } from 'next';
-
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://www.reviewreply-ai.in';
-
   return [
     {
       url: baseUrl,
@@ -28,7 +26,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'monthly',
       priority: 0.5,
     },
-
     // Blog Home
     {
       url: `${baseUrl}/blog`,
@@ -36,7 +33,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'weekly',
       priority: 0.9,
     },
-
     // Blog Posts
     {
       url: `${baseUrl}/blog/best-google-review-tools`,
@@ -76,6 +72,42 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/blog/google-review-reply-tool-faq`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/blog/ai-review-reply-generator`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/blog/google-review-management-software`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/blog/automatic-google-review-reply`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/blog/why-review-response-matters-local-business`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/blog/how-to-get-more-google-reviews`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/blog/best-affordable-review-management-tool`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.8,
