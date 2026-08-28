@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Sparkles, Target, Users, Rocket } from "lucide-react";
+import { Sparkles, Target, Users, Rocket, Linkedin } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "About ReviewReply AI | Founded by Afnan Khan",
@@ -25,6 +25,9 @@ export default function AboutPage() {
         "@type": "Person",
         name: "Afnan Khan",
         jobTitle: "Founder",
+        description:
+          "Data scientist with deep expertise in machine learning and AI systems.",
+        sameAs: ["https://www.linkedin.com/in/afnan-khan-byte/"],
       },
     },
   };
@@ -63,19 +66,29 @@ export default function AboutPage() {
             Our Story
           </h2>
           <p className="text-gray-400 leading-relaxed mb-4">
-            <span className="text-white font-semibold">Afnan Khan</span>{" "}
-            founded ReviewReply AI after seeing how many small and growing
-            businesses struggled to keep up with Google reviews &mdash;
-            missing negative feedback, replying inconsistently, and spending
-            hours every week writing responses by hand.
+            <span className="text-white font-semibold">Afnan Khan</span>, a
+            data scientist with deep expertise in machine learning, founded
+            ReviewReply AI after seeing how many small and growing businesses
+            struggled to keep up with Google reviews &mdash; missing negative
+            feedback, replying inconsistently, and spending hours every week
+            writing responses by hand.
           </p>
-          <p className="text-gray-400 leading-relaxed">
+          <p className="text-gray-400 leading-relaxed mb-6">
             The goal was simple: build a tool that connects directly to a
             Google Business Profile, understands each review&apos;s context,
             and generates fast, on-brand replies &mdash; so no business owner
             has to choose between running their business and managing their
             reputation.
           </p>
+          
+            href="https://www.linkedin.com/in/afnan-khan-byte/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-[#ff2d55] hover:text-[#ff5577] transition-colors"
+          >
+            <Linkedin className="w-4 h-4" />
+            Connect with the founder on LinkedIn
+          </a>
         </div>
       </section>
 
