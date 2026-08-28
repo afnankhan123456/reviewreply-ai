@@ -2,6 +2,22 @@ import "./globals.css";
 import Script from "next/script";
 import Providers from "../components/Providers";
 
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "ReviewReply AI",
+  url: "https://www.reviewreply-ai.in",
+  logo: "https://www.reviewreply-ai.in/ai-logo.png",
+  founder: {
+    "@type": "Person",
+    name: "Afnan Khan",
+    jobTitle: "Founder",
+    description:
+      "Data scientist with deep expertise in machine learning and AI systems.",
+    sameAs: ["https://www.linkedin.com/in/afnan-khan-byte/"],
+  },
+};
+
 export const metadata = {
   metadataBase: new URL("https://www.reviewreply-ai.in"),
   title: "ReviewReply AI",
@@ -67,14 +83,11 @@ export const metadata = {
   },
   manifest: "/manifest.json",
 };
-
 export const viewport = {
   width: "device-width",
   initialScale: 1.0,
 };
-
 export const dynamic = "force-dynamic";
-
 export default function RootLayout({
   children,
 }: {
@@ -83,6 +96,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        {/* Organization + Founder structured data */}
+        <Script
+          id="organization-jsonld"
+          type="application/ld+json"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
         {/* Shown AI conversion tracking pixel */}
         <script
           defer
