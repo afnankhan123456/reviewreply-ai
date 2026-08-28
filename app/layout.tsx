@@ -27,6 +27,9 @@ export const metadata = {
   verification: {
     google: "mLuWg9q3JVkzCcLhRQhEqye5XCK4C5lVRizxsF7Hs_c",
   },
+  icons: {
+    icon: "/favicon.png",
+  },
   openGraph: {
     title: "ReviewReply AI",
     description:
@@ -86,7 +89,6 @@ export default function RootLayout({
           src="https://shown.io/metrics/nW3oNDM20a"
           type="text/javascript"
         ></script>
-
         {/* Affitor Tracking */}
         <Script
           src="https://api.affitor.com/js/affitor-tracker.js"
@@ -94,9 +96,7 @@ export default function RootLayout({
           data-affitor-debug="false"
           strategy="afterInteractive"
         />
-
         <Providers>{children}</Providers>
-
         <script
           dangerouslySetInnerHTML={{
             __html:
