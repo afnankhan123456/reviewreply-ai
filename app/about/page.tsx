@@ -80,7 +80,7 @@ export default function AboutPage() {
             has to choose between running their business and managing their
             reputation.
           </p>
-          
+          <a
             href="https://www.linkedin.com/in/afnan-khan-byte/"
             target="_blank"
             rel="noopener noreferrer"
