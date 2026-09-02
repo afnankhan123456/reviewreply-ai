@@ -32,7 +32,7 @@ function GoogleCard() {
         loop
         muted
         playsInline
-        className="w-full h-auto block object-cover"
+        className="w-full h-56 block object-cover"
       />
 
       <div className="p-6">
