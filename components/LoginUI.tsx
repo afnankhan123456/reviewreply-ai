@@ -25,6 +25,7 @@ function GoogleCard() {
 
   return (
     <div className="w-full bg-black/40 backdrop-blur-md border border-[#ff2d55]/30 rounded-3xl overflow-hidden shadow-[0_0_60px_-15px_rgba(255,45,85,0.35)]">
+      {/* 👇 Video seamlessly attached as the card's top banner — full card width, no separate box */}
       <video
         src="/logo-animation-clean.mp4"
         autoPlay
@@ -34,7 +35,7 @@ function GoogleCard() {
         className="w-full h-auto block object-cover"
       />
 
-      <div className="p-8">
+      <div className="p-6">
         <div className="flex flex-col items-center text-center mb-6">
           <h2 className="text-xl font-black text-white mb-2">
             Continue with Google to access <span className="text-blue-400">ReviewReply AI</span>
@@ -44,7 +45,7 @@ function GoogleCard() {
           </p>
         </div>
 
-        <div className="border-t border-white/10 pt-6 space-y-4 mb-7">
+        <div className="border-t border-white/10 pt-4 space-y-3 mb-5">
           {points.map(({ icon: Icon, title, desc }) => (
             <div key={title} className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-full bg-[#ff2d55]/10 border border-[#ff2d55]/30 flex items-center justify-center shrink-0">
@@ -76,6 +77,7 @@ function LoginHero() {
     <>
       {/* ✅ MOBILE HERO — purple/violet theme */}
       <div className="flex md:hidden min-h-[100dvh] flex-col justify-center relative bg-black px-5 py-8 overflow-hidden">
+        {/* Purple/violet luxury gradient background — no image, pure CSS */}
         <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_60%_at_50%_0%,rgba(141,108,240,0.20),transparent_65%),radial-gradient(ellipse_80%_50%_at_15%_100%,rgba(107,70,193,0.16),transparent_70%)]" />
           <div className="absolute -top-32 -right-24 w-72 h-72 rounded-full bg-gradient-to-br from-[#8d6cf0] to-transparent opacity-20 blur-[80px]" />
@@ -90,6 +92,7 @@ function LoginHero() {
             </h1>
           </div>
 
+          {/* 👇 EXPLICIT PURPOSE – added for verification */}
           <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-4 py-3 mb-3 max-w-xs">
             <div className="flex items-center gap-1.5 text-[#ff2d55] mb-1">
               <Info className="w-3.5 h-3.5" />
@@ -106,6 +109,7 @@ function LoginHero() {
             that helps businesses manage and reply to Google reviews with AI.
           </p>
 
+          {/* ✅ Google sign-in card (video logo applied automatically via shared component) */}
           {/* 👇 shifted up 40px */}
           <div className="w-full max-w-[26rem] -translate-y-10">
             <GoogleCard />
@@ -114,7 +118,7 @@ function LoginHero() {
       </div>
 
       {/* ✅ DESKTOP HERO — UNCHANGED, exactly as before */}
-      <div className="hidden md:flex min-h-[100dvh] flex-col justify-center relative bg-black overflow-hidden px-10 lg:px-20 py-16">
+      <div className="hidden md:flex min-h-[100dvh] flex-col justify-center relative bg-black overflow-hidden px-6 lg:px-10 py-8">
         <img
           src="/main-BG.webp"
           alt={`${APP_NAME} Background`}
@@ -122,7 +126,7 @@ function LoginHero() {
         />
         <div className="absolute -top-40 right-[-200px] w-[900px] h-[900px] rounded-full bg-gradient-to-br from-[#ff2d55] via-[#c81e3a] to-transparent opacity-20 blur-[80px] pointer-events-none" />
 
-        <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-32 xl:gap-40 max-w-7xl mx-auto w-full">
+        <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12 xl:gap-16 max-w-7xl mx-auto w-full">
           <div className="max-w-3xl">
             <div className="flex items-center gap-3 mb-4">
               <img src="/ai-logo.png" alt={`${APP_NAME} logo`} className="w-16 h-16 object-contain" />
@@ -131,6 +135,7 @@ function LoginHero() {
               </h1>
             </div>
 
+            {/* 👇 EXPLICIT PURPOSE – added for verification */}
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-6 py-4 mb-6 inline-block">
               <div className="flex items-center gap-2 text-[#ff2d55] mb-2">
                 <Info className="w-4 h-4" />
@@ -154,8 +159,9 @@ function LoginHero() {
             </p>
           </div>
 
+          {/* ✅ Google sign-in card (video logo applied automatically via shared component) */}
           {/* 👇 shifted up 40px */}
-          <div className="w-full max-w-[26rem] shrink-0 -translate-y-10">
+          <div className="w-full max-w-[30rem] shrink-0 -translate-y-4">
             <GoogleCard />
           </div>
         </div>
@@ -209,6 +215,7 @@ function WhatItDoes() {
         }
       `}</style>
 
+      {/* Ambient luxury glow */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
         <div className="gold-ambient absolute -top-20 left-1/4 w-96 h-96 rounded-full bg-gradient-to-br from-[#d4af37] to-transparent blur-[100px]" />
         <div className="gold-ambient absolute -bottom-20 right-1/4 w-80 h-80 rounded-full bg-gradient-to-tr from-[#b8860b] to-transparent blur-[100px]" style={{ animationDelay: "1.5s" }} />
