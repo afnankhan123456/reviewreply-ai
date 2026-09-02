@@ -31,10 +31,10 @@ function GoogleCard() {
         loop
         muted
         playsInline
-        className="w-full h-64 block object-cover"
+        className="w-full h-56 block object-cover"
       />
 
-      <div className="p-7">
+      <div className="p-6">
         <div className="flex flex-col items-center text-center mb-6">
           <h2 className="text-xl font-black text-white mb-2">
             Continue with Google to access <span className="text-blue-400">ReviewReply AI</span>
@@ -44,7 +44,7 @@ function GoogleCard() {
           </p>
         </div>
 
-        <div className="border-t border-white/10 pt-4 space-y-4 mb-5">
+        <div className="border-t border-white/10 pt-4 space-y-3 mb-5">
           {points.map(({ icon: Icon, title, desc }) => (
             <div key={title} className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-full bg-[#ff2d55]/10 border border-[#ff2d55]/30 flex items-center justify-center shrink-0">
@@ -106,14 +106,14 @@ function LoginHero() {
             that helps businesses manage and reply to Google reviews with AI.
           </p>
 
-          <div className="w-full max-w-[26rem]">
+          <div className="w-full max-w-[26rem] -translate-y-10">
             <GoogleCard />
           </div>
         </div>
       </div>
 
       {/* ✅ DESKTOP HERO */}
-      <div className="hidden md:flex min-h-[100dvh] flex-col justify-center relative bg-black overflow-hidden px-6 lg:px-10 py-6">
+      <div className="hidden md:flex min-h-[100dvh] flex-col justify-center relative bg-black overflow-hidden px-6 lg:px-10 py-8">
         <img
           src="/main-BG.webp"
           alt={`${APP_NAME} Background`}
@@ -121,40 +121,40 @@ function LoginHero() {
         />
         <div className="absolute -top-40 right-[-200px] w-[900px] h-[900px] rounded-full bg-gradient-to-br from-[#ff2d55] via-[#c81e3a] to-transparent opacity-20 blur-[80px] pointer-events-none" />
 
-        {/* ✅ No zoom hack — real element sizes below are tuned to fit at 100% zoom */}
-        <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8 xl:gap-10 max-w-6xl mx-auto w-full">
-          <div className="max-w-2xl">
-            <div className="flex items-center gap-3 mb-3">
-              <img src="/ai-logo.png" alt={`${APP_NAME} logo`} className="w-12 h-12 object-contain" />
-              <h1 className="text-2xl font-black tracking-tight text-white">
+        {/* 👇 zoom: 0.8 makes this render exactly like 80% browser zoom, even at normal 100% zoom */}
+        <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12 xl:gap-16 max-w-7xl mx-auto w-full" style={{ zoom: 0.8 }}>
+          <div className="max-w-3xl">
+            <div className="flex items-center gap-3 mb-4">
+              <img src="/ai-logo.png" alt={`${APP_NAME} logo`} className="w-16 h-16 object-contain" />
+              <h1 className="text-3xl font-black tracking-tight text-white">
                 ReviewReply <span className="text-blue-400">AI</span>
               </h1>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-5 py-3 mb-5 inline-block">
+            <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-6 py-4 mb-6 inline-block">
               <div className="flex items-center gap-2 text-[#ff2d55] mb-2">
                 <Info className="w-4 h-4" />
                 <span className="text-xs font-black uppercase tracking-widest">App Purpose</span>
               </div>
-              <p className="text-xs font-semibold text-white leading-relaxed max-w-md">
+              <p className="text-sm font-semibold text-white leading-relaxed max-w-lg">
                 {APP_NAME} is an AI-powered Google Business Profile review management platform.
                 We help businesses automatically sync Google reviews, generate AI-powered replies,
                 and manage their online reputation – all from a single dashboard.
               </p>
             </div>
 
-            <p className="text-sm font-semibold text-gray-200 leading-relaxed max-w-md mb-2">
+            <p className="text-base font-semibold text-gray-200 leading-relaxed max-w-lg mb-2">
               {APP_NAME} is an AI-powered Google Business Profile review management platform
               that helps businesses manage and reply to Google reviews with AI.
             </p>
-            <p className="text-xs text-gray-400 leading-relaxed max-w-md mb-3">
+            <p className="text-sm text-gray-400 leading-relaxed max-w-lg mb-4">
               Securely connect your Google Business Profile, automatically sync customer reviews,
               generate AI-powered replies, publish responses, and manage your online reputation —
               all from one dashboard.
             </p>
           </div>
 
-          <div className="w-full max-w-[27rem] shrink-0">
+          <div className="w-full max-w-[30rem] shrink-0 -translate-y-4">
             <GoogleCard />
           </div>
         </div>
