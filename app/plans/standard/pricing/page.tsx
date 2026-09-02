@@ -293,6 +293,13 @@ export default function StandardPricingPage() {
       <div className="absolute top-[10%] left-[-200px] w-[700px] h-[700px] rounded-full bg-violet-600/20 blur-[140px] pointer-events-none" />
       <div className="absolute top-[5%] right-[-200px] w-[700px] h-[700px] rounded-full bg-blue-600/20 blur-[140px] pointer-events-none" />
 
+      {/* Offer coin — pinned to the top-right, stays visible while scrolling */}
+      {OFFER_ACTIVE && (
+        <div className="fixed top-4 right-4 sm:top-6 sm:right-6 md:top-8 md:right-8 z-50 scale-[0.8] sm:scale-90 md:scale-100 origin-top-right">
+          <OfferCoin wasPrice={269} nowPrice={YEARLY_OFFER_PRICE} />
+        </div>
+      )}
+
       <div className="relative z-10 mx-auto max-w-7xl">
         <div className="text-center mb-10 md:mb-14">
           <div className="inline-flex items-center gap-2 bg-zinc-900 border border-violet-500/40 rounded-full px-4 py-1.5 mb-6">
@@ -330,14 +337,8 @@ export default function StandardPricingPage() {
                   plan.popular
                     ? "border-violet-500/50 bg-gradient-to-br from-violet-950/40 to-blue-950/40 shadow-[0_0_40px_-15px_rgba(139,92,246,0.4)]"
                     : "border-zinc-800 bg-zinc-900/60"
-                } ${isYearlyOffer ? "pr-28" : ""}`}
+                }`}
               >
-                {isYearlyOffer && (
-                  <div className="absolute -top-3 right-3 z-20">
-                    <OfferCoin wasPrice={plan.finalPrice} nowPrice={YEARLY_OFFER_PRICE} />
-                  </div>
-                )}
-
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-lg font-semibold text-white">{plan.title}</h3>
                   {plan.popular && (
@@ -472,13 +473,6 @@ export default function StandardPricingPage() {
               </tbody>
             </table>
           </div>
-
-          {/* Offer coin floats outside the table's right edge, level with the 12-Month row */}
-          {OFFER_ACTIVE && (
-            <div className="absolute right-0 translate-x-1/2 top-[88%] -translate-y-1/2 z-20">
-              <OfferCoin wasPrice={269} nowPrice={YEARLY_OFFER_PRICE} />
-            </div>
-          )}
         </div>
       </div>
     </main>
