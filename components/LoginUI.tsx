@@ -26,18 +26,16 @@ function GoogleCard() {
 
   return (
     <div className="w-full bg-black/40 backdrop-blur-md border border-[#ff2d55]/30 rounded-3xl overflow-hidden shadow-[0_0_60px_-15px_rgba(255,45,85,0.35)]">
-      {/* 👇 Video fixed at the top of the card in its own container */}
-      <div className="w-full h-96 overflow-hidden flex items-center justify-center bg-black/20">
-        <video
-          src="/logo-animation-clean.mp4"
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-96 h-96 object-contain"
-          style={{ mixBlendMode: "screen" }}
-        />
-      </div>
+      {/* 👇 Video seamlessly attached as the card's top banner — full card width, no separate box */}
+      <video
+        src="/logo-animation-clean.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="w-full h-auto block"
+        style={{ mixBlendMode: "screen" }}
+      />
 
       <div className="p-8">
       <div className="flex flex-col items-center text-center mb-6">
