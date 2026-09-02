@@ -31,10 +31,10 @@ function GoogleCard() {
         loop
         muted
         playsInline
-        className="w-full h-56 block object-cover"
+        className="w-full h-60 block object-cover"
       />
 
-      <div className="p-6">
+      <div className="p-7">
         <div className="flex flex-col items-center text-center mb-6">
           <h2 className="text-xl font-black text-white mb-2">
             Continue with Google to access <span className="text-blue-400">ReviewReply AI</span>
@@ -44,7 +44,7 @@ function GoogleCard() {
           </p>
         </div>
 
-        <div className="border-t border-white/10 pt-4 space-y-3 mb-5">
+        <div className="border-t border-white/10 pt-4 space-y-4 mb-5">
           {points.map(({ icon: Icon, title, desc }) => (
             <div key={title} className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-full bg-[#ff2d55]/10 border border-[#ff2d55]/30 flex items-center justify-center shrink-0">
