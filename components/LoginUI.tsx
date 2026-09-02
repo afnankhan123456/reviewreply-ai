@@ -123,7 +123,7 @@ function LoginHero() {
 
         {/* 👇 zoom: 0.8 makes this render exactly like 80% browser zoom, even at normal 100% zoom */}
         <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12 xl:gap-16 max-w-7xl mx-auto w-full" style={{ zoom: 0.8 }}>
-          <div className="max-w-3xl">
+          <div className="max-w-3xl -translate-y-10 -translate-x-6">
             <div className="flex items-center gap-3 mb-4">
               <img src="/ai-logo.png" alt={`${APP_NAME} logo`} className="w-16 h-16 object-contain" />
               <h1 className="text-3xl font-black tracking-tight text-white">
@@ -154,7 +154,7 @@ function LoginHero() {
             </p>
           </div>
 
-          <div className="w-full max-w-[26rem] shrink-0 ml-16">
+          <div className="w-full max-w-[26rem] shrink-0 ml-32">
             <GoogleCard />
           </div>
         </div>
