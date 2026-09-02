@@ -25,7 +25,7 @@ function GoogleCard() {
   ];
 
   return (
-    <div className="w-full h-[750px] bg-black/40 backdrop-blur-md border border-[#ff2d55]/30 rounded-3xl p-8 shadow-[0_0_60px_-15px_rgba(255,45,85,0.35)]">
+    <div className="w-full h-[550px] bg-black/40 backdrop-blur-md border border-[#ff2d55]/30 rounded-3xl p-8 shadow-[0_0_60px_-15px_rgba(255,45,85,0.35)]">
       <div className="flex flex-col items-center text-center mb-6">
         {/* 👇 Size updated: 112px (w-28) -> 384px (w-96 h-96) */}
         <video
