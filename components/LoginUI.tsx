@@ -154,7 +154,7 @@ function LoginHero() {
             </p>
           </div>
 
-          <div className="w-full max-w-[24rem] shrink-0 -translate-y-4">
+          <div className="w-full max-w-[25rem] shrink-0 -translate-y-4">
             <GoogleCard />
           </div>
         </div>
