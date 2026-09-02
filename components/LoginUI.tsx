@@ -4,7 +4,6 @@ import { MessageSquareText, ShieldCheck, Sparkles, BarChart3, Info, RefreshCw, S
 const APP_NAME = "ReviewReply AI"; // ⚠️ must be IDENTICAL to the name on OAuth consent screen
 
 // ✅ Google sign-in card (used in both mobile and desktop)
-// 👇 Logo video size: 384px x 384px (w-96 h-96), card enlarged to fit
 function GoogleCard() {
   const points = [
     {
@@ -33,42 +32,41 @@ function GoogleCard() {
         loop
         muted
         playsInline
-        className="w-full h-auto block"
-        style={{ mixBlendMode: "screen" }}
+        className="w-full h-auto block object-cover"
       />
 
       <div className="p-8">
-      <div className="flex flex-col items-center text-center mb-6">
-        <h2 className="text-xl font-black text-white mb-2">
-          Continue with Google to access <span className="text-blue-400">ReviewReply AI</span>
-        </h2>
-        <p className="text-xs text-gray-400 leading-relaxed max-w-xs">
-          Securely sign in with your Google account to connect your Business Profile and get started.
-        </p>
-      </div>
+        <div className="flex flex-col items-center text-center mb-6">
+          <h2 className="text-xl font-black text-white mb-2">
+            Continue with Google to access <span className="text-blue-400">ReviewReply AI</span>
+          </h2>
+          <p className="text-xs text-gray-400 leading-relaxed max-w-xs">
+            Securely sign in with your Google account to connect your Business Profile and get started.
+          </p>
+        </div>
 
-      <div className="border-t border-white/10 pt-6 space-y-4 mb-7">
-        {points.map(({ icon: Icon, title, desc }) => (
-          <div key={title} className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-full bg-[#ff2d55]/10 border border-[#ff2d55]/30 flex items-center justify-center shrink-0">
-              <Icon className="w-4 h-4 text-[#ff2d55]" />
+        <div className="border-t border-white/10 pt-6 space-y-4 mb-7">
+          {points.map(({ icon: Icon, title, desc }) => (
+            <div key={title} className="flex items-start gap-3">
+              <div className="w-8 h-8 rounded-full bg-[#ff2d55]/10 border border-[#ff2d55]/30 flex items-center justify-center shrink-0">
+                <Icon className="w-4 h-4 text-[#ff2d55]" />
+              </div>
+              <div>
+                <h3 className="text-white text-sm font-bold">{title}</h3>
+                <p className="text-gray-400 text-xs leading-relaxed">{desc}</p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-white text-sm font-bold">{title}</h3>
-              <p className="text-gray-400 text-xs leading-relaxed">{desc}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
 
-      <GoogleSignInButton className="w-full bg-white hover:bg-gray-100 transition-all text-[#111827] text-sm font-bold py-3.5 rounded-xl shadow-sm flex items-center justify-center gap-2">
-        <img
-          src="https://www.svgrepo.com/show/475656/google-color.svg"
-          alt="Google"
-          className="w-5 h-5"
-        />
-        Continue with Google
-      </GoogleSignInButton>
+        <GoogleSignInButton className="w-full bg-white hover:bg-gray-100 transition-all text-[#111827] text-sm font-bold py-3.5 rounded-xl shadow-sm flex items-center justify-center gap-2">
+          <img
+            src="https://www.svgrepo.com/show/475656/google-color.svg"
+            alt="Google"
+            className="w-5 h-5"
+          />
+          Continue with Google
+        </GoogleSignInButton>
       </div>
     </div>
   );
@@ -112,7 +110,6 @@ function LoginHero() {
           </p>
 
           {/* ✅ Google sign-in card (video logo applied automatically via shared component) */}
-          {/* 👇 Width enlarged to fit 384px video: max-w-xs -> max-w-[26rem] */}
           <div className="w-full max-w-[26rem]">
             <GoogleCard />
           </div>
@@ -162,7 +159,6 @@ function LoginHero() {
           </div>
 
           {/* ✅ Google sign-in card (video logo applied automatically via shared component) */}
-          {/* 👇 Width enlarged to fit 384px video: max-w-sm -> max-w-[26rem] */}
           <div className="w-full max-w-[26rem] shrink-0">
             <GoogleCard />
           </div>
