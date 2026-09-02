@@ -110,7 +110,7 @@ function LoginHero() {
           </p>
 
           {/* ✅ Google sign-in card (video logo applied automatically via shared component) */}
-          <div className="w-full max-w-[26rem]">
+          <div className="w-full max-w-[26rem] -translate-y-10">
             <GoogleCard />
           </div>
         </div>
