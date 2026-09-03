@@ -5,6 +5,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/authOptions';
 import { resolveOwnerAndRole } from '@/lib/getEffectiveOwner';
 import { postReplyToGoogle } from '@/lib/googlePostReply';
+import { generateAIReply } from '@/lib/aiReply';
 
 export async function getAutoReplyMode() {
   try {
@@ -123,5 +124,58 @@ export async function rejectPendingReply(reviewId: string) {
   } catch (error) {
     console.error('Error rejecting reply:', error);
     return { error: 'Failed to reject reply' };
+  }
+}
+
+// ✅ NAYA — "Test AI Generator" widget ke liye. Koi real review select nahi
+// hota yahan (user free text paste karta hai), isliye ye seedha
+// generateAIReply() ko tone/language/length/emoji options ko ek style-guidance
+// "template" string me combine karke call karta hai — generateAIReply khud
+// touch nahi hua.
+export async function generateTestReply(
+  reviewText: string,
+  tone: 'Professional' | 'Friendly' | 'Empathetic' | 'Formal',
+  language: string,
+  length: 'Short' | 'Medium' | 'Long',
+  addEmojis: boolean
+) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id) return { error: 'Unauthorized' };
+
+    const { ownerId } = await resolveOwnerAndRole(session.user.id);
+
+    if (!reviewText || !reviewText.trim()) {
+      return { error: 'Please paste a review first' };
+    }
+
+    const lengthGuidance: Record<string, string> = {
+      Short: 'Keep the reply to 1-2 lines.',
+      Medium: 'Keep the reply to 3-4 lines.',
+      Long: 'Keep the reply to 5-6 lines.',
+    };
+
+    const styleGuidance = [
+      `Reply tone: ${tone}.`,
+      `Reply language: ${language}.`,
+      lengthGuidance[length] || '',
+      addEmojis ? 'Naturally include a couple of relevant emojis.' : 'Do not use any emojis.',
+    ]
+      .filter(Boolean)
+      .join(' ');
+
+    const result = await generateAIReply(ownerId, {
+      reviewText,
+      template: styleGuidance,
+    });
+
+    if (!result.success) {
+      return { error: result.error || 'Failed to generate reply' };
+    }
+
+    return { success: true, reply: result.reply };
+  } catch (error) {
+    console.error('Error generating test reply:', error);
+    return { error: 'Failed to generate reply' };
   }
 }
