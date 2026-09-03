@@ -46,21 +46,9 @@ const pricingPlans = [
   },
 ];
 
-// ============================================================
-// OFFER CONFIG — ABHI KE LIYE MANUAL, BAAD ME ADMIN SE AAYEGA
-// ============================================================
-// Step 2 me hum yaha admin panel / API se data fetch karenge
-// (jaise: const { data } = await fetch("/api/admin/offer-settings"))
-// Filhaal isko manually true/false karke test kar sakte ho.
-const OFFER_ACTIVE = true; // TODO: replace with admin-controlled value
-
 // 12-Month plan ki offer price aur uska naya monthly equivalent
 const YEARLY_OFFER_PRICE = 260;
 const YEARLY_OFFER_MONTHLY_EQUIVALENT = "$21.67/mo";
-
-// Countdown ka total duration (seconds me) — abhi visual hai,
-// admin se ek fixed end-timestamp aane ke baad genuinely real countdown banega
-const OFFER_COUNTDOWN_SECONDS = 24 * 60 * 60;
 
 function formatCountdown(totalSeconds: number) {
   const h = String(Math.floor(totalSeconds / 3600)).padStart(2, "0");
@@ -69,22 +57,64 @@ function formatCountdown(totalSeconds: number) {
   return `${h}:${m}:${s}`;
 }
 
-function useCountdown(seconds: number) {
-  const [secondsLeft, setSecondsLeft] = useState(seconds);
+// expiresAt (ISO string, admin ne set kiya) ke against har second remaining
+// seconds calculate karta hai. Time khatam hote hi 0 pe ruk jata hai.
+function useCountdownTo(expiresAt: string | null) {
+  const [secondsLeft, setSecondsLeft] = useState(0);
+
   useEffect(() => {
-    const timer = setInterval(() => {
-      setSecondsLeft((prev) => (prev > 0 ? prev - 1 : 0));
-    }, 1000);
+    if (!expiresAt) {
+      setSecondsLeft(0);
+      return;
+    }
+
+    const target = new Date(expiresAt).getTime();
+
+    const tick = () => {
+      const diff = Math.floor((target - Date.now()) / 1000);
+      setSecondsLeft(diff > 0 ? diff : 0);
+    };
+
+    tick();
+    const timer = setInterval(tick, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [expiresAt]);
+
   return secondsLeft;
 }
 
-function BumperOfferBanner() {
-  const secondsLeft = useCountdown(OFFER_COUNTDOWN_SECONDS);
+// Admin settings se offer ka live status fetch karta hai (public, read-only route)
+function useOfferStatus() {
+  const [isActive, setIsActive] = useState(false);
+  const [expiresAt, setExpiresAt] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  if (!OFFER_ACTIVE) return null;
+  useEffect(() => {
+    let cancelled = false;
 
+    fetch("/api/offer-status")
+      .then((res) => res.json())
+      .then((data) => {
+        if (cancelled) return;
+        setIsActive(data.isActive ?? false);
+        setExpiresAt(data.expiresAt ?? null);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch offer status:", err);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return { isActive, expiresAt, loading };
+}
+
+function BumperOfferBanner({ secondsLeft }: { secondsLeft: number }) {
   return (
     <div className="mb-8 rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-4 py-3 text-center shadow-[0_0_30px_-10px_rgba(139,92,246,0.6)] animate-pulse-slow">
       <span className="text-sm sm:text-base font-semibold text-white tracking-wide">
@@ -101,9 +131,15 @@ function BumperOfferBanner() {
 // OFFER COIN — custom animated badge for the 12-Month plan
 // (dark coin, rotating shine ring, floating motion, live timer)
 // ============================================================
-function OfferCoin({ wasPrice, nowPrice }: { wasPrice: number; nowPrice: number }) {
-  const secondsLeft = useCountdown(OFFER_COUNTDOWN_SECONDS);
-
+function OfferCoin({
+  wasPrice,
+  nowPrice,
+  secondsLeft,
+}: {
+  wasPrice: number;
+  nowPrice: number;
+  secondsLeft: number;
+}) {
   return (
     <div className="offer-coin-stack">
       <div className="offer-coin-float">
@@ -279,9 +315,16 @@ export default function StandardPricingPage() {
   const router = useRouter();
   const [activatingPlan, setActivatingPlan] = useState<string | null>(null);
 
+  // Admin settings se live offer status (on/off + 24h expiry)
+  const { isActive: offerActive, expiresAt, loading: offerLoading } = useOfferStatus();
+  const secondsLeft = useCountdownTo(expiresAt);
+
+  // Time khatam ho jaye to offer khud band mana jayega, chahe DB update thoda late ho
+  const isOfferLive = offerActive && !offerLoading && secondsLeft > 0;
+
   const handleChoosePlan = (plan: (typeof pricingPlans)[number]) => {
     const finalAmount =
-      plan.id === "yearly" && OFFER_ACTIVE ? YEARLY_OFFER_PRICE : plan.finalPrice;
+      plan.id === "yearly" && isOfferLive ? YEARLY_OFFER_PRICE : plan.finalPrice;
     setActivatingPlan(plan.id);
     router.push(`/plans/standard/checkout?plan=${plan.id}&amount=${finalAmount}`);
   };
@@ -294,9 +337,9 @@ export default function StandardPricingPage() {
       <div className="absolute top-[5%] right-[-200px] w-[700px] h-[700px] rounded-full bg-blue-600/20 blur-[140px] pointer-events-none" />
 
       {/* Offer coin — pinned to the top-right, stays visible while scrolling */}
-      {OFFER_ACTIVE && (
+      {isOfferLive && (
         <div className="fixed top-4 right-4 sm:top-6 sm:right-6 md:top-8 md:right-8 z-50 scale-[0.8] sm:scale-90 md:scale-100 origin-top-right">
-          <OfferCoin wasPrice={269} nowPrice={YEARLY_OFFER_PRICE} />
+          <OfferCoin wasPrice={269} nowPrice={YEARLY_OFFER_PRICE} secondsLeft={secondsLeft} />
         </div>
       )}
 
@@ -318,13 +361,13 @@ export default function StandardPricingPage() {
           </p>
         </div>
 
-        {/* Bumper offer banner — OFFER_ACTIVE false hone par khud hi hide ho jayega */}
-        <BumperOfferBanner />
+        {/* Bumper offer banner — offer OFF ya expire hone par khud hi hide ho jayega */}
+        {isOfferLive && <BumperOfferBanner secondsLeft={secondsLeft} />}
 
         {/* ✅ MOBILE — stacked cards (screens below md) */}
         <div className="block md:hidden space-y-4">
           {pricingPlans.map((plan) => {
-            const isYearlyOffer = plan.id === "yearly" && OFFER_ACTIVE;
+            const isYearlyOffer = plan.id === "yearly" && isOfferLive;
             const displayFinalPrice = isYearlyOffer ? YEARLY_OFFER_PRICE : plan.finalPrice;
             const displayMonthlyEquivalent = isYearlyOffer
               ? YEARLY_OFFER_MONTHLY_EQUIVALENT
@@ -406,7 +449,7 @@ export default function StandardPricingPage() {
 
               <tbody>
                 {pricingPlans.map((plan) => {
-                  const isYearlyOffer = plan.id === "yearly" && OFFER_ACTIVE;
+                  const isYearlyOffer = plan.id === "yearly" && isOfferLive;
                   const displayFinalPrice = isYearlyOffer ? YEARLY_OFFER_PRICE : plan.finalPrice;
                   const displayMonthlyEquivalent = isYearlyOffer
                     ? YEARLY_OFFER_MONTHLY_EQUIVALENT
