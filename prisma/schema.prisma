@@ -423,8 +423,19 @@ model Payment {
   planType      String?
   status        String   @default("success")
   createdAt     DateTime @default(now())
-
   @@index([userId])
+}
+
+// ========================================================
+// ✅ NAYA MODEL — User Special Offer (per-user personal discount)
+// ========================================================
+model UserSpecialOffer {
+  id                 String   @id @default(cuid())
+  email              String   @unique
+  yearlyDiscount     Float
+  halfYearlyDiscount Float
+  expiresAt          DateTime
+  updatedAt          DateTime @updatedAt
 }
 
 // ========================================================
