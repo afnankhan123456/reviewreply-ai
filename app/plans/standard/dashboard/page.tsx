@@ -41,7 +41,6 @@ export default function DashboardPage() {
   const [qrLoading, setQrLoading] = useState(false);
 
   // ✅ NEW: Manual Sync state
-  const [isSyncing, setIsSyncing] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem("theme");
@@ -139,25 +138,6 @@ export default function DashboardPage() {
     }
   };
 
-  // ✅ NEW: Manual Sync handler
-  const handleManualSync = async () => {
-    setIsSyncing(true);
-    try {
-      const res = await fetch('/api/standard/google/sync', { method: 'POST' });
-      const result = await res.json();
-      if (result.success) {
-        setToast({ message: 'Reviews synced successfully!', type: 'success' });
-        fetchDashboardData();
-      } else {
-        setToast({ message: result.message || 'Sync failed', type: 'error' });
-      }
-    } catch (err) {
-      setToast({ message: 'Error syncing reviews', type: 'error' });
-    } finally {
-      setIsSyncing(false);
-    }
-  };
-
   const isLight = theme === "light";
   const bgMain = isLight ? "bg-gray-50" : "bg-[#0B0E14]";
   const bgCard = isLight ? "bg-white" : "bg-[#11141C]";
@@ -227,16 +207,6 @@ export default function DashboardPage() {
         </div>
 
         <div className="flex items-center gap-3">
-          {/* ✅ NEW: Manual Sync button — profile icon ke left */}
-          <button
-            onClick={handleManualSync}
-            disabled={isSyncing}
-            className={`${buttonBg} border rounded-lg px-3 py-2 flex items-center gap-2 text-xs font-medium transition-colors disabled:opacity-50`}
-          >
-            <RefreshCw size={14} className={isSyncing ? 'animate-spin' : ''} />
-            {isSyncing ? 'Syncing...' : 'Sync Now'}
-          </button>
-
           <div className="relative" ref={profileRef}>
             <button
               onClick={() => setProfileOpen((prev) => !prev)}
