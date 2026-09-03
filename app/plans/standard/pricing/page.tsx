@@ -1,3 +1,5 @@
+// app/plans/standard/pricing/page.tsx
+
 "use client";
 
 import { useRouter } from "next/navigation";
@@ -46,7 +48,7 @@ const pricingPlans = [
   },
 ];
 
-// 12-Month plan ki offer price aur uska naya monthly equivalent
+// 12-Month plan ki bumper-offer price (sabke liye)
 const YEARLY_OFFER_PRICE = 260;
 const YEARLY_OFFER_MONTHLY_EQUIVALENT = "$21.67/mo";
 
@@ -57,8 +59,13 @@ function formatCountdown(totalSeconds: number) {
   return `${h}:${m}:${s}`;
 }
 
-// expiresAt (ISO string, admin ne set kiya) ke against har second remaining
-// seconds calculate karta hai. Time khatam hote hi 0 pe ruk jata hai.
+function formatMinSec(totalSeconds: number) {
+  const m = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+  const s = String(totalSeconds % 60).padStart(2, "0");
+  return `${m}:${s}`;
+}
+
+// expiresAt (ISO string) ke against har second remaining seconds calculate karta hai
 function useCountdownTo(expiresAt: string | null) {
   const [secondsLeft, setSecondsLeft] = useState(0);
 
@@ -83,9 +90,7 @@ function useCountdownTo(expiresAt: string | null) {
   return secondsLeft;
 }
 
-// Admin settings se offer ka live status fetch karta hai (public, read-only route)
-// Har 2 second me khud-ba-khud dobara check karta hai — user ko refresh
-// nahi karna padega jab admin offer ON/OFF karega.
+// Bumper offer (sabke liye) — har 2 second me poll hota hai
 function useOfferStatus() {
   const [isActive, setIsActive] = useState(false);
   const [expiresAt, setExpiresAt] = useState<string | null>(null);
@@ -102,17 +107,14 @@ function useOfferStatus() {
           setIsActive(data.isActive ?? false);
           setExpiresAt(data.expiresAt ?? null);
         })
-        .catch((err) => {
-          console.error("Failed to fetch offer status:", err);
-        })
+        .catch((err) => console.error("Failed to fetch offer status:", err))
         .finally(() => {
           if (!cancelled) setLoading(false);
         });
     };
 
-    fetchStatus(); // page load hote hi ek baar
-
-    const interval = setInterval(fetchStatus, 2000); // fir har 2 sec me
+    fetchStatus();
+    const interval = setInterval(fetchStatus, 2000);
 
     return () => {
       cancelled = true;
@@ -121,6 +123,45 @@ function useOfferStatus() {
   }, []);
 
   return { isActive, expiresAt, loading };
+}
+
+// Per-user special discount (sirf logged-in user ke apne email ke liye) — har 2 second me poll hota hai
+function useUserOfferStatus() {
+  const [hasOffer, setHasOffer] = useState(false);
+  const [yearlyDiscount, setYearlyDiscount] = useState(0);
+  const [halfYearlyDiscount, setHalfYearlyDiscount] = useState(0);
+  const [expiresAt, setExpiresAt] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const fetchStatus = () => {
+      fetch("/api/user-offer-status")
+        .then((res) => res.json())
+        .then((data) => {
+          if (cancelled) return;
+          setHasOffer(data.hasOffer ?? false);
+          setYearlyDiscount(data.yearlyDiscount ?? 0);
+          setHalfYearlyDiscount(data.halfYearlyDiscount ?? 0);
+          setExpiresAt(data.expiresAt ?? null);
+        })
+        .catch((err) => console.error("Failed to fetch user offer status:", err))
+        .finally(() => {
+          if (!cancelled) setLoading(false);
+        });
+    };
+
+    fetchStatus();
+    const interval = setInterval(fetchStatus, 2000);
+
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, []);
+
+  return { hasOffer, yearlyDiscount, halfYearlyDiscount, expiresAt, loading };
 }
 
 function BumperOfferBanner({ secondsLeft }: { secondsLeft: number }) {
@@ -136,9 +177,21 @@ function BumperOfferBanner({ secondsLeft }: { secondsLeft: number }) {
   );
 }
 
+function PersonalOfferBanner({ secondsLeft }: { secondsLeft: number }) {
+  return (
+    <div className="mb-8 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-3 text-center shadow-[0_0_30px_-10px_rgba(16,185,129,0.6)]">
+      <span className="text-sm sm:text-base font-semibold text-white tracking-wide">
+        🎁 A SPECIAL PRICE HAS BEEN UNLOCKED FOR YOU — ENDS IN{" "}
+        <span className="ml-1 rounded-md bg-white/15 px-2 py-1 font-mono tabular-nums">
+          {formatMinSec(secondsLeft)}
+        </span>
+      </span>
+    </div>
+  );
+}
+
 // ============================================================
-// OFFER COIN — custom animated badge for the 12-Month plan
-// (dark coin, rotating shine ring, floating motion, live timer)
+// OFFER COIN — custom animated badge for the 12-Month plan (bumper offer)
 // ============================================================
 function OfferCoin({
   wasPrice,
@@ -174,14 +227,12 @@ function OfferCoin({
           align-items: center;
           gap: 10px;
         }
-
         .offer-coin-float {
           position: relative;
           width: 118px;
           height: 118px;
           animation: coin-float 3.2s ease-in-out infinite;
         }
-
         .offer-coin-glow {
           position: absolute;
           inset: -14px;
@@ -195,7 +246,6 @@ function OfferCoin({
           filter: blur(4px);
           animation: coin-pulse 2.4s ease-in-out infinite;
         }
-
         .offer-coin {
           position: relative;
           width: 100%;
@@ -213,7 +263,6 @@ function OfferCoin({
           justify-content: center;
           overflow: hidden;
         }
-
         .offer-coin-sheen {
           position: absolute;
           inset: -40%;
@@ -226,7 +275,6 @@ function OfferCoin({
           );
           animation: coin-spin 3.6s linear infinite;
         }
-
         .offer-coin-ribbon {
           position: absolute;
           top: 16px;
@@ -236,7 +284,6 @@ function OfferCoin({
           color: #fde68a;
           text-shadow: 0 0 8px rgba(253, 230, 138, 0.6);
         }
-
         .offer-coin-was {
           margin-top: 12px;
           font-size: 11px;
@@ -244,7 +291,6 @@ function OfferCoin({
           color: #71717a;
           text-decoration: line-through;
         }
-
         .offer-coin-now {
           font-size: 26px;
           font-weight: 800;
@@ -254,7 +300,6 @@ function OfferCoin({
           background-clip: text;
           color: transparent;
         }
-
         .offer-coin-sub {
           margin-top: 3px;
           font-size: 9px;
@@ -262,7 +307,6 @@ function OfferCoin({
           letter-spacing: 0.05em;
           color: #a1a1aa;
         }
-
         .offer-coin-timer {
           display: flex;
           align-items: center;
@@ -277,7 +321,6 @@ function OfferCoin({
           padding: 4px 12px;
           box-shadow: 0 0 16px -4px rgba(139, 92, 246, 0.5);
         }
-
         .offer-coin-dot {
           width: 6px;
           height: 6px;
@@ -286,32 +329,24 @@ function OfferCoin({
           box-shadow: 0 0 6px 1px rgba(251, 113, 133, 0.8);
           animation: coin-blink 1s ease-in-out infinite;
         }
-
         @keyframes coin-float {
           0%, 100% { transform: translateY(0px); }
           50% { transform: translateY(-8px); }
         }
-
         @keyframes coin-pulse {
           0%, 100% { opacity: 0.55; transform: scale(1); }
           50% { opacity: 0.9; transform: scale(1.08); }
         }
-
         @keyframes coin-spin {
           from { transform: rotate(0deg); }
           to { transform: rotate(360deg); }
         }
-
         @keyframes coin-blink {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.25; }
         }
-
         @media (prefers-reduced-motion: reduce) {
-          .offer-coin-float,
-          .offer-coin-glow,
-          .offer-coin-sheen,
-          .offer-coin-dot {
+          .offer-coin-float, .offer-coin-glow, .offer-coin-sheen, .offer-coin-dot {
             animation: none;
           }
         }
@@ -324,31 +359,71 @@ export default function StandardPricingPage() {
   const router = useRouter();
   const [activatingPlan, setActivatingPlan] = useState<string | null>(null);
 
-  // Admin settings se live offer status (on/off + 24h expiry), 2s me poll hota hai
-  const { isActive: offerActive, expiresAt, loading: offerLoading } = useOfferStatus();
-  const secondsLeft = useCountdownTo(expiresAt);
+  // Bumper offer (sabke liye)
+  const { isActive: bumperActive, expiresAt: bumperExpiresAt, loading: bumperLoading } = useOfferStatus();
+  const bumperSecondsLeft = useCountdownTo(bumperExpiresAt);
+  const isBumperLive = bumperActive && !bumperLoading && bumperSecondsLeft > 0;
 
-  // Time khatam ho jaye to offer khud band mana jayega, chahe DB update thoda late ho
-  const isOfferLive = offerActive && !offerLoading && secondsLeft > 0;
+  // Per-user special discount (sirf isi logged-in email ke liye)
+  const {
+    hasOffer: hasUserOffer,
+    yearlyDiscount: userYearlyDiscount,
+    halfYearlyDiscount: userHalfYearlyDiscount,
+    expiresAt: userOfferExpiresAt,
+    loading: userOfferLoading,
+  } = useUserOfferStatus();
+  const userOfferSecondsLeft = useCountdownTo(userOfferExpiresAt);
+  const isUserOfferLive = hasUserOffer && !userOfferLoading && userOfferSecondsLeft > 0;
+
+  // Har plan ke liye final price nikalne wala helper:
+  // Priority: personal (per-user) discount > bumper offer > normal price
+  const getDisplayPrice = (plan: (typeof pricingPlans)[number]) => {
+    if (plan.id === "yearly" && isUserOfferLive && userYearlyDiscount > 0) {
+      return {
+        price: plan.finalPrice - userYearlyDiscount,
+        strikePrice: plan.finalPrice,
+        isPersonal: true,
+      };
+    }
+    if (plan.id === "halfyearly" && isUserOfferLive && userHalfYearlyDiscount > 0) {
+      return {
+        price: plan.finalPrice - userHalfYearlyDiscount,
+        strikePrice: plan.finalPrice,
+        isPersonal: true,
+      };
+    }
+    if (plan.id === "yearly" && isBumperLive) {
+      return { price: YEARLY_OFFER_PRICE, strikePrice: plan.finalPrice, isPersonal: false };
+    }
+    return { price: plan.finalPrice, strikePrice: null, isPersonal: false };
+  };
+
+  const getMonthlyEquivalent = (plan: (typeof pricingPlans)[number], price: number) => {
+    if (price === plan.finalPrice) {
+      return plan.monthlyEquivalent;
+    }
+    if (plan.id === "yearly" && !getDisplayPrice(plan).isPersonal && isBumperLive) {
+      return YEARLY_OFFER_MONTHLY_EQUIVALENT;
+    }
+    const months = plan.days / 30;
+    return `$${(price / months).toFixed(2)}/mo`;
+  };
 
   const handleChoosePlan = (plan: (typeof pricingPlans)[number]) => {
-    const finalAmount =
-      plan.id === "yearly" && isOfferLive ? YEARLY_OFFER_PRICE : plan.finalPrice;
+    const { price } = getDisplayPrice(plan);
     setActivatingPlan(plan.id);
-    router.push(`/plans/standard/checkout?plan=${plan.id}&amount=${finalAmount}`);
+    router.push(`/plans/standard/checkout?plan=${plan.id}&amount=${price}`);
   };
 
   return (
     <main className="min-h-screen bg-black text-white py-16 px-4 sm:px-6 relative overflow-hidden">
-
-      {/* Background glow orbs — same theme as plans page */}
       <div className="absolute top-[10%] left-[-200px] w-[700px] h-[700px] rounded-full bg-violet-600/20 blur-[140px] pointer-events-none" />
       <div className="absolute top-[5%] right-[-200px] w-[700px] h-[700px] rounded-full bg-blue-600/20 blur-[140px] pointer-events-none" />
 
-      {/* Offer coin — pinned to the top-right, stays visible while scrolling */}
-      {isOfferLive && (
+      {/* Offer coin — bumper offer, sirf personal discount na hone par dikhega */}
+      {isBumperLive && !isUserOfferLive && (
         <div className="fixed top-4 right-4 sm:top-6 sm:right-6 md:top-8 md:right-8 z-50 scale-[0.8] sm:scale-90 md:scale-100 origin-top-right">
-          <OfferCoin wasPrice={269} nowPrice={YEARLY_OFFER_PRICE} secondsLeft={secondsLeft} />
+          <OfferCoin wasPrice={269} nowPrice={YEARLY_OFFER_PRICE} secondsLeft={bumperSecondsLeft} />
         </div>
       )}
 
@@ -357,46 +432,54 @@ export default function StandardPricingPage() {
           <div className="inline-flex items-center gap-2 bg-zinc-900 border border-violet-500/40 rounded-full px-4 py-1.5 mb-6">
             <span className="text-xs font-semibold tracking-widest text-violet-300">STANDARD PLAN</span>
           </div>
-
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold">
             Standard Plan{" "}
             <span className="bg-gradient-to-r from-violet-400 to-blue-400 bg-clip-text text-transparent">
               Pricing
             </span>
           </h1>
-
           <p className="mt-4 text-zinc-400 text-sm sm:text-base md:text-lg">
             Choose the billing period that works best for your business.
           </p>
         </div>
 
-        {/* Bumper offer banner — offer OFF ya expire hone par khud hi hide ho jayega */}
-        {isOfferLive && <BumperOfferBanner secondsLeft={secondsLeft} />}
+        {/* Personal discount banner sabse pehle priority pe dikhega */}
+        {isUserOfferLive ? (
+          <PersonalOfferBanner secondsLeft={userOfferSecondsLeft} />
+        ) : (
+          isBumperLive && <BumperOfferBanner secondsLeft={bumperSecondsLeft} />
+        )}
 
-        {/* ✅ MOBILE — stacked cards (screens below md) */}
+        {/* ✅ MOBILE — stacked cards */}
         <div className="block md:hidden space-y-4">
           {pricingPlans.map((plan) => {
-            const isYearlyOffer = plan.id === "yearly" && isOfferLive;
-            const displayFinalPrice = isYearlyOffer ? YEARLY_OFFER_PRICE : plan.finalPrice;
-            const displayMonthlyEquivalent = isYearlyOffer
-              ? YEARLY_OFFER_MONTHLY_EQUIVALENT
-              : plan.monthlyEquivalent;
+            const { price: displayFinalPrice, strikePrice, isPersonal } = getDisplayPrice(plan);
+            const displayMonthlyEquivalent = getMonthlyEquivalent(plan, displayFinalPrice);
+            const showStrike = strikePrice !== null;
 
             return (
               <div
                 key={plan.id}
                 className={`relative rounded-2xl border p-5 ${
-                  plan.popular
+                  isPersonal
+                    ? "border-emerald-500/50 bg-gradient-to-br from-emerald-950/40 to-teal-950/40 shadow-[0_0_40px_-15px_rgba(16,185,129,0.4)]"
+                    : plan.popular
                     ? "border-violet-500/50 bg-gradient-to-br from-violet-950/40 to-blue-950/40 shadow-[0_0_40px_-15px_rgba(139,92,246,0.4)]"
                     : "border-zinc-800 bg-zinc-900/60"
                 }`}
               >
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="text-lg font-semibold text-white">{plan.title}</h3>
-                  {plan.popular && (
-                    <span className="rounded-full bg-gradient-to-r from-violet-600 to-blue-600 px-3 py-1 text-[10px] font-semibold text-white">
-                      BEST VALUE
+                  {isPersonal ? (
+                    <span className="rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 px-3 py-1 text-[10px] font-semibold text-white">
+                      JUST FOR YOU
                     </span>
+                  ) : (
+                    plan.popular && (
+                      <span className="rounded-full bg-gradient-to-r from-violet-600 to-blue-600 px-3 py-1 text-[10px] font-semibold text-white">
+                        BEST VALUE
+                      </span>
+                    )
                   )}
                 </div>
 
@@ -404,15 +487,11 @@ export default function StandardPricingPage() {
                   <span className="text-3xl font-bold bg-gradient-to-r from-violet-400 to-blue-400 bg-clip-text text-transparent">
                     ${displayFinalPrice}
                   </span>
-                  {isYearlyOffer && (
-                    <span className="text-sm text-zinc-500 line-through mb-1">
-                      ${plan.finalPrice}
-                    </span>
+                  {showStrike && (
+                    <span className="text-sm text-zinc-500 line-through mb-1">${strikePrice}</span>
                   )}
-                  {!isYearlyOffer && plan.discount && (
-                    <span className="text-sm text-zinc-500 line-through mb-1">
-                      ${plan.regularPrice}
-                    </span>
+                  {!showStrike && plan.discount && (
+                    <span className="text-sm text-zinc-500 line-through mb-1">${plan.regularPrice}</span>
                   )}
                 </div>
 
@@ -439,7 +518,7 @@ export default function StandardPricingPage() {
           })}
         </div>
 
-        {/* ✅ DESKTOP — table (md and above) */}
+        {/* ✅ DESKTOP — table */}
         <div className="hidden md:block relative rounded-2xl border border-zinc-800 bg-zinc-900/60 backdrop-blur-sm shadow-[0_0_60px_-20px_rgba(139,92,246,0.3)]">
           <div className="overflow-hidden rounded-2xl">
             <table className="w-full">
@@ -449,41 +528,42 @@ export default function StandardPricingPage() {
                   <th className="px-8 py-5 text-center font-semibold">Regular Price</th>
                   <th className="px-8 py-5 text-center font-semibold">Discount</th>
                   <th className="px-8 py-5 text-center font-semibold">Final Price</th>
-                  <th className="px-8 py-5 text-center font-semibold">
-                    Monthly Equivalent
-                  </th>
+                  <th className="px-8 py-5 text-center font-semibold">Monthly Equivalent</th>
                   <th className="px-8 py-5 text-center"></th>
                 </tr>
               </thead>
-
               <tbody>
                 {pricingPlans.map((plan) => {
-                  const isYearlyOffer = plan.id === "yearly" && isOfferLive;
-                  const displayFinalPrice = isYearlyOffer ? YEARLY_OFFER_PRICE : plan.finalPrice;
-                  const displayMonthlyEquivalent = isYearlyOffer
-                    ? YEARLY_OFFER_MONTHLY_EQUIVALENT
-                    : plan.monthlyEquivalent;
+                  const { price: displayFinalPrice, strikePrice, isPersonal } = getDisplayPrice(plan);
+                  const displayMonthlyEquivalent = getMonthlyEquivalent(plan, displayFinalPrice);
+                  const showStrike = strikePrice !== null;
 
                   return (
                     <tr
                       key={plan.id}
                       className={`border-t border-zinc-800 ${
-                        plan.popular ? "bg-gradient-to-r from-violet-950/40 to-blue-950/40" : "bg-transparent"
+                        isPersonal
+                          ? "bg-gradient-to-r from-emerald-950/40 to-teal-950/40"
+                          : plan.popular
+                          ? "bg-gradient-to-r from-violet-950/40 to-blue-950/40"
+                          : "bg-transparent"
                       }`}
                     >
                       <td className="px-8 py-6 font-semibold text-lg text-white">
                         {plan.title}
-
-                        {plan.popular && (
+                        {isPersonal && (
+                          <span className="ml-3 rounded-full bg-gradient-to-r from-emerald-600 to-teal-600 px-3 py-1 text-xs font-semibold text-white">
+                            JUST FOR YOU
+                          </span>
+                        )}
+                        {!isPersonal && plan.popular && (
                           <span className="ml-3 rounded-full bg-gradient-to-r from-violet-600 to-blue-600 px-3 py-1 text-xs font-semibold text-white">
                             BEST VALUE
                           </span>
                         )}
                       </td>
 
-                      <td className="px-8 py-6 text-center text-zinc-400">
-                        ${plan.regularPrice}
-                      </td>
+                      <td className="px-8 py-6 text-center text-zinc-400">${plan.regularPrice}</td>
 
                       <td className="px-8 py-6 text-center">
                         {plan.discount ? (
@@ -499,9 +579,9 @@ export default function StandardPricingPage() {
                         <span className="text-2xl font-bold bg-gradient-to-r from-violet-400 to-blue-400 bg-clip-text text-transparent">
                           ${displayFinalPrice}
                         </span>
-                        {isYearlyOffer && (
+                        {showStrike && (
                           <span className="ml-2 text-sm text-zinc-500 line-through align-middle">
-                            ${plan.finalPrice}
+                            ${strikePrice}
                           </span>
                         )}
                       </td>
