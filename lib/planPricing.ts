@@ -20,9 +20,6 @@ export const PLAN_PRICES: Record<"basic" | "standard", Record<string, number>> =
   },
 };
 
-// ✅ FIX (Bug 11): startup sanity check — koi bhi price ek reasonable
-// min/max range se bahar nahi hona chahiye. Typo (jaise ek extra/missing
-// zero) ko CI/build/startup pe hi pakad lena hai, production mein nahi.
 const MIN_PLAN_PRICE = 5;
 const MAX_PLAN_PRICE = 500;
 
@@ -43,39 +40,63 @@ function assertPlanPricesInRange() {
 assertPlanPricesInRange();
 
 // ============================================================
-// BUMPER OFFER — sirf standard/yearly ke liye, admin settings se controlled
+// BUMPER OFFER — sabke liye, admin settings se controlled
 // ============================================================
-const OFFER_ID = "standard-yearly-offer"; // app/api/admin/offer/route.ts wala hi id
+const OFFER_ID = "standard-yearly-offer";
 const YEARLY_OFFER_PRICE = 260;
 
-// Admin ne offer ON kiya hai aur woh abhi expire nahi hua, to true.
-// Yehi logic app/api/offer-status/route.ts aur app/api/admin/offer/route.ts
-// me bhi hai — teeno jagah same rehna chahiye.
 async function isYearlyOfferLive(): Promise<boolean> {
   try {
-    const offer = await prisma.offerSetting.findUnique({
-      where: { id: OFFER_ID },
-    });
-
+    const offer = await prisma.offerSetting.findUnique({ where: { id: OFFER_ID } });
     if (!offer?.isActive) return false;
     if (offer.expiresAt && offer.expiresAt < new Date()) return false;
-
     return true;
   } catch (error) {
-    console.error("Error checking offer status in planPricing:", error);
-    return false; // DB dikkat me galti se discount na de do
+    console.error("Error checking bumper offer status in planPricing:", error);
+    return false;
   }
 }
 
-// ⚠️ Ab async hai — jahan bhi use ho raha hai wahan `await` lagana zaroori hai
-// (app/api/paypal/create-order/route.ts aur app/api/paypal/verify-and-activate/route.ts)
+// ============================================================
+// PER-USER SPECIAL DISCOUNT — sirf specific email, 30-min expiry
+// ============================================================
+async function getUserDiscount(email: string, planType: string): Promise<number> {
+  try {
+    const offer = await prisma.userSpecialOffer.findUnique({
+      where: { email: email.toLowerCase() },
+    });
+
+    if (!offer || offer.expiresAt < new Date()) return 0;
+
+    if (planType === "yearly") return offer.yearlyDiscount || 0;
+    if (planType === "halfyearly") return offer.halfYearlyDiscount || 0;
+
+    return 0;
+  } catch (error) {
+    console.error("Error checking user special offer in planPricing:", error);
+    return 0;
+  }
+}
+
+// ⚠️ Async hai — jahan bhi use ho raha hai wahan `await` lagana zaroori hai.
+// `email` optional hai — jab pass karoge tabhi personal discount check hoga.
 export async function getExpectedPrice(
   tier: "basic" | "standard",
-  planType: string
+  planType: string,
+  email?: string
 ): Promise<number | null> {
   const basePrice = PLAN_PRICES[tier]?.[planType];
   if (typeof basePrice !== "number") return null;
 
+  // 1) Personal discount ki sabse zyada priority hai
+  if (tier === "standard" && email && (planType === "yearly" || planType === "halfyearly")) {
+    const discount = await getUserDiscount(email, planType);
+    if (discount > 0) {
+      return basePrice - discount;
+    }
+  }
+
+  // 2) Fir bumper offer (sirf yearly ke liye)
   if (tier === "standard" && planType === "yearly" && (await isYearlyOfferLive())) {
     return YEARLY_OFFER_PRICE;
   }
@@ -87,5 +108,5 @@ export async function getExpectedPrice(
 export function isAmountValid(paidAmount: string | number, expectedPrice: number) {
   const paid = Number(paidAmount);
   if (Number.isNaN(paid)) return false;
-  return Math.abs(paid - expectedPrice) < 0.01; // chhota tolerance rounding ke liye
+  return Math.abs(paid - expectedPrice) < 0.01;
 }
