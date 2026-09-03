@@ -1,5 +1,9 @@
+// lib/planPricing.ts
+
 // ✅ Server-side source of truth for plan prices.
 // Client se aaya "amount" kabhi trust nahi karna — hamesha isi table se compare karo.
+
+import { prisma } from "@/lib/prisma";
 
 export const PLAN_PRICES: Record<"basic" | "standard", Record<string, number>> = {
   basic: {
@@ -38,12 +42,45 @@ function assertPlanPricesInRange() {
 
 assertPlanPricesInRange();
 
-export function getExpectedPrice(
+// ============================================================
+// BUMPER OFFER — sirf standard/yearly ke liye, admin settings se controlled
+// ============================================================
+const OFFER_ID = "standard-yearly-offer"; // app/api/admin/offer/route.ts wala hi id
+const YEARLY_OFFER_PRICE = 260;
+
+// Admin ne offer ON kiya hai aur woh abhi expire nahi hua, to true.
+// Yehi logic app/api/offer-status/route.ts aur app/api/admin/offer/route.ts
+// me bhi hai — teeno jagah same rehna chahiye.
+async function isYearlyOfferLive(): Promise<boolean> {
+  try {
+    const offer = await prisma.offerSetting.findUnique({
+      where: { id: OFFER_ID },
+    });
+
+    if (!offer?.isActive) return false;
+    if (offer.expiresAt && offer.expiresAt < new Date()) return false;
+
+    return true;
+  } catch (error) {
+    console.error("Error checking offer status in planPricing:", error);
+    return false; // DB dikkat me galti se discount na de do
+  }
+}
+
+// ⚠️ Ab async hai — jahan bhi use ho raha hai wahan `await` lagana zaroori hai
+// (app/api/paypal/create-order/route.ts aur app/api/paypal/verify-and-activate/route.ts)
+export async function getExpectedPrice(
   tier: "basic" | "standard",
   planType: string
-): number | null {
-  const price = PLAN_PRICES[tier]?.[planType];
-  return typeof price === "number" ? price : null;
+): Promise<number | null> {
+  const basePrice = PLAN_PRICES[tier]?.[planType];
+  if (typeof basePrice !== "number") return null;
+
+  if (tier === "standard" && planType === "yearly" && (await isYearlyOfferLive())) {
+    return YEARLY_OFFER_PRICE;
+  }
+
+  return basePrice;
 }
 
 // PayPal se aaya actual paid amount is expected price se match karta hai ya nahi
