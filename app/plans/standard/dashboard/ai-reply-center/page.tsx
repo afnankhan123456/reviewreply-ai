@@ -3,7 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import {
   Sparkles, BarChart3, MessageSquare, RefreshCw,
-  ThumbsUp, Copy, CheckCircle, Clock, Check, X, Settings2
+  ThumbsUp, Copy, CheckCircle, Clock, Check, X, Settings2,
+  Briefcase, Smile, Heart, UserCheck, FlaskConical, Send
 } from 'lucide-react';
 import {
   getAutoReplyMode,
@@ -11,6 +12,7 @@ import {
   getPendingReplies,
   approvePendingReply,
   rejectPendingReply,
+  generateTestReply,
 } from './actions';
 
 export default function AIReplyCenterPage() {
@@ -35,6 +37,17 @@ export default function AIReplyCenterPage() {
   const [pendingReplies, setPendingReplies] = useState<any[]>([]);
   const [editingText, setEditingText] = useState<Record<string, string>>({});
   const [pendingActionId, setPendingActionId] = useState<string | null>(null);
+
+  // ✅ NAYA — "Test AI Generator" widget state
+  const [testTone, setTestTone] = useState<'Professional' | 'Friendly' | 'Empathetic' | 'Formal'>('Professional');
+  const [testLanguage, setTestLanguage] = useState('English');
+  const [testLength, setTestLength] = useState<'Short' | 'Medium' | 'Long'>('Medium');
+  const [testAddEmojis, setTestAddEmojis] = useState(true);
+  const [testReviewText, setTestReviewText] = useState('');
+  const [testGeneratedReply, setTestGeneratedReply] = useState('');
+  const [isTestGenerating, setIsTestGenerating] = useState(false);
+  const [testCopied, setTestCopied] = useState(false);
+  const [testPosted, setTestPosted] = useState(false);
 
   // ✅ Theme state – reads from localStorage
   const [theme, setTheme] = useState<"light" | "dark">("dark");
@@ -140,6 +153,43 @@ export default function AIReplyCenterPage() {
       alert(result.error || 'Failed to reject');
     }
     setPendingActionId(null);
+  };
+
+  // ✅ NAYA — "Test AI Generator" widget handlers
+  const handleGenerateTestReply = async () => {
+    if (!testReviewText.trim()) return;
+    setIsTestGenerating(true);
+    setTestPosted(false);
+    try {
+      const result = await generateTestReply(testReviewText, testTone, testLanguage, testLength, testAddEmojis);
+      if (result.success) {
+        setTestGeneratedReply(result.reply || '');
+      } else {
+        alert(result.error || 'Failed to generate reply');
+      }
+    } catch (error) {
+      alert('Error generating reply');
+    } finally {
+      setIsTestGenerating(false);
+    }
+  };
+
+  const handleCopyTestReply = () => {
+    if (!testGeneratedReply) return;
+    navigator.clipboard.writeText(testGeneratedReply);
+    setTestCopied(true);
+    setTimeout(() => setTestCopied(false), 2000);
+  };
+
+  // Ye "Test AI Generator" hai — koi real review yahan select nahi hota
+  // (sirf free-paste text), isliye "Post" seedha Google pe kuch post nahi
+  // karta. Ye reply ko copy karke user ko batata hai ki actual posting
+  // "Reviews" tab se, us specific review pe hoti hai.
+  const handlePostTestReply = () => {
+    if (!testGeneratedReply) return;
+    navigator.clipboard.writeText(testGeneratedReply);
+    setTestPosted(true);
+    setTimeout(() => setTestPosted(false), 2500);
   };
 
   if (isLoading) {
@@ -285,6 +335,115 @@ export default function AIReplyCenterPage() {
             </button>
           ))}
         </div>
+      </div>
+
+      {/* ✅ NAYA — Test AI Generator widget (tone + advanced options + free-text tester) */}
+      <div className={`${bgCard} border rounded-xl p-5 mb-6`}>
+        <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium mb-3`}>
+          <Settings2 size={14} /> Select Reply Tone
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+          {([
+            { value: 'Professional', label: 'Professional', icon: Briefcase },
+            { value: 'Friendly', label: 'Friendly', icon: Smile },
+            { value: 'Empathetic', label: 'Empathetic', icon: Heart },
+            { value: 'Formal', label: 'Formal', icon: UserCheck },
+          ] as const).map((t) => {
+            const Icon = t.icon;
+            const active = testTone === t.value;
+            return (
+              <button
+                key={t.value}
+                onClick={() => setTestTone(t.value)}
+                className={`flex flex-col items-center justify-center gap-1.5 py-3 rounded-lg border-2 transition-colors ${
+                  active ? 'border-indigo-500 bg-indigo-500/15 text-indigo-400' : `border ${inactiveBtn} ${textSecondary}`
+                }`}
+              >
+                <Icon size={16} />
+                <span className="text-xs font-medium">{t.label}</span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium mb-3`}>
+          <Settings2 size={14} /> Advanced Options
+        </div>
+        <div className="flex flex-wrap items-center gap-3 mb-5">
+          <select
+            className={`border rounded-lg px-3 py-2 text-xs outline-none ${inputBg}`}
+            value={testLanguage}
+            onChange={(e) => setTestLanguage(e.target.value)}
+          >
+            <option value="English">🇬🇧 English</option>
+            <option value="Hindi">🇮🇳 Hindi</option>
+            <option value="Hinglish">🇮🇳 Hinglish</option>
+            <option value="Spanish">🇪🇸 Spanish</option>
+            <option value="French">🇫🇷 French</option>
+          </select>
+
+          <select
+            className={`border rounded-lg px-3 py-2 text-xs outline-none ${inputBg}`}
+            value={testLength}
+            onChange={(e) => setTestLength(e.target.value as 'Short' | 'Medium' | 'Long')}
+          >
+            <option value="Short">Short (1-2 lines)</option>
+            <option value="Medium">Medium (3-4 lines)</option>
+            <option value="Long">Long (5-6 lines)</option>
+          </select>
+
+          <label className={`flex items-center gap-2 text-xs ${textSecondary}`}>
+            <input
+              type="checkbox"
+              checked={testAddEmojis}
+              onChange={(e) => setTestAddEmojis(e.target.checked)}
+            />
+            Add Emojis ✨
+          </label>
+        </div>
+
+        <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium mb-3`}>
+          <FlaskConical size={14} /> Test AI Generator
+        </div>
+        <textarea
+          className={`w-full border rounded-lg p-3 text-sm outline-none mb-3 ${inputBg}`}
+          rows={3}
+          placeholder="Paste any customer review here..."
+          value={testReviewText}
+          onChange={(e) => setTestReviewText(e.target.value)}
+        />
+
+        <div className="flex flex-wrap gap-2">
+          <button
+            className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+            onClick={handleGenerateTestReply}
+            disabled={isTestGenerating || !testReviewText.trim()}
+          >
+            <Sparkles size={14} /> {isTestGenerating ? 'Generating...' : 'Generate AI Reply'}
+          </button>
+          <button
+            className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-500 text-white text-sm px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+            onClick={handleCopyTestReply}
+            disabled={!testGeneratedReply}
+          >
+            <Copy size={14} /> {testCopied ? 'Copied!' : 'Copy'}
+          </button>
+          <button
+            className="flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-500 text-white text-sm px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+            onClick={handlePostTestReply}
+            disabled={!testGeneratedReply}
+            title="Test generator me koi real review linked nahi hai — ye reply copy kar deta hai taaki tum use Reviews tab se us review par post kar sako."
+          >
+            <Send size={14} /> {testPosted ? 'Copied for posting!' : 'Post'}
+          </button>
+        </div>
+
+        {testGeneratedReply && (
+          <div className={`${bgSubCard} border rounded-lg p-4 mt-3`}>
+            <span className={`text-xs ${textSecondary}`}>AI Generated Reply:</span>
+            <p className={`text-sm leading-relaxed mt-1 ${textPrimary}`}>{testGeneratedReply}</p>
+          </div>
+        )}
       </div>
 
       {/* Manual mode: rule/style-guidance box — sirf Manual select hone par dikhega */}
