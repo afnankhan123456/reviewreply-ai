@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { generateAIReply } from '@/lib/aiReply';
+import { postReplyToGoogle } from '@/lib/googlePostReply';
 import { Redis } from '@upstash/redis';
 
 // ---- Rate limiter (shared across all serverless instances via Upstash Redis) ----
@@ -152,6 +153,7 @@ export async function POST(request: Request) {
     const source = 'google';
     const reviewDate = new Date();
     const googleLocationId = body.locationId; // must be sent by Google/your relay
+    const googleReviewId = body.reviewId; // must be sent by Google/your relay — needed to post the reply back to the correct review
 
     // 3. Map the incoming location to the real business + real owner.
     const businessLocation = await prisma.businessLocation.findUnique({
@@ -171,6 +173,7 @@ export async function POST(request: Request) {
       data: {
         userId: businessLocation.userId,
         businessLocationId: businessLocation.id,
+        googleReviewId,
         reviewerName,
         rating,
         comment,
@@ -203,20 +206,28 @@ export async function POST(request: Request) {
       );
     }
 
-    // 6. Update the review with AI reply
+    // 6. Actually post the AI reply to Google (postReplyToGoogle itself updates
+    // reviewReply/replied/replyStatus/repliedAt in the DB once the reply is
+    // confirmed posted — we no longer mark it "replied" ourselves beforehand).
+    const postResult = await postReplyToGoogle(newReview.id, aiResult.reply!);
+
+    // Regardless of Google post success, mark that this was an AI-generated reply.
     await prisma.review.update({
       where: { id: newReview.id },
-      data: {
-        reviewReply: aiResult.reply,
-        replied: true,
-        aiReplied: true,
-        repliedAt: new Date(),
-      },
+      data: { aiReplied: true },
     });
 
-    console.log(`✅ Auto-reply sent to review: ${newReview.id}`);
+    if (!postResult.success) {
+      console.warn(`Reply generated but failed to post to Google for review ${newReview.id}:`, postResult.error);
+      return NextResponse.json(
+        { success: true, message: 'Review saved, AI reply generated but failed to post to Google', reason: postResult.error },
+        { status: 200 }
+      );
+    }
 
-    return NextResponse.json({ success: true, message: 'Review saved and auto-replied!' }, { status: 200 });
+    console.log(`✅ Auto-reply posted to Google for review: ${newReview.id}`);
+
+    return NextResponse.json({ success: true, message: 'Review saved and auto-replied on Google!' }, { status: 200 });
 
   } catch (error) {
     console.error('Google Webhook Error:', error instanceof Error ? error.message : 'unknown');
