@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 import {
   Sparkles, BarChart3, MessageSquare, RefreshCw,
   ThumbsUp, Copy, CheckCircle, Clock, Check, X, Settings2,
-  Briefcase, Smile, Heart, UserCheck, FlaskConical, Send
+  Briefcase, Smile, Heart, UserCheck, FlaskConical, Send,
+  ChevronDown, ChevronUp
 } from 'lucide-react';
 import {
   getAutoReplyMode,
@@ -14,6 +15,8 @@ import {
   rejectPendingReply,
   generateTestReply,
 } from './actions';
+
+type ToneValue = 'Professional' | 'Friendly' | 'Empathetic' | 'Formal';
 
 export default function AIReplyCenterPage() {
   const [stats, setStats] = useState({
@@ -39,7 +42,7 @@ export default function AIReplyCenterPage() {
   const [pendingActionId, setPendingActionId] = useState<string | null>(null);
 
   // ✅ NAYA — "Test AI Generator" widget state
-  const [testTone, setTestTone] = useState<'Professional' | 'Friendly' | 'Empathetic' | 'Formal'>('Professional');
+  const [testTone, setTestTone] = useState<ToneValue>('Professional');
   const [testLanguage, setTestLanguage] = useState('English');
   const [testLength, setTestLength] = useState<'Short' | 'Medium' | 'Long'>('Medium');
   const [testAddEmojis, setTestAddEmojis] = useState(true);
@@ -48,6 +51,21 @@ export default function AIReplyCenterPage() {
   const [isTestGenerating, setIsTestGenerating] = useState(false);
   const [testCopied, setTestCopied] = useState(false);
   const [testPosted, setTestPosted] = useState(false);
+
+  // ✅ NAYA — "Select Reply Tone" cards ab accordion hain: click karne se
+  // wo tone select bhi hota hai AUR expand/collapse bhi hota hai. Har tone
+  // ka apna alag rule/condition ho sakta hai (jaise "sirf 1-2 star ke liye",
+  // "refund/complaint keyword aaye to isi tone se reply karo"), jo active
+  // mode (Manual/Draft/Auto) ke andar hi apply hota hai — mode khud nahi
+  // badalta, sirf uske andar ka content is rule se guide hota hai.
+  const [expandedTones, setExpandedTones] = useState<Partial<Record<ToneValue, boolean>>>({});
+  const [toneRules, setToneRules] = useState<Record<ToneValue, string>>({
+    Professional: '',
+    Friendly: '',
+    Empathetic: '',
+    Formal: '',
+  });
+  const [toneRuleSaved, setToneRuleSaved] = useState<ToneValue | null>(null);
 
   // ✅ Theme state – reads from localStorage
   const [theme, setTheme] = useState<"light" | "dark">("dark");
@@ -59,6 +77,17 @@ export default function AIReplyCenterPage() {
     }
     const savedRules = localStorage.getItem("aiReplyRules");
     if (savedRules) setManualRules(savedRules);
+
+    // ✅ NAYA — saved per-tone rules load karo
+    const savedToneRules = localStorage.getItem("aiReplyToneRules");
+    if (savedToneRules) {
+      try {
+        const parsed = JSON.parse(savedToneRules);
+        setToneRules((prev) => ({ ...prev, ...parsed }));
+      } catch {
+        // corrupt data — ignore, defaults use ho jayenge
+      }
+    }
   }, []);
 
   useEffect(() => {
@@ -97,10 +126,18 @@ export default function AIReplyCenterPage() {
   const handleGenerateReply = async () => {
     setIsGenerating(true);
     try {
+      // ✅ NAYA — manual free-text rules + currently selected tone ka apna
+      // rule, dono ko combine karke bhejte hain. Ye Manual mode ke "AI Review
+      // Reply Generator" box se generate hota hai, isliye yahi is mode ka
+      // "kaise" wala hissa hai.
+      const combinedTemplate = [manualRules, toneRules[testTone]]
+        .filter((t) => t && t.trim())
+        .join(' ');
+
       const res = await fetch('/api/standard/ai-reply-center/generate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reviewText, template: manualRules || undefined }),
+        body: JSON.stringify({ reviewText, template: combinedTemplate || undefined }),
       });
       const data = await res.json();
       if (data.success) {
@@ -132,6 +169,21 @@ export default function AIReplyCenterPage() {
     setTimeout(() => setRulesSaved(false), 2000);
   };
 
+  // ✅ NAYA — Tone card pe click: select bhi karo, expand/collapse bhi karo
+  const handleToneCardClick = (toneValue: ToneValue) => {
+    setTestTone(toneValue);
+    setExpandedTones((prev) => ({ ...prev, [toneValue]: !prev[toneValue] }));
+  };
+
+  // ✅ NAYA — Ek specific tone ka rule save karo (localStorage me sab tones
+  // ka combined object rehta hai)
+  const handleSaveToneRule = (toneValue: ToneValue) => {
+    const updated = { ...toneRules };
+    localStorage.setItem('aiReplyToneRules', JSON.stringify(updated));
+    setToneRuleSaved(toneValue);
+    setTimeout(() => setToneRuleSaved(null), 2000);
+  };
+
   const handleApprove = async (reviewId: string) => {
     setPendingActionId(reviewId);
     const finalText = editingText[reviewId] || '';
@@ -161,7 +213,16 @@ export default function AIReplyCenterPage() {
     setIsTestGenerating(true);
     setTestPosted(false);
     try {
-      const result = await generateTestReply(testReviewText, testTone, testLanguage, testLength, testAddEmojis);
+      // ✅ NAYA — selected tone ka apna rule bhi bhejo, taaki wo backend me
+      // style-guidance ke saath combine ho jaaye
+      const result = await generateTestReply(
+        testReviewText,
+        testTone,
+        testLanguage,
+        testLength,
+        testAddEmojis,
+        toneRules[testTone]
+      );
       if (result.success) {
         setTestGeneratedReply(result.reply || '');
       } else {
@@ -236,6 +297,15 @@ export default function AIReplyCenterPage() {
       desc: 'AI generates & posts replies with no review.',
       activeClasses: 'border-orange-500 bg-orange-500/15 text-orange-400',
     },
+  ];
+
+  // ✅ NAYA — tone card definitions ek jagah, taaki grid aur expanded panels
+  // dono isi se render ho sakein
+  const toneOptions: { value: ToneValue; label: string; icon: any }[] = [
+    { value: 'Professional', label: 'Professional', icon: Briefcase },
+    { value: 'Friendly', label: 'Friendly', icon: Smile },
+    { value: 'Empathetic', label: 'Empathetic', icon: Heart },
+    { value: 'Formal', label: 'Formal', icon: UserCheck },
   ];
 
   return (
@@ -339,32 +409,68 @@ export default function AIReplyCenterPage() {
 
       {/* ✅ NAYA — Test AI Generator widget (tone + advanced options + free-text tester) */}
       <div className={`${bgCard} border rounded-xl p-5 mb-6`}>
-        <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium mb-3`}>
+        <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium mb-1`}>
           <Settings2 size={14} /> Select Reply Tone
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-          {([
-            { value: 'Professional', label: 'Professional', icon: Briefcase },
-            { value: 'Friendly', label: 'Friendly', icon: Smile },
-            { value: 'Empathetic', label: 'Empathetic', icon: Heart },
-            { value: 'Formal', label: 'Formal', icon: UserCheck },
-          ] as const).map((t) => {
+        <p className={`text-xs mb-3 ${textMuted}`}>
+          Click a tone to select it — click again to open its rule settings. Rules you set here apply inside whichever Auto-Reply Mode is active above.
+        </p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+          {toneOptions.map((t) => {
             const Icon = t.icon;
             const active = testTone === t.value;
+            const isOpen = !!expandedTones[t.value];
+            const hasRule = !!toneRules[t.value]?.trim();
             return (
               <button
                 key={t.value}
-                onClick={() => setTestTone(t.value)}
-                className={`flex flex-col items-center justify-center gap-1.5 py-3 rounded-lg border-2 transition-colors ${
+                onClick={() => handleToneCardClick(t.value)}
+                className={`relative flex flex-col items-center justify-center gap-1.5 py-3 rounded-lg border-2 transition-colors ${
                   active ? 'border-indigo-500 bg-indigo-500/15 text-indigo-400' : `border ${inactiveBtn} ${textSecondary}`
                 }`}
               >
+                {hasRule && (
+                  <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-indigo-400" title="Rule set" />
+                )}
                 <Icon size={16} />
                 <span className="text-xs font-medium">{t.label}</span>
+                <span className="flex items-center gap-0.5 text-[10px] opacity-70">
+                  {isOpen ? <ChevronUp size={10} /> : <ChevronDown size={10} />}
+                  {isOpen ? 'Hide rule' : 'Set rule'}
+                </span>
               </button>
             );
           })}
         </div>
+
+        {/* ✅ NAYA — expanded rule panel(s), ek ya zyada tones ek saath khule reh sakte hain */}
+        {toneOptions
+          .filter((t) => expandedTones[t.value])
+          .map((t) => (
+            <div key={t.value} className={`${bgSubCard} border rounded-lg p-4 mb-3`}>
+              <div className={`flex items-center gap-2 text-xs font-medium mb-2 ${textPrimary}`}>
+                <t.icon size={14} /> {t.label} — Rule
+              </div>
+              <p className={`text-xs mb-2 ${textMuted}`}>
+                Optional — describe when this tone should apply (e.g. "use for 1-2 star reviews", "use when the review mentions refund or complaint"). Leave blank to just use this as the default tone.
+              </p>
+              <textarea
+                className={`w-full border rounded-lg p-3 text-sm outline-none mb-3 ${inputBg}`}
+                rows={2}
+                placeholder={`e.g. Use ${t.label} tone for 1-2 star or negative-sentiment reviews.`}
+                value={toneRules[t.value]}
+                onChange={(e) =>
+                  setToneRules((prev) => ({ ...prev, [t.value]: e.target.value }))
+                }
+              />
+              <button
+                onClick={() => handleSaveToneRule(t.value)}
+                className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-1.5 rounded-lg transition-colors"
+              >
+                {toneRuleSaved === t.value ? 'Saved!' : 'Save Rule'}
+              </button>
+            </div>
+          ))}
 
         <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium mb-3`}>
           <Settings2 size={14} /> Advanced Options
