@@ -29,7 +29,8 @@ export async function POST(req: any) {
 
     // ✅ FIX: planType ka sahi price server-side table se pata karo — client
     // se aaya amount is baar bhi trust nahi karna.
-    const expectedPrice = getExpectedPrice(planTier, planType);
+    // ⚠️ ab async — live bumper offer (agar admin ne ON kiya hai) yahi check karta hai
+    const expectedPrice = await getExpectedPrice(planTier, planType);
     if (expectedPrice === null) {
       return NextResponse.json(
         { success: false, error: "Invalid plan type" },
