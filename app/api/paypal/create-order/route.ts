@@ -1,3 +1,5 @@
+// app/api/paypal/create-order/route.ts
+
 import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 import { getExpectedPrice } from "@/lib/planPricing";
@@ -46,7 +48,8 @@ export async function POST(req: Request) {
     const { planType, tier } = await req.json();
     const planTier = tier === "standard" ? "standard" : "basic";
 
-    const amount = getExpectedPrice(planTier, planType);
+    // ⚠️ ab async — live bumper offer + is user ka personal discount (agar hai) yahi check karta hai
+    const amount = await getExpectedPrice(planTier, planType, token.email);
 
     if (amount === null) {
       return NextResponse.json(
