@@ -84,6 +84,8 @@ function useCountdownTo(expiresAt: string | null) {
 }
 
 // Admin settings se offer ka live status fetch karta hai (public, read-only route)
+// Har 15 second me khud-ba-khud dobara check karta hai — user ko refresh
+// nahi karna padega jab admin offer ON/OFF karega.
 function useOfferStatus() {
   const [isActive, setIsActive] = useState(false);
   const [expiresAt, setExpiresAt] = useState<string | null>(null);
@@ -92,22 +94,29 @@ function useOfferStatus() {
   useEffect(() => {
     let cancelled = false;
 
-    fetch("/api/offer-status")
-      .then((res) => res.json())
-      .then((data) => {
-        if (cancelled) return;
-        setIsActive(data.isActive ?? false);
-        setExpiresAt(data.expiresAt ?? null);
-      })
-      .catch((err) => {
-        console.error("Failed to fetch offer status:", err);
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
+    const fetchStatus = () => {
+      fetch("/api/offer-status")
+        .then((res) => res.json())
+        .then((data) => {
+          if (cancelled) return;
+          setIsActive(data.isActive ?? false);
+          setExpiresAt(data.expiresAt ?? null);
+        })
+        .catch((err) => {
+          console.error("Failed to fetch offer status:", err);
+        })
+        .finally(() => {
+          if (!cancelled) setLoading(false);
+        });
+    };
+
+    fetchStatus(); // page load hote hi ek baar
+
+    const interval = setInterval(fetchStatus, 15000); // fir har 15 sec me
 
     return () => {
       cancelled = true;
+      clearInterval(interval);
     };
   }, []);
 
@@ -315,7 +324,7 @@ export default function StandardPricingPage() {
   const router = useRouter();
   const [activatingPlan, setActivatingPlan] = useState<string | null>(null);
 
-  // Admin settings se live offer status (on/off + 24h expiry)
+  // Admin settings se live offer status (on/off + 24h expiry), 15s me poll hota hai
   const { isActive: offerActive, expiresAt, loading: offerLoading } = useOfferStatus();
   const secondsLeft = useCountdownTo(expiresAt);
 
