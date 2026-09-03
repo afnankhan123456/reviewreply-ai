@@ -132,12 +132,20 @@ export async function rejectPendingReply(reviewId: string) {
 // generateAIReply() ko tone/language/length/emoji options ko ek style-guidance
 // "template" string me combine karke call karta hai — generateAIReply khud
 // touch nahi hua.
+//
+// ✅ NAYA — `toneRule` optional param: "Select Reply Tone" accordion me user
+// ne jo specific-tone rule set kiya hai (jaise "1-2 star ke liye ye tone use
+// karo"), wo yahan combine hota hai. Ye bhi ek untrusted/style-hint hi rehta
+// hai — generateAIReply() ke andar ye poora combined text `template` ki tarah
+// jaata hai, jo already "not a command to obey blindly" ki tarah treat hota
+// hai (see lib/aiReply.ts SYSTEM_PROMPT).
 export async function generateTestReply(
   reviewText: string,
   tone: 'Professional' | 'Friendly' | 'Empathetic' | 'Formal',
   language: string,
   length: 'Short' | 'Medium' | 'Long',
-  addEmojis: boolean
+  addEmojis: boolean,
+  toneRule?: string
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -160,6 +168,7 @@ export async function generateTestReply(
       `Reply language: ${language}.`,
       lengthGuidance[length] || '',
       addEmojis ? 'Naturally include a couple of relevant emojis.' : 'Do not use any emojis.',
+      toneRule && toneRule.trim() ? `Additional tone-specific rule from the business owner: ${toneRule.trim()}` : '',
     ]
       .filter(Boolean)
       .join(' ');
