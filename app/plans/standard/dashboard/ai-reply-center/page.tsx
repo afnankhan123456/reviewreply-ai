@@ -17,6 +17,7 @@ import {
 } from './actions';
 
 type ToneValue = 'Professional' | 'Friendly' | 'Empathetic' | 'Formal';
+type ModeValue = 'manual' | 'draft' | 'auto';
 
 export default function AIReplyCenterPage() {
   const [stats, setStats] = useState({
@@ -31,7 +32,7 @@ export default function AIReplyCenterPage() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  const [mode, setMode] = useState<'manual' | 'draft' | 'auto'>('manual');
+  const [mode, setMode] = useState<ModeValue>('manual');
   const [savingMode, setSavingMode] = useState(false);
 
   const [manualRules, setManualRules] = useState('');
@@ -41,7 +42,7 @@ export default function AIReplyCenterPage() {
   const [editingText, setEditingText] = useState<Record<string, string>>({});
   const [pendingActionId, setPendingActionId] = useState<string | null>(null);
 
-  // ✅ NAYA — "Test AI Generator" widget state
+  // "Test AI Generator" widget state
   const [testTone, setTestTone] = useState<ToneValue>('Professional');
   const [testLanguage, setTestLanguage] = useState('English');
   const [testLength, setTestLength] = useState<'Short' | 'Medium' | 'Long'>('Medium');
@@ -52,12 +53,10 @@ export default function AIReplyCenterPage() {
   const [testCopied, setTestCopied] = useState(false);
   const [testPosted, setTestPosted] = useState(false);
 
-  // ✅ NAYA — "Select Reply Tone" cards ab accordion hain: click karne se
-  // wo tone select bhi hota hai AUR expand/collapse bhi hota hai. Har tone
-  // ka apna alag rule/condition ho sakta hai (jaise "sirf 1-2 star ke liye",
-  // "refund/complaint keyword aaye to isi tone se reply karo"), jo active
-  // mode (Manual/Draft/Auto) ke andar hi apply hota hai — mode khud nahi
-  // badalta, sirf uske andar ka content is rule se guide hota hai.
+  // "Select Reply Tone" cards accordion hain: click karne se wo tone
+  // select bhi hota hai AUR expand/collapse bhi hota hai. Har tone ka apna
+  // alag rule/condition ho sakta hai, jo active mode (Manual/Draft/Auto) ke
+  // andar hi apply hota hai.
   const [expandedTones, setExpandedTones] = useState<Partial<Record<ToneValue, boolean>>>({});
   const [toneRules, setToneRules] = useState<Record<ToneValue, string>>({
     Professional: '',
@@ -67,7 +66,16 @@ export default function AIReplyCenterPage() {
   });
   const [toneRuleSaved, setToneRuleSaved] = useState<ToneValue | null>(null);
 
-  // ✅ Theme state – reads from localStorage
+  // ✅ NAYA — Draft aur Auto mode ke liye "Save" ke baad poora tone/advanced
+  // settings section hide ho jaata hai. Dobara edit karne ke liye upar wale
+  // "Auto-Reply Mode" me usi (already active) mode button pe dobara click
+  // karo — wo panel wapas khol dega. true = saved/hidden, false = open.
+  const [modeSettingsSaved, setModeSettingsSaved] = useState<{ draft: boolean; auto: boolean }>({
+    draft: false,
+    auto: false,
+  });
+
+  // Theme state – reads from localStorage
   const [theme, setTheme] = useState<"light" | "dark">("dark");
 
   useEffect(() => {
@@ -78,7 +86,7 @@ export default function AIReplyCenterPage() {
     const savedRules = localStorage.getItem("aiReplyRules");
     if (savedRules) setManualRules(savedRules);
 
-    // ✅ NAYA — saved per-tone rules load karo
+    // saved per-tone rules load karo
     const savedToneRules = localStorage.getItem("aiReplyToneRules");
     if (savedToneRules) {
       try {
@@ -88,11 +96,37 @@ export default function AIReplyCenterPage() {
         // corrupt data — ignore, defaults use ho jayenge
       }
     }
+
+    // ✅ NAYA — Draft/Auto settings pehle se saved hain ya nahi, ye load karo
+    // taaki page reload/navigate karne par bhi collapsed state yaad rahe
+    const draftSaved = localStorage.getItem("aiReplyDraftSettingsSaved") === "true";
+    const autoSaved = localStorage.getItem("aiReplyAutoSettingsSaved") === "true";
+    setModeSettingsSaved({ draft: draftSaved, auto: autoSaved });
   }, []);
 
   useEffect(() => {
     fetchDashboardData();
   }, []);
+
+  // ✅ NAYA — jab bhi mode Draft ya Auto ho jaaye, uske liye pehle se saved
+  // language/length/emoji/tone-rules (agar hain) load kar do, taaki panel
+  // dobara khulne par sahi values dikhein.
+  useEffect(() => {
+    if (mode !== 'draft' && mode !== 'auto') return;
+    const key = mode === 'draft' ? 'aiReplyDraftSettings' : 'aiReplyAutoSettings';
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.testLanguage) setTestLanguage(parsed.testLanguage);
+        if (parsed.testLength) setTestLength(parsed.testLength);
+        if (typeof parsed.testAddEmojis === 'boolean') setTestAddEmojis(parsed.testAddEmojis);
+        if (parsed.toneRules) setToneRules((prev) => ({ ...prev, ...parsed.toneRules }));
+      } catch {
+        // ignore corrupt data
+      }
+    }
+  }, [mode]);
 
   const fetchDashboardData = async () => {
     try {
@@ -126,10 +160,9 @@ export default function AIReplyCenterPage() {
   const handleGenerateReply = async () => {
     setIsGenerating(true);
     try {
-      // ✅ NAYA — manual free-text rules + currently selected tone ka apna
-      // rule, dono ko combine karke bhejte hain. Ye Manual mode ke "AI Review
-      // Reply Generator" box se generate hota hai, isliye yahi is mode ka
-      // "kaise" wala hissa hai.
+      // manual free-text rules + currently selected tone ka apna rule, dono
+      // combine karke bhejte hain. Ye Manual mode se generate hota hai —
+      // isi call par 500-wali monthly quota me se 1 count hota hai.
       const combinedTemplate = [manualRules, toneRules[testTone]]
         .filter((t) => t && t.trim())
         .join(' ');
@@ -152,7 +185,7 @@ export default function AIReplyCenterPage() {
     }
   };
 
-  const handleModeChange = async (newMode: 'manual' | 'draft' | 'auto') => {
+  const handleModeChange = async (newMode: ModeValue) => {
     setSavingMode(true);
     const result = await setAutoReplyMode(newMode);
     if (result.success) {
@@ -163,25 +196,54 @@ export default function AIReplyCenterPage() {
     setSavingMode(false);
   };
 
+  // ✅ NAYA — "Auto-Reply Mode" ke teen buttons ka click handler.
+  // - Naye mode pe click → normal mode-switch (backend call)
+  // - Usi mode pe dobara click jo already active hai AUR Draft/Auto hai →
+  //   koi backend call nahi, sirf uska settings panel (jo Save karne par
+  //   hide ho gaya tha) wapas khol do
+  const handleModeButtonClick = (value: ModeValue) => {
+    if (value === mode && (value === 'draft' || value === 'auto')) {
+      setModeSettingsSaved((prev) => ({ ...prev, [value]: false }));
+      return;
+    }
+    handleModeChange(value);
+  };
+
   const handleSaveRules = () => {
     localStorage.setItem('aiReplyRules', manualRules);
     setRulesSaved(true);
     setTimeout(() => setRulesSaved(false), 2000);
   };
 
-  // ✅ NAYA — Tone card pe click: select bhi karo, expand/collapse bhi karo
+  // Tone card pe click: select bhi karo, expand/collapse bhi karo
   const handleToneCardClick = (toneValue: ToneValue) => {
     setTestTone(toneValue);
     setExpandedTones((prev) => ({ ...prev, [toneValue]: !prev[toneValue] }));
   };
 
-  // ✅ NAYA — Ek specific tone ka rule save karo (localStorage me sab tones
-  // ka combined object rehta hai)
+  // Ek specific tone ka rule save karo (localStorage me sab tones ka
+  // combined object rehta hai)
   const handleSaveToneRule = (toneValue: ToneValue) => {
-    const updated = { ...toneRules };
-    localStorage.setItem('aiReplyToneRules', JSON.stringify(updated));
+    localStorage.setItem('aiReplyToneRules', JSON.stringify(toneRules));
     setToneRuleSaved(toneValue);
     setTimeout(() => setToneRuleSaved(null), 2000);
+  };
+
+  // ✅ NAYA — Draft ya Auto mode ke "Save" button ka handler. Current
+  // tone-rules + language/length/emoji ko us mode ke liye save karta hai
+  // (background draft/auto-post generation isi ko follow karega), aur
+  // poora settings panel hide/collapse kar deta hai.
+  const handleSaveModeSettings = (modeKey: 'draft' | 'auto') => {
+    const settingsKey = modeKey === 'draft' ? 'aiReplyDraftSettings' : 'aiReplyAutoSettings';
+    const savedFlagKey = modeKey === 'draft' ? 'aiReplyDraftSettingsSaved' : 'aiReplyAutoSettingsSaved';
+
+    localStorage.setItem(
+      settingsKey,
+      JSON.stringify({ toneRules, testLanguage, testLength, testAddEmojis })
+    );
+    localStorage.setItem(savedFlagKey, 'true');
+
+    setModeSettingsSaved((prev) => ({ ...prev, [modeKey]: true }));
   };
 
   const handleApprove = async (reviewId: string) => {
@@ -207,14 +269,12 @@ export default function AIReplyCenterPage() {
     setPendingActionId(null);
   };
 
-  // ✅ NAYA — "Test AI Generator" widget handlers
+  // "Test AI Generator" widget handlers
   const handleGenerateTestReply = async () => {
     if (!testReviewText.trim()) return;
     setIsTestGenerating(true);
     setTestPosted(false);
     try {
-      // ✅ NAYA — selected tone ka apna rule bhi bhejo, taaki wo backend me
-      // style-guidance ke saath combine ho jaaye
       const result = await generateTestReply(
         testReviewText,
         testTone,
@@ -242,10 +302,9 @@ export default function AIReplyCenterPage() {
     setTimeout(() => setTestCopied(false), 2000);
   };
 
-  // Ye "Test AI Generator" hai — koi real review yahan select nahi hota
-  // (sirf free-paste text), isliye "Post" seedha Google pe kuch post nahi
-  // karta. Ye reply ko copy karke user ko batata hai ki actual posting
-  // "Reviews" tab se, us specific review pe hoti hai.
+  // Test Generator me koi real review linked nahi hoti (sirf free-paste
+  // text), isliye "Post" seedha Google pe kuch post nahi karta — sirf copy
+  // karta hai, taaki user use Reviews tab se us review par post kar sake.
   const handlePostTestReply = () => {
     if (!testGeneratedReply) return;
     navigator.clipboard.writeText(testGeneratedReply);
@@ -263,7 +322,7 @@ export default function AIReplyCenterPage() {
     );
   }
 
-  // ✅ Common conditional classes
+  // Common conditional classes
   const bgCard = theme === "light" ? "bg-white border-gray-200" : "bg-[#11141C] border-[#1F2430]";
   const bgSubCard = theme === "light" ? "bg-gray-50 border-gray-200" : "bg-[#181D27] border-[#2A303C]";
   const textPrimary = theme === "light" ? "text-gray-900" : "text-white";
@@ -272,9 +331,8 @@ export default function AIReplyCenterPage() {
   const inputBg = theme === "light" ? "bg-white border-gray-300 text-gray-900" : "bg-[#181D27] border-[#2A303C] text-gray-300";
   const inactiveBtn = theme === "light" ? "border-gray-200 hover:bg-gray-50" : "border-[#2A303C] hover:bg-[#181D27]";
 
-  // ✅ Har mode ka apna alag color — sirf selected wala dark/highlighted dikhega
   const modeOptions: {
-    value: 'manual' | 'draft' | 'auto';
+    value: ModeValue;
     label: string;
     desc: string;
     activeClasses: string;
@@ -299,14 +357,19 @@ export default function AIReplyCenterPage() {
     },
   ];
 
-  // ✅ NAYA — tone card definitions ek jagah, taaki grid aur expanded panels
-  // dono isi se render ho sakein
   const toneOptions: { value: ToneValue; label: string; icon: any }[] = [
     { value: 'Professional', label: 'Professional', icon: Briefcase },
     { value: 'Friendly', label: 'Friendly', icon: Smile },
     { value: 'Empathetic', label: 'Empathetic', icon: Heart },
     { value: 'Formal', label: 'Formal', icon: UserCheck },
   ];
+
+  // ✅ NAYA — "Select Reply Tone" section ab sirf 2 cases me dikhta hai:
+  // 1) Mode Manual ho → hamesha dikhta hai (Test Generator ke saath)
+  // 2) Mode Draft/Auto ho AUR uske liye settings abhi "saved/hidden" state
+  //    me na ho → dikhta hai (Save button ke saath); Save karte hi hide.
+  const showToneSection =
+    mode === 'manual' || ((mode === 'draft' || mode === 'auto') && !modeSettingsSaved[mode]);
 
   return (
     <div className={`flex-1 flex flex-col p-6 overflow-y-auto transition-colors duration-300 ${
@@ -392,7 +455,7 @@ export default function AIReplyCenterPage() {
           {modeOptions.map((opt) => (
             <button
               key={opt.value}
-              onClick={() => handleModeChange(opt.value)}
+              onClick={() => handleModeButtonClick(opt.value)}
               disabled={savingMode}
               className={`text-left p-3 rounded-lg border-2 transition-colors disabled:opacity-50 ${
                 mode === opt.value ? opt.activeClasses : `border ${inactiveBtn} ${textSecondary}`
@@ -407,150 +470,171 @@ export default function AIReplyCenterPage() {
         </div>
       </div>
 
-      {/* ✅ NAYA — Test AI Generator widget (tone + advanced options + free-text tester) */}
-      <div className={`${bgCard} border rounded-xl p-5 mb-6`}>
-        <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium mb-1`}>
-          <Settings2 size={14} /> Select Reply Tone
-        </div>
-        <p className={`text-xs mb-3 ${textMuted}`}>
-          Click a tone to select it — click again to open its rule settings. Rules you set here apply inside whichever Auto-Reply Mode is active above.
-        </p>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
-          {toneOptions.map((t) => {
-            const Icon = t.icon;
-            const active = testTone === t.value;
-            const isOpen = !!expandedTones[t.value];
-            const hasRule = !!toneRules[t.value]?.trim();
-            return (
-              <button
-                key={t.value}
-                onClick={() => handleToneCardClick(t.value)}
-                className={`relative flex flex-col items-center justify-center gap-1.5 py-3 rounded-lg border-2 transition-colors ${
-                  active ? 'border-indigo-500 bg-indigo-500/15 text-indigo-400' : `border ${inactiveBtn} ${textSecondary}`
-                }`}
-              >
-                {hasRule && (
-                  <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-indigo-400" title="Rule set" />
-                )}
-                <Icon size={16} />
-                <span className="text-xs font-medium">{t.label}</span>
-                <span className="flex items-center gap-0.5 text-[10px] opacity-70">
-                  {isOpen ? <ChevronUp size={10} /> : <ChevronDown size={10} />}
-                  {isOpen ? 'Hide rule' : 'Set rule'}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+      {/* "Select Reply Tone" + Advanced Options — mode ke hisaab se dikhta/hide hota hai */}
+      {showToneSection && (
+        <div className={`${bgCard} border rounded-xl p-5 mb-6`}>
+          <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium mb-1`}>
+            <Settings2 size={14} /> Select Reply Tone
+          </div>
+          <p className={`text-xs mb-3 ${textMuted}`}>
+            Click a tone to select it — click again to open its rule settings. Rules you set here apply inside whichever Auto-Reply Mode is active above.
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-3">
+            {toneOptions.map((t) => {
+              const Icon = t.icon;
+              const active = testTone === t.value;
+              const isOpen = !!expandedTones[t.value];
+              const hasRule = !!toneRules[t.value]?.trim();
+              return (
+                <button
+                  key={t.value}
+                  onClick={() => handleToneCardClick(t.value)}
+                  className={`relative flex flex-col items-center justify-center gap-1.5 py-3 rounded-lg border-2 transition-colors ${
+                    active ? 'border-indigo-500 bg-indigo-500/15 text-indigo-400' : `border ${inactiveBtn} ${textSecondary}`
+                  }`}
+                >
+                  {hasRule && (
+                    <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-indigo-400" title="Rule set" />
+                  )}
+                  <Icon size={16} />
+                  <span className="text-xs font-medium">{t.label}</span>
+                  <span className="flex items-center gap-0.5 text-[10px] opacity-70">
+                    {isOpen ? <ChevronUp size={10} /> : <ChevronDown size={10} />}
+                    {isOpen ? 'Hide rule' : 'Set rule'}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
 
-        {/* ✅ NAYA — expanded rule panel(s), ek ya zyada tones ek saath khule reh sakte hain */}
-        {toneOptions
-          .filter((t) => expandedTones[t.value])
-          .map((t) => (
-            <div key={t.value} className={`${bgSubCard} border rounded-lg p-4 mb-3`}>
-              <div className={`flex items-center gap-2 text-xs font-medium mb-2 ${textPrimary}`}>
-                <t.icon size={14} /> {t.label} — Rule
+          {/* expanded rule panel(s) — ek ya zyada tones ek saath khule reh sakte hain */}
+          {toneOptions
+            .filter((t) => expandedTones[t.value])
+            .map((t) => (
+              <div key={t.value} className={`${bgSubCard} border rounded-lg p-4 mb-3`}>
+                <div className={`flex items-center gap-2 text-xs font-medium mb-2 ${textPrimary}`}>
+                  <t.icon size={14} /> {t.label} — Rule
+                </div>
+                <p className={`text-xs mb-2 ${textMuted}`}>
+                  Optional — describe when this tone should apply (e.g. "use for 1-2 star reviews", "use when the review mentions refund or complaint"). Leave blank to just use this as the default tone.
+                </p>
+                <textarea
+                  className={`w-full border rounded-lg p-3 text-sm outline-none mb-3 ${inputBg}`}
+                  rows={2}
+                  placeholder={`e.g. Use ${t.label} tone for 1-2 star or negative-sentiment reviews.`}
+                  value={toneRules[t.value]}
+                  onChange={(e) =>
+                    setToneRules((prev) => ({ ...prev, [t.value]: e.target.value }))
+                  }
+                />
+                <button
+                  onClick={() => handleSaveToneRule(t.value)}
+                  className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-1.5 rounded-lg transition-colors"
+                >
+                  {toneRuleSaved === t.value ? 'Saved!' : 'Save Rule'}
+                </button>
               </div>
-              <p className={`text-xs mb-2 ${textMuted}`}>
-                Optional — describe when this tone should apply (e.g. "use for 1-2 star reviews", "use when the review mentions refund or complaint"). Leave blank to just use this as the default tone.
-              </p>
+            ))}
+
+          <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium mb-3`}>
+            <Settings2 size={14} /> Advanced Options
+          </div>
+          <div className="flex flex-wrap items-center gap-3 mb-5">
+            <select
+              className={`border rounded-lg px-3 py-2 text-xs outline-none ${inputBg}`}
+              value={testLanguage}
+              onChange={(e) => setTestLanguage(e.target.value)}
+            >
+              <option value="English">🇬🇧 English</option>
+              <option value="Hindi">🇮🇳 Hindi</option>
+              <option value="Hinglish">🇮🇳 Hinglish</option>
+              <option value="Spanish">🇪🇸 Spanish</option>
+              <option value="French">🇫🇷 French</option>
+            </select>
+
+            <select
+              className={`border rounded-lg px-3 py-2 text-xs outline-none ${inputBg}`}
+              value={testLength}
+              onChange={(e) => setTestLength(e.target.value as 'Short' | 'Medium' | 'Long')}
+            >
+              <option value="Short">Short (1-2 lines)</option>
+              <option value="Medium">Medium (3-4 lines)</option>
+              <option value="Long">Long (5-6 lines)</option>
+            </select>
+
+            <label className={`flex items-center gap-2 text-xs ${textSecondary}`}>
+              <input
+                type="checkbox"
+                checked={testAddEmojis}
+                onChange={(e) => setTestAddEmojis(e.target.checked)}
+              />
+              Add Emojis ✨
+            </label>
+          </div>
+
+          {/* Manual mode: Test AI Generator (hamesha khula, koi save/hide nahi —
+              generate karne par hi quota count hoti hai) */}
+          {mode === 'manual' && (
+            <>
+              <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium mb-3`}>
+                <FlaskConical size={14} /> Test AI Generator
+              </div>
               <textarea
                 className={`w-full border rounded-lg p-3 text-sm outline-none mb-3 ${inputBg}`}
-                rows={2}
-                placeholder={`e.g. Use ${t.label} tone for 1-2 star or negative-sentiment reviews.`}
-                value={toneRules[t.value]}
-                onChange={(e) =>
-                  setToneRules((prev) => ({ ...prev, [t.value]: e.target.value }))
-                }
+                rows={3}
+                placeholder="Paste any customer review here..."
+                value={testReviewText}
+                onChange={(e) => setTestReviewText(e.target.value)}
               />
-              <button
-                onClick={() => handleSaveToneRule(t.value)}
-                className="bg-indigo-600 hover:bg-indigo-500 text-white text-xs px-3 py-1.5 rounded-lg transition-colors"
-              >
-                {toneRuleSaved === t.value ? 'Saved!' : 'Save Rule'}
-              </button>
-            </div>
-          ))}
 
-        <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium mb-3`}>
-          <Settings2 size={14} /> Advanced Options
+              <div className="flex flex-wrap gap-2">
+                <button
+                  className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+                  onClick={handleGenerateTestReply}
+                  disabled={isTestGenerating || !testReviewText.trim()}
+                >
+                  <Sparkles size={14} /> {isTestGenerating ? 'Generating...' : 'Generate AI Reply'}
+                </button>
+                <button
+                  className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-500 text-white text-sm px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+                  onClick={handleCopyTestReply}
+                  disabled={!testGeneratedReply}
+                >
+                  <Copy size={14} /> {testCopied ? 'Copied!' : 'Copy'}
+                </button>
+                <button
+                  className="flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-500 text-white text-sm px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+                  onClick={handlePostTestReply}
+                  disabled={!testGeneratedReply}
+                  title="Test generator me koi real review linked nahi hai — ye reply copy kar deta hai taaki tum use Reviews tab se us review par post kar sako."
+                >
+                  <Send size={14} /> {testPosted ? 'Copied for posting!' : 'Post'}
+                </button>
+              </div>
+
+              {testGeneratedReply && (
+                <div className={`${bgSubCard} border rounded-lg p-4 mt-3`}>
+                  <span className={`text-xs ${textSecondary}`}>AI Generated Reply:</span>
+                  <p className={`text-sm leading-relaxed mt-1 ${textPrimary}`}>{testGeneratedReply}</p>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* ✅ NAYA — Draft/Auto mode: koi Test Generator nahi, sirf ek Save
+              button. Save karte hi ye poora section hide ho jaayega — dobara
+              edit karne ke liye upar "Auto-Reply Mode" me isi (active) mode
+              button pe dobara click karo. */}
+          {(mode === 'draft' || mode === 'auto') && (
+            <button
+              onClick={() => handleSaveModeSettings(mode)}
+              className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm px-4 py-2 rounded-lg transition-colors"
+            >
+              Save {mode === 'draft' ? 'Draft' : 'Auto-Reply'} Settings
+            </button>
+          )}
         </div>
-        <div className="flex flex-wrap items-center gap-3 mb-5">
-          <select
-            className={`border rounded-lg px-3 py-2 text-xs outline-none ${inputBg}`}
-            value={testLanguage}
-            onChange={(e) => setTestLanguage(e.target.value)}
-          >
-            <option value="English">🇬🇧 English</option>
-            <option value="Hindi">🇮🇳 Hindi</option>
-            <option value="Hinglish">🇮🇳 Hinglish</option>
-            <option value="Spanish">🇪🇸 Spanish</option>
-            <option value="French">🇫🇷 French</option>
-          </select>
-
-          <select
-            className={`border rounded-lg px-3 py-2 text-xs outline-none ${inputBg}`}
-            value={testLength}
-            onChange={(e) => setTestLength(e.target.value as 'Short' | 'Medium' | 'Long')}
-          >
-            <option value="Short">Short (1-2 lines)</option>
-            <option value="Medium">Medium (3-4 lines)</option>
-            <option value="Long">Long (5-6 lines)</option>
-          </select>
-
-          <label className={`flex items-center gap-2 text-xs ${textSecondary}`}>
-            <input
-              type="checkbox"
-              checked={testAddEmojis}
-              onChange={(e) => setTestAddEmojis(e.target.checked)}
-            />
-            Add Emojis ✨
-          </label>
-        </div>
-
-        <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium mb-3`}>
-          <FlaskConical size={14} /> Test AI Generator
-        </div>
-        <textarea
-          className={`w-full border rounded-lg p-3 text-sm outline-none mb-3 ${inputBg}`}
-          rows={3}
-          placeholder="Paste any customer review here..."
-          value={testReviewText}
-          onChange={(e) => setTestReviewText(e.target.value)}
-        />
-
-        <div className="flex flex-wrap gap-2">
-          <button
-            className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
-            onClick={handleGenerateTestReply}
-            disabled={isTestGenerating || !testReviewText.trim()}
-          >
-            <Sparkles size={14} /> {isTestGenerating ? 'Generating...' : 'Generate AI Reply'}
-          </button>
-          <button
-            className="flex items-center justify-center gap-2 bg-green-600 hover:bg-green-500 text-white text-sm px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
-            onClick={handleCopyTestReply}
-            disabled={!testGeneratedReply}
-          >
-            <Copy size={14} /> {testCopied ? 'Copied!' : 'Copy'}
-          </button>
-          <button
-            className="flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-500 text-white text-sm px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
-            onClick={handlePostTestReply}
-            disabled={!testGeneratedReply}
-            title="Test generator me koi real review linked nahi hai — ye reply copy kar deta hai taaki tum use Reviews tab se us review par post kar sako."
-          >
-            <Send size={14} /> {testPosted ? 'Copied for posting!' : 'Post'}
-          </button>
-        </div>
-
-        {testGeneratedReply && (
-          <div className={`${bgSubCard} border rounded-lg p-4 mt-3`}>
-            <span className={`text-xs ${textSecondary}`}>AI Generated Reply:</span>
-            <p className={`text-sm leading-relaxed mt-1 ${textPrimary}`}>{testGeneratedReply}</p>
-          </div>
-        )}
-      </div>
+      )}
 
       {/* Manual mode: rule/style-guidance box — sirf Manual select hone par dikhega */}
       {mode === 'manual' && (
@@ -699,6 +783,3 @@ export default function AIReplyCenterPage() {
     </div>
   );
 }
-
-
-
