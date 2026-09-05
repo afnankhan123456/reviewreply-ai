@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Sparkles, BarChart3, MessageSquare, RefreshCw,
-  ThumbsUp, Copy, CheckCircle, Clock, Check, X, Settings2,
+  ThumbsUp, Copy, Clock, Check, X, Settings2,
   Briefcase, Smile, Heart, UserCheck, FlaskConical, Send,
   ChevronDown, ChevronUp
 } from 'lucide-react';
@@ -27,16 +27,10 @@ export default function AIReplyCenterPage() {
     positive: 0,
     negative: 0,
   });
-  const [reviewText, setReviewText] = useState('');
-  const [generatedReply, setGeneratedReply] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
   const [mode, setMode] = useState<ModeValue>('manual');
   const [savingMode, setSavingMode] = useState(false);
-
-  const [manualRules, setManualRules] = useState('');
-  const [rulesSaved, setRulesSaved] = useState(false);
 
   const [pendingReplies, setPendingReplies] = useState<any[]>([]);
   const [editingText, setEditingText] = useState<Record<string, string>>({});
@@ -66,8 +60,8 @@ export default function AIReplyCenterPage() {
   });
   const [toneRuleSaved, setToneRuleSaved] = useState<ToneValue | null>(null);
 
-  // ✅ NAYA — Draft aur Auto mode ke liye "Save" ke baad poora tone/advanced
-  // settings section hide ho jaata hai. Dobara edit karne ke liye upar wale
+  // Draft aur Auto mode ke liye "Save" ke baad poora tone/advanced settings
+  // section hide ho jaata hai. Dobara edit karne ke liye upar wale
   // "Auto-Reply Mode" me usi (already active) mode button pe dobara click
   // karo — wo panel wapas khol dega. true = saved/hidden, false = open.
   const [modeSettingsSaved, setModeSettingsSaved] = useState<{ draft: boolean; auto: boolean }>({
@@ -83,8 +77,6 @@ export default function AIReplyCenterPage() {
     if (saved === "light" || saved === "dark") {
       setTheme(saved);
     }
-    const savedRules = localStorage.getItem("aiReplyRules");
-    if (savedRules) setManualRules(savedRules);
 
     // saved per-tone rules load karo
     const savedToneRules = localStorage.getItem("aiReplyToneRules");
@@ -97,8 +89,8 @@ export default function AIReplyCenterPage() {
       }
     }
 
-    // ✅ NAYA — Draft/Auto settings pehle se saved hain ya nahi, ye load karo
-    // taaki page reload/navigate karne par bhi collapsed state yaad rahe
+    // Draft/Auto settings pehle se saved hain ya nahi, ye load karo taaki
+    // page reload/navigate karne par bhi collapsed state yaad rahe
     const draftSaved = localStorage.getItem("aiReplyDraftSettingsSaved") === "true";
     const autoSaved = localStorage.getItem("aiReplyAutoSettingsSaved") === "true";
     setModeSettingsSaved({ draft: draftSaved, auto: autoSaved });
@@ -108,7 +100,7 @@ export default function AIReplyCenterPage() {
     fetchDashboardData();
   }, []);
 
-  // ✅ NAYA — jab bhi mode Draft ya Auto ho jaaye, uske liye pehle se saved
+  // jab bhi mode Draft ya Auto ho jaaye, uske liye pehle se saved
   // language/length/emoji/tone-rules (agar hain) load kar do, taaki panel
   // dobara khulne par sahi values dikhein.
   useEffect(() => {
@@ -157,34 +149,6 @@ export default function AIReplyCenterPage() {
     }
   };
 
-  const handleGenerateReply = async () => {
-    setIsGenerating(true);
-    try {
-      // manual free-text rules + currently selected tone ka apna rule, dono
-      // combine karke bhejte hain. Ye Manual mode se generate hota hai —
-      // isi call par 500-wali monthly quota me se 1 count hota hai.
-      const combinedTemplate = [manualRules, toneRules[testTone]]
-        .filter((t) => t && t.trim())
-        .join(' ');
-
-      const res = await fetch('/api/standard/ai-reply-center/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ reviewText, template: combinedTemplate || undefined }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setGeneratedReply(data.reply);
-      } else {
-        alert(data.error || 'Failed to generate reply');
-      }
-    } catch (error) {
-      alert('Error generating reply');
-    } finally {
-      setIsGenerating(false);
-    }
-  };
-
   const handleModeChange = async (newMode: ModeValue) => {
     setSavingMode(true);
     const result = await setAutoReplyMode(newMode);
@@ -196,7 +160,7 @@ export default function AIReplyCenterPage() {
     setSavingMode(false);
   };
 
-  // ✅ NAYA — "Auto-Reply Mode" ke teen buttons ka click handler.
+  // "Auto-Reply Mode" ke teen buttons ka click handler.
   // - Naye mode pe click → normal mode-switch (backend call)
   // - Usi mode pe dobara click jo already active hai AUR Draft/Auto hai →
   //   koi backend call nahi, sirf uska settings panel (jo Save karne par
@@ -207,12 +171,6 @@ export default function AIReplyCenterPage() {
       return;
     }
     handleModeChange(value);
-  };
-
-  const handleSaveRules = () => {
-    localStorage.setItem('aiReplyRules', manualRules);
-    setRulesSaved(true);
-    setTimeout(() => setRulesSaved(false), 2000);
   };
 
   // Tone card pe click: select bhi karo, expand/collapse bhi karo
@@ -229,10 +187,10 @@ export default function AIReplyCenterPage() {
     setTimeout(() => setToneRuleSaved(null), 2000);
   };
 
-  // ✅ NAYA — Draft ya Auto mode ke "Save" button ka handler. Current
-  // tone-rules + language/length/emoji ko us mode ke liye save karta hai
-  // (background draft/auto-post generation isi ko follow karega), aur
-  // poora settings panel hide/collapse kar deta hai.
+  // Draft ya Auto mode ke "Save" button ka handler. Current tone-rules +
+  // language/length/emoji ko us mode ke liye save karta hai (background
+  // draft/auto-post generation isi ko follow karega), aur poora settings
+  // panel hide/collapse kar deta hai.
   const handleSaveModeSettings = (modeKey: 'draft' | 'auto') => {
     const settingsKey = modeKey === 'draft' ? 'aiReplyDraftSettings' : 'aiReplyAutoSettings';
     const savedFlagKey = modeKey === 'draft' ? 'aiReplyDraftSettingsSaved' : 'aiReplyAutoSettingsSaved';
@@ -364,8 +322,9 @@ export default function AIReplyCenterPage() {
     { value: 'Formal', label: 'Formal', icon: UserCheck },
   ];
 
-  // ✅ NAYA — "Select Reply Tone" section ab sirf 2 cases me dikhta hai:
-  // 1) Mode Manual ho → hamesha dikhta hai (Test Generator ke saath)
+  // "Select Reply Tone" section ab sirf 2 cases me dikhta hai:
+  // 1) Mode Manual ho → hamesha dikhta hai (Test Generator ke saath) —
+  //    Manual mode me ab BAS yahi section hai, aur koi extra block nahi.
   // 2) Mode Draft/Auto ho AUR uske liye settings abhi "saved/hidden" state
   //    me na ho → dikhta hai (Save button ke saath); Save karte hi hide.
   const showToneSection =
@@ -470,7 +429,10 @@ export default function AIReplyCenterPage() {
         </div>
       </div>
 
-      {/* "Select Reply Tone" + Advanced Options — mode ke hisaab se dikhta/hide hota hai */}
+      {/* "Select Reply Tone" + Advanced Options — mode ke hisaab se dikhta/hide hota hai.
+          Manual mode me ye poora block akela hi rehta hai (Test AI Generator ke saath) —
+          "Your Reply Style / Rules", "AI Review Reply Generator" aur "Recent AI Activity"
+          jaanboojh kar hata diye gaye hain. */}
       {showToneSection && (
         <div className={`${bgCard} border rounded-xl p-5 mb-6`}>
           <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium mb-1`}>
@@ -573,7 +535,8 @@ export default function AIReplyCenterPage() {
           </div>
 
           {/* Manual mode: Test AI Generator (hamesha khula, koi save/hide nahi —
-              generate karne par hi quota count hoti hai) */}
+              generate karne par hi quota count hoti hai). Manual mode me
+              PAGE PAR AB SIRF YAHI content hai (upar mode-selector ke alawa). */}
           {mode === 'manual' && (
             <>
               <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium mb-3`}>
@@ -621,9 +584,9 @@ export default function AIReplyCenterPage() {
             </>
           )}
 
-          {/* ✅ NAYA — Draft/Auto mode: koi Test Generator nahi, sirf ek Save
-              button. Save karte hi ye poora section hide ho jaayega — dobara
-              edit karne ke liye upar "Auto-Reply Mode" me isi (active) mode
+          {/* Draft/Auto mode: koi Test Generator nahi, sirf ek Save button.
+              Save karte hi ye poora section hide ho jaayega — dobara edit
+              karne ke liye upar "Auto-Reply Mode" me isi (active) mode
               button pe dobara click karo. */}
           {(mode === 'draft' || mode === 'auto') && (
             <button
@@ -636,32 +599,7 @@ export default function AIReplyCenterPage() {
         </div>
       )}
 
-      {/* Manual mode: rule/style-guidance box — sirf Manual select hone par dikhega */}
-      {mode === 'manual' && (
-        <div className={`${bgCard} border rounded-xl p-5 mb-6`}>
-          <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium mb-3`}>
-            <Settings2 size={14} /> Your Reply Style / Rules
-          </div>
-          <p className={`text-xs mb-3 ${textMuted}`}>
-            Optional — set a default tone or instructions the AI should follow whenever you generate a reply manually (e.g. "keep it short and formal", "always mention our loyalty program").
-          </p>
-          <textarea
-            className={`w-full border rounded-lg p-3 text-sm outline-none mb-3 ${inputBg}`}
-            rows={3}
-            placeholder="e.g. Always thank the customer by name and keep replies under 3 sentences."
-            value={manualRules}
-            onChange={(e) => setManualRules(e.target.value)}
-          />
-          <button
-            onClick={handleSaveRules}
-            className="bg-blue-600 hover:bg-blue-500 text-white text-sm px-4 py-2 rounded-lg transition-colors"
-          >
-            {rulesSaved ? 'Saved!' : 'Save Rules'}
-          </button>
-        </div>
-      )}
-
-      {/* Pending Approval — sirf Draft & Approve select hone par dikhega */}
+      {/* Pending Approval — sirf Draft & Approve select hone par dikhega (Draft/Auto ka apna flow, isse hath nahi lagaya) */}
       {mode === 'draft' && pendingReplies.length > 0 && (
         <div className={`${bgCard} border rounded-xl p-5 mb-6`}>
           <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium mb-3`}>
@@ -715,71 +653,6 @@ export default function AIReplyCenterPage() {
           <p className={`text-sm ${textMuted}`}>No replies pending approval right now.</p>
         </div>
       )}
-
-      {/* AI Generator (manual mode ke liye test/direct use) */}
-      {mode === 'manual' && (
-        <div className={`${bgCard} border rounded-xl p-5 mb-6`}>
-          <div className={`flex items-center gap-2 ${textSecondary} text-xs font-medium mb-3`}>
-            <Sparkles size={14} /> AI Review Reply Generator
-          </div>
-          <textarea
-            className={`w-full border rounded-lg p-3 text-sm outline-none mb-3 ${inputBg}`}
-            rows={3}
-            placeholder="Paste a customer review here to generate a reply..."
-            value={reviewText}
-            onChange={(e) => setReviewText(e.target.value)}
-          />
-          <button
-            className="bg-indigo-600 hover:bg-indigo-500 text-white text-sm px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
-            onClick={handleGenerateReply}
-            disabled={isGenerating || !reviewText.trim()}
-          >
-            {isGenerating ? 'Generating...' : 'Generate Reply'}
-          </button>
-
-          {generatedReply && (
-            <div className={`${bgSubCard} border rounded-lg p-4 mt-3`}>
-              <div className="flex justify-between items-start mb-2">
-                <span className={`text-xs ${textSecondary}`}>AI Generated Reply:</span>
-                <button
-                  className={`text-[10px] px-2 py-1 rounded transition-colors flex items-center gap-1 ${
-                    theme === "light" ? "bg-gray-200 text-gray-700 hover:bg-gray-300" : "bg-[#1F2430] text-gray-400 hover:text-white"
-                  }`}
-                  onClick={() => navigator.clipboard.writeText(generatedReply)}
-                >
-                  <Copy size={12} /> Copy
-                </button>
-              </div>
-              <p className={`text-sm leading-relaxed ${textPrimary}`}>{generatedReply}</p>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Recent AI Activity */}
-      <div className={`${bgCard} border rounded-xl p-5`}>
-        <h3 className={`text-sm font-medium ${textPrimary} mb-3`}>Recent AI Activity</h3>
-        <div className="space-y-3">
-          <div className={`flex items-center justify-between rounded-lg px-3 py-2 ${
-            theme === "light" ? "bg-gray-50" : "bg-[#181D27]"
-          }`}>
-            <div className="flex items-center gap-2">
-              <CheckCircle size={14} className="text-green-400" />
-              <span className={`text-xs ${textPrimary}`}>Reply sent to Rohit Sharma (5★)</span>
-            </div>
-            <span className={`text-[10px] ${textMuted}`}>2 hours ago</span>
-          </div>
-          <div className={`flex items-center justify-between rounded-lg px-3 py-2 ${
-            theme === "light" ? "bg-gray-50" : "bg-[#181D27]"
-          }`}>
-            <div className="flex items-center gap-2">
-              <CheckCircle size={14} className="text-green-400" />
-              <span className={`text-xs ${textPrimary}`}>Reply sent to Priya Patel (4★)</span>
-            </div>
-            <span className={`text-[10px] ${textMuted}`}>5 hours ago</span>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
