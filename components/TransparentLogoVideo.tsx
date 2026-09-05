@@ -1,12 +1,20 @@
-export default function TransparentLogoVideo() {
+interface TransparentLogoVideoProps {
+  src: string;
+  className?: string;
+}
+
+export default function TransparentLogoVideo({
+  src,
+  className,
+}: TransparentLogoVideoProps) {
   return (
     <video
-      src="/logo-animation.mp4"
+      src={src}
       autoPlay
       loop
       muted
       playsInline
-      className="w-full h-full object-contain"
+      className={className}
     />
   );
 }
