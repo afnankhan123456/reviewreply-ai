@@ -1,5 +1,6 @@
 import GoogleSignInButton from "@/app/components/GoogleSignInButton";
 import { MessageSquareText, ShieldCheck, Sparkles, BarChart3, Info, RefreshCw, Star } from "lucide-react";
+import TransparentLogoVideo from "./TransparentLogoVideo";
 
 const APP_NAME = "ReviewReply AI"; // ⚠️ must be IDENTICAL to the name on OAuth consent screen
 
@@ -25,12 +26,13 @@ function GoogleCard() {
 
   return (
     <div className="w-full bg-black/40 backdrop-blur-md border border-[#ff2d55]/30 rounded-3xl overflow-hidden shadow-[0_0_60px_-15px_rgba(255,45,85,0.35)]">
-      <video
-        src="/logo-animation-clean.mp4"
-        autoPlay
-        loop
-        muted
-        playsInline
+      {/* ✅ NAYA — asli <video> ki jagah TransparentLogoVideo. Ye "/logo-animation-alpha.mp4"
+          (color+mask stacked video) ko canvas pe real-time combine karke true
+          per-pixel transparency deta hai — kisi bhi background ke peeche fit
+          ho jaata hai, chahe wo is card ka red glow ho ya kuch aur, aur sab
+          browsers (Chrome/Safari/Firefox) me equally kaam karta hai. */}
+      <TransparentLogoVideo
+        src="/logo-animation-alpha.mp4"
         className="w-full h-60 block object-cover"
       />
 
