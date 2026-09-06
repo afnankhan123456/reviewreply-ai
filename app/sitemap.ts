@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next';
+
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://www.reviewreply-ai.in';
   return [
@@ -114,6 +115,24 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/blog/best-affordable-review-management-tool`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/blog/cheap-review-management-tool`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/blog/cost-effective-review-management`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/blog/review-management-solutions`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.8,
