@@ -26,7 +26,7 @@ function GoogleCard() {
   return (
     <div className="w-full bg-black/40 backdrop-blur-md border border-[#ff2d55]/30 rounded-3xl overflow-hidden shadow-[0_0_60px_-15px_rgba(255,45,85,0.35)]">
       <video
-        src="/logo-animation-clean.mp4"
+        src="/logo-animation.mp4"
         autoPlay
         loop
         muted
