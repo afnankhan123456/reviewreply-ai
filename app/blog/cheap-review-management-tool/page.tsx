@@ -145,6 +145,27 @@ export default function CheapReviewManagementTool() {
         </p>
       </section>
 
+      <section className="section">
+        <h2>Need more than one location, or AI-written replies?</h2>
+        <p>
+          The Basic plan covers tracking, alerts, and reporting for a single location — but it
+          doesn&apos;t include AI-generated replies or multi-location support. If your business
+          has grown past that, the Standard plan ($29/month) adds:
+        </p>
+        <ul>
+          <li><strong>2 Business Locations</strong> instead of 1.</li>
+          <li><strong>500 AI-Generated Replies / Month</strong> — draft, edit, and publish replies in seconds instead of writing every response by hand.</li>
+          <li><strong>Sentiment Analysis &amp; Advanced Analytics</strong> — a deeper read on what customers are actually saying.</li>
+          <li><strong>WhatsApp Review Requests &amp; QR Code Generator</strong> — actively collect more reviews, not just respond to the ones that show up.</li>
+          <li><strong>2 Team Members &amp; Priority Support</strong> — useful once more than one person is handling reviews.</li>
+        </ul>
+        <p>
+          For a single-location business that just needs to stay on top of reviews without
+          overspending, Basic at $9/month remains the more sensible starting point — you can
+          always move up to Standard later as the business grows.
+        </p>
+      </section>
+
       <section className="section cta">
         <h2>Start tracking every review for $9/month</h2>
         <p>Connect your Google Business Profile and see your reviews synced in minutes.</p>
