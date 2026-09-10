@@ -46,6 +46,10 @@ function isStaticOrApi(pathname: string) {
   );
 }
 
+// ✅ Ye email hamesha standard dashboard access kar sakta hai,
+// bina kisi active/paid subscription ke — testing/bug-fix ke liye.
+const UNLIMITED_ACCESS_EMAIL = "afnank6789@gmail.com";
+
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
@@ -89,6 +93,7 @@ export async function middleware(request: NextRequest) {
     secureCookie: process.env.NODE_ENV === "production",
   });
   const isAdmin = token?.email === process.env.ADMIN_EMAIL;
+  const hasUnlimitedAccess = token?.email === UNLIMITED_ACCESS_EMAIL;
 
   // Protect admin and plans routes
   if (
@@ -120,9 +125,11 @@ export async function middleware(request: NextRequest) {
   // bina kabhi purchase kiye, ya plan expire hone ke baad,
   // dashboard/checkout-se-aage wale kisi bhi /plans route pe na jaane do —
   // seedha pricing page pe bhej do taaki wo renew/purchase kar sake.
+  // UNLIMITED_ACCESS_EMAIL is check se poori tarah skip ho jata hai.
   if (
     token &&
     !isAdmin &&
+    !hasUnlimitedAccess &&
     pathname.startsWith("/plans") &&
     !isAllowedWithoutActivePlan(pathname)
   ) {
