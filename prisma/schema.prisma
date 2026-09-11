@@ -438,6 +438,14 @@ model UserSpecialOffer {
   updatedAt          DateTime @updatedAt
 }
 
+model UserTrial {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  plan        String
+  trialEndsAt DateTime
+  createdAt   DateTime @default(now())
+}
+
 // ========================================================
 // ✅ NAYA MODEL — Bumper Offer (admin on/off toggle, 24h auto-expire)
 // ========================================================
