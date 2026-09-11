@@ -11,6 +11,12 @@ type UserOffer = {
   expiresAt: string;
 };
 
+type TrialUser = {
+  email: string;
+  plan: string;
+  trialEndsAt: string;
+};
+
 export default function AdminSettingsPage() {
   const [darkMode, setDarkMode] = useState(false);
 
@@ -29,6 +35,13 @@ export default function AdminSettingsPage() {
   const [activeUserOffers, setActiveUserOffers] = useState<UserOffer[]>([]);
   const [userOffersLoading, setUserOffersLoading] = useState(true);
   const [now, setNow] = useState(Date.now());
+
+  // Per-user 5-day trial state (naya)
+  const [trialEmail, setTrialEmail] = useState("");
+  const [trialPlan, setTrialPlan] = useState("standard");
+  const [grantingTrial, setGrantingTrial] = useState(false);
+  const [activeTrials, setActiveTrials] = useState<TrialUser[]>([]);
+  const [trialsLoading, setTrialsLoading] = useState(true);
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
@@ -111,7 +124,7 @@ export default function AdminSettingsPage() {
     return () => clearInterval(interval);
   }, [offerActive, expiresAt]);
 
-  // ===================== Per-user special discount (naya) =====================
+  // ===================== Per-user special discount (existing) =====================
   useEffect(() => {
     fetchUserOffers();
     const listInterval = setInterval(fetchUserOffers, 15000); // list bhi refresh hoti rahe
@@ -180,6 +193,70 @@ export default function AdminSettingsPage() {
     return `${m}:${s}`;
   };
 
+  // ===================== Per-user 5-day trial (naya) =====================
+  useEffect(() => {
+    fetchTrials();
+    const interval = setInterval(fetchTrials, 15000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const fetchTrials = async () => {
+    try {
+      const res = await fetch("/api/admin/user-trial");
+      const data = await res.json();
+      setActiveTrials(data.trials ?? []);
+    } catch (err) {
+      console.error("Failed to fetch trials:", err);
+    } finally {
+      setTrialsLoading(false);
+    }
+  };
+
+  const grantTrial = async () => {
+    if (!trialEmail.trim()) return;
+    setGrantingTrial(true);
+    try {
+      const res = await fetch("/api/admin/user-trial", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: trialEmail.trim(),
+          plan: trialPlan,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setTrialEmail("");
+        fetchTrials();
+      }
+    } catch (err) {
+      console.error("Failed to grant trial:", err);
+    } finally {
+      setGrantingTrial(false);
+    }
+  };
+
+  const revokeTrial = async (email: string) => {
+    try {
+      await fetch("/api/admin/user-trial", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      fetchTrials();
+    } catch (err) {
+      console.error("Failed to revoke trial:", err);
+    }
+  };
+
+  const formatTrialRemaining = (endsAtStr: string) => {
+    const diff = new Date(endsAtStr).getTime() - now;
+    if (diff <= 0) return "Expired";
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    return `${d}d ${h}h`;
+  };
+
   return (
     <div className="p-8">
       <h1 className="text-3xl font-bold text-black dark:text-white mb-6">
@@ -239,7 +316,7 @@ export default function AdminSettingsPage() {
         </button>
       </div>
 
-      {/* Per-user special discount (naya) */}
+      {/* Per-user special discount (existing) */}
       <div className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-6 mb-6">
         <h2 className="text-lg font-semibold text-zinc-900 dark:text-white mb-1">
           Give a Specific User a Discount
@@ -307,6 +384,81 @@ export default function AdminSettingsPage() {
                     </span>
                     <button
                       onClick={() => revokeUserOffer(offer.email)}
+                      className="text-red-500 hover:text-red-600 text-xs font-semibold"
+                    >
+                      Revoke
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Per-user 5-day trial (naya) */}
+      <div className="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-2xl p-6 mb-6">
+        <h2 className="text-lg font-semibold text-zinc-900 dark:text-white mb-1">
+          Give a Specific User a 5-Day Trial
+        </h2>
+        <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4">
+          Is email ko 5 din ke liye chuna hua plan bina payment ke mil jayega. 5 din baad khud expire ho jayega.
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 mb-4">
+          <input
+            type="email"
+            placeholder="user@example.com"
+            value={trialEmail}
+            onChange={(e) => setTrialEmail(e.target.value)}
+            className="sm:col-span-2 rounded-xl border border-zinc-300 dark:border-zinc-600 bg-transparent px-3 py-2 text-sm text-zinc-900 dark:text-white"
+          />
+          <select
+            value={trialPlan}
+            onChange={(e) => setTrialPlan(e.target.value)}
+            className="rounded-xl border border-zinc-300 dark:border-zinc-600 bg-transparent px-3 py-2 text-sm text-zinc-900 dark:text-white"
+          >
+            <option value="basic">Basic</option>
+            <option value="standard">Standard</option>
+            <option value="pro">Pro</option>
+          </select>
+        </div>
+
+        <button
+          onClick={grantTrial}
+          disabled={grantingTrial || !trialEmail.trim()}
+          className="rounded-xl bg-gradient-to-r from-violet-600 to-blue-600 px-5 py-2 font-semibold text-white transition hover:opacity-90 disabled:opacity-50"
+        >
+          {grantingTrial ? "Granting..." : "Grant 5-Day Trial"}
+        </button>
+
+        <div className="mt-6">
+          <h3 className="text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
+            Currently Active Trials
+          </h3>
+          {trialsLoading ? (
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">Loading...</p>
+          ) : activeTrials.length === 0 ? (
+            <p className="text-sm text-zinc-500 dark:text-zinc-400">No active trials right now.</p>
+          ) : (
+            <div className="space-y-2">
+              {activeTrials.map((trial) => (
+                <div
+                  key={trial.email}
+                  className="flex items-center justify-between rounded-xl border border-zinc-200 dark:border-zinc-700 px-4 py-2 text-sm"
+                >
+                  <div>
+                    <span className="font-medium text-zinc-900 dark:text-white">{trial.email}</span>
+                    <span className="text-zinc-500 dark:text-zinc-400 ml-2">
+                      Plan: {trial.plan}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <span className="font-mono text-violet-500 dark:text-violet-400">
+                      {formatTrialRemaining(trial.trialEndsAt)}
+                    </span>
+                    <button
+                      onClick={() => revokeTrial(trial.email)}
                       className="text-red-500 hover:text-red-600 text-xs font-semibold"
                     >
                       Revoke
