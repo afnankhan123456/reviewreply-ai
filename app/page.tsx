@@ -314,6 +314,16 @@ function InfoSection() {
 export default function HomePage() {
   return (
     <>
+      <a
+        href="https://www.sideprojectors.com/project/93214/reviewreply-ai"
+        title="ReviewReply AI is for sale at @SideProjectors"
+      >
+        <img
+          style={{ position: "fixed", zIndex: 1000, top: "-5px", right: "20px", border: 0 }}
+          src="https://www.sideprojectors.com/img/badges/badge_2_red.png"
+          alt="ReviewReply AI is for sale at @SideProjectors"
+        />
+      </a>
       <LoginUI />
       <InfoSection />
     </>
