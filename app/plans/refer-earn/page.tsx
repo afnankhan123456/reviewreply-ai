@@ -267,7 +267,7 @@ export default function ReferEarnPage() {
               </div>
 
               <h2 className="text-3xl font-bold mb-2 text-white">Your Referral Link</h2>
-              <p className="text-zinc-400 text-sm mb-6">Share your link and earn ₹100 per paid signup</p>
+              <p className="text-zinc-400 text-sm mb-6">Basic plan: earn ₹500, Standard plan: earn ₹1000 per paid signup</p>
 
               <div className="flex flex-col md:flex-row gap-2 bg-white/5 border border-white/10 rounded-xl p-1.5 mb-6 max-w-lg backdrop-blur-sm">
                 <input 
