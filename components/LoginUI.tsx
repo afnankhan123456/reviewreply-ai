@@ -167,7 +167,7 @@ const jsonLd = [
 
 const card =
   "pcard rv bg-gradient-to-b from-[#141008] to-[#0a0705] border border-[#d4af37]/25 rounded-2xl hover:border-[#d4af37]/60 hover:shadow-[0_0_40px_-10px_rgba(212,175,55,0.35)] transition-all duration-500";
-const section = "sec relative overflow-hidden bg-[#050302] px-6 md:px-20 py-16 md:py-24 border-t border-[#d4af37]/10";
+const section = "sec relative overflow-hidden bg-[#050302] px-6 md:px-20 py-16 md:py-24";
 const h2 = "h2fx rv text-2xl md:text-3xl font-black text-white text-center mb-3";
 const sub = "rv text-gray-400 text-center max-w-2xl mx-auto mb-12 text-sm md:text-base";
 
@@ -501,7 +501,7 @@ function WhatItDoes() {
   ];
 
   return (
-    <section className="relative bg-[#050302] px-6 md:px-20 py-16 md:py-24 border-t border-[#d4af37]/10 overflow-hidden">
+    <section className="relative bg-[#050302] px-6 md:px-20 py-16 md:py-24 overflow-hidden">
       <style>{`
         @keyframes goldFloat {
           0%, 100% { transform: translateY(0px); }
@@ -574,7 +574,7 @@ function DataUsage() {
   ];
 
   return (
-    <section className="relative bg-[#050302] px-6 md:px-20 py-16 md:py-24 border-t border-[#d4af37]/10 overflow-hidden">
+    <section className="relative bg-[#050302] px-6 md:px-20 py-16 md:py-24 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
         <div className="gold-ambient absolute top-1/3 right-10 w-72 h-72 rounded-full bg-gradient-to-br from-[#d4af37] to-transparent blur-[100px]" style={{ animationDelay: "0.8s" }} />
       </div>
