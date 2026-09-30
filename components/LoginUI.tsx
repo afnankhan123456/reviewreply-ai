@@ -28,8 +28,6 @@ export const metadata: Metadata = {
   },
 };
 
-const STANDARD_URL = `${SITE}/plans/standard/pricing`;
-
 const standardFeatures = [
   "2 Business Locations",
   "500 AI Replies / Month",
@@ -574,10 +572,10 @@ export default function HomePage() {
         <div className={`${card} p-6 md:p-8 max-w-5xl mx-auto`}>
           <div className="text-center mb-8">
             <h3 className="text-2xl font-black">
-              <a href={STANDARD_URL} className="text-[#d4af37]">Standard</a>
+              <span className="text-[#d4af37]">Standard</span>
             </h3>
             <p className="text-gray-300 text-sm mt-1">
-              <a href={STANDARD_URL}>Best for growing businesses</a>
+              <span>Best for growing businesses</span>
             </p>
             <p className="text-3xl font-black text-[#d4af37] mt-3">$29<span className="text-sm text-gray-400">/month</span></p>
           </div>
@@ -585,7 +583,7 @@ export default function HomePage() {
             {standardFeatures.map((f) => (
               <li key={f} className="flex items-start gap-2 text-gray-300 text-sm">
                 <Check className="w-4 h-4 text-[#d4af37] mt-0.5 shrink-0" />
-                <a href={STANDARD_URL} className="hover:text-[#d4af37]">{f}</a>
+                <span>{f}</span>
               </li>
             ))}
           </ul>
