@@ -300,6 +300,14 @@ function InfoSection() {
             <a href="mailto:afnank6789@gmail.com" className="hover:text-[#ff2d55] transition-colors">
               Support
             </a>
+            <a
+              href="https://www.linkedin.com/in/afnan-khan-byte"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-[#ff2d55] transition-colors"
+            >
+              LinkedIn
+            </a>
           </div>
         </div>
 
