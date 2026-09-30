@@ -153,7 +153,7 @@ const faqs: [string, string][] = [
   ["Why is ReviewReply AI cheaper than other tools?", "It is focused on Google review management for small businesses, without enterprise overhead."],
   ["Is there a difference between Basic and Standard?", "Basic starts at $9/month; Standard is $29/month and includes AI features. See the pricing page for details."],
   ["How do I get started?", `Go to ${SITE} and click "Continue with Google".`],
-  ["Who built ReviewReply AI?", "ReviewReply AI is built by [Founder name] to give small businesses an affordable way to manage Google reviews."],
+  ["Who built ReviewReply AI?", "ReviewReply AI is built by Afnan Khan, an expert in machine learning and AI technology, to give small businesses an affordable way to manage Google reviews."],
 ];
 
 const jsonLd = [
@@ -751,13 +751,13 @@ export default function HomePage() {
         <div className="max-w-3xl mx-auto">
           <h2 className={h2}>About {APP_NAME}</h2>
           <ul className="space-y-3 text-gray-400 text-sm list-disc pl-5">
-            <li><strong className="text-gray-200">Who built it:</strong> {APP_NAME} is built by [Founder name], [short background].</li>
+            <li><strong className="text-gray-200">Who built it:</strong> {APP_NAME} is built by Afnan Khan, an expert in machine learning and AI technology.</li>
             <li><strong className="text-gray-200">Why it exists:</strong> Small businesses need review management but are often priced out of enterprise tools.</li>
             <li><strong className="text-gray-200">Who it is for:</strong> Small businesses, local businesses and agencies.</li>
             <li><strong className="text-gray-200">Transparent pricing:</strong> $9/month and $29/month, listed openly.</li>
             <li><strong className="text-gray-200">Clear scope:</strong> We help you manage Google reviews; we do not promise specific ranking or revenue results.</li>
             <li><strong className="text-gray-200">Data use:</strong> Google access is used only to read your locations and reviews and to publish replies you approve. Basic profile info (name, email, photo) is used only to create and secure your account. We do not sell this data.</li>
-            <li><strong className="text-gray-200">Contact:</strong> [support email]</li>
+            <li><strong className="text-gray-200">Contact:</strong> afnank6789@gmail.com</li>
           </ul>
         </div>
       </section>
@@ -782,12 +782,12 @@ export default function HomePage() {
       </section>
 
       <footer className="px-6 md:px-20 py-8 border-t border-white/10 text-center text-xs text-gray-500">
-        <nav className="flex flex-wrap justify-center gap-4 mb-3">
-          {["home", "features", "pricing", "basic", "standard", "blog", "faq"].map((p) => (
-            <span key={p} className="capitalize">{p}</span>
-          ))}
+        <nav className="flex flex-wrap justify-center gap-4">
+          <a href="https://www.reviewreply-ai.in/legal/privacy-policy" className="hover:text-[#d4af37]">Privacy Policy</a>
+          <a href="https://www.reviewreply-ai.in/legal/terms" className="hover:text-[#d4af37]">Terms of Service</a>
+          <a href="mailto:afnank6789@gmail.com" className="hover:text-[#d4af37]">Contact Support</a>
+          <a href="https://www.linkedin.com/in/afnan-khan-byte" target="_blank" rel="noopener noreferrer" className="hover:text-[#d4af37]">LinkedIn</a>
         </nav>
-        <p>Competitor pricing is based on publicly available information and may change.</p>
       </footer>
     </main>
   );
