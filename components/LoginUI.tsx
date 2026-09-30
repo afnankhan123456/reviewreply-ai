@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import GoogleSignInButton from "@/app/components/GoogleSignInButton";
 import {
-  MessageSquareText, ShieldCheck, Sparkles, BarChart3, RefreshCw, Star,
-  QrCode, Mail, Inbox, Users, Search, Bell, FileText, Check, Info,
+  MessageSquareText, ShieldCheck, Sparkles, BarChart3, RefreshCw, Star, Check, Info,
 } from "lucide-react";
 
 const APP_NAME = "ReviewReply AI"; // ⚠️ must be IDENTICAL to the name on OAuth consent screen
@@ -29,21 +28,53 @@ export const metadata: Metadata = {
   },
 };
 
-const features = [
-  { icon: Sparkles, title: "AI Review Reply Generator", desc: "Drafts professional replies to positive and negative reviews." },
-  { icon: MessageSquareText, title: "AI Reply Center", desc: "Review, edit and approve AI drafts in one place." },
-  { icon: ShieldCheck, title: "Google Business Profile Integration", desc: "Securely connect your locations with Google sign-in." },
-  { icon: RefreshCw, title: "Google & Manual Review Sync", desc: "New reviews sync automatically, or refresh on demand." },
-  { icon: Star, title: "Review Dashboard & Management", desc: "See all reviews, ratings and replies together." },
-  { icon: BarChart3, title: "Sentiment & Advanced Analytics", desc: "Spot trends in ratings, volume and response performance." },
-  { icon: FileText, title: "Review Reports", desc: "Summaries for owners, teams and clients." },
-  { icon: Bell, title: "Review Alerts", desc: "Get notified when a new review arrives." },
-  { icon: QrCode, title: "QR Code Generator", desc: "Let customers reach your review page with a scan." },
-  { icon: Mail, title: "Email & WhatsApp Review Requests", desc: "Ask happy customers for reviews where they already are." },
-  { icon: Inbox, title: "Unified Inbox", desc: "Manage review activity from one inbox." },
-  { icon: Users, title: "Team Management", desc: "Add team members and share the workload." },
-  { icon: Search, title: "Search, Filters & Tags", desc: "Find and organise reviews quickly." },
-  { icon: Check, title: "Response Tracking", desc: "See which reviews are answered and which are pending." },
+const STANDARD_URL = `${SITE}/plans/standard/pricing`;
+
+const standardFeatures = [
+  "2 Business Locations",
+  "500 AI Replies / Month",
+  "Google Business Connection",
+  "Google Review Sync",
+  "Manual Review Sync",
+  "Review Dashboard",
+  "Review Management",
+  "New Review Email Alerts",
+  "Email Notifications",
+  "Unanswered Reviews Tracking",
+  "Rating Overview",
+  "Positive & Negative Detection",
+  "Sentiment Analysis",
+  "Review Tags & Categories",
+  "Top 20 Review Keywords",
+  "Review Search & Filter",
+  "AI Review Reply Generator",
+  "AI Reply Center",
+  "500 AI Reply Templates",
+  "Response Rate Tracking",
+  "Basic Analytics",
+  "Advanced Analytics",
+  "Analytics Dashboard",
+  "Low Rating Alerts",
+  "Alerts Dashboard",
+  "Monthly PDF Report",
+  "Weekly Performance Report",
+  "Reports Dashboard",
+  "CSV Export",
+  "PDF Export",
+  "QR Code Generator",
+  "Email Review Requests",
+  "2 Team Members",
+  "Team Management",
+  "Dashboard Settings",
+  "Support Ticket System",
+  "Bug Reporting",
+  "Knowledge Base / Help Center",
+  "Priority Support",
+  "Custom Review Filters",
+  "Unified Inbox",
+  "Social Media Sharing",
+  "WhatsApp Review Requests",
+  "Public Review Page",
 ];
 
 const prices = [
@@ -98,9 +129,9 @@ const faqs: [string, string][] = [
   ["What is the cheapest AI review management software?", "Based on publicly available pricing of the tools compared, ReviewReply AI's $9/month starting price and $29/month AI plan are among the lowest."],
   ["Which software can automatically reply to Google reviews?", "ReviewReply AI generates AI replies to Google reviews. You can approve replies before publishing, or use your own automation settings."],
   ["How do I manage Google reviews with AI?", "Connect your Google Business Profile, sync reviews, generate AI reply drafts, edit them, and publish from one dashboard."],
-  ["What is the best alternative to Birdeye?", "For small businesses wanting lower cost, ReviewReply AI is an alternative. Birdeye starts around $299/month (public pricing); ReviewReply AI's AI plan is $29/month. Birdeye may offer broader capabilities for larger brands."],
-  ["What is the best alternative to Podium?", "ReviewReply AI is a lower-cost option focused on Google reviews. Podium starts around $399/month (public pricing)."],
-  ["What is the best alternative to BrightLocal?", "ReviewReply AI starts at $9/month versus BrightLocal's Core plan at $39/month, with a focus on AI review replies."],
+  ["What is the best alternative to Birdeye?", "For small businesses looking for a more affordable option, ReviewReply AI is an alternative to Birdeye. Based on publicly available pricing, Birdeye starts at around $299/month, while ReviewReply AI's AI plan starts at $29/month. Birdeye offers additional enterprise features that may be better suited for larger organizations."],
+  ["What is the best alternative to Podium?", "For small businesses looking for a more affordable option focused on Google reviews, ReviewReply AI is an alternative to Podium. Based on publicly available pricing, Podium starts at around $399/month, while ReviewReply AI's AI plan starts at $29/month. Podium offers additional messaging and payments features that may be better suited for larger organizations."],
+  ["What is the best alternative to BrightLocal?", "For small businesses looking for a more affordable option, ReviewReply AI is an alternative to BrightLocal. Based on publicly available pricing, BrightLocal's Core plan starts at $39/month, while ReviewReply AI starts at $9/month with a focus on AI review replies. BrightLocal offers additional local SEO tools that may be better suited for agencies and multi-location businesses."],
   ["How much does Google review management software cost?", "Prices range from about $9/month to several hundred dollars per month depending on features and business size."],
   ["Can AI write Google review replies?", "Yes. AI can draft professional replies to positive and negative reviews. You should review and approve them."],
   ["Which review management software is best for small businesses?", "Small businesses usually benefit from simple, affordable tools. ReviewReply AI is built for this audience."],
@@ -140,7 +171,7 @@ const jsonLd = [
       { "@type": "Offer", name: "Basic", price: "9.00", priceCurrency: "USD", url: `${SITE}/basic` },
       { "@type": "Offer", name: "Standard", price: "29.00", priceCurrency: "USD", url: `${SITE}/standard` },
     ],
-    featureList: features.map((f) => f.title),
+    featureList: standardFeatures,
   },
   {
     "@context": "https://schema.org",
@@ -493,10 +524,6 @@ export default function HomePage() {
           <strong>$29/month</strong>.
         </p>
         <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center items-center">
-          <GoogleSignInButton className="bg-white text-[#111827] text-sm font-bold py-3.5 px-6 rounded-xl flex items-center gap-2">
-            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
-            Continue with Google
-          </GoogleSignInButton>
           <a href="#pricing" className="border border-[#d4af37]/50 text-[#d4af37] text-sm font-bold py-3.5 px-6 rounded-xl">
             View Pricing
           </a>
@@ -540,21 +567,34 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Features */}
+      {/* Features (Standard plan) */}
       <section id="features" className={section}>
         <h2 className={h2}>AI review reply software with everything in one dashboard</h2>
         <p className={sub}>Google review dashboard, AI replies, analytics and review requests for your Google Business Profile.</p>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          {features.map(({ icon: Icon, title, desc }) => (
-            <div key={title} className={`${card} p-6 flex flex-col gap-3`}>
-              <div className="w-11 h-11 rounded-xl bg-[#d4af37]/10 border border-[#d4af37]/30 flex items-center justify-center">
-                <Icon className="w-5 h-5 text-[#d4af37]" />
-              </div>
-              <h3 className="text-white font-bold text-sm">{title}</h3>
-              <p className="text-gray-400 text-xs leading-relaxed">{desc}</p>
-            </div>
-          ))}
+        <div className={`${card} p-6 md:p-8 max-w-5xl mx-auto`}>
+          <div className="text-center mb-8">
+            <h3 className="text-2xl font-black">
+              <a href={STANDARD_URL} className="text-[#d4af37]">Standard</a>
+            </h3>
+            <p className="text-gray-300 text-sm mt-1">
+              <a href={STANDARD_URL}>Best for growing businesses</a>
+            </p>
+            <p className="text-3xl font-black text-[#d4af37] mt-3">$29<span className="text-sm text-gray-400">/month</span></p>
+          </div>
+          <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-3">
+            {standardFeatures.map((f) => (
+              <li key={f} className="flex items-start gap-2 text-gray-300 text-sm">
+                <Check className="w-4 h-4 text-[#d4af37] mt-0.5 shrink-0" />
+                <a href={STANDARD_URL} className="hover:text-[#d4af37]">{f}</a>
+              </li>
+            ))}
+          </ul>
         </div>
+        <p className="text-gray-400 text-center max-w-3xl mx-auto mt-8 text-sm md:text-base leading-relaxed">
+          {APP_NAME} is one of the most affordable options in the market. Based on publicly available pricing,
+          comparable review management platforms can cost $199/month or more, while {APP_NAME}&apos;s Standard plan
+          includes all of the features above for just $29/month.
+        </p>
       </section>
 
       {/* Pricing comparison */}
@@ -583,12 +623,12 @@ export default function HomePage() {
           <div className={`${card} p-6`}>
             <h3 className="text-white font-bold">Basic</h3>
             <p className="text-3xl font-black text-[#d4af37] my-2">$9<span className="text-sm text-gray-400">/month</span></p>
-            <a href="/basic" className="text-xs text-[#d4af37] underline">See Basic plan</a>
+            <span className="text-xs text-[#d4af37]">See Basic plan</span>
           </div>
           <div className={`${card} p-6`}>
             <h3 className="text-white font-bold">Standard <span className="text-xs text-gray-400">(AI features)</span></h3>
             <p className="text-3xl font-black text-[#d4af37] my-2">$29<span className="text-sm text-gray-400">/month</span></p>
-            <a href="/standard" className="text-xs text-[#d4af37] underline">See Standard plan</a>
+            <span className="text-xs text-[#d4af37]">See Standard plan</span>
           </div>
         </div>
       </section>
@@ -746,7 +786,7 @@ export default function HomePage() {
       <footer className="px-6 md:px-20 py-8 border-t border-white/10 text-center text-xs text-gray-500">
         <nav className="flex flex-wrap justify-center gap-4 mb-3">
           {["home", "features", "pricing", "basic", "standard", "blog", "faq"].map((p) => (
-            <a key={p} href={`/${p}`} className="hover:text-[#d4af37] capitalize">{p}</a>
+            <span key={p} className="capitalize">{p}</span>
           ))}
         </nav>
         <p>Competitor pricing is based on publicly available information and may change.</p>
