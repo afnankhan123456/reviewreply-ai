@@ -75,24 +75,12 @@ const standardFeatures = [
   "Public Review Page",
 ];
 
-const prices = [
-  { name: "ReviewReply AI – Basic", price: "$9/month", us: true },
-  { name: "ReviewReply AI – Standard (AI features)", price: "$29/month", us: true },
-  { name: "SocialPilot Reviews", price: "~$25.50/month" },
-  { name: "Synup", price: "~$34.99/month" },
-  { name: "BrightLocal (Core)", price: "$39/month" },
-  { name: "NiceJob", price: "~$75/month" },
-  { name: "ReviewTrackers", price: "~$89/month" },
-  { name: "Birdeye", price: "~$299/month" },
-  { name: "Podium", price: "~$399/month" },
-];
-
 const comparisons = [
-  { href: "/compare/brightlocal-vs-reviewreply-ai", label: "BrightLocal", note: "Core plan is $39/month; ReviewReply AI starts at $9/month." },
-  { href: "/compare/birdeye-vs-reviewreply-ai", label: "Birdeye", note: "Starts around $299/month; ReviewReply AI's AI plan is $29/month." },
-  { href: "/compare/podium-vs-reviewreply-ai", label: "Podium", note: "Starts around $399/month; a lighter option for small businesses." },
-  { href: "/compare/reviewtrackers-vs-reviewreply-ai", label: "ReviewTrackers", note: "Starts around $89/month." },
-  { href: "/compare/socialpilot-vs-reviewreply-ai", label: "SocialPilot Reviews", note: "Starts around $25.50/month." },
+  { href: "/compare/brightlocal-vs-reviewreply-ai", label: "BrightLocal", note: "A more affordable option for small businesses that mainly need Google review management." },
+  { href: "/compare/birdeye-vs-reviewreply-ai", label: "Birdeye", note: "A more affordable option for small businesses that mainly need Google review management." },
+  { href: "/compare/podium-vs-reviewreply-ai", label: "Podium", note: "A more affordable option for small businesses that mainly need Google review management." },
+  { href: "/compare/reviewtrackers-vs-reviewreply-ai", label: "ReviewTrackers", note: "A more affordable option for small businesses that mainly need Google review management." },
+  { href: "/compare/socialpilot-vs-reviewreply-ai", label: "SocialPilot Reviews", note: "A more affordable option for small businesses that mainly need Google review management." },
 ];
 
 const audiences = [
@@ -124,13 +112,13 @@ const steps = [
 
 const faqs: [string, string][] = [
   ["What is the best AI Google review management tool?", "The best tool depends on budget and needs. ReviewReply AI is an affordable option for small businesses, with Google Business Profile integration, AI reply generation and analytics from $9/month (AI features from $29/month)."],
-  ["What is the cheapest AI review management software?", "Based on publicly available pricing of the tools compared, ReviewReply AI's $9/month starting price and $29/month AI plan are among the lowest."],
+  ["What is the cheapest AI review management software?", "ReviewReply AI is one of the most affordable options, with plans from $9/month and AI features from $29/month."],
   ["Which software can automatically reply to Google reviews?", "ReviewReply AI generates AI replies to Google reviews. You can approve replies before publishing, or use your own automation settings."],
   ["How do I manage Google reviews with AI?", "Connect your Google Business Profile, sync reviews, generate AI reply drafts, edit them, and publish from one dashboard."],
-  ["What is the best alternative to Birdeye?", "For small businesses looking for a more affordable option, ReviewReply AI is an alternative to Birdeye. Based on publicly available pricing, Birdeye starts at around $299/month, while ReviewReply AI's AI plan starts at $29/month. Birdeye offers additional enterprise features that may be better suited for larger organizations."],
-  ["What is the best alternative to Podium?", "For small businesses looking for a more affordable option focused on Google reviews, ReviewReply AI is an alternative to Podium. Based on publicly available pricing, Podium starts at around $399/month, while ReviewReply AI's AI plan starts at $29/month. Podium offers additional messaging and payments features that may be better suited for larger organizations."],
-  ["What is the best alternative to BrightLocal?", "For small businesses looking for a more affordable option, ReviewReply AI is an alternative to BrightLocal. Based on publicly available pricing, BrightLocal's Core plan starts at $39/month, while ReviewReply AI starts at $9/month with a focus on AI review replies. BrightLocal offers additional local SEO tools that may be better suited for agencies and multi-location businesses."],
-  ["How much does Google review management software cost?", "Prices range from about $9/month to several hundred dollars per month depending on features and business size."],
+  ["What is the best alternative to Birdeye?", `For small businesses looking for a more affordable option, ReviewReply AI is an alternative to Birdeye. ReviewReply AI's Standard plan includes ${standardFeatures.length} features for $29/month, while Birdeye offers additional enterprise features that may be better suited for larger organizations.`],
+  ["What is the best alternative to Podium?", `For small businesses looking for a more affordable option focused on Google reviews, ReviewReply AI is an alternative to Podium. ReviewReply AI's Standard plan includes ${standardFeatures.length} features for $29/month, while Podium offers additional messaging and payments features that may be better suited for larger organizations.`],
+  ["What is the best alternative to BrightLocal?", `For small businesses looking for a more affordable option, ReviewReply AI is an alternative to BrightLocal. ReviewReply AI starts at $9/month with a focus on AI review replies, while BrightLocal offers additional local SEO tools that may be better suited for agencies and multi-location businesses.`],
+  ["How much does Google review management software cost?", "ReviewReply AI plans start at $9/month, and the Standard plan with AI features is $29/month. Other platforms may charge significantly more depending on features and business size."],
   ["Can AI write Google review replies?", "Yes. AI can draft professional replies to positive and negative reviews. You should review and approve them."],
   ["Which review management software is best for small businesses?", "Small businesses usually benefit from simple, affordable tools. ReviewReply AI is built for this audience."],
   ["What is ReviewReply AI?", "An AI-powered Google review management platform that syncs reviews, drafts replies and shows analytics."],
@@ -537,7 +525,7 @@ export default function HomePage() {
         <ul className="max-w-3xl mx-auto space-y-3 text-gray-400 text-sm md:text-base list-disc pl-5">
           <li>Reviews arrive at all hours, and unanswered ones hurt trust and local visibility.</li>
           <li>Writing a thoughtful reply for every review takes time most owners don&apos;t have.</li>
-          <li>Many enterprise reputation platforms are priced for large chains, often in the hundreds of dollars per month (based on publicly available pricing).</li>
+          <li>Many enterprise reputation platforms are priced for large chains, which can be too expensive for small businesses.</li>
           <li>Switching between Google, email and messaging apps makes it easy to miss a review.</li>
         </ul>
         <p className="text-center text-gray-300 mt-6 text-sm">{APP_NAME} was built to fix this at a price small businesses can afford.</p>
@@ -589,39 +577,19 @@ export default function HomePage() {
           </ul>
         </div>
         <p className="text-gray-400 text-center max-w-3xl mx-auto mt-8 text-sm md:text-base leading-relaxed">
-          {APP_NAME} is one of the most affordable options in the market. Based on publicly available pricing,
-          comparable review management platforms can cost $199/month or more, while {APP_NAME}&apos;s Standard plan
-          includes all of the features above for just $29/month.
+          Many review management platforms charge high prices for these capabilities. {APP_NAME} is one of the most
+          affordable options in the market, offering {standardFeatures.length} features in the Standard plan for just $29/month.
         </p>
       </section>
 
-      {/* Pricing comparison */}
+      {/* Pricing */}
       <section id="pricing" className={section}>
-        <h2 className={h2}>Google review management software pricing compared</h2>
-        <p className={sub}>Starting prices, based on publicly available pricing. Competitor prices may change.</p>
-        <div className="max-w-3xl mx-auto overflow-x-auto">
-          <table className="w-full text-sm border-collapse">
-            <thead>
-              <tr className="text-left text-gray-400 border-b border-white/10">
-                <th className="py-3 pr-4">Tool</th>
-                <th className="py-3">Starting price</th>
-              </tr>
-            </thead>
-            <tbody>
-              {prices.map((p) => (
-                <tr key={p.name} className={`border-b border-white/5 ${p.us ? "text-[#d4af37] font-bold bg-[#d4af37]/5" : "text-gray-300"}`}>
-                  <td className="py-3 pr-4 pl-2">{p.name}</td>
-                  <td className="py-3">{p.price}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <p className="text-gray-400 text-xs md:text-sm text-center max-w-3xl mx-auto mt-4">
-          Competitor prices are based on publicly available information and may change. {APP_NAME} offers many
-          features at a much lower price.
+        <h2 className={h2}>Simple, affordable Google review management pricing</h2>
+        <p className={sub}>
+          Many review management platforms charge high prices. {APP_NAME} offers {standardFeatures.length} features in the
+          Standard plan at one of the lowest prices in the market.
         </p>
-        <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto mt-10">
+        <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
           <div className={`${card} p-6`}>
             <h3 className="text-white font-bold">Basic</h3>
             <p className="text-3xl font-black text-[#d4af37] my-2">$9<span className="text-sm text-gray-400">/month</span></p>
@@ -665,7 +633,7 @@ export default function HomePage() {
           {comparisons.map((c) => (
             <a key={c.href} href={c.href} className={`${card} p-5 block`}>
               <h3 className="text-white font-bold text-sm mb-1">{c.label} vs {APP_NAME}</h3>
-              <p className="text-gray-400 text-xs leading-relaxed">{c.note} (based on publicly available pricing)</p>
+              <p className="text-gray-400 text-xs leading-relaxed">{c.note}</p>
             </a>
           ))}
         </div>
@@ -784,6 +752,9 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+      <div className="px-6 md:px-20 py-6 border-t border-white/10 text-center text-xs text-gray-500">
+        <a href="https://www.linkedin.com/in/afnan-khan-byte" target="_blank" rel="noopener noreferrer" className="hover:text-[#d4af37]">LinkedIn</a>
+      </div>
     </main>
   );
 }
