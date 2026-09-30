@@ -617,6 +617,10 @@ export default function HomePage() {
             </tbody>
           </table>
         </div>
+        <p className="text-gray-400 text-xs md:text-sm text-center max-w-3xl mx-auto mt-4">
+          Competitor prices are based on publicly available information and may change. {APP_NAME} offers many
+          features at a much lower price.
+        </p>
         <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto mt-10">
           <div className={`${card} p-6`}>
             <h3 className="text-white font-bold">Basic</h3>
@@ -780,15 +784,6 @@ export default function HomePage() {
           ))}
         </div>
       </section>
-
-      <footer className="px-6 md:px-20 py-8 border-t border-white/10 text-center text-xs text-gray-500">
-        <nav className="flex flex-wrap justify-center gap-4">
-          <a href="https://www.reviewreply-ai.in/legal/privacy-policy" className="hover:text-[#d4af37]">Privacy Policy</a>
-          <a href="https://www.reviewreply-ai.in/legal/terms" className="hover:text-[#d4af37]">Terms of Service</a>
-          <a href="mailto:afnank6789@gmail.com" className="hover:text-[#d4af37]">Contact Support</a>
-          <a href="https://www.linkedin.com/in/afnan-khan-byte" target="_blank" rel="noopener noreferrer" className="hover:text-[#d4af37]">LinkedIn</a>
-        </nav>
-      </footer>
     </main>
   );
 }
