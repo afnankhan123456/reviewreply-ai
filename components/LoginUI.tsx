@@ -185,10 +185,71 @@ const jsonLd = [
 ];
 
 const card =
-  "bg-gradient-to-b from-[#141008] to-[#0a0705] border border-[#d4af37]/25 rounded-2xl hover:border-[#d4af37]/60 hover:shadow-[0_0_40px_-10px_rgba(212,175,55,0.35)] transition-all duration-500";
-const section = "relative bg-[#050302] px-6 md:px-20 py-16 md:py-24 border-t border-[#d4af37]/10";
-const h2 = "text-2xl md:text-3xl font-black text-white text-center mb-3";
-const sub = "text-gray-400 text-center max-w-2xl mx-auto mb-12 text-sm md:text-base";
+  "pcard rv bg-gradient-to-b from-[#141008] to-[#0a0705] border border-[#d4af37]/25 rounded-2xl hover:border-[#d4af37]/60 hover:shadow-[0_0_40px_-10px_rgba(212,175,55,0.35)] transition-all duration-500";
+const section = "sec relative overflow-hidden bg-[#050302] px-6 md:px-20 py-16 md:py-24 border-t border-[#d4af37]/10";
+const h2 = "h2fx rv text-2xl md:text-3xl font-black text-white text-center mb-3";
+const sub = "rv text-gray-400 text-center max-w-2xl mx-auto mb-12 text-sm md:text-base";
+
+// stagger helper: sets --i so neighbouring cards animate one after another
+const st = (i: number) => ({ "--i": i } as React.CSSProperties);
+
+// Premium animations (pure CSS, works in a server component).
+// Scroll-reveal uses CSS scroll-driven animations; browsers without support simply show everything normally.
+const premiumCss = `
+@keyframes heroIn{from{opacity:0;transform:translateY(30px);filter:blur(8px)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes rvUp{from{opacity:0;translate:0 44px;scale:.96}to{opacity:1;translate:0 0;scale:1}}
+@keyframes shimmerText{to{background-position:200% center}}
+@keyframes orbDrift{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(40px,30px,0) scale(1.15)}}
+@keyframes borderFlow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes ringPulse{0%{box-shadow:0 0 0 0 rgba(212,175,55,.5)}70%,100%{box-shadow:0 0 0 14px rgba(212,175,55,0)}}
+@keyframes faqOpen{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
+@keyframes sheen{from{transform:translateX(-120%) skewX(-20deg)}to{transform:translateX(320%) skewX(-20deg)}}
+@keyframes lineGrow{from{transform:scaleX(0);opacity:0}to{transform:scaleX(1);opacity:1}}
+
+.hero-in{animation:heroIn .9s cubic-bezier(.2,.7,.2,1) both}
+.hero-in.d2{animation-delay:.2s}.hero-in.d3{animation-delay:.4s}.hero-in.d4{animation-delay:.6s}
+
+.gtext{background-image:linear-gradient(90deg,#b8860b,#f5d76e,#d4af37,#fff1b8,#d4af37,#b8860b);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:shimmerText 5s linear infinite}
+
+.sec::before{content:'';position:absolute;top:-140px;right:-140px;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,.16),transparent 70%);filter:blur(40px);animation:orbDrift 9s ease-in-out infinite;pointer-events:none}
+.sec:nth-of-type(even)::before{right:auto;left:-140px;top:auto;bottom:-140px}
+.sec > *{position:relative;z-index:1}
+
+.pcard{position:relative;overflow:hidden}
+.pcard:hover{transform:translateY(-8px)}
+.pcard::before{content:'';position:absolute;top:0;left:0;width:35%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.09),transparent);transform:translateX(-120%) skewX(-20deg);pointer-events:none}
+.pcard:hover::before{animation:sheen .9s ease}
+.pcard::after{content:'';position:absolute;left:0;top:0;height:2px;width:100%;background:linear-gradient(90deg,transparent,#d4af37,transparent);transform:scaleX(0);transition:transform .6s ease}
+.pcard:hover::after{transform:scaleX(1)}
+
+.gborder{background:linear-gradient(120deg,#8a6d1a,#f5d76e,#1a1408 35%,#d4af37 60%,#f5d76e,#8a6d1a);background-size:300% 300%;animation:borderFlow 7s ease-in-out infinite;border-radius:1rem;padding:1.5px}
+
+.h2fx::after{content:'';display:block;height:3px;width:64px;margin:12px auto 0;border-radius:3px;background:linear-gradient(90deg,transparent,#d4af37,transparent)}
+
+.ring,.btn-glow{animation:ringPulse 2.6s ease-out infinite}
+.btn-glow{transition:transform .3s,background-color .3s}
+.btn-glow:hover{transform:translateY(-3px) scale(1.04);background-color:rgba(212,175,55,.12)}
+
+.fli{transition:transform .3s,color .3s}
+.fli:hover{transform:translateX(6px);color:#f5d76e}
+.tick{transition:transform .3s}
+.fli:hover .tick{transform:scale(1.35) rotate(10deg)}
+
+.faq summary span{transition:transform .3s}
+.faq[open] p{animation:faqOpen .4s ease both}
+
+.lnk svg{transition:transform .3s}
+.lnk:hover svg{transform:scale(1.2) rotate(-6deg)}
+
+@supports (animation-timeline: view()){
+  .rv{animation:rvUp linear both;animation-timeline:view();animation-range:entry calc(min(var(--i,0),8)*3%) entry calc(42% + min(var(--i,0),8)*3%)}
+  .h2fx::after{animation:lineGrow linear both;animation-timeline:view();animation-range:entry 20% entry 80%}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .rv,.hero-in,.gtext,.sec::before,.ring,.btn-glow,.gborder,.h2fx::after{animation:none !important}
+}
+`;
 
 /* ============================================================
    OLD CODE (Login UI) — all preserved
@@ -492,6 +553,7 @@ function DataUsage() {
 export default function HomePage() {
   return (
     <main className="bg-black text-white">
+      <style dangerouslySetInnerHTML={{ __html: premiumCss }} />
       {jsonLd.map((data, i) => (
         <script key={i} type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />
       ))}
@@ -500,21 +562,21 @@ export default function HomePage() {
       <LoginHero />
 
       {/* NEW: SEO Hero */}
-      <section className="px-6 md:px-20 py-20 md:py-28 text-center bg-[radial-gradient(ellipse_90%_60%_at_50%_0%,rgba(212,175,55,0.15),transparent_65%)]">
-        <h1 className="text-3xl md:text-5xl font-black max-w-4xl mx-auto leading-tight">
-          Affordable <span className="text-[#d4af37]">AI Google Review Management</span> Software for Small Businesses
+      <section className="sec relative overflow-hidden px-6 md:px-20 py-20 md:py-28 text-center bg-[radial-gradient(ellipse_90%_60%_at_50%_0%,rgba(212,175,55,0.15),transparent_65%)]">
+        <h1 className="hero-in text-3xl md:text-5xl font-black max-w-4xl mx-auto leading-tight">
+          Affordable <span className="gtext">AI Google Review Management</span> Software for Small Businesses
         </h1>
-        <p className="text-gray-300 max-w-2xl mx-auto mt-5 text-sm md:text-lg">
+        <p className="hero-in d2 text-gray-300 max-w-2xl mx-auto mt-5 text-sm md:text-lg">
           {APP_NAME} syncs your Google Business Profile reviews, drafts on-brand AI replies, and tracks your online
           reputation from one dashboard. Plans start at <strong>$9/month</strong>, and AI reply features start at{" "}
           <strong>$29/month</strong>.
         </p>
-        <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center items-center">
-          <a href="#pricing" className="border border-[#d4af37]/50 text-[#d4af37] text-sm font-bold py-3.5 px-6 rounded-xl">
+        <div className="hero-in d3 mt-8 flex flex-col sm:flex-row gap-3 justify-center items-center">
+          <a href="#pricing" className="btn-glow border border-[#d4af37]/50 text-[#d4af37] text-sm font-bold py-3.5 px-6 rounded-xl">
             View Pricing
           </a>
         </div>
-        <p className="text-gray-500 text-xs mt-5">
+        <p className="hero-in d4 text-gray-500 text-xs mt-5">
           Transparent pricing · Built for restaurants, clinics, dentists, gyms, salons, retail stores and agencies.
         </p>
       </section>
@@ -523,12 +585,12 @@ export default function HomePage() {
       <section className={section}>
         <h2 className={h2}>Managing Google reviews shouldn&apos;t cost more than your marketing budget</h2>
         <ul className="max-w-3xl mx-auto space-y-3 text-gray-400 text-sm md:text-base list-disc pl-5">
-          <li>Reviews arrive at all hours, and unanswered ones hurt trust and local visibility.</li>
-          <li>Writing a thoughtful reply for every review takes time most owners don&apos;t have.</li>
-          <li>Many enterprise reputation platforms are priced for large chains, which can be too expensive for small businesses.</li>
-          <li>Switching between Google, email and messaging apps makes it easy to miss a review.</li>
+          <li className="rv" style={st(0)}>Reviews arrive at all hours, and unanswered ones hurt trust and local visibility.</li>
+          <li className="rv" style={st(1)}>Writing a thoughtful reply for every review takes time most owners don&apos;t have.</li>
+          <li className="rv" style={st(2)}>Many enterprise reputation platforms are priced for large chains, which can be too expensive for small businesses.</li>
+          <li className="rv" style={st(3)}>Switching between Google, email and messaging apps makes it easy to miss a review.</li>
         </ul>
-        <p className="text-center text-gray-300 mt-6 text-sm">{APP_NAME} was built to fix this at a price small businesses can afford.</p>
+        <p className="rv text-center text-gray-300 mt-6 text-sm">{APP_NAME} was built to fix this at a price small businesses can afford.</p>
       </section>
 
       {/* OLD: What it does (also defines the .gold-* animation styles used by DataUsage) */}
@@ -536,7 +598,7 @@ export default function HomePage() {
 
       {/* Why choose */}
       <section className={section}>
-        <h2 className={h2}>Why businesses choose <span className="text-[#d4af37]">{APP_NAME}</span></h2>
+        <h2 className={h2}>Why businesses choose <span className="gtext">{APP_NAME}</span></h2>
         <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto mt-10">
           {[
             ["Low starting price", "Basic from $9/month; Standard with AI from $29/month."],
@@ -544,8 +606,8 @@ export default function HomePage() {
             ["Built around Google Business Profile", "Direct integration and review sync, plus manual sync when you need it."],
             ["One dashboard", "Reviews, replies, analytics, alerts and requests in one place."],
             ["Made for local businesses", "Simple setup, no enterprise complexity."],
-          ].map(([t, d]) => (
-            <div key={t} className={`${card} p-6`}>
+          ].map(([t, d], i) => (
+            <div key={t} style={st(i)} className={`${card} p-6`}>
               <h3 className="text-white font-bold text-sm mb-2">{t}</h3>
               <p className="text-gray-400 text-xs leading-relaxed">{d}</p>
             </div>
@@ -557,26 +619,27 @@ export default function HomePage() {
       <section id="features" className={section}>
         <h2 className={h2}>AI review reply software with everything in one dashboard</h2>
         <p className={sub}>Google review dashboard, AI replies, analytics and review requests for your Google Business Profile.</p>
-        <div className={`${card} p-6 md:p-8 max-w-5xl mx-auto`}>
-          <div className="text-center mb-8">
-            <h3 className="text-2xl font-black">
-              <span className="text-[#d4af37]">Standard</span>
-            </h3>
-            <p className="text-gray-300 text-sm mt-1">
-              <span>Best for growing businesses</span>
-            </p>
-            <p className="text-3xl font-black text-[#d4af37] mt-3">$29<span className="text-sm text-gray-400">/month</span></p>
+        <div className="gborder rv max-w-5xl mx-auto">
+          <div className="rounded-[0.9rem] bg-gradient-to-b from-[#141008] to-[#0a0705] p-6 md:p-8">
+            <div className="text-center mb-8">
+              <h3 className="gtext inline-block text-2xl font-black">Standard</h3>
+              <p className="text-gray-300 text-sm mt-1">Best for growing businesses</p>
+              <p className="mt-3">
+                <span className="gtext text-3xl font-black">$29</span>
+                <span className="text-sm text-gray-400">/month</span>
+              </p>
+            </div>
+            <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-3">
+              {standardFeatures.map((f, i) => (
+                <li key={f} style={st(i % 3)} className="rv fli flex items-start gap-2 text-gray-300 text-sm">
+                  <Check className="tick w-4 h-4 text-[#d4af37] mt-0.5 shrink-0" />
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
           </div>
-          <ul className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-3">
-            {standardFeatures.map((f) => (
-              <li key={f} className="flex items-start gap-2 text-gray-300 text-sm">
-                <Check className="w-4 h-4 text-[#d4af37] mt-0.5 shrink-0" />
-                <span>{f}</span>
-              </li>
-            ))}
-          </ul>
         </div>
-        <p className="text-gray-400 text-center max-w-3xl mx-auto mt-8 text-sm md:text-base leading-relaxed">
+        <p className="rv text-gray-400 text-center max-w-3xl mx-auto mt-8 text-sm md:text-base leading-relaxed">
           Many review management platforms charge high prices for these capabilities. {APP_NAME} is one of the most
           affordable options in the market, offering {standardFeatures.length} features in the Standard plan for just $29/month.
         </p>
@@ -592,13 +655,21 @@ export default function HomePage() {
         <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
           <div className={`${card} p-6`}>
             <h3 className="text-white font-bold">Basic</h3>
-            <p className="text-3xl font-black text-[#d4af37] my-2">$9<span className="text-sm text-gray-400">/month</span></p>
+            <p className="my-2">
+              <span className="gtext text-3xl font-black">$9</span>
+              <span className="text-sm text-gray-400">/month</span>
+            </p>
             <span className="text-xs text-[#d4af37]">See Basic plan</span>
           </div>
-          <div className={`${card} p-6`}>
-            <h3 className="text-white font-bold">Standard <span className="text-xs text-gray-400">(AI features)</span></h3>
-            <p className="text-3xl font-black text-[#d4af37] my-2">$29<span className="text-sm text-gray-400">/month</span></p>
-            <span className="text-xs text-[#d4af37]">See Standard plan</span>
+          <div className="gborder rv" style={st(1)}>
+            <div className="rounded-[0.9rem] bg-gradient-to-b from-[#141008] to-[#0a0705] p-6 h-full">
+              <h3 className="text-white font-bold">Standard <span className="text-xs text-gray-400">(AI features)</span></h3>
+              <p className="my-2">
+                <span className="gtext text-3xl font-black">$29</span>
+                <span className="text-sm text-gray-400">/month</span>
+              </p>
+              <span className="text-xs text-[#d4af37]">See Standard plan</span>
+            </div>
           </div>
         </div>
       </section>
@@ -612,8 +683,8 @@ export default function HomePage() {
             ["No enterprise overhead", "No large sales team or long contracts driving up the price."],
             ["Built for small businesses", "Features are chosen for local business needs, not enterprise reporting."],
             ["Transparent plans", "Two simple plans, published openly."],
-          ].map(([t, d]) => (
-            <div key={t} className={`${card} p-5`}>
+          ].map(([t, d], i) => (
+            <div key={t} style={st(i)} className={`${card} p-5`}>
               <h3 className="text-white font-bold text-sm mb-1">{t}</h3>
               <p className="text-gray-400 text-xs leading-relaxed">{d}</p>
             </div>
@@ -630,8 +701,8 @@ export default function HomePage() {
           beyond review management, so compare based on what you actually need.
         </p>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {comparisons.map((c) => (
-            <a key={c.href} href={c.href} className={`${card} p-5 block`}>
+          {comparisons.map((c, i) => (
+            <a key={c.href} href={c.href} style={st(i)} className={`${card} p-5 block`}>
               <h3 className="text-white font-bold text-sm mb-1">{c.label} vs {APP_NAME}</h3>
               <p className="text-gray-400 text-xs leading-relaxed">{c.note}</p>
             </a>
@@ -643,8 +714,8 @@ export default function HomePage() {
       <section className={section}>
         <h2 className={h2}>Who should use {APP_NAME}</h2>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto mt-10">
-          {audiences.map(([t, d]) => (
-            <div key={t} className={`${card} p-5`}>
+          {audiences.map(([t, d], i) => (
+            <div key={t} style={st(i)} className={`${card} p-5`}>
               <h3 className="text-white font-bold text-sm mb-1">{t}</h3>
               <p className="text-gray-400 text-xs leading-relaxed">{d}</p>
             </div>
@@ -656,9 +727,9 @@ export default function HomePage() {
       <section className={section}>
         <h2 className={h2}>Benefits</h2>
         <ul className="grid sm:grid-cols-2 gap-3 max-w-3xl mx-auto mt-8">
-          {benefits.map((b) => (
-            <li key={b} className="flex items-start gap-2 text-gray-300 text-sm">
-              <Check className="w-4 h-4 text-[#d4af37] mt-0.5 shrink-0" />
+          {benefits.map((b, i) => (
+            <li key={b} style={st(i)} className="rv fli flex items-start gap-2 text-gray-300 text-sm">
+              <Check className="tick w-4 h-4 text-[#d4af37] mt-0.5 shrink-0" />
               {b}
             </li>
           ))}
@@ -670,8 +741,8 @@ export default function HomePage() {
         <h2 className={h2}>How it works</h2>
         <ol className="max-w-3xl mx-auto mt-10 space-y-4">
           {steps.map(([t, d], i) => (
-            <li key={t} className={`${card} p-4 flex items-start gap-4`}>
-              <span className="w-8 h-8 rounded-full bg-[#d4af37]/10 border border-[#d4af37]/30 text-[#d4af37] font-black flex items-center justify-center shrink-0">
+            <li key={t} style={st(i)} className={`${card} p-4 flex items-start gap-4`}>
+              <span className="ring w-8 h-8 rounded-full bg-[#d4af37]/10 border border-[#d4af37]/30 text-[#d4af37] font-black flex items-center justify-center shrink-0">
                 {i + 1}
               </span>
               <div>
@@ -687,7 +758,7 @@ export default function HomePage() {
       <section className={section}>
         <div className="max-w-3xl mx-auto">
           <h2 className={h2}>What is {APP_NAME}?</h2>
-          <p className="text-gray-300 text-sm md:text-base leading-relaxed text-center mb-8">
+          <p className="rv text-gray-300 text-sm md:text-base leading-relaxed text-center mb-8">
             {APP_NAME} is an affordable AI-powered Google review management platform for small and local businesses. It connects
             to Google Business Profile, syncs customer reviews, generates AI reply drafts, and provides analytics, review requests
             (QR code, email, WhatsApp), a unified inbox and team management. Plans start at $9/month (Basic), with AI features
@@ -703,15 +774,15 @@ export default function HomePage() {
                 ["AI plan", "Standard, $29/month"],
                 ["Integrates with", "Google Business Profile"],
                 ["Website", SITE],
-              ].map(([k, v]) => (
-                <tr key={k} className="border-b border-white/10">
+              ].map(([k, v], i) => (
+                <tr key={k} style={st(i)} className="rv border-b border-white/10">
                   <th className="text-left py-3 pr-4 text-gray-400 font-semibold w-40">{k}</th>
                   <td className="py-3 text-gray-200">{v}</td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <p className="text-gray-400 text-xs mt-4">
+          <p className="rv text-gray-400 text-xs mt-4">
             <strong className="text-gray-200">Best choice when:</strong> you want an affordable tool for AI replies to Google reviews without enterprise pricing.{" "}
             <strong className="text-gray-200">May not be the best choice when:</strong> you need a large all-in-one customer messaging or payments suite.
           </p>
@@ -723,13 +794,13 @@ export default function HomePage() {
         <div className="max-w-3xl mx-auto">
           <h2 className={h2}>About {APP_NAME}</h2>
           <ul className="space-y-3 text-gray-400 text-sm list-disc pl-5">
-            <li><strong className="text-gray-200">Who built it:</strong> {APP_NAME} is built by Afnan Khan, an expert in machine learning and AI technology.</li>
-            <li><strong className="text-gray-200">Why it exists:</strong> Small businesses need review management but are often priced out of enterprise tools.</li>
-            <li><strong className="text-gray-200">Who it is for:</strong> Small businesses, local businesses and agencies.</li>
-            <li><strong className="text-gray-200">Transparent pricing:</strong> $9/month and $29/month, listed openly.</li>
-            <li><strong className="text-gray-200">Clear scope:</strong> We help you manage Google reviews; we do not promise specific ranking or revenue results.</li>
-            <li><strong className="text-gray-200">Data use:</strong> Google access is used only to read your locations and reviews and to publish replies you approve. Basic profile info (name, email, photo) is used only to create and secure your account. We do not sell this data.</li>
-            <li><strong className="text-gray-200">Contact:</strong> afnank6789@gmail.com</li>
+            <li className="rv"><strong className="text-gray-200">Who built it:</strong> {APP_NAME} is built by Afnan Khan, an expert in machine learning and AI technology.</li>
+            <li className="rv"><strong className="text-gray-200">Why it exists:</strong> Small businesses need review management but are often priced out of enterprise tools.</li>
+            <li className="rv"><strong className="text-gray-200">Who it is for:</strong> Small businesses, local businesses and agencies.</li>
+            <li className="rv"><strong className="text-gray-200">Transparent pricing:</strong> $9/month and $29/month, listed openly.</li>
+            <li className="rv"><strong className="text-gray-200">Clear scope:</strong> We help you manage Google reviews; we do not promise specific ranking or revenue results.</li>
+            <li className="rv"><strong className="text-gray-200">Data use:</strong> Google access is used only to read your locations and reviews and to publish replies you approve. Basic profile info (name, email, photo) is used only to create and secure your account. We do not sell this data.</li>
+            <li className="rv"><strong className="text-gray-200">Contact:</strong> afnank6789@gmail.com</li>
           </ul>
         </div>
       </section>
@@ -742,7 +813,7 @@ export default function HomePage() {
         <h2 className={h2}>Frequently asked questions</h2>
         <div className="max-w-3xl mx-auto mt-10 space-y-3">
           {faqs.map(([q, a]) => (
-            <details key={q} className={`${card} p-4 group`}>
+            <details key={q} className={`${card} faq p-4 group`}>
               <summary className="cursor-pointer text-white font-bold text-sm list-none flex justify-between gap-4">
                 {q}
                 <span className="text-[#d4af37] group-open:rotate-45 transition-transform">+</span>
@@ -752,9 +823,20 @@ export default function HomePage() {
           ))}
         </div>
       </section>
-      <div className="px-6 md:px-20 py-6 border-t border-white/10 text-center text-xs text-gray-500">
-        <a href="https://www.linkedin.com/in/afnan-khan-byte" target="_blank" rel="noopener noreferrer" className="hover:text-[#d4af37]">LinkedIn</a>
-      </div>
+      <footer className="border-t border-white/10 px-6 py-8 text-center">
+        <a
+          href="https://www.linkedin.com/in/afnan-khan-byte"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Afnan Khan on LinkedIn"
+          className="lnk inline-flex items-center gap-2 text-gray-400 hover:text-[#d4af37] text-sm font-semibold transition-colors duration-300"
+        >
+          <svg viewBox="0 0 24 24" className="w-5 h-5" fill="currentColor" aria-hidden="true">
+            <path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.36V9h3.41v1.56h.05c.47-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45zM22.22 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.45c.98 0 1.78-.77 1.78-1.73V1.73C24 .77 23.2 0 22.22 0z" />
+          </svg>
+          LinkedIn
+        </a>
+      </footer>
     </main>
   );
 }
