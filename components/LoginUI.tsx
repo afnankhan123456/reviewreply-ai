@@ -1,4 +1,6 @@
-import type { Metadata } from "next";
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import GoogleSignInButton from "@/app/components/GoogleSignInButton";
 import {
   MessageSquareText, ShieldCheck, Sparkles, BarChart3, RefreshCw, Star, Check, Info,
@@ -6,27 +8,6 @@ import {
 
 const APP_NAME = "ReviewReply AI"; // ⚠️ must be IDENTICAL to the name on OAuth consent screen
 const SITE = "https://www.reviewreply-ai.in";
-
-export const metadata: Metadata = {
-  title: "ReviewReply AI – Affordable AI Google Review Management Software (from $9/mo)",
-  description:
-    "Reply to Google reviews with AI. ReviewReply AI is Google Business Profile review management software for small businesses. Plans from $9/month, AI replies from $29/month.",
-  alternates: { canonical: SITE },
-  openGraph: {
-    type: "website",
-    siteName: APP_NAME,
-    title: "ReviewReply AI – Affordable AI Google Review Management Software",
-    description: "AI review replies, Google review sync and reputation analytics for small businesses. From $9/month.",
-    url: SITE,
-    images: [`${SITE}/og-image.png`],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "ReviewReply AI – Affordable AI Google Review Management Software",
-    description: "Reply to Google reviews with AI. Plans from $9/month.",
-    images: [`${SITE}/og-image.png`],
-  },
-};
 
 const standardFeatures = [
   "2 Business Locations",
@@ -193,6 +174,87 @@ const sub = "rv text-gray-400 text-center max-w-2xl mx-auto mb-12 text-sm md:tex
 // stagger helper: sets --i so neighbouring cards animate one after another
 const st = (i: number) => ({ "--i": i } as React.CSSProperties);
 
+// title type hone ke baad description start ho (TypeText defaults: speed 30ms, max 1800ms)
+const after = (t: string) => Math.round(Math.min(30, 1800 / Math.max(t.length, 1)) * t.length) + 150;
+
+/* ============================================================
+   TypeText — scroll par screen me aate hi "likha" hua dikhta hai
+   ============================================================ */
+function TypeText({
+  text,
+  delay = 0,
+  speed = 30,
+  maxMs = 1800,
+  inline = false,
+  className = "",
+}: {
+  text: string;
+  delay?: number;
+  speed?: number;
+  maxMs?: number;
+  inline?: boolean;
+  className?: string;
+}) {
+  const ref = useRef<HTMLSpanElement>(null);
+  const [started, setStarted] = useState(false);
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setCount(text.length);
+      setStarted(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          setStarted(true);
+          io.disconnect();
+        }
+      },
+      { threshold: 0.2, rootMargin: "0px 0px -8% 0px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [text]);
+
+  useEffect(() => {
+    if (!started || count >= text.length) return;
+    const per = Math.max(6, Math.min(speed, maxMs / Math.max(text.length, 1)));
+    let iv: ReturnType<typeof setInterval>;
+    const t = setTimeout(() => {
+      iv = setInterval(() => {
+        setCount((c) => {
+          if (c >= text.length) {
+            clearInterval(iv);
+            return c;
+          }
+          return c + 1;
+        });
+      }, per);
+    }, delay);
+    return () => {
+      clearTimeout(t);
+      clearInterval(iv);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [started]);
+
+  const typing = started && count < text.length;
+
+  return (
+    <span ref={ref} className={`${inline ? "inline-block" : "block"} relative ${className}`}>
+      <span className="opacity-0">{text}</span>
+      <span aria-hidden="true" className="absolute inset-0">
+        {text.slice(0, count)}
+        {typing && <i className="tw-caret" />}
+      </span>
+    </span>
+  );
+}
+
 // Premium animations (pure CSS, works in a server component).
 // Scroll-reveal uses CSS scroll-driven animations; browsers without support simply show everything normally.
 const premiumCss = `
@@ -204,6 +266,7 @@ const premiumCss = `
 @keyframes ringPulse{0%{box-shadow:0 0 0 0 rgba(212,175,55,.5)}70%,100%{box-shadow:0 0 0 14px rgba(212,175,55,0)}}
 @keyframes faqOpen{from{opacity:0;transform:translateY(-8px)}to{opacity:1;transform:none}}
 @keyframes sheen{from{transform:translateX(-120%) skewX(-20deg)}to{transform:translateX(320%) skewX(-20deg)}}
+@keyframes caretBlink{0%,49%{opacity:1}50%,100%{opacity:0}}
 @keyframes lineGrow{from{transform:scaleX(0);opacity:0}to{transform:scaleX(1);opacity:1}}
 
 .hero-in{animation:heroIn .9s cubic-bezier(.2,.7,.2,1) both}
@@ -219,8 +282,8 @@ const premiumCss = `
 .pcard:hover{transform:translateY(-8px)}
 .pcard::before{content:'';position:absolute;top:0;left:0;width:35%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.09),transparent);transform:translateX(-120%) skewX(-20deg);pointer-events:none}
 .pcard:hover::before{animation:sheen .9s ease}
-.pcard::after{content:'';position:absolute;left:0;top:0;height:2px;width:100%;background:linear-gradient(90deg,transparent,#d4af37,transparent);transform:scaleX(0);transition:transform .6s ease}
-.pcard:hover::after{transform:scaleX(1)}
+
+.tw-caret{display:inline-block;width:2px;height:1em;margin-left:2px;background:#f5d76e;box-shadow:0 0 8px rgba(245,215,110,.8);vertical-align:-0.12em;animation:caretBlink .7s steps(1) infinite}
 
 .gborder{background:linear-gradient(120deg,#8a6d1a,#f5d76e,#1a1408 35%,#d4af37 60%,#f5d76e,#8a6d1a);background-size:300% 300%;animation:borderFlow 7s ease-in-out infinite;border-radius:1rem;padding:1.5px}
 
@@ -247,7 +310,7 @@ const premiumCss = `
 }
 
 @media (prefers-reduced-motion: reduce){
-  .rv,.hero-in,.gtext,.sec::before,.ring,.btn-glow,.gborder,.h2fx::after{animation:none !important}
+  .rv,.hero-in,.gtext,.sec::before,.ring,.btn-glow,.gborder,.h2fx::after,.tw-caret{animation:none !important}
 }
 `;
 
@@ -276,7 +339,7 @@ function GoogleCard() {
   ];
 
   return (
-    <div className="w-full bg-black/40 backdrop-blur-md border border-[#ff2d55]/30 rounded-3xl overflow-hidden shadow-[0_0_60px_-15px_rgba(255,45,85,0.35)]">
+    <div className="w-full bg-black/40 backdrop-blur-md border border-[#d4af37]/30 rounded-3xl overflow-hidden shadow-[0_0_60px_-15px_rgba(212,175,55,0.35)]">
       <video
         src="/logo-animation.mp4"
         autoPlay
@@ -289,7 +352,7 @@ function GoogleCard() {
       <div className="p-7">
         <div className="flex flex-col items-center text-center mb-6">
           <h2 className="text-xl font-black text-white mb-2">
-            Continue with Google to access <span className="text-blue-400">ReviewReply AI</span>
+            Continue with Google to access <span className="text-[#d4af37]">ReviewReply AI</span>
           </h2>
           <p className="text-xs text-gray-400 leading-relaxed max-w-xs">
             Securely sign in with your Google account to connect your Business Profile and get started.
@@ -299,12 +362,12 @@ function GoogleCard() {
         <div className="border-t border-white/10 pt-4 space-y-4 mb-5">
           {points.map(({ icon: Icon, title, desc }) => (
             <div key={title} className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-[#ff2d55]/10 border border-[#ff2d55]/30 flex items-center justify-center shrink-0">
-                <Icon className="w-4 h-4 text-[#ff2d55]" />
+              <div className="w-8 h-8 rounded-full bg-[#d4af37]/10 border border-[#d4af37]/30 flex items-center justify-center shrink-0">
+                <Icon className="w-4 h-4 text-[#d4af37]" />
               </div>
-              <div>
-                <h3 className="text-white text-sm font-bold">{title}</h3>
-                <p className="text-gray-400 text-xs leading-relaxed">{desc}</p>
+              <div className="flex-1">
+                <h3 className="text-white text-sm font-bold"><TypeText text={title} /></h3>
+                <p className="text-gray-400 text-xs leading-relaxed"><TypeText text={desc} delay={after(title)} speed={14} /></p>
               </div>
             </div>
           ))}
@@ -329,9 +392,9 @@ function LoginHero() {
       {/* ✅ MOBILE HERO — purple/violet theme */}
       <div className="flex md:hidden min-h-[100dvh] flex-col justify-center relative bg-black px-5 py-8 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_60%_at_50%_0%,rgba(141,108,240,0.20),transparent_65%),radial-gradient(ellipse_80%_50%_at_15%_100%,rgba(107,70,193,0.16),transparent_70%)]" />
-          <div className="absolute -top-32 -right-24 w-72 h-72 rounded-full bg-gradient-to-br from-[#8d6cf0] to-transparent opacity-20 blur-[80px]" />
-          <div className="absolute -bottom-24 -left-20 w-64 h-64 rounded-full bg-gradient-to-tr from-[#6b46c1] to-transparent opacity-15 blur-[80px]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_60%_at_50%_0%,rgba(212,175,55,0.20),transparent_65%),radial-gradient(ellipse_80%_50%_at_15%_100%,rgba(184,134,11,0.16),transparent_70%)]" />
+          <div className="absolute -top-32 -right-24 w-72 h-72 rounded-full bg-gradient-to-br from-[#d4af37] to-transparent opacity-20 blur-[80px]" />
+          <div className="absolute -bottom-24 -left-20 w-64 h-64 rounded-full bg-gradient-to-tr from-[#b8860b] to-transparent opacity-15 blur-[80px]" />
         </div>
 
         <div className="relative z-10 flex flex-col items-center text-center">
@@ -339,12 +402,12 @@ function LoginHero() {
             <img src="/ai-logo.png" alt={`${APP_NAME} logo`} className="w-9 h-9 object-contain" />
             {/* NOTE: was <h1>; changed to <div> so the page has only ONE <h1> (the SEO hero below) */}
             <div className="text-xl font-black tracking-tight text-white">
-              ReviewReply <span className="text-[#a78bfa]">AI</span>
+              ReviewReply <span className="text-[#f5d76e]">AI</span>
             </div>
           </div>
 
           <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-4 py-3 mb-3 max-w-xs">
-            <div className="flex items-center gap-1.5 text-[#ff2d55] mb-1">
+            <div className="flex items-center gap-1.5 text-[#d4af37] mb-1">
               <Info className="w-3.5 h-3.5" />
               <span className="text-[10px] font-black uppercase tracking-widest">App Purpose</span>
             </div>
@@ -372,7 +435,7 @@ function LoginHero() {
           alt={`${APP_NAME} Background`}
           className="absolute inset-0 w-full h-full object-cover object-bottom"
         />
-        <div className="absolute -top-40 right-[-200px] w-[900px] h-[900px] rounded-full bg-gradient-to-br from-[#ff2d55] via-[#c81e3a] to-transparent opacity-20 blur-[80px] pointer-events-none" />
+        <div className="absolute -top-40 right-[-200px] w-[900px] h-[900px] rounded-full bg-gradient-to-br from-[#d4af37] via-[#b8860b] to-transparent opacity-20 blur-[80px] pointer-events-none" />
 
         {/* 👇 zoom: 0.8 makes this render exactly like 80% browser zoom, even at normal 100% zoom */}
         <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-12 xl:gap-16 max-w-7xl mx-auto w-full" style={{ zoom: 0.8 }}>
@@ -381,12 +444,12 @@ function LoginHero() {
               <img src="/ai-logo.png" alt={`${APP_NAME} logo`} className="w-16 h-16 object-contain" />
               {/* NOTE: was <h1>; changed to <div> so the page has only ONE <h1> (the SEO hero below) */}
               <div className="text-3xl font-black tracking-tight text-white">
-                ReviewReply <span className="text-blue-400">AI</span>
+                ReviewReply <span className="text-[#d4af37]">AI</span>
               </div>
             </div>
 
             <div className="bg-white/10 backdrop-blur-md border border-white/20 rounded-xl px-6 py-4 mb-6 inline-block">
-              <div className="flex items-center gap-2 text-[#ff2d55] mb-2">
+              <div className="flex items-center gap-2 text-[#d4af37] mb-2">
                 <Info className="w-4 h-4" />
                 <span className="text-xs font-black uppercase tracking-widest">App Purpose</span>
               </div>
@@ -488,8 +551,8 @@ function WhatItDoes() {
               <div className="gold-icon-wrap w-12 h-12 rounded-xl bg-[#d4af37]/10 border border-[#d4af37]/30 flex items-center justify-center">
                 <Icon className="w-6 h-6 text-[#d4af37]" />
               </div>
-              <h3 className="text-white font-bold text-sm">{title}</h3>
-              <p className="text-gray-400 text-xs leading-relaxed">{desc}</p>
+              <h3 className="text-white font-bold text-sm"><TypeText text={title} /></h3>
+              <p className="text-gray-400 text-xs leading-relaxed"><TypeText text={desc} delay={after(title)} speed={14} /></p>
             </div>
           ))}
         </div>
@@ -534,9 +597,9 @@ function DataUsage() {
               <div className="gold-icon-wrap w-9 h-9 rounded-lg bg-[#d4af37]/10 border border-[#d4af37]/30 flex items-center justify-center shrink-0 mt-0.5">
                 <ShieldCheck className="w-4 h-4 text-[#d4af37]" />
               </div>
-              <div>
-                <h3 className="text-white text-sm font-bold">{title}</h3>
-                <p className="text-gray-400 text-xs leading-relaxed">{desc}</p>
+              <div className="flex-1">
+                <h3 className="text-white text-sm font-bold"><TypeText text={title} /></h3>
+                <p className="text-gray-400 text-xs leading-relaxed"><TypeText text={desc} delay={after(title)} speed={14} /></p>
               </div>
             </div>
           ))}
@@ -608,8 +671,8 @@ export default function HomePage() {
             ["Made for local businesses", "Simple setup, no enterprise complexity."],
           ].map(([t, d], i) => (
             <div key={t} style={st(i)} className={`${card} p-6`}>
-              <h3 className="text-white font-bold text-sm mb-2">{t}</h3>
-              <p className="text-gray-400 text-xs leading-relaxed">{d}</p>
+              <h3 className="text-white font-bold text-sm mb-2"><TypeText text={t} /></h3>
+              <p className="text-gray-400 text-xs leading-relaxed"><TypeText text={d} delay={after(t)} speed={14} /></p>
             </div>
           ))}
         </div>
@@ -654,21 +717,21 @@ export default function HomePage() {
         </p>
         <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
           <div className={`${card} p-6`}>
-            <h3 className="text-white font-bold">Basic</h3>
+            <h3 className="text-white font-bold"><TypeText text="Basic" /></h3>
             <p className="my-2">
               <span className="gtext text-3xl font-black">$9</span>
               <span className="text-sm text-gray-400">/month</span>
             </p>
-            <span className="text-xs text-[#d4af37]">See Basic plan</span>
+            <span className="text-xs text-[#d4af37]"><TypeText text="See Basic plan" delay={after("Basic")} inline /></span>
           </div>
           <div className="gborder rv" style={st(1)}>
             <div className="rounded-[0.9rem] bg-gradient-to-b from-[#141008] to-[#0a0705] p-6 h-full">
-              <h3 className="text-white font-bold">Standard <span className="text-xs text-gray-400">(AI features)</span></h3>
+              <h3 className="text-white font-bold"><TypeText text="Standard" inline />{" "}<span className="text-xs text-gray-400">(AI features)</span></h3>
               <p className="my-2">
                 <span className="gtext text-3xl font-black">$29</span>
                 <span className="text-sm text-gray-400">/month</span>
               </p>
-              <span className="text-xs text-[#d4af37]">See Standard plan</span>
+              <span className="text-xs text-[#d4af37]"><TypeText text="See Standard plan" delay={after("Standard")} inline /></span>
             </div>
           </div>
         </div>
@@ -685,8 +748,8 @@ export default function HomePage() {
             ["Transparent plans", "Two simple plans, published openly."],
           ].map(([t, d], i) => (
             <div key={t} style={st(i)} className={`${card} p-5`}>
-              <h3 className="text-white font-bold text-sm mb-1">{t}</h3>
-              <p className="text-gray-400 text-xs leading-relaxed">{d}</p>
+              <h3 className="text-white font-bold text-sm mb-1"><TypeText text={t} /></h3>
+              <p className="text-gray-400 text-xs leading-relaxed"><TypeText text={d} delay={after(t)} speed={14} /></p>
             </div>
           ))}
         </div>
@@ -701,12 +764,15 @@ export default function HomePage() {
           beyond review management, so compare based on what you actually need.
         </p>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-          {comparisons.map((c, i) => (
-            <a key={c.href} href={c.href} style={st(i)} className={`${card} p-5 block`}>
-              <h3 className="text-white font-bold text-sm mb-1">{c.label} vs {APP_NAME}</h3>
-              <p className="text-gray-400 text-xs leading-relaxed">{c.note}</p>
-            </a>
-          ))}
+          {comparisons.map((c, i) => {
+            const title = `${c.label} vs ${APP_NAME}`;
+            return (
+              <div key={c.href} style={st(i)} className={`${card} p-5 block`}>
+                <h3 className="text-white font-bold text-sm mb-1"><TypeText text={title} /></h3>
+                <p className="text-gray-400 text-xs leading-relaxed"><TypeText text={c.note} delay={after(title)} speed={14} /></p>
+              </div>
+            );
+          })}
         </div>
       </section>
 
@@ -716,8 +782,8 @@ export default function HomePage() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto mt-10">
           {audiences.map(([t, d], i) => (
             <div key={t} style={st(i)} className={`${card} p-5`}>
-              <h3 className="text-white font-bold text-sm mb-1">{t}</h3>
-              <p className="text-gray-400 text-xs leading-relaxed">{d}</p>
+              <h3 className="text-white font-bold text-sm mb-1"><TypeText text={t} /></h3>
+              <p className="text-gray-400 text-xs leading-relaxed"><TypeText text={d} delay={after(t)} speed={14} /></p>
             </div>
           ))}
         </div>
@@ -745,9 +811,9 @@ export default function HomePage() {
               <span className="ring w-8 h-8 rounded-full bg-[#d4af37]/10 border border-[#d4af37]/30 text-[#d4af37] font-black flex items-center justify-center shrink-0">
                 {i + 1}
               </span>
-              <div>
-                <h3 className="text-white font-bold text-sm">{t}</h3>
-                <p className="text-gray-400 text-xs">{d}</p>
+              <div className="flex-1">
+                <h3 className="text-white font-bold text-sm"><TypeText text={t} /></h3>
+                <p className="text-gray-400 text-xs"><TypeText text={d} delay={after(t)} speed={14} /></p>
               </div>
             </li>
           ))}
@@ -815,10 +881,10 @@ export default function HomePage() {
           {faqs.map(([q, a]) => (
             <details key={q} className={`${card} faq p-4 group`}>
               <summary className="cursor-pointer text-white font-bold text-sm list-none flex justify-between gap-4">
-                {q}
+                <span className="flex-1"><TypeText text={q} /></span>
                 <span className="text-[#d4af37] group-open:rotate-45 transition-transform">+</span>
               </summary>
-              <p className="text-gray-400 text-xs leading-relaxed mt-3">{a}</p>
+              <p className="text-gray-400 text-xs leading-relaxed mt-3"><TypeText text={a} speed={12} /></p>
             </details>
           ))}
         </div>
