@@ -34,7 +34,7 @@ function InfoSection() {
   return (
     <div className="relative bg-black text-white overflow-hidden">
       <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_20%_10%,rgba(255,45,85,0.15),transparent_70%),radial-gradient(ellipse_60%_60%_at_80%_30%,rgba(180,0,60,0.2),transparent_70%),radial-gradient(ellipse_100%_100%_at_50%_100%,rgba(80,0,50,0.25),transparent_70%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_20%_10%,rgba(212,175,55,0.15),transparent_70%),radial-gradient(ellipse_60%_60%_at_80%_30%,rgba(184,134,11,0.2),transparent_70%),radial-gradient(ellipse_100%_100%_at_50%_100%,rgba(138,109,26,0.25),transparent_70%)]" />
         <div className="absolute top-0 left-0 right-0 h-48 bg-gradient-to-b from-black/80 to-transparent" />
       </div>
 
@@ -46,11 +46,11 @@ function InfoSection() {
       {/* SECTION 1 — How ReviewReply AI Works (vertical timeline) */}
       <section className="px-5 py-16 md:py-24 max-w-4xl mx-auto relative z-10">
         <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-center mb-14">
-          How <span className="text-[#ff2d55]">ReviewReply AI</span> Works
+          How <span className="text-[#d4af37]">ReviewReply AI</span> Works
         </h2>
 
         <div className="relative pl-10 md:pl-14">
-          <div className="absolute left-[15px] md:left-[19px] top-2 bottom-2 w-px bg-gradient-to-b from-[#ff2d55]/60 via-[#ff2d55]/20 to-transparent" />
+          <div className="absolute left-[15px] md:left-[19px] top-2 bottom-2 w-px bg-gradient-to-b from-[#d4af37]/60 via-[#d4af37]/20 to-transparent" />
 
           {[
             { title: "Sign in with Google", desc: "Authenticate securely with your Google account using OAuth." },
@@ -61,7 +61,7 @@ function InfoSection() {
             { title: "Track Analytics", desc: "Monitor ratings, sentiment, and reputation trends over time." },
           ].map((step, idx) => (
             <div key={idx} className="relative pb-10 last:pb-0">
-              <div className="absolute -left-10 md:-left-14 top-0 w-8 h-8 md:w-10 md:h-10 rounded-full bg-[#0d0d0d] border border-[#ff2d55]/50 flex items-center justify-center text-xs md:text-sm font-bold text-[#ff2d55]">
+              <div className="absolute -left-10 md:-left-14 top-0 w-8 h-8 md:w-10 md:h-10 rounded-full bg-[#0d0d0d] border border-[#d4af37]/50 flex items-center justify-center text-xs md:text-sm font-bold text-[#d4af37]">
                 {idx + 1}
               </div>
               <h3 className="text-base md:text-lg font-bold text-white">{step.title}</h3>
@@ -74,7 +74,7 @@ function InfoSection() {
       {/* SECTION 2 — Google Business Profile Integration (horizontal workflow) */}
       <section className="px-5 py-12 md:py-20 max-w-6xl mx-auto relative z-10">
         <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-center mb-4">
-          Google Business Profile <span className="text-[#ff2d55]">Integration</span>
+          Google Business Profile <span className="text-[#d4af37]">Integration</span>
         </h2>
         <p className="text-gray-400 text-sm text-center max-w-2xl mx-auto mb-12">
           A single, purpose-built flow connects your Business Profile to ReviewReply AI.
@@ -93,13 +93,13 @@ function InfoSection() {
             return (
               <div key={idx} className="flex md:flex-1 items-center gap-2 w-full md:w-auto">
                 <div className="flex flex-col items-center text-center gap-2 flex-1">
-                  <div className="w-14 h-14 rounded-2xl bg-[#0d0d0d] border border-[#ff2d55]/30 flex items-center justify-center">
-                    <Icon className="w-6 h-6 text-[#ff2d55]" />
+                  <div className="w-14 h-14 rounded-2xl bg-[#0d0d0d] border border-[#d4af37]/30 flex items-center justify-center">
+                    <Icon className="w-6 h-6 text-[#d4af37]" />
                   </div>
                   <span className="text-xs font-semibold text-white leading-tight">{step.label}</span>
                 </div>
                 {idx !== arr.length - 1 && (
-                  <span className="text-[#ff2d55]/50 text-xl rotate-90 md:rotate-0 shrink-0">→</span>
+                  <span className="text-[#d4af37]/50 text-xl rotate-90 md:rotate-0 shrink-0">→</span>
                 )}
               </div>
             );
@@ -115,7 +115,7 @@ function InfoSection() {
             "You can revoke ReviewReply AI's access at any time from your Google Account settings.",
           ].map((text, i) => (
             <div key={i} className="flex items-start gap-3">
-              <CheckCircle className="w-5 h-5 text-[#ff2d55] shrink-0 mt-0.5" />
+              <CheckCircle className="w-5 h-5 text-[#d4af37] shrink-0 mt-0.5" />
               <span className="text-sm text-gray-300 leading-relaxed">{text}</span>
             </div>
           ))}
@@ -125,7 +125,7 @@ function InfoSection() {
       {/* SECTION 3 — Features (large premium glassmorphism cards) */}
       <section className="px-5 py-12 md:py-20 max-w-6xl mx-auto relative z-10">
         <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-center mb-14">
-          Everything You <span className="text-[#ff2d55]">Need</span>
+          Everything You <span className="text-[#d4af37]">Need</span>
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {[
@@ -144,10 +144,10 @@ function InfoSection() {
             return (
               <div
                 key={idx}
-                className="group bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-3xl p-7 hover:border-[#ff2d55]/50 hover:bg-white/[0.05] transition-all duration-300 hover:-translate-y-1"
+                className="group bg-white/[0.03] backdrop-blur-md border border-white/10 rounded-3xl p-7 hover:border-[#d4af37]/50 hover:bg-white/[0.05] transition-all duration-300 hover:-translate-y-1"
               >
-                <div className="w-14 h-14 rounded-2xl bg-[#2a0a10] border border-[#ff2d55]/30 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
-                  <Icon className="w-7 h-7 text-[#ff2d55]" />
+                <div className="w-14 h-14 rounded-2xl bg-[#1a1408] border border-[#d4af37]/30 flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300">
+                  <Icon className="w-7 h-7 text-[#d4af37]" />
                 </div>
                 <h3 className="text-lg font-bold text-white mb-1.5">{f.title}</h3>
                 <p className="text-sm text-gray-400 leading-relaxed">{f.desc}</p>
@@ -161,9 +161,9 @@ function InfoSection() {
       <section className="px-5 py-12 md:py-20 max-w-5xl mx-auto relative z-10">
         <div className="bg-gradient-to-br from-white/[0.04] to-transparent border border-white/10 rounded-3xl p-8 md:p-12">
           <div className="flex items-center gap-3 mb-10 justify-center">
-            <ShieldCheck className="w-7 h-7 text-[#ff2d55]" />
+            <ShieldCheck className="w-7 h-7 text-[#d4af37]" />
             <h2 className="text-2xl md:text-3xl font-extrabold text-white">
-              Security &amp; <span className="text-[#ff2d55]">Privacy</span>
+              Security &amp; <span className="text-[#d4af37]">Privacy</span>
             </h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
@@ -178,8 +178,8 @@ function InfoSection() {
               const Icon = item.icon;
               return (
                 <div key={idx} className="flex flex-col items-center text-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-[#2a0a10] border border-[#ff2d55]/30 flex items-center justify-center">
-                    <Icon className="w-5 h-5 text-[#ff2d55]" />
+                  <div className="w-12 h-12 rounded-full bg-[#1a1408] border border-[#d4af37]/30 flex items-center justify-center">
+                    <Icon className="w-5 h-5 text-[#d4af37]" />
                   </div>
                   <h4 className="font-semibold text-white text-sm leading-tight">{item.title}</h4>
                 </div>
@@ -192,7 +192,7 @@ function InfoSection() {
       {/* SECTION 5 — Why ReviewReply AI Uses Google APIs */}
       <section className="px-5 py-12 md:py-20 max-w-5xl mx-auto relative z-10">
         <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-center mb-4">
-          Why ReviewReply AI Uses <span className="text-[#ff2d55]">Google APIs</span>
+          Why ReviewReply AI Uses <span className="text-[#d4af37]">Google APIs</span>
         </h2>
         <p className="text-gray-400 text-sm text-center max-w-2xl mx-auto mb-12">
           Only the Google Business Profile API is used — nothing more.
@@ -201,7 +201,7 @@ function InfoSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-[#0d0d0d] border border-white/10 rounded-2xl p-6 md:p-8">
             <div className="flex items-center gap-2.5 mb-5">
-              <Globe className="w-5 h-5 text-[#ff2d55]" />
+              <Globe className="w-5 h-5 text-[#d4af37]" />
               <h3 className="font-bold text-white">Google access is used only for</h3>
             </div>
             <div className="space-y-3">
@@ -213,7 +213,7 @@ function InfoSection() {
                 "Analytics",
               ].map((text, i) => (
                 <div key={i} className="flex items-center gap-2.5">
-                  <CheckCircle className="w-4 h-4 text-[#ff2d55] shrink-0" />
+                  <CheckCircle className="w-4 h-4 text-[#d4af37] shrink-0" />
                   <span className="text-sm text-gray-300">{text}</span>
                 </div>
               ))}
@@ -222,7 +222,7 @@ function InfoSection() {
 
           <div className="bg-[#0d0d0d] border border-white/10 rounded-2xl p-6 md:p-8">
             <div className="flex items-center gap-2.5 mb-5">
-              <Ban className="w-5 h-5 text-[#ff2d55]" />
+              <Ban className="w-5 h-5 text-[#d4af37]" />
               <h3 className="font-bold text-white">We do NOT access</h3>
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -240,7 +240,7 @@ function InfoSection() {
       {/* SECTION 6 — FAQ (accordion) */}
       <section className="px-5 py-12 md:py-20 max-w-3xl mx-auto relative z-10">
         <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-center mb-12">
-          Frequently Asked <span className="text-[#ff2d55]">Questions</span>
+          Frequently Asked <span className="text-[#d4af37]">Questions</span>
         </h2>
         <div className="space-y-3">
           {[
@@ -271,7 +271,7 @@ function InfoSection() {
             >
               <summary className="flex items-center justify-between cursor-pointer">
                 <span className="font-semibold text-white text-sm pr-4">{faq.q}</span>
-                <HelpCircle className="w-5 h-5 text-[#ff2d55] shrink-0 group-open:rotate-180 transition-transform" />
+                <HelpCircle className="w-5 h-5 text-[#d4af37] shrink-0 group-open:rotate-180 transition-transform" />
               </summary>
               <p className="text-gray-400 text-sm mt-3 leading-relaxed">{faq.a}</p>
             </details>
@@ -288,25 +288,17 @@ function InfoSection() {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-gray-400">
-            <Link href="/legal/privacy-policy" className="hover:text-[#ff2d55] transition-colors">
+            <Link href="/legal/privacy-policy" className="hover:text-[#d4af37] transition-colors">
               Privacy Policy
             </Link>
-            <Link href="/legal/terms" className="hover:text-[#ff2d55] transition-colors">
+            <Link href="/legal/terms" className="hover:text-[#d4af37] transition-colors">
               Terms of Service
             </Link>
-            <a href="mailto:afnank6789@gmail.com" className="hover:text-[#ff2d55] transition-colors">
+            <a href="mailto:afnank6789@gmail.com" className="hover:text-[#d4af37] transition-colors">
               Contact
             </a>
-            <a href="mailto:afnank6789@gmail.com" className="hover:text-[#ff2d55] transition-colors">
+            <a href="mailto:afnank6789@gmail.com" className="hover:text-[#d4af37] transition-colors">
               Support
-            </a>
-            <a
-              href="https://www.linkedin.com/in/afnan-khan-byte"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hover:text-[#ff2d55] transition-colors"
-            >
-              LinkedIn
             </a>
           </div>
         </div>
