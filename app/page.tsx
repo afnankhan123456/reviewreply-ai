@@ -29,7 +29,7 @@ import {
 } from "lucide-react";
 
 // 👇 Yahan apni nayi support mail daalo (sirf yahin badalni hai)
-const SUPPORT_EMAIL = "yahan-apni-nayi-mail@example.com";
+const SUPPORT_EMAIL = "support@reviewreply-ai.in";
 const SUPPORT_SUBJECT = "ReviewReply AI Support";
 
 // Phone par: default mail app (mailto)
