@@ -30,7 +30,20 @@ import {
 
 // 👇 Yahan apni nayi support mail daalo (sirf yahin badalni hai)
 const SUPPORT_EMAIL = "yahan-apni-nayi-mail@example.com";
-const SUPPORT_MAILTO = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("ReviewReply AI Support")}`;
+const SUPPORT_SUBJECT = "ReviewReply AI Support";
+
+// Phone par: default mail app (mailto)
+const SUPPORT_MAILTO = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent(SUPPORT_SUBJECT)}`;
+// Laptop par: seedha Gmail compose window
+const SUPPORT_GMAIL = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(SUPPORT_EMAIL)}&su=${encodeURIComponent(SUPPORT_SUBJECT)}`;
+
+function openSupportMail(e: React.MouseEvent<HTMLAnchorElement>) {
+  const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  if (!isMobile) {
+    e.preventDefault();
+    window.open(SUPPORT_GMAIL, "_blank", "noopener,noreferrer");
+  }
+}
 
 /* ================================================================
    Helpers — scroll par "likha" hua dikhne wala text (TypeText)
@@ -388,10 +401,10 @@ function InfoSection() {
             <Link href="/legal/terms" className="hover:text-[#d4af37] transition-colors">
               Terms of Service
             </Link>
-            <a href={SUPPORT_MAILTO} className="hover:text-[#d4af37] transition-colors">
+            <a href={SUPPORT_MAILTO} onClick={openSupportMail} className="hover:text-[#d4af37] transition-colors">
               Contact
             </a>
-            <a href={SUPPORT_MAILTO} className="hover:text-[#d4af37] transition-colors">
+            <a href={SUPPORT_MAILTO} onClick={openSupportMail} className="hover:text-[#d4af37] transition-colors">
               Support
             </a>
             <a
@@ -404,6 +417,10 @@ function InfoSection() {
             </a>
           </div>
         </div>
+
+        <p className="text-center text-xs text-gray-500 mt-4">
+          Support: <span className="select-all">{SUPPORT_EMAIL}</span>
+        </p>
 
         <p className="text-center text-xs text-gray-600 mt-6">
           © {new Date().getFullYear()} ReviewReply AI. All rights reserved.
