@@ -28,6 +28,10 @@ import {
   X,
 } from "lucide-react";
 
+// 👇 Yahan apni nayi support mail daalo (sirf yahin badalni hai)
+const SUPPORT_EMAIL = "yahan-apni-nayi-mail@example.com";
+const SUPPORT_MAILTO = `mailto:${SUPPORT_EMAIL}?subject=${encodeURIComponent("ReviewReply AI Support")}`;
+
 /* ================================================================
    Helpers — scroll par "likha" hua dikhne wala text (TypeText)
    ================================================================ */
@@ -384,10 +388,10 @@ function InfoSection() {
             <Link href="/legal/terms" className="hover:text-[#d4af37] transition-colors">
               Terms of Service
             </Link>
-            <a href="mailto:afnank6789@gmail.com" className="hover:text-[#d4af37] transition-colors">
+            <a href={SUPPORT_MAILTO} className="hover:text-[#d4af37] transition-colors">
               Contact
             </a>
-            <a href="mailto:afnank6789@gmail.com" className="hover:text-[#d4af37] transition-colors">
+            <a href={SUPPORT_MAILTO} className="hover:text-[#d4af37] transition-colors">
               Support
             </a>
             <a
