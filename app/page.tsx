@@ -395,15 +395,21 @@ function InfoSection() {
           </div>
 
           <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-gray-400">
+            <Link href="/blog" className="hover:text-[#d4af37] transition-colors">
+              Blog
+            </Link>
+            <Link href="/about" className="hover:text-[#d4af37] transition-colors">
+              About
+            </Link>
             <Link href="/legal/privacy-policy" className="hover:text-[#d4af37] transition-colors">
               Privacy Policy
             </Link>
             <Link href="/legal/terms" className="hover:text-[#d4af37] transition-colors">
               Terms of Service
             </Link>
-            <a href={SUPPORT_MAILTO} onClick={openSupportMail} className="hover:text-[#d4af37] transition-colors">
+            <Link href="/contact" className="hover:text-[#d4af37] transition-colors">
               Contact
-            </a>
+            </Link>
             <a href={SUPPORT_MAILTO} onClick={openSupportMail} className="hover:text-[#d4af37] transition-colors">
               Support
             </a>

@@ -9,7 +9,7 @@ export default function PrivacyPolicyPage() {
         </h1>
 
         <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-8">
-          Last Updated: June 25, 2026
+          Last Updated: November 6, 2026
         </p>
 
         <div className="space-y-6 text-zinc-700 dark:text-zinc-300 leading-7">
@@ -201,6 +201,31 @@ export default function PrivacyPolicyPage() {
 
           <div>
             <h2 className="text-xl font-semibold mb-2 text-black dark:text-white">
+              Cookies and Advertising
+            </h2>
+
+            <p>
+              ReviewReply AI is supported by advertising. We and our advertising partners,
+              including Google AdSense, use cookies to serve ads based on a user&apos;s prior
+              visits to this website or other websites.
+            </p>
+
+            <ul className="list-disc pl-6 space-y-2">
+              <li>Third-party vendors, including Google, use cookies to serve ads based on your prior visits to this website or other websites.</li>
+              <li>Google&apos;s use of advertising cookies enables it and its partners to serve ads to you based on your visit to this site and/or other sites on the Internet.</li>
+              <li>You may opt out of personalised advertising by visiting Google Ads Settings at https://www.google.com/settings/ads.</li>
+              <li>You can also opt out of some third-party vendors&apos; use of cookies for personalised advertising at https://www.aboutads.info/choices/.</li>
+              <li>You can disable or delete cookies in your browser settings at any time. Disabling cookies may affect how parts of this site work.</li>
+            </ul>
+
+            <p>
+              We do not serve personalised ads to users in regions where consent is required
+              by law without obtaining that consent first.
+            </p>
+          </div>
+
+          <div>
+            <h2 className="text-xl font-semibold mb-2 text-black dark:text-white">
               Changes to This Policy
             </h2>
 
@@ -219,7 +244,7 @@ export default function PrivacyPolicyPage() {
             </p>
 
             <p className="mt-2 font-medium text-black dark:text-white">
-              Support Email: afnak6789@gmail.com
+              Support Email: support@reviewreply-ai.in
             </p>
             <p className="mt-1 font-medium text-black dark:text-white">
               Official Website: https://www.reviewreply-ai.in
