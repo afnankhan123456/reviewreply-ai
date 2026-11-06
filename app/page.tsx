@@ -410,9 +410,9 @@ function InfoSection() {
             <Link href="/contact" className="hover:text-[#d4af37] transition-colors">
               Contact
             </Link>
-            <a href={SUPPORT_MAILTO} onClick={openSupportMail} className="hover:text-[#d4af37] transition-colors">
+            <Link href="/contact" className="hover:text-[#d4af37] transition-colors">
               Support
-            </a>
+            </Link>
             <a
               href="https://www.linkedin.com/in/afnan-khan-byte"
               target="_blank"

@@ -1,3 +1,13 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Review Examples",
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+
 export default function ReviewsPage() {
   return (
     <div className="min-h-screen bg-black text-white p-10">

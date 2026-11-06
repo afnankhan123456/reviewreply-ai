@@ -42,6 +42,9 @@ export const metadata = {
   category: "Business",
   verification: {
     google: "mLuWg9q3JVkzCcLhRQhEqye5XCK4C5lVRizxsF7Hs_c",
+    other: {
+      "google-adsense-account": "ca-pub-4298382725239273",
+    },
   },
   icons: {
     icon: "/favicon.png",
@@ -56,7 +59,10 @@ export const metadata = {
     locale: "en_US",
     images: [
       {
-        url: "/og-image.png",
+        url: "/ai-logo.png",
+        width: 512,
+        height: 512,
+        alt: "ReviewReply AI",
       },
     ],
   },
@@ -65,7 +71,7 @@ export const metadata = {
     title: "ReviewReply AI",
     description:
       "ReviewReply AI is an AI-powered Google Business Profile review management platform. Securely connect your Google Business Profile, sync reviews, generate AI replies, publish responses, track ratings, and manage reputation.",
-    images: ["/og-image.png"],
+    images: ["/ai-logo.png"],
   },
   robots: {
     index: true,
@@ -102,6 +108,14 @@ export default function RootLayout({
           type="application/ld+json"
           strategy="afterInteractive"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        {/* Google AdSense */}
+        <Script
+          async
+          id="adsbygoogle-init"
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4298382725239273"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
         />
         {/* Shown AI conversion tracking pixel */}
         <script
