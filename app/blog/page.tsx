@@ -23,6 +23,21 @@ export default function BlogIndexPage() {
       </header>
 
       <section className="post-grid">
+        <a key="how-to-reply-to-a-1-star-google-review" href="/blog/how-to-reply-to-a-1-star-google-review" className="post-card">
+          <h2>How to Reply to a 1-Star Google Review (With Real Examples)</h2>
+          <p>A four-step reply structure, twelve before-and-after examples from real industries, and the mistakes that turn a bad review into a lost customer.</p>
+          <span className="read-more">Read the guide &rarr;</span>
+        </a>
+        <a key="how-to-report-and-remove-fake-google-reviews" href="/blog/how-to-report-and-remove-fake-google-reviews" className="post-card">
+          <h2>How to Report and Remove Fake Google Reviews</h2>
+          <p>What Google actually removes, the exact reporting path, the evidence that speeds it up, and what to do while you wait.</p>
+          <span className="read-more">Read the guide &rarr;</span>
+        </a>
+        <a key="google-review-reply-examples-by-industry" href="/blog/google-review-reply-examples-by-industry" className="post-card">
+          <h2>Google Review Reply Examples by Industry</h2>
+          <p>Restaurants, dental clinics, salons, gyms, hotels, real estate and auto service - with the reasoning behind each reply.</p>
+          <span className="read-more">Read the guide &rarr;</span>
+        </a>
         <a key="google-review-response-templates" href="/blog/google-review-response-templates" className="post-card">
           <h2>20+ Copy-Paste Google Review Response Templates (Positive & Negative)</h2>
           <p>Proven copy-paste Google review response templates for 5-star praise, 1-star negative complaints, delayed service, and fake reviews. Boost local SEO and client trust.</p>

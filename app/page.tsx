@@ -398,6 +398,9 @@ function InfoSection() {
             <Link href="/blog" className="hover:text-[#d4af37] transition-colors">
               Blog
             </Link>
+            <Link href="/faq" className="hover:text-[#d4af37] transition-colors">
+              FAQ
+            </Link>
             <Link href="/about" className="hover:text-[#d4af37] transition-colors">
               About
             </Link>
