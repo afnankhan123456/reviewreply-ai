@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import PublicNav from "@/components/PublicNav";
 
 export const metadata: Metadata = {
   title: 'AI Review Reply Generator: How It Works and Why Your Business Needs One',
@@ -17,6 +18,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US', {
 export default function AiReviewReplyGenerator() {
   return (
     <article className="article">
+      <PublicNav />
       <header className="hero">
         <div className="eyebrow">Guide · AI</div>
         <h1>AI Review Reply Generator: How It Works and Why Your Business Needs One</h1>
@@ -62,6 +64,122 @@ export default function AiReviewReplyGenerator() {
           This is where most owners struggle most &mdash; and where AI genuinely helps. A
           well-trained generator can draft a calm, empathetic, non-defensive reply that
           acknowledges the issue and invites the customer to resolve it offline.
+        </p>
+      </section>
+
+      <section className="section">
+        <h2>What the tool does with a review, step by step</h2>
+        <p>
+          It helps to know what is happening between the review arriving and a draft
+          appearing, because it explains both the speed and the mistakes.
+        </p>
+        <ol>
+          <li>
+            <strong>Reads the review text and rating.</strong> The rating sets the
+            direction: a five-star review needs reinforcement, a two-star review needs
+            acknowledgement and a route to a fix.
+          </li>
+          <li>
+            <strong>Detects sentiment and topic.</strong> Complaints usually fall into a
+            small set of buckets: waiting time, staff behaviour, price and billing, quality
+            of the work, cleanliness, or communication. The topic decides which operational
+            detail belongs in the reply.
+          </li>
+          <li>
+            <strong>Composes against your business profile.</strong> Business type, service
+            names and the tone you picked shape the wording. A dental clinic reply should
+            never sound like a burger chain reply.
+          </li>
+          <li>
+            <strong>Hands you the draft.</strong> Nothing publishes without approval. You
+            edit the sentence that feels wrong and publish.
+          </li>
+        </ol>
+      </section>
+
+      <section className="section">
+        <h2>The four inputs that decide reply quality</h2>
+        <p>
+          Two businesses using the same tool get very different output. The difference is
+          almost always these four settings:
+        </p>
+        <ul>
+          <li>
+            <strong>Business type and service names.</strong> If the tool knows you do
+            &ldquo;root canal treatment&rdquo; and not &ldquo;dental services&rdquo;, the
+            reply mentions the actual thing the reviewer experienced.
+          </li>
+          <li>
+            <strong>Tone.</strong> Professional, warm, apologetic or brief. Pick one and
+            keep it. Switching tone between reviews makes the account look managed by
+            different people.
+          </li>
+          <li>
+            <strong>Language.</strong> If your customers review in Hindi or Hinglish, a
+            generator set to formal English will produce replies that read as templates to
+            those customers.
+          </li>
+          <li>
+            <strong>Length limits.</strong> Around 40 words for praise, 70 to 100 for
+            complaints. Longer replies on positive reviews waste attention.
+          </li>
+        </ul>
+      </section>
+
+      <section className="section">
+        <h2>Where AI replies go wrong</h2>
+        <p>
+          Four failure patterns account for nearly every bad AI reply. All of them are
+          caught in ten seconds of reading, which is why approval stays in the loop.
+        </p>
+        <ul>
+          <li>
+            <strong>Invented promises.</strong> &ldquo;We will refund you&rdquo; or
+            &ldquo;your next visit is free&rdquo; written by the model, not by you. Never
+            publish a commitment you have not decided to honour.
+          </li>
+          <li>
+            <strong>Over-apologising.</strong> Three apologies in one paragraph reads as
+            guilt. One acknowledgement, then the fix.
+          </li>
+          <li>
+            <strong>Wrong specifics.</strong> Naming a service, department or staff member
+            that had nothing to do with the review. This is the fastest way to look
+            automated.
+          </li>
+          <li>
+            <strong>Confidential or clinical detail.</strong> A model may happily restate
+            what the review said about someone&apos;s treatment or payment. Remove it. Public
+            replies should never confirm personal details.
+          </li>
+        </ul>
+      </section>
+
+      <section className="section">
+        <h2>A ten-second check before you publish</h2>
+        <ol>
+          <li>Does it name the actual thing the reviewer mentioned?</li>
+          <li>Is there a promise in it that I have not agreed to?</li>
+          <li>Would I be comfortable if a competitor read this?</li>
+          <li>Is there medical, financial or personal detail that should not be public?</li>
+          <li>Is it under 100 words?</li>
+        </ol>
+      </section>
+
+      <section className="section">
+        <h2>When not to use a generated reply</h2>
+        <p>
+          Some reviews need a human on the first line: threats of legal action, allegations
+          of injury or malpractice, discrimination complaints, anything involving a minor, and
+          anything that has already gone public on social media. In those cases the reply
+          should be short, factual, and point to a private channel, and it should be written
+          by the owner after advice. A generator is a tool for volume, not for the reviews
+          that carry real risk.
+        </p>
+        <p>
+          For the reply structures behind good output, see{" "}
+          <a href="/blog/how-to-reply-to-a-1-star-google-review">replying to one-star reviews</a>{" "}
+          and the <a href="/blog/google-review-response-templates">template library</a>.
         </p>
       </section>
 

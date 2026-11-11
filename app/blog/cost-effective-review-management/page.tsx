@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import PublicNav from "@/components/PublicNav";
 
 export const metadata: Metadata = {
   title: 'Cost-Effective Google Review Management for Growing Businesses',
@@ -17,6 +18,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US', {
 export default function CostEffectiveReviewManagement() {
   return (
     <article className="article">
+      <PublicNav />
       <header className="hero">
         <div className="eyebrow">Guide · Growth</div>
         <h1>Cost-Effective Google Review Management for Growing Businesses</h1>

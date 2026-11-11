@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import PublicNav from "@/components/PublicNav";
 
 export const metadata: Metadata = {
   title: 'Cheap Review Management Tool for Small Business — Starting at $9/month',
@@ -17,6 +18,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US', {
 export default function CheapReviewManagementTool() {
   return (
     <article className="article">
+      <PublicNav />
       <header className="hero">
         <div className="eyebrow">Guide · Pricing</div>
         <h1>Cheap Review Management Tool for Small Business — Starting at $9/month</h1>

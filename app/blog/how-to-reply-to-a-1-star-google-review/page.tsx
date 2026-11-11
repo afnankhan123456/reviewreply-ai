@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import PublicNav from "@/components/PublicNav";
 
 export const metadata: Metadata = {
   title: 'How to Reply to a 1-Star Google Review (With Real Examples)',
@@ -74,6 +75,7 @@ const examples = [
 export default function OneStarReviewReply() {
   return (
     <article className="article">
+      <PublicNav />
       <header className="hero">
         <div className="eyebrow">GUIDE &bull; NEGATIVE REVIEWS</div>
         <h1>How to Reply to a 1-Star Google Review</h1>

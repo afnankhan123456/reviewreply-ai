@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import PublicNav from "@/components/PublicNav";
 
 export const metadata: Metadata = {
   title: 'Google Reviews FAQ: Replies, Ratings, Removal & Policy Answers',
@@ -107,6 +108,7 @@ export default function FaqPage() {
 
   return (
     <main className="faq-page">
+      <PublicNav />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

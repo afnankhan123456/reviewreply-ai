@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import PublicNav from "@/components/PublicNav";
 
 export const metadata: Metadata = {
   title: 'Google Review Reply Tool — Common Questions Answered',
@@ -60,6 +61,7 @@ const faqs = [
 export default function GoogleReviewReplyToolFAQArticle() {
   return (
     <article className="article">
+      <PublicNav />
       <header className="hero">
         <div className="eyebrow">FAQ</div>
         <h1>Google Review Reply Tool — Common Questions Answered</h1>

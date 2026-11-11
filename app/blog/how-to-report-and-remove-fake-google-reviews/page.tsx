@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import PublicNav from "@/components/PublicNav";
 
 export const metadata: Metadata = {
   title: 'How to Report and Remove Fake Google Reviews (2026 Guide)',
@@ -17,6 +18,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US', {
 export default function RemoveFakeReviews() {
   return (
     <article className="article">
+      <PublicNav />
       <header className="hero">
         <div className="eyebrow">GUIDE &bull; POLICY &amp; REMOVAL</div>
         <h1>How to Report and Remove Fake Google Reviews</h1>

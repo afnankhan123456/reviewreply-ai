@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import PublicNav from "@/components/PublicNav";
 
 export const metadata: Metadata = {
   title: 'ReviewReply AI vs Birdeye — Which One Fits Your Business?',
@@ -17,6 +18,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US', {
 export default function ReviewReplyVsBirdeye() {
   return (
     <article className="article">
+      <PublicNav />
       <header className="hero">
         <div className="eyebrow">Comparison</div>
         <h1>ReviewReply AI vs Birdeye</h1>
@@ -121,6 +123,90 @@ export default function ReviewReplyVsBirdeye() {
           <li>You want to be live and generating replies within minutes, without a sales call.</li>
           <li>You&apos;re a small or growing business and want to pay for what you use, not a bundle of unused features.</li>
         </ul>
+      </section>
+
+      <section className="section">
+        <h2>Side-by-side on the things that actually decide it</h2>
+        <p>
+          Feature lists flatter both products. The decision usually turns on five questions
+          instead: how many locations you run, whether you need SMS lead capture, what you
+          can afford monthly, whether you will sign an annual contract, and whether you want
+          help publishing replies or a platform to run yourself.
+        </p>
+        <ul>
+          <li>
+            <strong>Scope.</strong> Birdeye is a broad reputation and customer-experience
+            platform covering reviews, listings, messaging, surveys and insights. ReviewReply
+            AI does one job: Google reviews, replies, sentiment and reporting.
+          </li>
+          <li>
+            <strong>Commercial model.</strong> Birdeye is enterprise-style, quoted per
+            location with an annual commitment in most deals. ReviewReply AI is
+            self-serve at $9 or $29 per month with no contract.
+          </li>
+          <li>
+            <strong>Setup.</strong> Birdeye typically involves a sales call, onboarding and a
+            contract. ReviewReply AI is a Google sign-in and a sync, in minutes.
+          </li>
+          <li>
+            <strong>Multi-location.</strong> If you run 20 branches with a marketing team,
+            Birdeye&apos;s cross-location reporting and workflow tooling is genuinely deeper.
+          </li>
+          <li>
+            <strong>Messaging.</strong> Birdeye bundles review requests with a wider customer
+            messaging suite. ReviewReply AI focuses on reviews and replies, not SMS
+            campaigns.
+          </li>
+        </ul>
+      </section>
+
+      <section className="section">
+        <h2>Where Birdeye is the better choice</h2>
+        <p>
+          Being honest about this saves you a bad fit: if you are a franchise or a regional
+          chain, if you need listings management across dozens of directories, if you have a
+          marketing coordinator who will use the platform daily, and if procurement is
+          comfortable with an annual contract, Birdeye&apos;s breadth is worth the price.
+          The same applies if you need to combine review requests, surveys and messaging in
+          one place for a team of ten.
+        </p>
+      </section>
+
+      <section className="section">
+        <h2>Where ReviewReply AI wins</h2>
+        <p>
+          Single-location businesses and small groups: a dental clinic, two salons, three
+          gyms. You need replies written and published, low-rating alerts, and a monthly
+          summary. You will not use listings management or a survey engine, and you do not
+          want a sales process for a $9 product. The price difference alone usually settles
+          it for a business doing under 200 reviews a month.
+        </p>
+      </section>
+
+      <section className="section">
+        <h2>Switching checklist</h2>
+        <ol>
+          <li>Export your reply history so you keep the wording that worked.</li>
+          <li>Check contract end dates before you cancel anything &mdash; most enterprise plans auto-renew.</li>
+          <li>Note which locations are in the old platform and who owns each one.</li>
+          <li>Connect Google, let the sync finish, then clear the unanswered backlog first.</li>
+          <li>Run both for two weeks if the contract allows it, and compare response time, not features.</li>
+        </ol>
+      </section>
+
+      <section className="section">
+        <h2>Deciding in ten minutes</h2>
+        <p>
+          Write down three numbers: locations, reviews per month, and monthly budget. Above
+          ten locations and a budget in the hundreds, evaluate Birdeye properly. Below that,
+          a focused tool at $9 to $29 will handle everything you actually need, and you can
+          revisit in a year when volume justifies the jump.
+        </p>
+        <p>
+          See also <a href="/blog/reviewreply-ai-vs-podium">ReviewReply AI vs Podium</a>,{" "}
+          <a href="/blog/best-affordable-review-management-tool">affordable tools compared</a>{" "}
+          and <a href="/blog/google-review-management-software">the review software guide</a>.
+        </p>
       </section>
 
       <section className="section cta">

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import PublicNav from "@/components/PublicNav";
 
 export const metadata: Metadata = {
   title: 'How to Set Up Automatic Google Review Replies (Without Losing Your Personal Touch)',
@@ -17,6 +18,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US', {
 export default function AutomaticGoogleReviewReply() {
   return (
     <article className="article">
+      <PublicNav />
       <header className="hero">
         <div className="eyebrow">Guide · Automation</div>
         <h1>How to Set Up Automatic Google Review Replies</h1>
@@ -80,6 +82,104 @@ export default function AutomaticGoogleReviewReply() {
           a few weeks. Once you&apos;re confident in how the AI writes and you&apos;ve tuned the
           tone to match your brand, expand automation further &mdash; most businesses eventually
           automate the majority of their replies and only step in for the tricky ones.
+        </p>
+      </section>
+
+      <section className="section">
+        <h2>What &ldquo;automatic&rdquo; can and cannot mean</h2>
+        <p>
+          The honest answer is that fully hands-off publishing is a bad idea for most
+          businesses, and Google&apos;s own review system does not require it. There are
+          three levels, and level two is where nearly all good setups land:
+        </p>
+        <ul>
+          <li>
+            <strong>Level 1 &mdash; notify only.</strong> You get an alert when a review
+            arrives and write the reply yourself. Zero risk, still saves the &ldquo;I forgot
+            to check&rdquo; problem.
+          </li>
+          <li>
+            <strong>Level 2 &mdash; draft and approve.</strong> A reply is drafted in your
+            tone, you read it, edit if needed, publish. This is the default in ReviewReply AI
+            because it removes 90 percent of the work and 100 percent of the risk.
+          </li>
+          <li>
+            <strong>Level 3 &mdash; auto-publish.</strong> Drafts go live without a human.
+            Faster, and fine for high volume praise. Dangerous the moment a serious complaint
+            arrives, because the wrong sentence is already public.
+          </li>
+        </ul>
+      </section>
+
+      <section className="section">
+        <h2>Setting it up in one afternoon</h2>
+        <ol>
+          <li>
+            <strong>Connect the Google Business Profile.</strong> Sign in with Google and
+            approve read access to your locations and reviews. Access is revocable at any
+            time from your Google account.
+          </li>
+          <li>
+            <strong>Let the first sync finish.</strong> Existing reviews load into one inbox,
+            newest first, with the unanswered ones flagged.
+          </li>
+          <li>
+            <strong>Set tone, language and length once.</strong> Do this before drafting the
+            first reply, otherwise you end up correcting the same habits on every draft.
+          </li>
+          <li>
+            <strong>Turn on alerts for one and two star reviews.</strong> These should reach
+            you within minutes, not at the end of the week.
+          </li>
+          <li>
+            <strong>Clear the backlog in one sitting.</strong> The first afternoon is the
+            only heavy day. After that it is a few minutes a day.
+          </li>
+        </ol>
+      </section>
+
+      <section className="section">
+        <h2>The failure modes to watch for</h2>
+        <ul>
+          <li>
+            <strong>Replying twice.</strong> Two replies under one review happens when two
+            people share an account. Mark reviews as answered and stick to one owner per
+            location.
+          </li>
+          <li>
+            <strong>Identical replies across reviews.</strong> The fastest way to look
+            automated is five replies starting with the same eight words.
+          </li>
+          <li>
+            <strong>Wrong language.</strong> A Hindi review answered in English, or the
+            reverse, reads as boilerplate to that customer.
+          </li>
+          <li>
+            <strong>Replying to a grieving or distressed reviewer with marketing copy.</strong>{" "}
+            Some reviews need three sincere sentences and no call to action. Automation
+            cannot tell the difference; you can.
+          </li>
+          <li>
+            <strong>Editing nothing, ever.</strong> If you have never changed a single draft,
+            you are not reviewing, you are rubber-stamping. Read at least the complaints
+            properly.
+          </li>
+        </ul>
+      </section>
+
+      <section className="section">
+        <h2>How to tell if it is working</h2>
+        <p>
+          Four numbers, measured monthly, tell you whether the routine is paying off:
+          response rate (aim above 95 percent), median response time (under 48 hours),
+          average rating trend, and the share of reviews that mention a specific staff
+          member or service by name. The last one is the quiet signal that customers are
+          reading your replies and engaging rather than leaving a rating and moving on.
+        </p>
+        <p>
+          For the practical wording, see{" "}
+          <a href="/blog/google-review-reply-examples-by-industry">examples by industry</a>{" "}
+          and <a href="/blog/how-to-reply-to-a-1-star-google-review">the one-star playbook</a>.
         </p>
       </section>
 

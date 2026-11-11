@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import PublicNav from "@/components/PublicNav";
 
 export const metadata: Metadata = {
   title: 'How to Automate Google Review Replies with ChatGPT (and When You Need a Real Tool)',
@@ -17,6 +18,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US', {
 export default function AutomateGoogleReviewRepliesChatgpt() {
   return (
     <article className="article">
+      <PublicNav />
       <header className="hero">
         <div className="eyebrow">Guide · Automation</div>
         <h1>How to Automate Google Review Replies with ChatGPT</h1>

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import PublicNav from "@/components/PublicNav";
 
 export const metadata: Metadata = {
   title: 'How to Automatically Reply to Google Reviews Using AI',
@@ -17,6 +18,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US', {
 export default function HowToReplyGoogleReviewsWithAI() {
   return (
     <article className="article">
+      <PublicNav />
       {/* ---------- HERO ---------- */}
       <header className="hero">
         <div className="eyebrow">Guide · How-To</div>

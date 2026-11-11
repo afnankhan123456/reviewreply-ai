@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import PublicNav from "@/components/PublicNav";
 
 export const metadata: Metadata = {
   title: 'Contact ReviewReply AI | Support & Business Enquiries',
@@ -14,6 +15,7 @@ const SUPPORT_EMAIL = 'support@reviewreply-ai.in';
 export default function ContactPage() {
   return (
     <main className="contact-page">
+      <PublicNav />
       <header className="hero">
         <div className="eyebrow">Contact</div>
         <h1>Talk to the ReviewReply AI team</h1>

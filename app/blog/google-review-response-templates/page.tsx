@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import PublicNav from "@/components/PublicNav";
 
 export const metadata: Metadata = {
   title: '20+ Copy-Paste Google Review Response Templates (Positive & Negative)',
@@ -17,6 +18,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US', {
 export default function GoogleReviewResponseTemplates() {
   return (
     <article className="article">
+      <PublicNav />
       <header className="hero">
         <div className="eyebrow">GUIDE &bull; TEMPLATES</div>
         <h1>20+ Copy-Paste Google Review Response Templates (Positive & Negative)</h1>

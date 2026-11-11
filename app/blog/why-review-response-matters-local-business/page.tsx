@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import PublicNav from "@/components/PublicNav";
 
 export const metadata: Metadata = {
   title: 'Why Review Response Matters for Local Businesses (And What It Costs You If You Skip It)',
@@ -17,6 +18,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US', {
 export default function WhyReviewResponseMatters() {
   return (
     <article className="article">
+      <PublicNav />
       <header className="hero">
         <div className="eyebrow">Guide · Local SEO &amp; Trust</div>
         <h1>Why Review Response Matters for Local Businesses</h1>

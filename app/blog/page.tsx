@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import PublicNav from "@/components/PublicNav";
 
 export const metadata: Metadata = {
   title: 'Google Review Management Guides & Blog | ReviewReply AI',
@@ -12,6 +13,7 @@ export const metadata: Metadata = {
 export default function BlogIndexPage() {
   return (
     <main className="blog-index">
+      <PublicNav />
       <header className="blog-hero">
         <div className="eyebrow">Resources</div>
         <h1>Google Review Guides for Small Businesses</h1>

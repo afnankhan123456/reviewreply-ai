@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import PublicNav from "@/components/PublicNav";
 
 export const metadata: Metadata = {
   title: 'ReviewReply AI vs Podium — Which One Fits Your Business?',
@@ -17,6 +18,7 @@ const lastUpdated = new Date().toLocaleDateString('en-US', {
 export default function ReviewReplyVsPodium() {
   return (
     <article className="article">
+      <PublicNav />
       <header className="hero">
         <div className="eyebrow">Comparison</div>
         <h1>ReviewReply AI vs Podium</h1>
@@ -119,6 +121,83 @@ export default function ReviewReplyVsPodium() {
           <li>You want to set up and start seeing AI-drafted replies within minutes.</li>
           <li>You&apos;d rather pay a low, transparent price for a focused tool than a bundle you&apos;ll only partly use.</li>
         </ul>
+      </section>
+
+      <section className="section">
+        <h2>They solve different problems</h2>
+        <p>
+          Podium started as a text-messaging platform for local businesses and grew into
+          reviews, payments and messaging from there. Its centre of gravity is lead
+          conversion: getting a text conversation started and closing the job. ReviewReply AI
+          starts at the other end &mdash; the reviews already on your Google profile &mdash;
+          and does replies, sentiment and reporting.
+        </p>
+        <ul>
+          <li>
+            <strong>Core use case.</strong> Podium: turn web enquiries into conversations.
+            ReviewReply AI: answer every Google review quickly and well.
+          </li>
+          <li>
+            <strong>Pricing model.</strong> Podium is sold on annual contracts, quoted per
+            location, and is not self-serve for most plans. ReviewReply AI is $9 or $29 a
+            month, card on file, cancel anytime.
+          </li>
+          <li>
+            <strong>Time to value.</strong> Podium needs implementation and a phone number or
+            messaging setup. ReviewReply AI is live after a Google sign-in.
+          </li>
+          <li>
+            <strong>Depth in reviews.</strong> Podium covers review collection. For
+            draft-and-approve reply workflow with tone control and low-rating alerts,
+            ReviewReply AI is the narrower, purpose-built tool.
+          </li>
+        </ul>
+      </section>
+
+      <section className="section">
+        <h2>When Podium is the right purchase</h2>
+        <p>
+          If your business lives on inbound texts &mdash; a car dealership, a home services
+          company with dispatchers, a clinic with a front desk handling bookings by message
+          &mdash; Podium&apos;s messaging plus review requests is a coherent package, and the
+          contract price is easily justified by one extra job a month. Multi-location groups
+          that want a single vendor for messaging and reviews should evaluate it properly.
+        </p>
+      </section>
+
+      <section className="section">
+        <h2>When the focused tool is enough</h2>
+        <p>
+          If your reviews are the problem and your phone is not, you are paying for a
+          messaging platform to solve a review problem. A restaurant answering thirty reviews
+          a month, a salon with two stylists, a gym with one location: none of these need an
+          annual messaging contract. They need every review answered within a day, in the
+          right tone, with alerts when something goes wrong.
+        </p>
+      </section>
+
+      <section className="section">
+        <h2>Could you use both?</h2>
+        <p>
+          Yes, and some businesses do: Podium or a similar platform for enquiries that arrive
+          as texts, and a review-focused tool for the Google profile. The risk is two systems
+          touching reviews and both replying. Decide one owner per location before you add
+          the second tool, or you will end up with duplicate replies under the same review,
+          which looks worse than a slow reply.
+        </p>
+      </section>
+
+      <section className="section">
+        <h2>A fair way to decide</h2>
+        <ol>
+          <li>Count monthly inbound enquiries that arrive as texts or web chat. Under 30, a messaging platform is hard to justify.</li>
+          <li>Count Google reviews per month per location. Above 100, you need a workflow, not just good intentions.</li>
+          <li>Ask what happens today when a one-star review lands at 9 pm. If the answer is &ldquo;we see it next week&rdquo;, that is the gap to close first.</li>
+        </ol>
+        <p>
+          See also <a href="/blog/reviewreply-ai-vs-birdeye">ReviewReply AI vs Birdeye</a> and{" "}
+          <a href="/blog/best-google-review-tools">the wider tools comparison</a>.
+        </p>
       </section>
 
       <section className="section cta">
