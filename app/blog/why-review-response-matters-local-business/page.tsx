@@ -107,6 +107,22 @@ export default function WhyReviewResponseMatters() {
         </p>
       </section>
 
+      <section className="section author-box">
+        <p className="author-line">
+          Written by <a href="/author/afnan-khan">Afnan Khan</a>, founder of ReviewReply AI.
+          Questions or corrections: <a href="/contact">contact us</a>.
+        </p>
+      </section>
+
+      <section className="section">
+        <h2>Related guides</h2>
+        <ul className="related-list">
+          <li><a href="/blog/google-review-response-templates">20+ Copy-Paste Google Review Response Templates (Positive & Negative)</a></li>
+          <li><a href="/blog/google-review-reply-examples-by-industry">Google Review Reply Examples by Industry (Restaurants, Clinics, Salons, Gyms)</a></li>
+          <li><a href="/blog/how-to-reply-to-a-1-star-google-review">How to Reply to a 1-Star Google Review (With Real Examples)</a></li>
+        </ul>
+      </section>
+
       <section className="section cta">
         <h2>Never miss a review again</h2>
         <p>Get fast, on-brand replies to every review &mdash; automatically.</p>
@@ -130,6 +146,13 @@ export default function WhyReviewResponseMatters() {
         .feature-list li { position: relative; padding: 0.85rem 0 0.85rem 1.75rem; border-bottom: 1px solid #e4dfd3; font-size: 1rem; }
         .feature-list li:before { content: ''; position: absolute; left: 0; top: 1.3rem; width: 8px; height: 8px; border-radius: 50%; background: #d9a404; }
         .cta { text-align: center; background: #fbf3d9; border-radius: 14px; padding: 2.5rem 1.5rem; }
+        .author-box { border-top: 1px solid #e7e0d2; padding-top: 1.2rem; }
+        .author-line { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.88rem; color: #6b7488; margin: 0; }
+        .author-line a { color: #14213d; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #b8860b; }
+        .related-list { list-style: none; padding: 0; margin: 0.6rem 0 0; }
+        .related-list li { margin-bottom: 0.6rem; padding-left: 1.1rem; position: relative; }
+        .related-list li::before { content: "\2192"; position: absolute; left: 0; color: #b8860b; }
+        .related-list a { color: #14213d; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #d8cfbc; }
         .cta-button { display: inline-block; margin-top: 0.5rem; background: #14213d; color: #fbf9f4; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-weight: 600; text-decoration: none; padding: 0.85rem 1.75rem; border-radius: 8px; font-size: 0.98rem; }
         @media (max-width: 640px) { h1 { font-size: 1.75rem; } }
       `}</style>

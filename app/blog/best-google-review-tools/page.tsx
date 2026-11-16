@@ -246,6 +246,22 @@ export default function BestGoogleReviewToolsArticle() {
       </section>
 
       {/* ---------- CTA ---------- */}
+      <section className="section author-box">
+        <p className="author-line">
+          Written by <a href="/author/afnan-khan">Afnan Khan</a>, founder of ReviewReply AI.
+          Questions or corrections: <a href="/contact">contact us</a>.
+        </p>
+      </section>
+
+      <section className="section">
+        <h2>Related guides</h2>
+        <ul className="related-list">
+          <li><a href="/blog/ai-review-reply-generator">AI Review Reply Generator: How It Works and Why Your Business Needs One</a></li>
+          <li><a href="/blog/review-management-solutions">Best Review Management Solutions for Small Businesses (2026)</a></li>
+          <li><a href="/blog/how-to-reply-to-a-1-star-google-review">How to Reply to a 1-Star Google Review (With Real Examples)</a></li>
+        </ul>
+      </section>
+
       <section className="section cta">
         <h2>Try it on your own reviews</h2>
         <p>
@@ -400,6 +416,13 @@ export default function BestGoogleReviewToolsArticle() {
           padding: 2.5rem 1.5rem;
         }
         .cta h2 { }
+        .author-box { border-top: 1px solid #e7e0d2; padding-top: 1.2rem; }
+        .author-line { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 0.88rem; color: #6b7488; margin: 0; }
+        .author-line a { color: #14213d; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #b8860b; }
+        .related-list { list-style: none; padding: 0; margin: 0.6rem 0 0; }
+        .related-list li { margin-bottom: 0.6rem; padding-left: 1.1rem; position: relative; }
+        .related-list li::before { content: "\2192"; position: absolute; left: 0; color: #b8860b; }
+        .related-list a { color: #14213d; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #d8cfbc; }
         .cta-button {
           display: inline-block;
           margin-top: 0.5rem;

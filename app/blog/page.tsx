@@ -25,6 +25,11 @@ export default function BlogIndexPage() {
       </header>
 
       <section className="post-grid">
+        <a key="does-replying-to-google-reviews-affect-ranking" href="/blog/does-replying-to-google-reviews-affect-ranking" className="post-card">
+          <h2>Does Replying to Google Reviews Affect Your Ranking?</h2>
+          <p>Google has said owner responses are not a direct local ranking factor. Here is what actually matters for local visibility, and why replying still pays off.</p>
+          <span className="read-more">Read the guide &rarr;</span>
+        </a>
         <a key="how-to-reply-to-a-1-star-google-review" href="/blog/how-to-reply-to-a-1-star-google-review" className="post-card">
           <h2>How to Reply to a 1-Star Google Review (With Real Examples)</h2>
           <p>A four-step reply structure, twelve before-and-after examples from real industries, and the mistakes that turn a bad review into a lost customer.</p>

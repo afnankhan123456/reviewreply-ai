@@ -386,6 +386,31 @@ function InfoSection() {
         </div>
       </section>
 
+      {/* SECTION 7 - Guides / resources */}
+      <section className="px-5 py-12 md:py-20 max-w-5xl mx-auto relative z-10">
+        <h2 className="text-2xl md:text-3xl font-extrabold tracking-tight text-white text-center mb-3">
+          Guides for getting reviews right
+        </h2>
+        <p className="text-gray-400 text-center max-w-2xl mx-auto mb-8">
+          Practical, free reading on Google reviews and replies. No signup needed.
+        </p>
+        <div className="grid gap-4 md:grid-cols-2">
+          {[
+            { href: "/blog/how-to-reply-to-a-1-star-google-review", t: "How to reply to a 1-star review", d: "A framework, 12 before-and-after examples, and the phrases that make things worse." },
+            { href: "/blog/how-to-report-and-remove-fake-google-reviews", t: "Reporting fake reviews", d: "What Google actually removes, how to file a report that gets read, and what to do while you wait." },
+            { href: "/blog/google-review-reply-examples-by-industry", t: "Reply examples by industry", d: "Restaurants, clinics, salons, gyms, hotels and more - with the tone that fits each." },
+            { href: "/blog/google-review-response-templates", t: "20+ reply templates", d: "Copy-paste replies for praise, complaints, delays and suspicious reviews." },
+            { href: "/blog/google-review-management-software", t: "Review software guide", d: "What review management software does, and where AI genuinely helps." },
+            { href: "/faq", t: "Review questions answered", d: "Short, direct answers to the questions owners ask most about Google reviews." },
+          ].map((g) => (
+            <Link key={g.href} href={g.href} className="group rounded-2xl border border-white/10 bg-white/5 p-5 hover:border-[#d4af37]/40 transition-colors">
+              <h3 className="font-semibold text-white group-hover:text-[#d4af37] transition-colors">{g.t}</h3>
+              <p className="text-sm text-gray-400 mt-2 leading-relaxed">{g.d}</p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
       {/* FOOTER */}
       <footer className="border-t border-white/10 px-5 py-10 relative z-10">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
