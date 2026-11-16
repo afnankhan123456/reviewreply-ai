@@ -368,7 +368,7 @@ export default function HowToReplyGoogleReviewsWithAI() {
         .author-line a { color: #14213d; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #b8860b; }
         .related-list { list-style: none; padding: 0; margin: 0.6rem 0 0; }
         .related-list li { margin-bottom: 0.6rem; padding-left: 1.1rem; position: relative; }
-        .related-list li::before { content: "\2192"; position: absolute; left: 0; color: #b8860b; }
+        .related-list li::before { content: "→"; position: absolute; left: 0; color: #b8860b; }
         .related-list a { color: #14213d; text-decoration: underline; text-underline-offset: 3px; text-decoration-color: #d8cfbc; }
         .cta-button {
           display: inline-block;
